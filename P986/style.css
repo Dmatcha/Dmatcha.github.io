@@ -24,7 +24,7 @@ body {
 .card {
   width: 100%;
   max-width: 15%px;
-  height: 22%; /* 2:3 ratio for 480px width */
+  aspect-ratio: 2 / 3;  
   perspective: 1000px;
   opacity: 0;
   animation: fadeIn 0.5s ease-out forwards;
