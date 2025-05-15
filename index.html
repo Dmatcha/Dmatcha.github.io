@@ -19,20 +19,81 @@
       justify-content: center;
       align-items: center;
       height: 100%;
+      position: relative;
+      z-index: 1;
     }
 
-.hex-grid {
-  position: relative;
-  width: 90%;
-  max-width: 720px;  /* cap on desktop */
-  aspect-ratio: 1; /* maintain shape */
-  margin: auto;
-}
+    /* VIDEO BACKGROUND */
+    .video-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* BACKGROUND IMAGE FADE ON HOVER */
+    .background-fade {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease-in-out, background-image 0.3s ease-in-out;
+      z-index: 1;
+    }
+
+    body:has(.hex-NORTH:hover) .background-fade {
+      opacity: 1;
+      background-image: url('media/bg-north.jpg');
+    }
+
+    body:has(.hex-SOUTH:hover) .background-fade {
+      opacity: 1;
+      background-image: url('media/bg-south.jpg');
+    }
+
+    body:has(.hex-NORTHEAST:hover) .background-fade {
+      opacity: 1;
+      background-image: url('media/bg-northeast.jpg');
+    }
+
+    body:has(.hex-SOUTHEAST:hover) .background-fade {
+      opacity: 1;
+      background-image: url('media/bg-southeast.jpg');
+    }
+
+    body:has(.hex-SOUTHWEST:hover) .background-fade {
+      opacity: 1;
+      background-image: url('media/bg-southwest.jpg');
+    }
+
+    body:has(.hex-NORTHWEST:hover) .background-fade {
+      opacity: 1;
+      background-image: url('media/bg-northwest.jpg');
+    }
+
+    .hex-grid {
+      position: relative;
+      width: 90%;
+      max-width: 720px;
+      aspect-ratio: 1;
+      margin: auto;
+      z-index: 2;
+    }
 
     .hex-container {
       position: absolute;
-      width: 29.17%; /* 210px / 720px */
-      height: 25.56%; /* 184px / 720px */
+      width: 29.17%;
+      height: 25.56%;
       clip-path: polygon(
         25% 0%, 75% 0%,
         100% 50%, 75% 100%,
@@ -67,181 +128,97 @@
       transform: scale(1.10);
     }
 
-    .main-container {
-      background: white;
-      z-index: 2;
-    }
+    .main-container { background: white; z-index: 2; }
+    .main-inner { background: black; color: white; }
+    .main-inner:hover { background: #222; color: #fff; }
 
-    .main-inner {
-      background: black;
-      color: white;
-    }
+    .outer-container { background: black; }
+    .outer-inner { background: white; color: black; }
+    .outer-inner:hover { background: #f0f0f0; color: black; }
 
-    .main-inner:hover {
-      background: #222;
-      color: #fff;
-    }
+    .main-container { top: 43.05%; left: 41.67%; }
+    .hex-NORTH      { top: 16.67%; left: 41.67%; }
+    .hex-SOUTH      { top: 69.44%; left: 41.67%; }
+    .hex-NORTHEAST  { top: 29.86%; left: 64.58%; }
+    .hex-SOUTHEAST  { top: 56.25%; left: 64.58%; }
+    .hex-SOUTHWEST  { top: 56.25%; left: 18.75%; }
+    .hex-NORTHWEST  { top: 29.86%; left: 18.75%; }
 
-    .outer-container {
-      background: black;
-    }
-
-    .outer-inner {
-      background: white;
-      color: black;
-    }
-
-    .outer-inner:hover {
-      background: #f0f0f0;
-      color: black;
-    }
-
-    /* Adjusted layout with tighter spacing but greater main-vertical distance */
-.main-container { top: 43.05%; left: 41.67%; }    /* 310px / 720px, 300px / 720px */
-.hex-NORTH      { top: 16.67%; left: 41.67%; }
-.hex-SOUTH      { top: 69.44%; left: 41.67%; }
-.hex-NORTHEAST  { top: 29.86%; left: 64.58%; }
-.hex-SOUTHEAST  { top: 56.25%; left: 64.58%; }
-.hex-SOUTHWEST  { top: 56.25%; left: 18.75%; }
-.hex-NORTHWEST  { top: 29.86%; left: 18.75%; }
-
-    /* Responsive scaling */
+    /* Responsive tweaks */
     @media (max-width: 1000px) {
-      .hex-grid {
-        width: 600px;
-        height: 700px;
-      }
-
-      .hex-container {
-        width: 170px;
-        height: 150px;
-      }
-
-      .hex-inner {
-        font-size: 20px;
-        padding: 10px;
-      }
-
-  .main-container   { top: 248px; left: 240px; }
-  .hex-NORTH        { top:  96px; left: 240px; }
-  .hex-SOUTH        { top: 400px; left: 240px; }
-
-  .hex-NORTHEAST    { top: 172px; left: 376px; }
-  .hex-SOUTHEAST    { top: 324px; left: 376px; }
-  .hex-SOUTHWEST    { top: 324px; left: 104px; }
-  .hex-NORTHWEST    { top: 172px; left: 104px; }
+      .hex-grid { width: 600px; height: 700px; }
+      .hex-container { width: 170px; height: 150px; }
+      .hex-inner { font-size: 20px; padding: 10px; }
+      .main-container { top: 248px; left: 240px; }
+      .hex-NORTH { top: 96px; left: 240px; }
+      .hex-SOUTH { top: 400px; left: 240px; }
+      .hex-NORTHEAST { top: 172px; left: 376px; }
+      .hex-SOUTHEAST { top: 324px; left: 376px; }
+      .hex-SOUTHWEST { top: 324px; left: 104px; }
+      .hex-NORTHWEST { top: 172px; left: 104px; }
     }
 
     @media (max-width: 600px) {
-      .hex-grid {
-        width: 500px;
-        height: 600px;
-      }
-
-      .hex-container {
-        width: 140px;
-        height: 120px;
-      }
-
-      .hex-inner {
-        font-size: 16px;
-        padding: 8px;
-      }
-
-  .main-container   { top: 202px; left: 195px; }
-  .hex-NORTH        { top:  78px; left: 195px; }
-  .hex-SOUTH        { top: 326px; left: 195px; }
-
-  .hex-NORTHEAST    { top: 140px; left: 305px; }
-  .hex-SOUTHEAST    { top: 264px; left: 305px; }
-  .hex-SOUTHWEST    { top: 264px; left: 85px; }
-  .hex-NORTHWEST    { top: 140px; left: 85px; }
+      .hex-grid { width: 500px; height: 600px; }
+      .hex-container { width: 140px; height: 120px; }
+      .hex-inner { font-size: 16px; padding: 8px; }
+      .main-container { top: 202px; left: 195px; }
+      .hex-NORTH { top: 78px; left: 195px; }
+      .hex-SOUTH { top: 326px; left: 195px; }
+      .hex-NORTHEAST { top: 140px; left: 305px; }
+      .hex-SOUTHEAST { top: 264px; left: 305px; }
+      .hex-SOUTHWEST { top: 264px; left: 85px; }
+      .hex-NORTHWEST { top: 140px; left: 85px; }
     }
 
     @media (max-width: 400px) {
-      .hex-grid {
-        width: 380px;
-        height: 520px;
-      }
-
-      .hex-container {
-        width: 110px;
-        height: 100px;
-      }
-
-      .hex-inner {
-        font-size: 14px;
-        padding: 6px;
-      }
-
-  .main-container   { top: 155px; left: 150px; }
-  .hex-NORTH        { top:  60px; left: 150px; }
-  .hex-SOUTH        { top: 250px; left: 150px; }
-
-  .hex-NORTHEAST    { top: 108px; left: 235px; }
-  .hex-SOUTHEAST    { top: 202px; left: 235px; }
-  .hex-SOUTHWEST    { top: 202px; left: 65px; }
-  .hex-NORTHWEST    { top: 108px; left: 65px; }
+      .hex-grid { width: 380px; height: 520px; }
+      .hex-container { width: 110px; height: 100px; }
+      .hex-inner { font-size: 14px; padding: 6px; }
+      .main-container { top: 155px; left: 150px; }
+      .hex-NORTH { top: 60px; left: 150px; }
+      .hex-SOUTH { top: 250px; left: 150px; }
+      .hex-NORTHEAST { top: 108px; left: 235px; }
+      .hex-SOUTHEAST { top: 202px; left: 235px; }
+      .hex-SOUTHWEST { top: 202px; left: 65px; }
+      .hex-NORTHWEST { top: 108px; left: 65px; }
     }
-
-    .background-fade {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease-in-out, background-image 0.3s ease-in-out;
-  z-index: 0;
-}
-body:has(.hex-NORTH:hover) .background-fade {
-  opacity: 1;
-  background-image: url('media/bg-north.jpg');
-}
-
-body:has(.hex-SOUTH:hover) .background-fade {
-  opacity: 1;
-  background-image: url('media/bg-south.jpg');
-}
-
-/* Add more for each hex */
-
-
   </style>
 </head>
 <body>
+
+  <!-- 🔁 VIDEO BACKGROUND -->
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="media/background.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- 🖼️ FADE-IN BACKGROUND OVERLAY -->
+  <div class="background-fade"></div>
+
+  <!-- 🔷 HEXAGON GRID -->
   <div class="hex-grid">
     <div class="hex-container outer-container hex-NORTHEAST">
-      <a href="PAGE-NORTHEAST.html" target="_blank" class="hex-inner outer-inner">Social</a>
+      <a href="PAGE-NORTHEAST.html" class="hex-inner outer-inner">Social</a>
     </div>
-
     <div class="hex-container outer-container hex-SOUTHEAST">
       <a href="PAGE-SOUTHEAST.html" class="hex-inner outer-inner">Work CV</a>
     </div>
-
     <div class="hex-container outer-container hex-SOUTHWEST">
       <a href="PAGE-SOUTHWEST.html" class="hex-inner outer-inner">Thinking</a>
     </div>
-
     <div class="hex-container outer-container hex-NORTHWEST">
       <a href="mailto:deansmatthewcharles+HEX@gmail.com?subject=DEANSandCONTACT" class="hex-inner outer-inner">Contact</a>
     </div>
-
     <div class="hex-container outer-container hex-SOUTH">
       <a href="PAGE-SOUTH.html" class="hex-inner outer-inner">What?</a>
     </div>
-
     <div class="hex-container outer-container hex-NORTH">
       <a href="PAGE-NORTH.html" class="hex-inner outer-inner">Associates</a>
     </div>
-
     <div class="hex-container main-container main">
       <a href="jp.html" class="hex-inner main-inner">日本語</a>
     </div>
   </div>
 </body>
-<div class="background-fade"></div>
 </html>
