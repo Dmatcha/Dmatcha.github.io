@@ -21,11 +21,13 @@
       height: 100%;
     }
 
-    .hex-grid {
-      position: relative;
-      width: 750px;
-      height: 800px; /* Reduced height slightly */
-    }
+.hex-grid {
+  position: relative;
+  width: 90%;
+  max-width: 720px;  /* cap on desktop */
+  aspect-ratio: 1; /* maintain shape */
+  margin: auto;
+}
 
     .hex-container {
       position: absolute;
