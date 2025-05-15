@@ -7,9 +7,9 @@ body {
 
 .card-container {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); /* 7 cards per row */
-  gap: 8px;
-  padding: 5px;
+  grid-template-columns: repeat(6, 1fr); /* 7 cards per row */
+  gap: 1%;
+  padding: 1%;
   justify-items: center;
 }
 
@@ -19,15 +19,15 @@ body {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 720px) {
   .card-container {
-    grid-template-columns: repeat(3, 1fr); /* Mobile: 3 cards per row */
+    grid-template-columns: repeat(2, 1fr); /* Mobile: 3 cards per row */
   }
 }
 
 .card {
   width: 100%;
-  max-width: 360px; /* Previously 150px */
+/*  max-width: 360px;  Previously 150px */
   aspect-ratio: 2 / 3; 
   perspective: 1080px;
   opacity: 0;
