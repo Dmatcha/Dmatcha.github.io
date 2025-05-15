@@ -7,24 +7,24 @@ body {
 
 .card-container {
   display: grid;
-  grid-template-columns: repeat(6, 1fr); /* 7 cards per row */
-  gap: 2%;
-  padding: 2%;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  padding: 8px;
   justify-items: center;
-  margin: 0 auto;
   max-width: 100%;
+  margin: 0 auto;
 }
 
 @media (max-width: 720px) {
   .card-container {
-    grid-template-columns: repeat(2, 1fr); /* Mobile: 3 cards per row */
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 .card {
   width: 100%;
-  max-width: 15%;  /* Previously 480px */
-  aspect-ratio: 2 / 3; 
+  max-width: 480px;
+  height: 720px; /* 2:3 ratio for 480px width */
   perspective: 1000px;
   opacity: 0;
   animation: fadeIn 0.5s ease-out forwards;
@@ -51,7 +51,7 @@ body {
   height: 100%;
   backface-visibility: hidden;
   border: 2px solid #ccc;
-  border-radius: 20px;
+  border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
@@ -67,3 +67,8 @@ body {
   transform: rotateY(180deg);
 }
 
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
