@@ -1,45 +1,48 @@
-const container = document.getElementById('card-container');
-let loadedCards = 0;
 const totalCards = 986;
 const batchSize = 20;
+let loadedCards = 0;
 
-// Load a batch of cards
-function loadCards() {
-  for (let i = loadedCards; i < loadedCards + batchSize && i < totalCards; i++) {
+const cardContainer = document.getElementById('cardContainer');
+
+function loadNextBatch() {
+  const fragment = document.createDocumentFragment();
+
+  for (let i = loadedCards; i < Math.min(loadedCards + batchSize, totalCards); i++) {
     const card = document.createElement('div');
     card.className = 'card';
-    card.style.animationDelay = `${(i - loadedCards) * 40}ms`;
-
-    const cardInner = document.createElement('div');
-    cardInner.className = 'card-inner';
-
-    const front = document.createElement('div');
-    front.className = 'card-front';
-    front.style.backgroundImage = `url(cards/fronts/${String(i).padStart(3, '0')}.webp)`;
-
-    const back = document.createElement('div');
-    back.className = 'card-back';
-    back.style.backgroundImage = `url(cards/backs/${String(i).padStart(3, '0')}.webp)`;
-
-    cardInner.appendChild(front);
-    cardInner.appendChild(back);
-    card.appendChild(cardInner);
-    container.appendChild(card);
+    card.innerHTML = `
+      <div class="card-inner">
+        <div class="card-front">
+          <img src="cards/fronts/${String(i).padStart(3, '0')}.webp" alt="Card ${i}">
+        </div>
+        <div class="card-back">
+          <img src="cards/backs/${String(i).padStart(3, '0')}_back.webp" alt="Card ${i} Back">
+        </div>
+      </div>
+    `;
 
     card.addEventListener('click', () => {
       card.classList.toggle('flipped');
     });
+
+    fragment.appendChild(card);
   }
 
+  cardContainer.appendChild(fragment);
   loadedCards += batchSize;
 }
 
-// Trigger more loads on scroll
+// Infinite scroll logic
 window.addEventListener('scroll', () => {
-  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
-    loadCards();
+  const scrollPosition = window.innerHeight + window.scrollY;
+  const pageHeight = document.documentElement.offsetHeight;
+
+  if (scrollPosition >= pageHeight - 100) {
+    if (loadedCards < totalCards) {
+      loadNextBatch();
+    }
   }
 });
 
-// Load initial batch
-loadCards();
+// Initial load
+loadNextBatch();
