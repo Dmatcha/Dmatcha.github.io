@@ -7,15 +7,21 @@ body {
 
 .card-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(7, 1fr); /* 7 cards per row */
   gap: 16px;
-  padding: 24px;
+  padding: 20px;
   justify-items: center;
+}
+
+@media (max-width: 1024px) {
+  .card-container {
+    grid-template-columns: repeat(4, 1fr); /* Fallback for medium screens */
+  }
 }
 
 @media (max-width: 768px) {
   .card-container {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr); /* Mobile: 3 cards per row */
   }
 }
 
