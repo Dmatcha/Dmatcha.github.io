@@ -32,7 +32,8 @@
       min-height: 100%;
       object-fit: cover;
       z-index: 0;
-      opacity: 0.5;
+      opacity: 0.75;
+      filter: blur(8px);
       pointer-events: none;
     }
 
@@ -188,16 +189,23 @@
 <body>
 
   <!-- 🔁 VIDEO BACKGROUND -->
-  <video class="video-bg" autoplay muted loop playsinline>
-    <source src="media/background.mp4" type="video/mp4" />
+ <video class="video-bg" autoplay muted loop playsinline>
+    <source src="media/138556-769988117_medium.mp4" type="video/mp4" />
     Your browser does not support the video tag.
   </video>
 
+<!--
+<div class="video-background">
+  <video autoplay muted loop playsinline>
+    <source src="media/background.mp4" type="video/mp4" />
+  </video>
+</div>
+-->
   <!-- 🖼️ FADE-IN BACKGROUND OVERLAY -->
   <div class="background-fade"></div>
 
   <!-- 🔷 HEXAGON GRID -->
-  <div class="hex-grid">
+  <div class="hex-grid"> <!-- NOTE: depth is first = deepest, last = surface front -->
     <div class="hex-container outer-container hex-NORTHEAST">
       <a href="PAGE-NORTHEAST.html" class="hex-inner outer-inner">Social</a>
     </div>
