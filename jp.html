@@ -24,18 +24,32 @@
     }
 
     /* VIDEO BACKGROUND */
-    .video-bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      min-width: 100%;
-      min-height: 100%;
-      object-fit: cover;
-      z-index: 0;
-      opacity: 0.99;
-      filter: blur(8px);
-      pointer-events: none;
-    }
+  .video-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.video-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  filter: blur(8px) brightness(0.9) contrast(1.1);
+  opacity: 0.99;
+  pointer-events: none;
+}
+
 
     /* BACKGROUND IMAGE FADE ON HOVER */
     .background-fade {
@@ -189,10 +203,12 @@
 <body>
 
   <!-- 🔁 VIDEO BACKGROUND -->
+<div class="video-wrapper">
   <video class="video-bg" autoplay muted loop playsinline>
     <source src="media/background.mp4" type="video/mp4" />
     Your browser does not support the video tag.
   </video>
+</div>
 
   <!-- 🖼️ FADE-IN BACKGROUND OVERLAY -->
   <div class="background-fade"></div>
