@@ -11,6 +11,8 @@ body {
   gap: 2%;
   padding: 2%;
   justify-items: center;
+  margin: 0 auto;
+  max-width: 100%;
 }
 
 @media (max-width: 720px) {
@@ -21,7 +23,7 @@ body {
 
 .card {
   width: 100%;
-/*  max-width: 360px;  Previously 150px */
+  max-width: 15%;  /* Previously 480px */
   aspect-ratio: 2 / 3; 
   perspective: 1000px;
   opacity: 0;
