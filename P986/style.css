@@ -8,20 +8,27 @@ body {
 .card-container {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  padding: 12px;
+  gap: 4px;
+  padding: 6px;
   justify-items: center;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 860px) {
   .card-container {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
+/* Better control for portrait phones */
+@media (max-width: 768px) and (orientation: portrait) {
+  .card-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 .card {
-  width: 180px;
-  height: 250px;
+  width: 99%;
+  aspect-ratio: 63/88;
   perspective: 1000px;
 }
 
@@ -45,7 +52,7 @@ body {
   height: 100%;
   backface-visibility: hidden;
   border: 2px solid #ccc;
-  border-radius: 8px;
+  border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
