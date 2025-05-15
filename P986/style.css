@@ -7,7 +7,7 @@ body {
 
 .card-container {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); /* 7 cards per row */
+  grid-template-columns: repeat(5, 1fr); /* 7 cards per row */
   gap: 16px;
   padding: 20px;
   justify-items: center;
@@ -20,10 +20,14 @@ body {
 }
 
 .card {
-  width: 180px;
-  height: 250px;
+  width: 100%;
+  max-width: 180px; /* Previously 150px */
+  aspect-ratio: 2 / 3;
   perspective: 1000px;
+  opacity: 0;
+  animation: fadeIn 0.5s ease-out forwards;
 }
+
 
 .card-inner {
   width: 100%;
