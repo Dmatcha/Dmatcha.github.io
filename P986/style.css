@@ -31,6 +31,7 @@ body {
   aspect-ratio: 63/88;
   perspective: 1000px;
   transform-style: preserve-3d; /* <- firefox issuesss */
+  -webkit-transform-style: preserve-3d; /* <- iOS issues ??? */
 }
 
 .card-inner {
