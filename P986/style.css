@@ -30,6 +30,7 @@ body {
   width: 99%;
   aspect-ratio: 63/88;
   perspective: 1000px;
+  -webkit-perspective: 1000px;
   transform-style: preserve-3d; /* <- firefox issuesss */
   -webkit-transform-style: preserve-3d; /* <- iOS issues ??? */
 }
@@ -43,6 +44,7 @@ body {
   -webkit-transform-style: preserve-3d; /* <- iOS */
   cursor: pointer;
   transform: translateZ(0); /* <- Firefox issues maybe*/  
+  -webkit-transform: translateZ(0); /* <- Firefox issues maybe*/  
 }
 
 .card.flipped .card-inner {
@@ -58,7 +60,7 @@ body {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden; /* <- iOS */
   border: 2px solid #ccc;
-  border-radius: 12px;
+  border-radius: 32px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
