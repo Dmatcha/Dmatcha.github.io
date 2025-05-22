@@ -1,5 +1,5 @@
 const totalCards = 612;
-const batchSize = 21;
+const batchSize = 31;
 let loadedCards = 0;
 
 const cardContainer = document.getElementById('cardContainer');
