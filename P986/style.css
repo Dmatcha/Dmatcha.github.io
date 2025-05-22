@@ -39,7 +39,7 @@ body {
   width: 100%;
   height: 100%;
   position: relative;
-  transition: transform 0.8s;
+  transition: transform 0.9s;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d; /* <- iOS */
   cursor: pointer;
@@ -60,7 +60,7 @@ body {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden; /* <- iOS */
   border: 3px solid #ccc;
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
