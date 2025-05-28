@@ -1,4 +1,4 @@
-const totalCards = 612;
+const totalCards = 550;
 const batchSize = 31;
 let loadedCards = 0;
 
