@@ -3,8 +3,17 @@ body {
   padding: 0;
   background: #f5f5f5;
   font-family: sans-serif;
+  -webkit-font-smoothing: antialiased; /* Smooth font rendering */
+  -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
 }
 
+/* Ensure all children inherit box-sizing */
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* Standard vertical cards */
 .card-container {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -13,54 +22,64 @@ body {
   justify-items: center;
 }
 
-@media (max-width: 860px) {
-  .card-container {
-    grid-template-columns: repeat(3, 1fr);
+/* Horizontal MAP cards */
+.map-card-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 24px 6px;
+  justify-items: center;
+  background-color: #eaeaea;
+}
+
+/* Mobile adjustment for MAP cards */
+@media (max-width: 768px) {
+  .map-card-container {
+    grid-template-columns: repeat(1, 1fr);
   }
 }
 
-/* Better control for portrait phones */
-@media (max-width: 768px) and (orientation: portrait) {
-  .card-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
+/* Card base styles */
 .card {
-  width: 99%;
-  aspect-ratio: 63/88;
+  width: 100%;
+  aspect-ratio: 63 / 88;
+  -webkit-aspect-ratio: 63 / 88; /* Some Safari versions benefit */
   perspective: 1000px;
   -webkit-perspective: 1000px;
-  transform-style: preserve-3d; /* <- firefox issuesss */
-  -webkit-transform-style: preserve-3d; /* <- iOS issues ??? */
 }
 
+.map-card {
+  aspect-ratio: 88 / 63;
+  -webkit-aspect-ratio: 88 / 63;
+}
+
+/* Flip animation */
 .card-inner {
   width: 100%;
   height: 100%;
   position: relative;
   transition: transform 0.9s;
+  -webkit-transition: -webkit-transform 0.9s;
   transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d; /* <- iOS */
+  -webkit-transform-style: preserve-3d;
   cursor: pointer;
-  transform: translateZ(0); /* <- Firefox issues maybe*/  
-  -webkit-transform: translateZ(0); /* <- Firefox issues maybe*/  
+  will-change: transform;
 }
 
 .card.flipped .card-inner {
   transform: rotateY(180deg);
-  -webkit-transform: rotateY(180deg); /* <- Needed for iOS?*/  
+  -webkit-transform: rotateY(180deg);
 }
 
 .card-front,
 .card-back {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 99%;
+  height: 99%;
   backface-visibility: hidden;
-  -webkit-backface-visibility: hidden; /* <- iOS */
-  border: 3px solid #ccc;
-  border-radius: 19px;
+  -webkit-backface-visibility: hidden;
+  border: 2px solid #ccc;
+  border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
@@ -70,11 +89,10 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  backface-visibility: hidden; /*may or may not need*/
-  -webkit-backface-visibility: hidden; /* <- Also iOS */
 }
 
-.card-back {
+/* Rotate front for flip */
+.card-front {
   transform: rotateY(180deg);
-  -webkit-transform: rotateY(180deg); /* <- Needed for Safari */
+  -webkit-transform: rotateY(180deg);
 }
