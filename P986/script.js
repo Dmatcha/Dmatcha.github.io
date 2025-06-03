@@ -6,7 +6,7 @@ const standardContainer = document.getElementById('standardCards');
 const mapContainer = document.getElementById('mapCards');
 
 function createCard(i) {
-  const isMapCard = i >= 551;
+  const isMapCard = i >= 550;
   const card = document.createElement('div');
   card.className = isMapCard ? 'card map-card' : 'card';
 
@@ -34,7 +34,7 @@ function loadNextBatch() {
 
   for (let i = loadedCards; i < Math.min(loadedCards + batchSize, totalCards); i++) {
     const card = createCard(i);
-    if (i < 548) {
+    if (i < 550) {
       standardFragment.appendChild(card);
     } else {
       mapFragment.appendChild(card);
