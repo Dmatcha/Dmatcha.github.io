@@ -6,7 +6,7 @@ const standardContainer = document.getElementById('standardCards');
 const mapContainer = document.getElementById('mapCards');
 
 function createCard(i) {
-  const isMapCard = i >= 550;
+  const isMapCard = i >= 551;
   const card = document.createElement('div');
   card.className = isMapCard ? 'card map-card' : 'card';
 
