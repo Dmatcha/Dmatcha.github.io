@@ -1,4 +1,4 @@
-const totalCards = 612;
+const totalCards = 614;
 const batchSize = 31;
 let loadedCards = 0;
 
@@ -6,7 +6,7 @@ const standardContainer = document.getElementById('standardCards');
 const mapContainer = document.getElementById('mapCards');
 
 function createCard(i) {
-  const isMapCard = i >= 548;
+  const isMapCard = i >= 550;
   const card = document.createElement('div');
   card.className = isMapCard ? 'card map-card' : 'card';
 
