@@ -3,37 +3,52 @@ body {
   padding: 0;
   background: #f5f5f5;
   font-family: sans-serif;
-  -webkit-font-smoothing: antialiased; /* Smooth font rendering */
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   box-sizing: border-box;
 }
 
-/* Ensure all children inherit box-sizing */
+/* Inherit box-sizing for all elements */
 *, *::before, *::after {
   box-sizing: inherit;
 }
 
-/* Standard vertical cards */
+/* Default: Standard vertical cards = 3 per row */
 .card-container {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 4px;
   padding: 6px;
   justify-items: center;
 }
 
-/* Horizontal MAP cards */
+/* Default: Horizontal MAP cards = 2 per row */
 .map-card-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 8px;
   padding: 24px 6px;
   justify-items: center;
   background-color: #eaeaea;
 }
 
-/* Mobile adjustment for MAP cards */
-@media (max-width: 768px) {
+/* Large screen (≥1600px) */
+@media (min-width: 1200px) {
+  .card-container {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .map-card-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Small screens (≤768px) */
+@media (max-width: 720px) {
+  .card-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .map-card-container {
     grid-template-columns: repeat(1, 1fr);
   }
@@ -43,7 +58,7 @@ body {
 .card {
   width: 100%;
   aspect-ratio: 63 / 88;
-  -webkit-aspect-ratio: 63 / 88; /* Some Safari versions benefit */
+  -webkit-aspect-ratio: 63 / 88;
   perspective: 1000px;
   -webkit-perspective: 1000px;
 }
@@ -71,6 +86,7 @@ body {
   -webkit-transform: rotateY(180deg);
 }
 
+/* Front and back */
 .card-front,
 .card-back {
   position: absolute;
@@ -91,7 +107,6 @@ body {
   object-fit: cover;
 }
 
-/* Rotate front for flip */
 .card-front {
   transform: rotateY(180deg);
   -webkit-transform: rotateY(180deg);
