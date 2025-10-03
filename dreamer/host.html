@@ -5,28 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Host Tracker</title>
 <style>
-  body {
-    font-family: "Segoe UI", Arial, sans-serif;
-    background: #1e1e1e;
-    color: #eee;
-    margin: 0;
-    padding: 1rem;
-  }
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #121212; /* darker, same theme */
+  color: #f5f7fa;
+  margin: 0;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  gap: 1rem;
+}
+
 
   /* Header */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #2a2a2a;
-    padding: 0.6rem 1rem;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  }
-  .header select, .header div {
-    font-size: 1rem;
-  }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #2d2d2d, #232323);
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+}
+
+.header select, .header div {
+  font-size: 1rem;
+  color: #f1f5fb;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  padding: 0.3rem 0.5rem;
+  border-radius: 8px;
+}
+
   #actCounter {
   cursor: pointer;
   font-weight: bold;
@@ -41,19 +53,31 @@
   #actCounter:hover { background: #555; }
 
   /* Player Section */
-  .player-section {
-    background: #2d2d2d;
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-  }
+.player-section {
+  background: linear-gradient(145deg, #292929, #1f1f1f);
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.player-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.45);
+}
+
+.player-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+}
+@media(max-width: 700px) {
   .player-row {
-    display: grid;
-    grid-template-columns: 150px auto auto auto;
-    align-items: center;
-    gap: 1rem;
+    grid-template-columns: 1fr;
   }
+}
+
   .player-row input[type=text] {
     font-size: 1rem;
     background: transparent;
@@ -64,27 +88,31 @@
   }
 
   /* Bars */
-  .bar {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.9rem;
-  }
-  .bar button {
-    background: #444;
-    border: none;
-    color: white;
-    padding: 0.3rem 0.7rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  .bar button:hover { background: #666; }
-  .bar span.value {
-    min-width: 28px;
-    text-align: center;
-    font-weight: bold;
-  }
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #222;
+  padding: 0.4rem 0.6rem;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+.bar button {
+  background: #3b3b3b;
+  border: none;
+  color: white;
+  padding: 0.35rem 0.7rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.bar button:hover { background: #555; }
+.bar span.value {
+  min-width: 32px;
+  text-align: center;
+  font-weight: bold;
+}
+
   .madness span.value { color: #e57373; }
   .life span.value { color: #81c784; }
 
@@ -119,25 +147,26 @@
     padding: 0.8rem 1rem;
     box-shadow: 0 2px 6px rgba(0,0,0,0.25);
   }
-  .dice-buttons button {
-    margin: 0.2rem;
-    padding: 0.4rem 0.8rem;
-    background: #3a3a3a;
-    border: none;
-    border-radius: 6px;
-    color: #fff;
-    cursor: pointer;
-    transition: 0.2s;
-  }
-  .dice-buttons button:hover { background: #555; }
-    /* Bigger button style */
-  .big-button {
-    font-size: 1.2rem;
-    padding: 12px 24px;
-    border-radius: 12px;
-    margin: 0 6px;
-    transition: transform 0.2s ease;
-  }
+.dice-buttons button {
+  margin: 0.3rem;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  background: linear-gradient(180deg,#3a3a3a,#2a2a2a);
+  border: none;
+  border-radius: 10px;
+  color: #f9f9f9;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.3s;
+}
+.dice-buttons button:hover {
+  background: linear-gradient(180deg,#555,#3a3a3a);
+  transform: translateY(-2px);
+}
+.big-button {
+  font-size: 1.2rem;
+  padding: 14px 26px;
+}
+
     /* Animation class */
   .animate {
     animation: bounceScale 1.2s ease forwards;
@@ -166,23 +195,28 @@
     gap: 1rem;
     margin-top: 1rem;
   }
-  .enemy-row {
-    background: #3a2a44;
-    border-radius: 10px;
-    padding: 0.8rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-  .enemy-row input {
-    font-size: 1rem;
-    border: none;
-    border-bottom: 1px solid #888;
-    background: transparent;
-    color: #fff;
-    padding: 0.2rem;
-  }
+.enemy-row {
+  background: linear-gradient(160deg,#3a2a44,#2a1f33);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition: transform 0.2s ease;
+}
+.enemy-row:hover {
+  transform: translateY(-2px);
+}
+.enemy-row input {
+  font-size: 1rem;
+  border: none;
+  border-bottom: 1px solid #777;
+  background: transparent;
+  color: #fff;
+  padding: 0.25rem;
+}
+
   .enemy-row input::placeholder { color:#aaa; }
   .enemy-row button {
     background: #5e3b77;
