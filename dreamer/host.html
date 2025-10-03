@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Host Tracker</title>
+<style>
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #1e1e1e;
+    color: #eee;
+    margin: 0;
+    padding: 1rem;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #2a2a2a;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  }
+  .header select, .header div {
+    font-size: 1rem;
+  }
+  #actCounter {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    background: #444;
+    transition: 0.2s;
+  }
+  #actCounter:hover { background: #555; }
+
+  /* Player Section */
+  .player-section {
+    background: #2d2d2d;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  }
+  .player-row {
+    display: grid;
+    grid-template-columns: 150px auto auto auto;
+    align-items: center;
+    gap: 1rem;
+  }
+  .player-row input[type=text] {
+    font-size: 1rem;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #666;
+    color: white;
+    padding: 0.2rem;
+  }
+
+  /* Bars */
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.9rem;
+  }
+  .bar button {
+    background: #444;
+    border: none;
+    color: white;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .bar button:hover { background: #666; }
+  .bar span.value {
+    min-width: 28px;
+    text-align: center;
+    font-weight: bold;
+  }
+  .madness span.value { color: #e57373; }
+  .life span.value { color: #81c784; }
+
+  /* Checkboxes */
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 16px; /* row gap / column gap */
+  margin-top: 0.5rem;
+}
+
+.checkbox-grid label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.checkbox-grid input[type="checkbox"] {
+  transform: scale(1.2);
+}
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 1rem;
+    background: #2a2a2a;
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  }
+  .dice-buttons button {
+    margin: 0.2rem;
+    padding: 0.4rem 0.8rem;
+    background: #3a3a3a;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .dice-buttons button:hover { background: #555; }
+    /* Bigger button style */
+  .big-button {
+    font-size: 1.2rem;
+    padding: 12px 24px;
+    border-radius: 12px;
+    margin: 0 6px;
+    transition: transform 0.2s ease;
+  }
+    /* Animation class */
+  .animate {
+    animation: bounceScale 1.2s ease forwards;
+  }
+    @keyframes bounceScale {
+    0% { transform: scale(1); }
+    20% { transform: scale(1.3); }
+    40% { transform: scale(0.9); }
+    60% { transform: scale(1.15); }
+    80% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+
+  /* Enemy Tracker */
+  #enemyTracker {
+    display: none;
+    margin-top: 1.5rem;
+    background: #2d2d2d;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  }
+  #enemiesContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .enemy-row {
+    background: #3a2a44;
+    border-radius: 10px;
+    padding: 0.8rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .enemy-row input {
+    font-size: 1rem;
+    border: none;
+    border-bottom: 1px solid #888;
+    background: transparent;
+    color: #fff;
+    padding: 0.2rem;
+  }
+  .enemy-row input::placeholder { color:#aaa; }
+  .enemy-row button {
+    background: #5e3b77;
+    border: none;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  .enemy-row button:hover { background: #7a5097; }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>HOST</div>
+  <select id="villainSelect">
+    <option>Angelo Adair</option>
+    <option>Byron vey Byornn</option>
+    <option>Ceng Zhangyi</option>
+    <option>Daisuke Daioh</option>
+    <option>Elizabeth Einsborough</option>
+    <option>Fal</option>
+    <option>Gary Gigantes</option>
+    <option>Hyunjin Halvela</option>
+    <option>Isaac Ivanson</option>
+    <option>JJ The Beast</option>
+    <option>Kleo</option>
+    <option>Li</option>
+    <option>Maelle</option>
+    <option>Neville Schwarz</option>
+    <option>Olum Farhoud</option>
+    <option>Paarth Lomedi</option>
+    <option>Qing</option>
+    <option>Reeve Basilisk</option>
+    <option>Vincent</option>
+    <option>Taeonora</option>
+  </select>
+  <div id="actCounter">Act 0</div>
+</div>
+
+<!-- PLAYERS -->
+<div id="playersContainer"></div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <button id="resetBtn">Reset</button>
+  <div style="flex-grow:1; text-align:center;">
+    <div id="rollResult" style="font-size:1.2rem; min-height:1.5rem; margin-bottom:0.5rem;"></div>
+    <div class="dice-buttons">
+      <button class="big-button diceBtn" data-dice="1d6">1d6</button>
+      <button class="big-button diceBtn" data-dice="2d6">2d6</button>
+      <button class="big-button diceBtn" data-dice="1d8">1d8</button>
+      <button class="big-button diceBtn" data-dice="1d10">1d10</button>
+      <button class="big-button diceBtn" data-dice="1d12">1d12</button>
+      <button class="big-button diceBtn" data-dice="1d20">1d20</button>
+      <button id="coinTossBtn">Coin Toss</button>
+    </div>
+  </div>
+  <button id="enemyBtn">Enemy</button>
+</div>
+
+<!-- ENEMIES -->
+<div id="enemyTracker">
+  <h3 style="display:flex; align-items:center; justify-content:space-between;">
+    Enemy Encounter 
+    <button id="addEnemyBtn">Add Enemy</button>
+  </h3>
+  <div id="enemiesContainer"></div>
+</div>
+
+<script>
+// Helpers
+function saveState(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
+function loadState(k,f){ const v=localStorage.getItem(k); return v?JSON.parse(v):f; }
+
+// Act Counter
+const acts=["Act 0","Act I","Act II","Act III"];
+let currentAct=loadState("currentAct",0);
+document.getElementById("actCounter").textContent=acts[currentAct];
+document.getElementById("actCounter").onclick=()=>{
+  currentAct=(currentAct+1)%acts.length;
+  document.getElementById("actCounter").textContent=acts[currentAct];
+  saveState("currentAct",currentAct);
+};
+
+// Villain
+const villainSelect=document.getElementById("villainSelect");
+villainSelect.value=loadState("currentVillain",villainSelect.value);
+villainSelect.onchange=()=>saveState("currentVillain",villainSelect.value);
+
+// Players
+const playersContainer=document.getElementById("playersContainer");
+let players=loadState("hostPlayers",["P1","P2","P3"]);
+function renderPlayers(){
+  playersContainer.innerHTML="";
+  players.forEach((name,idx)=>{
+    const card=document.createElement("div");
+    card.className="player-section";
+
+    const row=document.createElement("div");
+    row.className="player-row";
+
+    // Name
+    const nameInput=document.createElement("input");
+    nameInput.type="text";
+    nameInput.placeholder=name;
+    nameInput.value=loadState("playerName"+idx,"");
+    nameInput.onkeydown=(e)=>{ if(e.key==="Enter"){ saveState("playerName"+idx,nameInput.value); nameInput.blur(); }};
+    nameInput.onblur=()=>saveState("playerName"+idx,nameInput.value);
+    row.appendChild(nameInput);
+
+    // Madness
+    let mv=loadState("playerMadness"+idx,0);
+    const madnessDiv=document.createElement("div"); madnessDiv.className="bar madness";
+    const mMinus=document.createElement("button"); mMinus.textContent="-";
+    const mVal=document.createElement("span"); mVal.className="value"; mVal.textContent=mv;
+    const mPlus=document.createElement("button"); mPlus.textContent="+";
+    mMinus.onclick=()=>{ if(mv>0){ mv--; mVal.textContent=mv; saveState("playerMadness"+idx,mv);} };
+    mPlus.onclick=()=>{ mv++; mVal.textContent=mv; saveState("playerMadness"+idx,mv);} ;
+    madnessDiv.append(mMinus,"Madness:",mVal,mPlus);
+    row.appendChild(madnessDiv);
+
+    // Life
+    let lv=loadState("playerLife"+idx,0);
+    const lifeDiv=document.createElement("div"); lifeDiv.className="bar life";
+    const lMinus=document.createElement("button"); lMinus.textContent="-";
+    const lVal=document.createElement("span"); lVal.className="value"; lVal.textContent=lv;
+    const lPlus=document.createElement("button"); lPlus.textContent="+";
+    lMinus.onclick=()=>{ lv--; lVal.textContent=lv; saveState("playerLife"+idx,lv);} ;
+    lPlus.onclick=()=>{ lv++; lVal.textContent=lv; saveState("playerLife"+idx,lv);} ;
+    lifeDiv.append(lMinus,"Life:",lVal,lPlus);
+    row.appendChild(lifeDiv);
+
+// Checkboxes (2x2 grid)
+const cbDiv = document.createElement("div");
+cbDiv.className = "checkbox-grid";
+["Favour","Dread","Blessed","Cursed"].forEach(cbName => {
+  const label = document.createElement("label");
+  const cb = document.createElement("input");
+  cb.type = "checkbox";
+  cb.checked = loadState(cbName+idx,false);
+  cb.onchange = () => saveState(cbName+idx,cb.checked);
+  label.append(cb, cbName);
+  cbDiv.appendChild(label);
+});
+row.appendChild(cbDiv);
+
+
+    card.appendChild(row);
+    playersContainer.appendChild(card);
+  });
+
+  if(players.length<10){
+    const addBtn=document.createElement("button");
+    addBtn.textContent="Add Player";
+    addBtn.onclick=()=>{ players.push("P"+(players.length+1)); saveState("hostPlayers",players); renderPlayers(); };
+    playersContainer.appendChild(addBtn);
+  }
+}
+renderPlayers();
+
+// Reset
+let resetTimeout;
+document.getElementById("resetBtn").onmousedown=()=>{ resetTimeout=setTimeout(()=>{localStorage.clear(); location.reload();},2000); };
+document.getElementById("resetBtn").onmouseup=()=>clearTimeout(resetTimeout);
+
+// Enemies
+const enemyTracker=document.getElementById("enemyTracker");
+document.getElementById("enemyBtn").onclick=()=>{ enemyTracker.style.display=enemyTracker.style.display==="none"?"block":"none"; };
+let enemies=loadState("enemies",[]);
+function saveEnemies(){ saveState("enemies",enemies); }
+function renderEnemies(){
+  const cont=document.getElementById("enemiesContainer");
+  cont.innerHTML="";
+  enemies.forEach((enemy,idx)=>{
+    const row=document.createElement("div");
+    row.className="enemy-row";
+
+    const input=document.createElement("input");
+    input.placeholder=`Enemy ${idx+1}`;
+    input.value=enemy.name||"";
+    input.onblur=()=>{ enemy.name=input.value; saveEnemies(); };
+    input.onkeydown=(e)=>{ if(e.key==="Enter"){ enemy.name=input.value; saveEnemies(); input.blur(); } };
+    row.appendChild(input);
+
+    // Power
+    const pDiv=document.createElement("div"); pDiv.className="bar";
+    const pMinus=document.createElement("button"); pMinus.textContent="-";
+    const pVal=document.createElement("span"); pVal.className="value"; pVal.textContent=enemy.power;
+    const pPlus=document.createElement("button"); pPlus.textContent="+";
+    pMinus.onclick=()=>{ if(enemy.power>0){ enemy.power--; pVal.textContent=enemy.power; saveEnemies(); }};
+    pPlus.onclick=()=>{ enemy.power++; pVal.textContent=enemy.power; saveEnemies(); };
+    pDiv.append(pMinus,"Power:",pVal,pPlus);
+    row.appendChild(pDiv);
+
+    // Life
+    const lDiv=document.createElement("div"); lDiv.className="bar";
+    const lMinus=document.createElement("button"); lMinus.textContent="-";
+    const lVal=document.createElement("span"); lVal.className="value"; lVal.textContent=enemy.life;
+    const lPlus=document.createElement("button"); lPlus.textContent="+";
+    lMinus.onclick=()=>{ if(enemy.life>0){ enemy.life--; lVal.textContent=enemy.life; saveEnemies(); }};
+    lPlus.onclick=()=>{ enemy.life++; lVal.textContent=enemy.life; saveEnemies(); };
+    lDiv.append(lMinus,"Life:",lVal,lPlus);
+    row.appendChild(lDiv);
+
+    const killBtn=document.createElement("button");
+    killBtn.textContent="Kill";
+    killBtn.onclick=()=>{ enemies.splice(idx,1); saveEnemies(); renderEnemies(); };
+    row.appendChild(killBtn);
+
+    cont.appendChild(row);
+  });
+}
+document.getElementById("addEnemyBtn").onclick=()=>{ if(enemies.length<16){ enemies.push({name:"",power:0,life:0}); saveEnemies(); renderEnemies(); }};
+renderEnemies();
+
+// Dice + Coin Toss
+let rollCooldown = false;
+
+// Animate button when clicked
+function animateButton(button) {
+  button.classList.add("animate");
+  setTimeout(() => button.classList.remove("animate"), 1200);
+}
+
+function setRollResult(text) {
+  document.getElementById("rollResult").textContent = text;
+  rollCooldown = true;
+  setTimeout(() => rollCooldown = false, 3000);
+}
+
+document.getElementById("coinTossBtn").onclick = (e) => {
+  if (rollCooldown) return;
+  animateButton(e.target);
+  setRollResult("Coin Toss: " + (Math.random() < 0.5 ? "Heads" : "Tails"));
+};
+
+document.querySelectorAll(".diceBtn").forEach(btn => {
+  btn.onclick = (e) => {
+    if (rollCooldown) return;
+    animateButton(e.target);
+    const [n, d] = btn.dataset.dice.split("d").map(Number);
+    let total = 0;
+    for (let i = 0; i < n; i++) {
+      total += Math.floor(Math.random() * d) + 1;
+    }
+    setRollResult(`${btn.dataset.dice} rolled: ${total}`);
+  };
+});
+</script>
+</body>
+</html>
