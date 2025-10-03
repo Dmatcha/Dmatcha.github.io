@@ -147,25 +147,37 @@ body {
     padding: 0.8rem 1rem;
     box-shadow: 0 2px 6px rgba(0,0,0,0.25);
   }
-.dice-buttons button {
-  margin: 0.3rem;
-  padding: 0.6rem 1rem;
-  font-size: 1rem;
-  background: linear-gradient(180deg,#3a3a3a,#2a2a2a);
-  border: none;
-  border-radius: 10px;
-  color: #f9f9f9;
-  cursor: pointer;
-  transition: transform 0.15s ease, background 0.3s;
-}
-.dice-buttons button:hover {
-  background: linear-gradient(180deg,#555,#3a3a3a);
-  transform: translateY(-2px);
-}
-.big-button {
+.dice-buttons button,
+.big-button,
+#coinTossBtn {
+  margin: 0.2rem;
+  padding: 12px 24px;
   font-size: 1.2rem;
-  padding: 14px 26px;
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(145deg, #4a32a8, #6A1B9A39);
+  box-shadow: inset 0 1px 3px rgba(255,255,255,0.3),
+              inset 0 -2px 4px rgba(0,0,0,0.4),
+              0 4px 8px rgba(0,0,0,0.4);
+  transition: all 0.2s ease;
 }
+
+.dice-buttons button:hover,
+.big-button:hover,
+#coinTossBtn:hover {
+  background: linear-gradient(145deg, #6A1B9AAA, #4a32aA);
+  transform: scale(1.05);
+}
+
+.dice-buttons button:active,
+.big-button:active,
+#coinTossBtn:active {
+  transform: scale(0.95);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
+}
+
 
     /* Animation class */
   .animate {
@@ -181,14 +193,18 @@ body {
   }
 
   /* Enemy Tracker */
-  #enemyTracker {
-    display: none;
-    margin-top: 1.5rem;
-    background: #2d2d2d;
-    padding: 1rem;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-  }
+#enemyTracker {
+  display: none;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+#enemyTracker.open {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
   #enemiesContainer {
     display: grid;
     grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
@@ -228,6 +244,12 @@ body {
     transition: 0.2s;
   }
   .enemy-row button:hover { background: #7a5097; }
+#enemyBtn.enemy-closed {
+  background: linear-gradient(145deg, #b71c1c, #7f0000); /* scarlet red */
+}
+#enemyBtn.enemy-open {
+  background: linear-gradient(145deg, #1565c0, #0d47a1); /* strong blue */
+}
   
 </style>
 </head>
@@ -235,7 +257,10 @@ body {
 
 <!-- HEADER -->
 <div class="header">
-  <div>HOST</div>
+<div style="display:flex; align-items:center; gap:0.5rem;">
+  <span style="font-size:1.2rem; font-weight:bold;">HOST</span>
+  <button id="resetBtn">Reset</button>
+</div>
   <select id="villainSelect">
     <option>Angelo Adair</option>
     <option>Byron vey Byornn</option>
@@ -266,7 +291,6 @@ body {
 
 <!-- FOOTER -->
 <div class="footer">
-  <button id="resetBtn">Reset</button>
   <div style="flex-grow:1; text-align:center;">
     <div id="rollResult" style="font-size:1.2rem; min-height:1.5rem; margin-bottom:0.5rem;"></div>
     <div class="dice-buttons">
@@ -277,9 +301,9 @@ body {
       <button class="big-button diceBtn" data-dice="1d12">1d12</button>
       <button class="big-button diceBtn" data-dice="1d20">1d20</button>
       <button id="coinTossBtn">Coin Toss</button>
+      <button id="enemyBtn">Enemy</button>
     </div>
   </div>
-  <button id="enemyBtn">Enemy</button>
 </div>
 
 <!-- ENEMIES -->
@@ -398,13 +422,30 @@ row.appendChild(cbDiv);
 renderPlayers();
 
 // Reset
-let resetTimeout;
-document.getElementById("resetBtn").onmousedown=()=>{ resetTimeout=setTimeout(()=>{localStorage.clear(); location.reload();},2000); };
-document.getElementById("resetBtn").onmouseup=()=>clearTimeout(resetTimeout);
+document.getElementById("resetBtn").onclick = () => {
+  if (confirm("Are you sure you want to reset everything? This cannot be undone.")) {
+    localStorage.clear();
+    location.reload();
+  }
+};
 
 // Enemies
-const enemyTracker=document.getElementById("enemyTracker");
-document.getElementById("enemyBtn").onclick=()=>{ enemyTracker.style.display=enemyTracker.style.display==="none"?"block":"none"; };
+const enemyTracker = document.getElementById("enemyTracker");
+const enemyBtn = document.getElementById("enemyBtn");
+enemyBtn.classList.add("enemy-closed"); // default red
+
+enemyBtn.onclick = () => {
+  enemyTracker.classList.toggle("open");
+  if (enemyTracker.classList.contains("open")) {
+    enemyBtn.classList.remove("enemy-closed");
+    enemyBtn.classList.add("enemy-open");
+  } else {
+    enemyBtn.classList.remove("enemy-open");
+    enemyBtn.classList.add("enemy-closed");
+  }
+};
+
+
 let enemies=loadState("enemies",[]);
 function saveEnemies(){ saveState("enemies",enemies); }
 function renderEnemies(){
