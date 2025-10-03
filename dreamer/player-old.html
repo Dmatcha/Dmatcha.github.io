@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #1e1e1e;
+            color: #fff;
+            margin: 0;
+            padding: 1rem;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+        }
+
+        .bar button {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .bar button:active {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .attributes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .attr {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #333;
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            user-select: none;
+            transition: border 0.3s;
+        }
+
+        .attr.luck {
+            border: 2px solid gold;
+            box-shadow: 0 0 10px gold;
+            padding: 0.8rem 1rem;
+        }
+
+        .attr.luck.no-border {
+            border: 2px solid transparent;
+            box-shadow: none;
+        }
+
+        .attr div {
+            margin: 2px 0;
+            text-align: center;
+        }
+ 
+
+
+    </style>
+</head>
+<body>
+<input type="text" id="playerName" placeholder="PLAYER" style="
+    width: 100%;
+    font-size: 2rem;
+    text-align: center;
+    background: transparent;
+    color: white;
+    border: none;
+    outline: none;
+    margin-bottom: 1rem;
+    font-family: inherit;
+" />
+
+    <div id="bars"></div>
+    <div class="attributes" id="attributes"></div>
+
+    <script>
+        // Persistent helpers
+        function saveState(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
+        }
+
+        function loadState(key, fallback) {
+            const v = localStorage.getItem(key);
+            return v ? JSON.parse(v) : fallback;
+        }
+
+        // Resource Bars
+        const barsConfig = [
+            { key: "life", label: "Life", color: "green" },
+            { key: "stamina", label: "Stamina", color: "blue" },
+            { key: "mana", label: "Mana", color: "orange" },
+            { key: "energy", label: "Energy", color: "deepskyblue" },
+            { key: "empower", label: "Empower", color: "red" },
+            { key: "coalesce", label: "Coalesce", color: "silver" }
+        ];
+
+        const barsContainer = document.getElementById("bars");
+        barsConfig.forEach(cfg => {
+            let value = loadState(cfg.key, 0);
+            const div = document.createElement("div");
+            div.className = "bar";
+            div.style.background = cfg.color;
+
+            const label = document.createElement("span");
+            label.textContent = cfg.label;
+
+            const minus = document.createElement("button");
+            minus.textContent = "-";
+            minus.onclick = () => { value--; display.textContent = value; saveState(cfg.key, value); };
+
+            const plus = document.createElement("button");
+            plus.textContent = "+";
+            plus.onclick = () => { value++; display.textContent = value; saveState(cfg.key, value); };
+
+            const display = document.createElement("span");
+            display.textContent = value;
+
+            div.appendChild(label);
+            div.appendChild(minus);
+            div.appendChild(display);
+            div.appendChild(plus);
+            barsContainer.appendChild(div);
+        });
+
+        // Attributes
+        const attrConfig = ["Endurance", "Skill", "Strength", "Potency", "Mastery", "Luck"];
+        const attrsContainer = document.getElementById("attributes");
+
+        attrConfig.forEach(name => {
+            let value = loadState(name, name === "Luck" ? null : 0);
+            const div = document.createElement("div");
+            div.className = "attr";
+            if (name === "Luck") div.classList.add("luck");
+
+            const label = document.createElement("div");
+            label.textContent = name;
+
+            const valDisplay = document.createElement("div");
+            valDisplay.textContent = name === "Luck" ? "--" : value;
+
+            div.appendChild(label);
+            div.appendChild(valDisplay);
+
+            if (name === "Luck") {
+                // Luck logic
+                let luckValue = null;
+                let lastLuck = loadState("luckLast", null);
+                let showingValue = false;
+                let cooldown = false, remainingSec = 0, timerInterval = null;
+
+                function updateDisplay() {
+                    if (showingValue && remainingSec > 0) {
+                        label.textContent = `${name} (${remainingSec}s)`;
+                        valDisplay.textContent = luckValue >= 0 ? `+${luckValue}` : luckValue;
+                        div.classList.add("no-border");
+                    } else if (showingValue) {
+                        label.textContent = name;
+                        valDisplay.textContent = luckValue >= 0 ? `+${luckValue}` : luckValue;
+                        div.classList.remove("no-border");
+                    } else {
+                        label.textContent = name;
+                        valDisplay.textContent = "--";
+                        div.classList.remove("no-border");
+                    }
+                }
+
+                function startCooldown(sec) {
+                    cooldown = true;
+                    remainingSec = sec;
+                    updateDisplay();
+                    timerInterval = setInterval(() => {
+                        remainingSec--;
+                        updateDisplay();
+                        if (remainingSec <= 0) {
+                            clearInterval(timerInterval);
+                            cooldown = false;
+                            updateDisplay();
+                        }
+                    }, 1000);
+                }
+
+                function rollLuckWeighted() {
+                    const options = [
+                        { value: -1, weight: 10 },
+                        { value: 0, weight: 10 },
+                        { value: 1, weight: 23 },
+                        { value: 2, weight: 23 },
+                        { value: 3, weight: 23 },
+                        { value: 4, weight: 10 },
+                        { value: 10, weight: 1 }
+                    ];
+
+                    const totalWeight = options.reduce((sum, o) => sum + o.weight, 0);
+                    let rnd = Math.random() * totalWeight;
+
+                    for (let i = 0; i < options.length; i++) {
+                        if (rnd < options[i].weight) return options[i].value;
+                        rnd -= options[i].weight;
+                    }
+                    return options[options.length - 1].value;
+                }
+
+                function rollLuck() {
+                    let newVal;
+                    do {
+                        newVal = rollLuckWeighted();
+                    } while (newVal === lastLuck);
+                    lastLuck = newVal;
+                    saveState("luckLast", lastLuck);
+                    return newVal;
+                }
+
+                div.onclick = () => {
+                    if (cooldown) return;
+                    if (!showingValue) {
+                        luckValue = rollLuck();
+                        showingValue = true;
+                        saveState("Luck", luckValue);
+                        saveState("luckShowing", showingValue);
+                        startCooldown(60);
+                    } else {
+                        showingValue = false;
+                        luckValue = null;
+                        saveState("Luck", luckValue);
+                        saveState("luckShowing", showingValue);
+                        updateDisplay();
+                    }
+                };
+
+                updateDisplay();
+            } else {
+                // Non-Luck attributes with 3-second lockout
+                let lockout = false;
+                div.onclick = () => {
+                    if (lockout) return;
+                    value = (value + 1) % 7;
+                    valDisplay.textContent = value;
+                    saveState(name, value);
+
+                    lockout = true;
+                    setTimeout(() => { lockout = false; }, 3000); // 3-second invisible lockout
+                };
+            }
+
+            attrsContainer.appendChild(div);
+        });
+
+const playerNameInput = document.getElementById("playerName");
+
+// Load saved name
+const savedName = loadState("playerName", "");
+if(savedName) playerNameInput.value = savedName;
+
+// Save name on Enter key
+playerNameInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter"){
+        const name = playerNameInput.value.trim();
+        saveState("playerName", name);
+        playerNameInput.blur(); // hides keyboard on mobile
+    }
+});
+
+
+
+    </script>
+</body>
+</html>
