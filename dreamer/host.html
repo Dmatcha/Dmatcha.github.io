@@ -250,6 +250,22 @@ body {
 #enemyBtn.enemy-open {
   background: linear-gradient(145deg, #1565c0, #0d47a1); /* strong blue */
 }
+@media (max-width: 600px) {
+  .header {
+    flex-wrap: wrap; /* allow items to flow */
+    gap: 0.5rem;     /* spacing between items */
+  }
+  .header > div:first-child {
+    flex-basis: 100%; /* HOST takes full width */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #resetBtn {
+    margin-left: 0;
+    margin-top: 0.5rem; /* stack below HOST text */
+  }
+}
   
 </style>
 </head>
