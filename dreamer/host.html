@@ -28,13 +28,16 @@
     font-size: 1rem;
   }
   #actCounter {
-    cursor: pointer;
-    font-weight: bold;
-    padding: 0.3rem 0.6rem;
-    border-radius: 6px;
-    background: #444;
-    transition: 0.2s;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  background: #444;
+  transition: 0.2s;
+  width: 5ch; /* 5 characters width, enough for "Act III" */
+  text-align: center; /* center the text inside */
   }
+
   #actCounter:hover { background: #555; }
 
   /* Player Section */
@@ -191,7 +194,7 @@
     transition: 0.2s;
   }
   .enemy-row button:hover { background: #7a5097; }
-
+  
 </style>
 </head>
 <body>
@@ -260,7 +263,7 @@ function saveState(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
 function loadState(k,f){ const v=localStorage.getItem(k); return v?JSON.parse(v):f; }
 
 // Act Counter
-const acts=["Act 0","Act I","Act II","Act III"];
+const acts=["Act 0","Act I","Act II","Act III","Finale"];
 let currentAct=loadState("currentAct",0);
 document.getElementById("actCounter").textContent=acts[currentAct];
 document.getElementById("actCounter").onclick=()=>{
@@ -268,6 +271,21 @@ document.getElementById("actCounter").onclick=()=>{
   document.getElementById("actCounter").textContent=acts[currentAct];
   saveState("currentAct",currentAct);
 };
+const actBtn = document.getElementById("actCounter");
+let actCooldown = false;
+
+actBtn.onclick = () => {
+  if (actCooldown) return;        // ignore clicks during cooldown
+  actCooldown = true;             // start cooldown
+
+  currentAct = (currentAct + 1) % acts.length;
+  actBtn.textContent = acts[currentAct];
+  saveState("currentAct", currentAct);
+
+  setTimeout(() => actCooldown = false, 2000); // 2-second cooldown
+};
+
+
 
 // Villain
 const villainSelect=document.getElementById("villainSelect");
