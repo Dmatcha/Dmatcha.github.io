@@ -36,7 +36,7 @@
   #playerName{
     width:100%;
     display:block;
-    font-size:2.0rem;
+    font-size:1.9rem;
     text-align:center;
     background:transparent;
     color: #fff;
@@ -47,21 +47,21 @@
   }
   #playerName::placeholder{ color: rgba(255,255,255,0.25); }
 
-  /* Layout */
+  /* ---------- Bars layout: grid 2 cols on wide, 1 col on small ---------- */
   .bars {
     display:grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
     gap:20px;
     margin-bottom:16px;
   }
-  @media(min-width:720px){
-    .bars{ grid-template-columns: repeat(2, minmax(220px,1fr)); }
+  @media (max-width: 720px) {
+    .bars { grid-template-columns: 1fr; } /* single column on small screens */
   }
 
   .bar-card{
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
     border-radius:20px;
-    padding:20px;
+    padding:16px 18px;
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -74,34 +74,33 @@
   .bar-left{
     display:flex;
     align-items:center;
-    gap:20px;
+    gap:14px;
     min-width: 0;
   }
 
-  /* color dot */
-  .bar-dot {
-  width: clamp(22px, 2.5vw, 34px);   /* scales with viewport */
-  height: clamp(22px, 2.5vw, 34px);
-  border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(255,255,255,0.05);
-  flex: 0 0 auto; /* don’t force fixed shrink value */
+  /* color dot (scaled) */
+  .bar-dot{
+    width: clamp(22px, 2.5vw, 34px);
+    height: clamp(22px, 2.5vw, 34px);
+    border-radius:50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(255,255,255,0.05);
+    flex: 0 0 auto;
   }
-
   .dot-life{ background: linear-gradient(180deg,#5fd08f,#2fb96b); }
   .dot-stamina{ background: linear-gradient(180deg,#6fb8ff,#2b74ff); }
   .dot-mana{ background: linear-gradient(180deg,#ffc46b,#ff9a2b); }
   .dot-energy{ background: linear-gradient(180deg,#6ff0ff,#13b6ff); }
-  .dot-empower{ background: linear-gradient(180deg,#ff4d4d,#FF2400); }
+  .dot-empower{ background: linear-gradient(180deg,#ff4d4d,#DC143C); }
   .dot-coalesce{ background: linear-gradient(180deg,#f5f7fa,#d9dde6); border:1px solid rgba(255,255,255,0.06); }
 
-  .bar-label{ font-weight:600; font-size:1.3rem; color:#f1f5fb; white-space:nowrap; }
+  .bar-label{ font-weight:600; font-size:1rem; color:#f1f5fb; white-space:nowrap; }
   .bar-controls{ display:flex; align-items:center; gap:8px; }
 
   .bar-value{
-    min-width:46px;
+    min-width:50px;
     text-align:center;
     font-weight:700;
-    font-size:1.25rem;
+    font-size:1.05rem;
     color:#ffffff;
   }
 
@@ -141,14 +140,13 @@
     transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
     user-select:none;
   }
-    .attr:hover {
+  .attr:hover {
     transform: translateY(-2px);
     box-shadow: 0 0 8px rgba(138, 43, 226, 0.4);
-    }
+  }
 
-
-  .attr .attr-label{ font-weight:700; color:#f4f6fb; }
-  .attr .attr-val{ font-weight:800; font-size:1.25rem; color:#eaeef8; }
+  .attr .attr-label{ font-weight:700; color:#f4f6fb; white-space: nowrap;}
+  .attr .attr-val{ font-weight:800; font-size:1.05rem; color:#eaeef8; }
 
   /* click pulse */
   @keyframes clickPulse {
@@ -156,49 +154,40 @@
     40%{ transform: scale(1.06); box-shadow: 0 8px 24px rgba(106,27,154,0.22); }
     100%{ transform: scale(1); box-shadow: 0 0 0 rgba(106,27,154,0.0); }
   }
-  .pulse {
-    animation: clickPulse .5s ease forwards;
-  }
+  .pulse { animation: clickPulse .5s ease forwards; }
 
   /* Luck special */
   .attr.luck{
-    border: 2px solid var(--gold);
+    border: 1px solid var(--gold);
     box-shadow: 0 6px 24px rgba(212,175,55,0.12), inset 0 1px 0 rgba(255,255,255,0.03);
   }
-  /* when on cooldown, remove gold border & reduce glow */
-  .attr.luck.cooling{
-    border: 2px solid transparent;
-    box-shadow:none;
-  }
+  .attr.luck.cooling{ border: 1px solid transparent; box-shadow:none; }
 
   /* small helpers */
-  .muted{ color: rgba(255,255,255,0.54); font-size:0.93rem; }
+  .muted{ color: rgba(255,255,255,0.54); font-size:0.88rem; }
   .center{ text-align:center; }
 
-  /* responsive spacing for small screens */
   @media(max-width:420px){
     .bar-card{ padding:10px; }
     .btn{ padding:6px 8px; border-radius:7px; }
   }
-#resetBtn {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  background: #1f1f1f;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 0.4rem 0.8rem;
-  font-size: 0.9rem;
-  font-weight: bold;
-  cursor: pointer;
-  z-index: 1000;
-  transition: background 0.2s;
-}
-#resetBtn:hover {
-  background: #ff4d4d;
-}
 
+  #resetBtn {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: #1f1f1f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1000;
+    transition: background 0.2s;
+  }
+  #resetBtn:hover { background: #ff4d4d; }
 </style>
 </head>
 <body>
@@ -216,21 +205,21 @@
 function saveState(key,value){ try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){} }
 function loadState(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
 
-/* ========= Bars config ========= */
+/* ========= Bars config (DOM order produces two-column row-major layout) ========= */
 const barsConfig = [
   { key:'life', label:'Life', dotClass:'dot-life' },
-  { key:'mana', label:'Mana', dotClass:'dot-mana' },  
+  { key:'mana', label:'Mana', dotClass:'dot-mana' },
   { key:'stamina', label:'Stamina', dotClass:'dot-stamina' },
-  { key:'energy', label:'Energy', dotClass:'dot-energy' },  
+  { key:'energy', label:'Energy', dotClass:'dot-energy' },
   { key:'empower', label:'Empower', dotClass:'dot-empower' },
   { key:'coalesce', label:'Coalesce', dotClass:'dot-coalesce' }
 ];
 
 const barsContainer = document.getElementById('bars');
 
-/* build bar cards */
+/* build bar cards (no icons) */
 barsConfig.forEach(cfg => {
-  let value = Number(loadState(cfg.key, 0)); // start at 0
+  let value = Number(loadState(cfg.key, 0)); // start at saved or 0
   const card = document.createElement('div');
   card.className = 'bar-card';
   card.dataset.key = cfg.key;
@@ -239,7 +228,8 @@ barsConfig.forEach(cfg => {
   const dot = document.createElement('div'); dot.className = 'bar-dot ' + cfg.dotClass;
   const label = document.createElement('div'); label.className='bar-label'; label.textContent = cfg.label;
 
-  left.appendChild(dot); left.appendChild(label);
+  left.appendChild(dot);
+  left.appendChild(label);
 
   const controls = document.createElement('div'); controls.className='bar-controls';
 
@@ -248,13 +238,13 @@ barsConfig.forEach(cfg => {
   const plus = document.createElement('button'); plus.className='btn'; plus.textContent='+';
 
   /* handlers */
-  minus.addEventListener('click', ()=>{
+  minus.addEventListener('click', ()=> {
     value = value - 1;
     valSpan.textContent = String(value);
     saveState(cfg.key, value);
     flashElement(card);
   });
-  plus.addEventListener('click', ()=>{
+  plus.addEventListener('click', ()=> {
     value = value + 1;
     valSpan.textContent = String(value);
     saveState(cfg.key, value);
@@ -285,7 +275,6 @@ const attrsContainer = document.getElementById('attributes');
 
 attrConfig.forEach(name => {
   let stored = loadState(name, name==='Luck' ? null : 0);
-  // For non-luck: ensure numeric
   if(name!=='Luck') stored = Number(stored) || 0;
 
   const card = document.createElement('div');
@@ -302,33 +291,30 @@ attrConfig.forEach(name => {
   if(name === 'Luck'){
     card.classList.add('luck');
     // Luck state variables
-    let luckValue = loadState('Luck', null); // may be null
+    let luckValue = loadState('Luck', null); // persisted value or null
     let showing = Boolean(loadState('luckShowing', false));
     let lastLuck = loadState('luckLast', null);
     let cooldownUntil = loadState('luckCooldownUntil', null); // ms timestamp (nullable)
     let timerId = null;
 
-    // helper to format value
     function formatLuck(n){ return (n>=0? '+'+n : String(n)); }
 
-    // compute remaining seconds for cooldown (persist across reloads)
     function getRemainingSec(){
       if(!cooldownUntil) return 0;
       const rem = Math.ceil((cooldownUntil - Date.now())/1000);
       return rem>0? rem: 0;
     }
 
-    // update UI display depending on showing/cooldown
     function updateLuckDisplay(){
       const rem = getRemainingSec();
       if(showing && rem>0){
         label.textContent = `Luck (${rem}s)`;
         val.textContent = formatLuck(luckValue);
-        card.classList.add('cooling'); // remove gold border via CSS when cooling
+        card.classList.add('cooling');
       } else if(showing){
         label.textContent = 'Luck';
         val.textContent = formatLuck(luckValue);
-        card.classList.remove('cooling'); // gold border visible
+        card.classList.remove('cooling');
       } else {
         label.textContent = 'Luck';
         val.textContent = '--';
@@ -336,12 +322,10 @@ attrConfig.forEach(name => {
       }
     }
 
-    // start cooldown for N seconds (and persist)
     function startCooldown(seconds){
       const until = Date.now() + seconds*1000;
       cooldownUntil = until;
       saveState('luckCooldownUntil', until);
-      // ensure showing is true when we start cooldown (we start cooldown only on roll)
       updateLuckDisplay();
       if(timerId) clearInterval(timerId);
       timerId = setInterval(()=>{
@@ -356,7 +340,6 @@ attrConfig.forEach(name => {
       }, 1000);
     }
 
-    // Weighted roll implementation per odds you gave
     function rollLuckWeighted(){
       const options = [
         {value:-1, weight:10},
@@ -376,14 +359,12 @@ attrConfig.forEach(name => {
       return options[options.length-1].value;
     }
 
-    // pick a new value not equal to lastLuck
     function pickNewLuck(){
       let newVal;
       let attempts = 0;
       do {
         newVal = rollLuckWeighted();
         attempts++;
-        // if many attempts, break to avoid infinite loop
         if(attempts>10) break;
       } while(newVal === lastLuck);
       lastLuck = newVal;
@@ -393,26 +374,18 @@ attrConfig.forEach(name => {
 
     // initial display (restore persisted showing state)
     if(showing){
-      // if showing and cooldown persisted, keep showing value and show countdown if active
       luckValue = loadState('Luck', luckValue);
     } else {
-      luckValue = loadState('Luck', null); // may be null
+      luckValue = loadState('Luck', null);
     }
-
     updateLuckDisplay();
 
-    // on click behavior:
-    // if cooling -> ignore
-    // else:
-    //   if not showing -> generate new value, set showing true, start 60s cooldown
-    //   else (showing true and no cooling) -> hide (showing=false, return to --)
     card.addEventListener('click', ()=>{
       const rem = getRemainingSec();
       if(rem > 0) {
         // cooling - ignore clicks
         return;
       }
-      // not cooling
       if(!showing){
         // roll and show
         luckValue = pickNewLuck();
@@ -421,7 +394,6 @@ attrConfig.forEach(name => {
         saveState('luckShowing', true);
         // start cooldown 60s
         startCooldown(60);
-        // visual pulse
         card.classList.add('pulse');
         setTimeout(()=> card.classList.remove('pulse'), 520);
       } else {
@@ -431,17 +403,14 @@ attrConfig.forEach(name => {
         saveState('Luck', null);
         saveState('luckShowing', false);
         updateLuckDisplay();
-        // small pulse feedback for the hide action
         card.classList.add('pulse');
         setTimeout(()=> card.classList.remove('pulse'), 320);
       }
     });
 
-    // On load: if cooldownUntil exists and still in future, start interval to update countdown
     if(cooldownUntil){
       const rem = getRemainingSec();
       if(rem>0){
-        // ensure showing true if we had started cooldown previously
         showing = true;
         saveState('luckShowing', true);
         updateLuckDisplay();
@@ -450,12 +419,12 @@ attrConfig.forEach(name => {
           const r = getRemainingSec();
           if(r<=0){
             clearInterval(timerId); timerId=null;
-            cooldownUntil = null; saveState('luckCooldownUntil', null);
+            cooldownUntil = null;
+            saveState('luckCooldownUntil', null);
             updateLuckDisplay();
           } else updateLuckDisplay();
         },1000);
       } else {
-        // cooldown expired before load
         cooldownUntil = null;
         saveState('luckCooldownUntil', null);
         updateLuckDisplay();
@@ -497,20 +466,17 @@ playerNameInput.addEventListener('keydown', (e)=>{
   }
 });
 playerNameInput.addEventListener('blur', ()=>{
-  // optional: save on blur too
   const nm = playerNameInput.value.trim();
   saveState('playerName', nm);
 });
 
+/* Reset button */
 document.getElementById("resetBtn").onclick = () => {
   if (confirm("Are you sure you want to reset all data?")) {
     localStorage.clear();
     location.reload();
   }
 };
-
-
-/* End of script */
 </script>
 </body>
 </html>
