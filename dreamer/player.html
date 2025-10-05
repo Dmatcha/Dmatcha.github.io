@@ -214,7 +214,7 @@
 </style>
 </head>
 <body>
-  <button id="resetBtn">RESET [hold]</button>
+  <button id="resetBtn">RESET</button>
   <div class="wrap">
     <input id="playerName" placeholder="PLAYER" aria-label="Player name" />
 
@@ -495,7 +495,7 @@ playerNameInput.addEventListener('blur', ()=>{
 
 /* Reset button */
 document.getElementById("resetBtn").onclick = () => {
-  if (confirm("Are you sure you want to reset all data?")) {
+  if (confirm("Are you sure you want to RESET ALL DATA?")) {
     localStorage.clear();
     location.reload();
   }
