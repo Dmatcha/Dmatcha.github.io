@@ -47,38 +47,15 @@
   }
   #playerName::placeholder{ color: rgba(255,255,255,0.25); }
 
-  /* ---------- Bars layout: grid 2 cols on wide, 1 col + reorder on small ---------- */
+  /* ---------- Bars layout: grid 2 cols on wide, 1 col on small ---------- */
   .bars {
     display:grid;
     grid-template-columns: repeat(2, minmax(220px, 1fr));
     gap:20px;
     margin-bottom:16px;
   }
-
-  /* NOTE: we do NOT change DOM order. On wide screens the default grid
-     places items row-major (left→right, top→bottom) which gives:
-       Life   Mana
-       Stamina Energy
-       Empower Coalesce
-     On narrow screens we switch to 1 column and use `order` to reorder items
-     into the sequence you requested (column-major style).
-  */
-
   @media (max-width: 720px) {
     .bars { grid-template-columns: 1fr; } /* single column on small screens */
-
-    /* mobile stacking order (explicit) */
-    .bar-card[data-key="life"]     { order: 1; }
-    .bar-card[data-key="stamina"]  { order: 2; }
-    .bar-card[data-key="empower"]  { order: 3; }
-    .bar-card[data-key="mana"]     { order: 4; }
-    .bar-card[data-key="energy"]   { order: 5; }
-    .bar-card[data-key="coalesce"] { order: 6; }
-  }
-
-  /* Ensure no ordering surprises on wide screens: reset order to initial */
-  @media (min-width: 721px) {
-    .bar-card { order: initial; }
   }
 
   .bar-card{
