@@ -128,6 +128,19 @@ body {
 .text-area::-webkit-scrollbar-thumb:hover {
   background: rgba(255,255,255,0.4);
 }
+.button.interstitial-btn {
+  background: #ff6347; 
+  color: #fff;
+  opacity: 0.4;       /* start faded */
+  pointer-events: none; /* unclickable */
+  transition: all 0.5s ease; /* smooth fade */
+}
+
+.button.interstitial-btn.active {
+  opacity: 1;
+  pointer-events: auto; /* now clickable */
+}
+
 /* Mobile: use wider relative width */
 @media (max-width: 600px) {
   .container {
@@ -433,6 +446,12 @@ function showContinueNightInterstitial() {
   container.appendChild(endBtn);
   container.appendChild(contBtn);
 
+  // Fade in after 1 second
+  setTimeout(() => {
+    endBtn.classList.add('active');
+    contBtn.classList.add('active');
+  }, 1000);
+  
   endBtn.addEventListener('click', () => {
     endBtn.remove(); contBtn.remove();
     goToDawn(true);
