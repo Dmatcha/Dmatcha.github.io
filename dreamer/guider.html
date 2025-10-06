@@ -361,7 +361,7 @@ function goToDawn(increment = true) {
 
 function restoreStableCheckboxes() {
   if (!document.getElementById('actCheckbox') || !document.getElementById('mapCheckbox')) {
-    checkboxesDiv.innerHTML = '<div class="checkbox" id="actCheckbox">ACT</div><div class="checkbox" id="mapCheckbox">MAP</div>';
+    checkboxesDiv.innerHTML = '<div class="checkbox" id="actCheckbox">ACT</div><div class="checkbox" id="mapCheckbox">REVEAL</div>';
     actCheckbox = document.getElementById('actCheckbox');
     mapCheckbox = document.getElementById('mapCheckbox');
     actCheckbox.addEventListener('click', toggleCheckbox);
