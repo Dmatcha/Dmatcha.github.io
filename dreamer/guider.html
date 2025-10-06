@@ -129,17 +129,13 @@ body {
   background: rgba(255,255,255,0.4);
 }
 .button.interstitial-btn {
-  background: #ff6347; 
-  color: #fff;
-  opacity: 0.4;       /* start faded */
-  pointer-events: none; /* unclickable */
-  transition: all 0.5s ease; /* smooth fade */
+  opacity: 0.4;          /* faded at start */
+  transition: all 0.5s ease;
 }
-
 .button.interstitial-btn.active {
   opacity: 1;
-  pointer-events: auto; /* now clickable */
 }
+
 
 /* Mobile: use wider relative width */
 @media (max-width: 600px) {
@@ -437,21 +433,31 @@ function showContinueNightInterstitial() {
 
   const endBtn = document.createElement('button');
   endBtn.className = 'button interstitial-btn';
-  endBtn.innerText = 'Loot the rewards, proceed to DAWN';
+  endBtn.innerText = 'Loot the rewards, proceed to the DAWN';
+  endBtn.disabled = true;  // LOCKOUT
 
   const contBtn = document.createElement('button');
   contBtn.className = 'button interstitial-btn';
-  contBtn.innerText = 'Continue the night...';
+  contBtn.innerText = 'Continue deeper into the NIGHT...';
+  contBtn.disabled = true;  // LOCKOUT
 
   container.appendChild(endBtn);
   container.appendChild(contBtn);
 
-  // Fade in after 1 second
-  setTimeout(() => {
-    endBtn.classList.add('active');
-    contBtn.classList.add('active');
+  // Countdown to unlock (like DUSK buttons)
+  let cooldown = 1; // seconds
+  const interval = setInterval(() => {
+    cooldown--;
+    if (cooldown <= 0) {
+      endBtn.disabled = false;
+      contBtn.disabled = false;
+      endBtn.classList.add('active'); // fade to normal
+      contBtn.classList.add('active');
+      clearInterval(interval);
+    }
   }, 1000);
-  
+
+  // Add click handlers (they will only fire after enabled)
   endBtn.addEventListener('click', () => {
     endBtn.remove(); contBtn.remove();
     goToDawn(true);
@@ -464,6 +470,7 @@ function showContinueNightInterstitial() {
     updateUI();
   });
 }
+
 
 /* Deep of Night */
 function showDeepOfNight() {
