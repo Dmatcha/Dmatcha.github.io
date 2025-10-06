@@ -128,6 +128,14 @@ body {
 .text-area::-webkit-scrollbar-thumb:hover {
   background: rgba(255,255,255,0.4);
 }
+/* Mobile: use wider relative width */
+@media (max-width: 600px) {
+  .container {
+    width: 92vw;
+    max-width: none; /* optional: remove desktop cap */
+    min-width: 300px; /* optional: don’t get too narrow */
+  }
+}
 </style>
 
 </head>
@@ -187,7 +195,7 @@ const dayFlavorTable = {
   5: [{ text: "<i>If you play a Discovery card, find a coin.</i>", chance: 0.10 }],
   6: [
     { text: "<i>If you play a Fight or Story card, gain quick and insight.</i>", chance: 0.10 },
-    { text: "<i>The shadows seem to whisper...</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.03 * c) },
+    { text: "<i>The shadows whisper...</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.03 * c) },
   ],
   7: [{ text: "<i>If you play a Discovery card, <strong>lose</strong> a coin.</i>", chance: 0.05 }],
   8: [{ text: "<i>If you play a Discovery card, find a coin.</i>", chance: 0.10 }],
