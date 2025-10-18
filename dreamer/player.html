@@ -461,8 +461,8 @@ attrConfig.forEach(name => {
 
     card.addEventListener('click', ()=>{
       if(lockout) return;
-      // increment 0..6 loop
-      valNum = (valNum + 1) % 7;
+      // increment 0..9 loop
+      valNum = (valNum + 1) % 10;
       val.textContent = String(valNum);
       saveState(name, valNum);
 
