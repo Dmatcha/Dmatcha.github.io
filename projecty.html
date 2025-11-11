@@ -24,33 +24,40 @@
     }
 
     /* VIDEO BACKGROUND */
-  .video-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  z-index: 0;
-  pointer-events: none;
-}
+    .video-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
 
-.video-bg {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
-  transform: translate(-50%, -50%);
-  object-fit: cover;
-  filter: blur(2px) brightness(0.95) contrast(1.1);
-  opacity: 0.99;
-  pointer-events: none;
-  transition: transform 0.3s ease;
-}
+    .video-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+      filter: blur(2px) brightness(0.95) contrast(1.1);
+      opacity: 0.99;
+      pointer-events: none;
+      transition: transform 0.3s ease;
+    }
 
+    @media (orientation: portrait) {
+      .video-bg {
+        transform: translate(-50%, -50%) rotate(90deg);
+        min-width: 100%;
+        min-height: 100%;
+      }
+    }
 
     /* BACKGROUND IMAGE FADE ON HOVER */
     .background-fade {
@@ -71,32 +78,28 @@
       opacity: 1;
       background-image: url('media/bg-north.jpg');
     }
-
     body:has(.hex-SOUTH:hover) .background-fade {
       opacity: 1;
       background-image: url('media/bg-south.jpg');
     }
-
     body:has(.hex-NORTHEAST:hover) .background-fade {
       opacity: 1;
       background-image: url('media/bg-northeast.jpg');
     }
-
     body:has(.hex-SOUTHEAST:hover) .background-fade {
       opacity: 1;
       background-image: url('media/bg-southeast.jpg');
     }
-
     body:has(.hex-SOUTHWEST:hover) .background-fade {
       opacity: 1;
       background-image: url('media/bg-southwest.jpg');
     }
-
     body:has(.hex-NORTHWEST:hover) .background-fade {
       opacity: 1;
       background-image: url('media/bg-northwest.jpg');
     }
 
+    /* HEXAGON GRID */
     .hex-grid {
       position: relative;
       width: 90%;
@@ -119,6 +122,7 @@
       justify-content: center;
       align-items: center;
       transform: translate(-13%, -30%);
+      overflow: hidden; /* contain hover scale */
     }
 
     .hex-inner {
@@ -144,15 +148,33 @@
       transform: scale(1.10);
     }
 
-    .main-container { background: white; z-index: 2; }
-    .main-inner { background: black; color: white; }
-    .main-inner:hover { background: #222; color: #fff; }
+    /* MAIN AND OUTER HEXES */
+    .main-container {
+      background: white;
+      z-index: 2;
+      top: 43.05%;
+      left: 41.67%;
+    }
+    .main-inner {
+      background: black;
+      color: white;
+    }
+    .main-inner:hover {
+      background: #222;
+      color: #fff;
+    }
 
     .outer-container { background: black; }
-    .outer-inner { background: white; color: black; }
-    .outer-inner:hover { background: #f0f0f0; color: black; }
+    .outer-inner {
+      background: white;
+      color: black;
+    }
+    .outer-inner:hover {
+      background: #f0f0f0;
+      color: black;
+    }
 
-    .main-container { top: 43.05%; left: 41.67%; }
+    /* HEX POSITIONING */
     .hex-NORTH      { top: 16.67%; left: 41.67%; }
     .hex-SOUTH      { top: 69.44%; left: 41.67%; }
     .hex-NORTHEAST  { top: 29.86%; left: 64.58%; }
@@ -160,7 +182,7 @@
     .hex-SOUTHWEST  { top: 56.25%; left: 18.75%; }
     .hex-NORTHWEST  { top: 29.86%; left: 18.75%; }
 
-    /* Responsive tweaks */
+    /* RESPONSIVE TWEAKS */
     @media (max-width: 1000px) {
       .hex-grid { width: 600px; height: 700px; }
       .hex-container { width: 170px; height: 150px; }
@@ -199,57 +221,56 @@
       .hex-SOUTHWEST { top: 202px; left: 65px; }
       .hex-NORTHWEST { top: 108px; left: 65px; }
     }
-    @media (orientation: portrait) {
-      .video-bg {
-      transform: translate(-50%, -60%) rotate(90deg);
-      width: auto;
-      height: 100%; /* Flip dimensions */
-    }
-
   </style>
 </head>
 <body>
 
   <!-- 🔁 VIDEO BACKGROUND -->
-<div class="video-wrapper">
-  <video class="video-bg" autoplay muted loop playsinline>
-    <source src="media/138556-769988117_medium.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
-  </video>
-</div>
-
+  <div class="video-wrapper">
+    <video class="video-bg" autoplay muted loop playsinline>
+      <source src="media/12530-239934669_medium.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  </div>
 
   <!-- 🖼️ FADE-IN BACKGROUND OVERLAY -->
   <div class="background-fade"></div>
 
   <!-- 🔷 HEXAGON GRID -->
-  <div class="hex-grid"> <!-- NOTE: depth is first = deepest, last = surface front -->
+  <div class="hex-grid">
     <div class="hex-container outer-container hex-NORTHEAST">
-      <a href="" class="hex-inner outer-inner">The <br/>DAY
+      <a href="P986/player.html" class="hex-inner outer-inner">
+        PLAYER
       </a>
     </div>
     <div class="hex-container outer-container hex-SOUTHEAST">
-      <a href="" class="hex-inner outer-inner">The <br/>NIGHT
-    </a>
+      <a href="P986/host.html" class="hex-inner outer-inner">
+        NARRATOR
+      </a>
     </div>
     <div class="hex-container outer-container hex-SOUTHWEST">
-      <a href="" class="hex-inner outer-inner">The <br/>Rules
+      <a href="P986/walker.html" class="hex-inner outer-inner">
+        World <br>Walker
       </a>
     </div>
     <div class="hex-container outer-container hex-NORTHWEST">
-      <a href="" class="hex-inner outer-inner">The <br/>World
+      <a href="P986/guider.html" class="hex-inner outer-inner">
+        Game <br>Guide
       </a>
     </div>
     <div class="hex-container outer-container hex-SOUTH">
-      <a href="" class="hex-inner outer-inner">Villains
-    </a>
+      <a target="_blank" href="P986/gallery.html" class="hex-inner outer-inner">
+        The <br/>Cards
+      </a>
     </div>
     <div class="hex-container outer-container hex-NORTH">
-      <a href="" class="hex-inner outer-inner">Friends
-    </a>
+      <a href="dreamer.html" class="hex-inner outer-inner">Dream<br/>
+        Dream<br/>Dream
+      </a>
     </div>
     <div class="hex-container main-container main">
-      <a href="projecty.html" class="hex-inner main-inner">BACK
+      <a href="index.html" class="hex-inner main-inner">
+        BACK
       </a>
     </div>
   </div>
