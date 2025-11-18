@@ -11,7 +11,6 @@
   --muted: #9aa3ad;
   --glass: rgba(255, 255, 255, 0.04);
 }
-
 /* ==========================
    BODY
 ========================== */
@@ -28,7 +27,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 /* ==========================
    BUTTONS
 ========================== */
@@ -143,7 +141,12 @@ body {
   border-radius: 10px;
   box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
 }
-.bar .value { min-width: 32px; text-align: center; font-weight: bold; }
+.bar .value { 
+  min-width: 40px; 
+  text-align: center; 
+  font-weight: bold; 
+  font-size: 1.35rem; /*adjust sizes as needed*/
+}
 .madness .value { color: #f28b8b; }
 .life .value { color: #9de3b6; }
 
@@ -243,20 +246,18 @@ body {
 .stat-playerMaxMana { color: #f1c40f; }    /* Sunshine Yellow */
 .stat-playerMaxEnergy { color: #1abc9c; }  /* Electric Sky Blue / Teal */
 
-/* Fix width so buttons don't jump */
+/* Fix width so buttons weeegle jump */
 .stat-controls .value {
   display: inline-block;
-  width: 22px;          /* fixed width (adjust if needed) */
-  text-align: center;   /* center digits */
+  width: 26px;          /* fixed width (adjust if needed) */
+  text-align: center;   /* center digits still looks bad*/
   font-weight: bold;
+  font-size: 1.35rem;    /* adjust sizes as needed */
   font-family: "Courier New", Courier, monospace;
 }
-
-
 </style>
 </head>
 <body>
-
 <!-- HEADER -->
 <div class="header">
   <div style="display:flex; align-items:center; gap:0.5rem;">
@@ -287,10 +288,8 @@ body {
   </select>
   <div id="actCounter">Act 0</div>
 </div>
-
 <!-- PLAYERS -->
 <div id="playersContainer"></div>
-
 <!-- FOOTER -->
 <div class="footer">
   <div>
@@ -307,7 +306,6 @@ body {
     </div>
   </div>
 </div>
-
 <!-- ENEMY TRACKER -->
 <div id="enemyTracker">
   <h3 style="display:flex; justify-content:space-between; align-items:center;">
@@ -316,7 +314,6 @@ body {
   </h3>
   <div id="enemiesContainer"></div>
 </div>
-
 <script>
 // ==========================
 // LOCAL STORAGE HELPERS
@@ -396,7 +393,6 @@ function makeStatControl(label, key, min, max, initial, idx) {
   block.append(labelDiv, controls);
   return { block, get value() { return v; }, set value(x) { v = x; val.textContent = x; } };
 }
-
 
 function enforceLifeCap(current,maxLife){ return Math.min(Math.max(current,-20),maxLife); }
 
