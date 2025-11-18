@@ -232,9 +232,9 @@ function loadState(key, fallback){ try{ const v = localStorage.getItem(key); ret
 /* ========= Bars config with min/max ranges and defaults ========= */
 const barsConfig = [
   { key:'life', label:'Life', dotClass:'dot-life', min: -10, max: 30, default: 3 },
-  { key:'mana', label:'Mana', dotClass:'dot-mana', min: -10, max: 30, default: 0 },
-  { key:'stamina', label:'Stamina', dotClass:'dot-stamina', min: -3, max: 9, default: 2 },
-  { key:'energy', label:'Energy', dotClass:'dot-energy', min: -10, max: 30, default: 0 },
+  { key:'mana', label:'Mana', dotClass:'dot-mana', min: -1, max: 30, default: 0 },
+  { key:'stamina', label:'Stamina', dotClass:'dot-stamina', min: -3, max: 9, default: 1 },
+  { key:'energy', label:'Energy', dotClass:'dot-energy', min: -1, max: 30, default: 0 },
   { key:'empower', label:'Empower', dotClass:'dot-empower', min: 0, max: 12, default: 0 },
   { key:'coalesce', label:'Coalesce', dotClass:'dot-coalesce', min: 0, max: 12, default: 3 }
 ];
