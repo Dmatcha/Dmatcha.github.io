@@ -141,7 +141,6 @@
   }
   .btn:active{ transform: scale(.97); }
   .btn:focus{ outline:none; box-shadow:0 0 0 3px rgba(102,204,255,0.12); }
-  .btn:disabled{ opacity: 0.3; cursor: not-allowed; }
 
   /* Attributes grid */
   .attributes{
@@ -229,24 +228,41 @@
 function saveState(key,value){ try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){} }
 function loadState(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
 
-/* ========= Bars config with min/max ranges and defaults ========= */
+/* ========= Bars config (DOM order produces two-column row-major layout) ========= */
 const barsConfig = [
-  { key:'life', label:'Life', dotClass:'dot-life', min: -10, max: 30, default: 3 },
-  { key:'mana', label:'Mana', dotClass:'dot-mana', min: -10, max: 30, default: 0 },
-  { key:'stamina', label:'Stamina', dotClass:'dot-stamina', min: -3, max: 9, default: 2 },
-  { key:'energy', label:'Energy', dotClass:'dot-energy', min: -10, max: 30, default: 0 },
-  { key:'empower', label:'Empower', dotClass:'dot-empower', min: 0, max: 12, default: 0 },
-  { key:'coalesce', label:'Coalesce', dotClass:'dot-coalesce', min: 0, max: 12, default: 3 }
+  { key:'life', label:'Life', dotClass:'dot-life' },
+  { key:'mana', label:'Mana', dotClass:'dot-mana' },
+  { key:'stamina', label:'Stamina', dotClass:'dot-stamina' },
+  { key:'energy', label:'Energy', dotClass:'dot-energy' },
+  { key:'empower', label:'Empower', dotClass:'dot-empower' },
+  { key:'coalesce', label:'Coalesce', dotClass:'dot-coalesce' }
 ];
 
 const barsContainer = document.getElementById('bars');
 
-/* build bar cards with range limits */
+// Default starting values for player bars
+const statLimits = {
+  life:     { min: -10,   max: 30 },
+  stamina:  { min: -3,    max: 9  },
+  empower:  { min: -1,    max: 12 },
+  mana:     { min: -10,   max: 30 },
+  energy:   { min: -10,   max: 30 },
+  coalesce: { min:  0,    max: 12 }
+};
+
+const defaultValues = {
+  life:     3,
+  stamina:  2,
+  empower:  0,
+  mana:     0,
+  energy:   0,
+  coalesce: 3
+};
+
+/* build bar cards (no icons) */
 barsConfig.forEach(cfg => {
-  let value = Number(loadState(cfg.key, cfg.default)); // start at saved or default
-  // Clamp initial value to valid range
-  value = Math.max(cfg.min, Math.min(cfg.max, value));
-  
+  let value = Number(loadState(cfg.key, defaultValues[cfg.key]));
+ // start at saved or default
   const card = document.createElement('div');
   card.className = 'bar-card';
   card.dataset.key = cfg.key;
@@ -264,37 +280,23 @@ barsConfig.forEach(cfg => {
   const valSpan = document.createElement('div'); valSpan.className='bar-value'; valSpan.textContent = String(value);
   const plus = document.createElement('button'); plus.className='btn'; plus.textContent='+';
 
-  /* Update button states based on current value */
-  function updateButtonStates() {
-    minus.disabled = (value <= cfg.min);
-    plus.disabled = (value >= cfg.max);
-  }
-
-  /* handlers with range enforcement */
+  /* handlers */
   minus.addEventListener('click', ()=> {
-    const newValue = value - 1;
-    if (newValue >= cfg.min) {
-      value = newValue;
-      valSpan.textContent = String(value);
-      saveState(cfg.key, value);
-      updateButtonStates();
-      flashElement(card);
-    }
-  });
-  
-  plus.addEventListener('click', ()=> {
-    const newValue = value + 1;
-    if (newValue <= cfg.max) {
-      value = newValue;
-      valSpan.textContent = String(value);
-      saveState(cfg.key, value);
-      updateButtonStates();
-      flashElement(card);
-    }
+    const lim = statLimits[cfg.key];
+    value = Math.max(lim.min, value - 1);
+    valSpan.textContent = String(value);
+    saveState(cfg.key, value);
+    flashElement(card);
   });
 
-  // Set initial button states
-  updateButtonStates();
+  plus.addEventListener('click', ()=> {
+    const lim = statLimits[cfg.key];
+    value = Math.min(lim.max, value + 1);
+    valSpan.textContent = String(value);
+    saveState(cfg.key, value);
+    flashElement(card);
+  });
+
 
   controls.appendChild(minus);
   controls.appendChild(valSpan);
