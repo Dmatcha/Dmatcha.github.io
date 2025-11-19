@@ -13,6 +13,11 @@
     --gold: #D4AF37;
     --blue-cool:#66ccff;
     --glass: rgba(255,255,255,0.04);
+    --heart-white: #ffffff;
+    --heart-blue: #4da6ff;
+    --heart-purple: #9b59b6;
+    --heart-red: #ff8fa3;
+    --scarlet-pink: #ff8fa3;
   }
 
   html,body{height:100%;margin:0;}
@@ -55,19 +60,9 @@
     margin-bottom:16px;
   }
 
-  /* NOTE: we do NOT change DOM order. On wide screens the default grid
-     places items row-major (left→right, top→bottom) which gives:
-       Life   Mana
-       Stamina Energy
-       Empower Coalesce
-     On narrow screens we switch to 1 column and use `order` to reorder items
-     into the sequence you requested (column-major style).
-  */
-
   @media (max-width: 720px) {
-    .bars { grid-template-columns: 1fr; } /* single column on small screens */
+    .bars { grid-template-columns: 1fr; }
 
-    /* mobile stacking order (explicit) */
     .bar-card[data-key="life"]     { order: 1; }
     .bar-card[data-key="stamina"]  { order: 2; }
     .bar-card[data-key="empower"]  { order: 3; }
@@ -76,7 +71,6 @@
     .bar-card[data-key="coalesce"] { order: 6; }
   }
 
-  /* Ensure no ordering surprises on wide screens: reset order to initial */
   @media (min-width: 721px) {
     .bar-card { order: initial; }
   }
@@ -101,7 +95,6 @@
     min-width: 0;
   }
 
-  /* color dot (scaled) */
   .bar-dot{
     width: clamp(22px, 2.5vw, 34px);
     height: clamp(22px, 2.5vw, 34px);
@@ -144,6 +137,7 @@
   .btn:focus{ outline:none; box-shadow:0 0 0 3px rgba(102,204,255,0.12); }
   .btn:disabled{ opacity: 0.3; cursor: not-allowed; }
   .btn:hover { background: #ff00ff; }
+
   /* Attributes grid */
   .attributes{
     display:grid;
@@ -173,7 +167,6 @@
   .attr .attr-label{ font-weight:700; color:#f4f6fb; white-space: nowrap;}
   .attr .attr-val{ font-weight:800; font-size:1.05rem; color:#eaeef8; }
 
-  /* click pulse */
   @keyframes clickPulse {
     0%{ transform: scale(1); box-shadow: 0 0 0 rgba(106,27,154,0.0); }
     40%{ transform: scale(1.06); box-shadow: 0 8px 24px rgba(106,27,154,0.22); }
@@ -181,14 +174,12 @@
   }
   .pulse { animation: clickPulse .5s ease forwards; }
 
-  /* Luck special */
   .attr.luck{
     border: 1px solid var(--gold);
     box-shadow: 0 6px 24px rgba(212,175,55,0.12), inset 0 1px 0 rgba(255,255,255,0.03);
   }
   .attr.luck.cooling{ border: 1px solid transparent; box-shadow:none; }
 
-  /* small helpers */
   .muted{ color: rgba(255,255,255,0.54); font-size:0.88rem; }
   .center{ text-align:center; }
 
@@ -213,10 +204,391 @@
     transition: background 0.2s;
   }
   #resetBtn:hover { background: #ff4d4d; }
+
+  /* Heart Button - Top Right */
+  #heartBtn {
+    position: fixed;
+    top: 10px;
+    right: 30px;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 3px solid white;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  #heartBtn svg {
+    width: 24px;
+    height: 24px;
+    fill: transparent;
+    stroke: white;
+    stroke-width: 2;
+    transition: all 0.3s ease;
+  }
+  #heartBtn.active {
+    background: var(--scarlet-pink);
+    border-color: #333;
+  }
+  #heartBtn.active svg {
+    fill: var(--scarlet-pink);
+    stroke: #333;
+  }
+  #heartBtn:hover:not(.disabled) {
+    transform: scale(1.05);
+  }
+  #heartBtn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Relationship Overlay */
+  #relationshipOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 15, 18, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 999;
+    display: none;
+    overflow-y: auto;
+    padding: 60px 16px 20px;
+  }
+  #relationshipOverlay.visible {
+    display: block;
+  }
+
+  .relationship-content {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .relationship-title {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #fff;
+  }
+
+  /* NPC Card */
+  .npc-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  /* NPC Image Placeholder */
+  .npc-image {
+    width: 120px;
+    height: 120px;
+    min-width: 120px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
+  }
+  .npc-image:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .npc-image svg {
+    width: 32px;
+    height: 32px;
+    stroke: rgba(255, 255, 255, 0.3);
+    stroke-width: 2;
+    fill: none;
+  }
+  .npc-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  .npc-image.has-image {
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* NPC Info */
+  .npc-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .npc-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .npc-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 4px 0;
+    flex: 1;
+  }
+  .npc-name::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .name-confirm-btn {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    background: rgba(76, 175, 80, 0.2);
+    border: 2px solid rgba(76, 175, 80, 0.5);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .name-confirm-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .name-confirm-btn:hover {
+    background: rgba(76, 175, 80, 0.4);
+    border-color: rgba(76, 175, 80, 0.8);
+  }
+  .name-confirm-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: #4caf50;
+    stroke-width: 3;
+    fill: none;
+  }
+
+  .npc-status {
+    font-size: 0.9rem;
+    color: var(--muted);
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 2px 0;
+    width: 100%;
+  }
+  .npc-status::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Hearts Container */
+  .npc-hearts {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 8px;
+    flex-wrap: wrap;
+  }
+
+  .heart-icon {
+    width: 56px;
+    height: 56px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .heart-icon:hover:not(.locked) {
+    transform: scale(1.1);
+  }
+  .heart-icon.locked {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .heart-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 2;
+    transition: all 0.3s ease;
+  }
+
+  /* Heart states */
+  .heart-icon.empty svg {
+    fill: transparent;
+    stroke: rgba(255, 255, 255, 0.3);
+  }
+  .heart-icon.filled-white svg {
+    fill: var(--heart-white);
+    stroke: var(--heart-white);
+  }
+  .heart-icon.filled-blue svg {
+    fill: var(--heart-blue);
+    stroke: var(--heart-blue);
+  }
+  .heart-icon.filled-purple svg {
+    fill: var(--heart-purple);
+    stroke: var(--heart-purple);
+  }
+  .heart-icon.filled-red svg {
+    fill: var(--heart-red);
+    stroke: var(--heart-red);
+  }
+
+  /* Heart number label inside heart */
+  .heart-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #333;
+    pointer-events: none;
+    user-select: none;
+  }
+  .heart-icon.empty .heart-number {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Pulsing animation for heart 7 */
+  @keyframes heartPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  .heart-icon.pulse-heart {
+    animation: heartPulse 2s ease-in-out infinite;
+  }
+
+  /* Add NPC Button */
+  .add-npc-btn {
+    width: 100%;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .add-npc-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .add-npc-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  /* Delete NPC Button */
+  .delete-npc-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: rgba(255, 0, 0, 0.2);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.2s ease;
+  }
+  .npc-card {
+    position: relative;
+  }
+  .npc-card:hover .delete-npc-btn {
+    opacity: 1;
+  }
+  .delete-npc-btn:hover {
+    background: rgba(255, 0, 0, 0.5);
+  }
+  .delete-npc-btn svg {
+    width: 12px;
+    height: 12px;
+    stroke: white;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  @media (max-width: 500px) {
+    .npc-card {
+      flex-direction: column;
+      align-items: center;
+    }
+    .npc-image {
+      width: 100px;
+      height: 100px;
+      min-width: 100px;
+    }
+    .npc-info {
+      width: 100%;
+      align-items: center;
+      text-align: center;
+    }
+    .npc-name, .npc-status {
+      text-align: center;
+    }
+    .npc-hearts {
+      justify-content: center;
+    }
+  }
 </style>
 </head>
 <body>
   <button id="resetBtn">RESET</button>
+  
+  <!-- Heart Button -->
+  <button id="heartBtn" aria-label="Toggle Relationships">
+    <svg viewBox="0 0 24 24">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>
+  </button>
+
+  <!-- Relationship Overlay -->
+  <div id="relationshipOverlay">
+    <div class="relationship-content">
+      <div class="relationship-title" id="relationshipTitle">Relationships</div>
+      <div id="npcList"></div>
+      <button class="add-npc-btn" id="addNpcBtn">
+        <svg viewBox="0 0 24 24">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Add Character
+      </button>
+    </div>
+  </div>
+
   <div class="wrap">
     <input id="playerName" placeholder="PLAYER" aria-label="Player name" />
 
@@ -231,77 +603,73 @@ function saveState(key,value){ try{ localStorage.setItem(key, JSON.stringify(val
 function loadState(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
 
 /* ========= Stat Bonus Tables ========= */
-// Each array index represents the rank (1-indexed, so index 0 is unused)
-// Format: { life: number, stamina: number, mana: number, energy: number }
-
 const enduranceBonuses = [
-  null, // rank 0 (unused)
-  { life: 2, stamina: 1, mana: 0, energy: 0 }, // rank 1
-  { life: 2, stamina: 1, mana: 0, energy: 0 }, // rank 2
-  { life: 2, stamina: 1, mana: 0, energy: 0 }, // rank 3
-  { life: 2, stamina: 1, mana: 0, energy: 0 }, // rank 4
-  { life: 2, stamina: 1, mana: 0, energy: 0 }, // rank 5
-  { life: 2, stamina: 1, mana: 0, energy: 0 }, // rank 6
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 7 (diminished)
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 8 (diminished)
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 9 (diminished)
+  null,
+  { life: 2, stamina: 1, mana: 0, energy: 0 },
+  { life: 2, stamina: 1, mana: 0, energy: 0 },
+  { life: 2, stamina: 1, mana: 0, energy: 0 },
+  { life: 2, stamina: 1, mana: 0, energy: 0 },
+  { life: 2, stamina: 1, mana: 0, energy: 0 },
+  { life: 2, stamina: 1, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
 ];
 
 const skillBonuses = [
-  null, // rank 0 (unused)
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 1
-  { life: 1, stamina: 1, mana: 0, energy: 0 }, // rank 2
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 3
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 4
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 5
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 6
-  { life: 0, stamina: 0, mana: 0, energy: 0 }, // rank 7 (no bonus)
-  { life: 0, stamina: 0, mana: 0, energy: 0 }, // rank 8 (no bonus)
-  { life: 0, stamina: 0, mana: 0, energy: 0 }, // rank 9 (no bonus)
+  null,
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 1, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 0, stamina: 0, mana: 0, energy: 0 },
+  { life: 0, stamina: 0, mana: 0, energy: 0 },
+  { life: 0, stamina: 0, mana: 0, energy: 0 },
 ];
 
 const strengthBonuses = [
-  null, // rank 0 (unused)
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 1
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 2
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 3
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 4
-  { life: 1, stamina: 1, mana: 0, energy: 0 }, // rank 5
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 6
-  { life: 0, stamina: 0, mana: 0, energy: 0 }, // rank 7 (no bonus)
-  { life: 0, stamina: 0, mana: 0, energy: 0 }, // rank 8 (no bonus)
-  { life: 0, stamina: 0, mana: 0, energy: 0 }, // rank 9 (no bonus)
+  null,
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 1, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 0, stamina: 0, mana: 0, energy: 0 },
+  { life: 0, stamina: 0, mana: 0, energy: 0 },
+  { life: 0, stamina: 0, mana: 0, energy: 0 },
 ];
 
 const potencyBonuses = [
-  null, // rank 0 (unused)
-  { life: 0, stamina: 0, mana: 3, energy: 0 }, // rank 1
-  { life: 0, stamina: 0, mana: 2, energy: 1 }, // rank 2
-  { life: 0, stamina: 0, mana: 3, energy: 0 }, // rank 3
-  { life: 0, stamina: 0, mana: 2, energy: 1 }, // rank 4
-  { life: 0, stamina: 0, mana: 3, energy: 0 }, // rank 5
-  { life: 0, stamina: 0, mana: 3, energy: 0 }, // rank 6
-  { life: 0, stamina: 0, mana: 2, energy: 0 }, // rank 7 (diminished)
-  { life: 0, stamina: 0, mana: 2, energy: 0 }, // rank 8 (diminished)
-  { life: 0, stamina: 0, mana: 3, energy: 0 }, // rank 9 (diminished)
+  null,
+  { life: 0, stamina: 0, mana: 3, energy: 0 },
+  { life: 0, stamina: 0, mana: 2, energy: 1 },
+  { life: 0, stamina: 0, mana: 3, energy: 0 },
+  { life: 0, stamina: 0, mana: 2, energy: 1 },
+  { life: 0, stamina: 0, mana: 3, energy: 0 },
+  { life: 0, stamina: 0, mana: 3, energy: 0 },
+  { life: 0, stamina: 0, mana: 2, energy: 0 },
+  { life: 0, stamina: 0, mana: 2, energy: 0 },
+  { life: 0, stamina: 0, mana: 3, energy: 0 },
 ];
 
 const masteryBonuses = [
-  null, // rank 0 (unused)
-  { life: 0, stamina: 0, mana: 1, energy: 2 }, // rank 1
-  { life: 0, stamina: 0, mana: 0, energy: 3 }, // rank 2
-  { life: 0, stamina: 0, mana: 1, energy: 3 }, // rank 3
-  { life: 0, stamina: 0, mana: 0, energy: 3 }, // rank 4
-  { life: 0, stamina: 0, mana: 0, energy: 2 }, // rank 5
-  { life: 0, stamina: 0, mana: 0, energy: 2 }, // rank 6
-  { life: 0, stamina: 0, mana: 0, energy: 2 }, // rank 7 (diminished)
-  { life: 0, stamina: 0, mana: 0, energy: 2 }, // rank 8 (diminished)
-  { life: 0, stamina: 0, mana: 0, energy: 2 }, // rank 9 (diminished)
+  null,
+  { life: 0, stamina: 0, mana: 1, energy: 2 },
+  { life: 0, stamina: 0, mana: 0, energy: 3 },
+  { life: 0, stamina: 0, mana: 1, energy: 3 },
+  { life: 0, stamina: 0, mana: 0, energy: 3 },
+  { life: 0, stamina: 0, mana: 0, energy: 2 },
+  { life: 0, stamina: 0, mana: 0, energy: 2 },
+  { life: 0, stamina: 0, mana: 0, energy: 2 },
+  { life: 0, stamina: 0, mana: 0, energy: 2 },
+  { life: 0, stamina: 0, mana: 0, energy: 2 },
 ];
 
 /* ========= Calculate Maximum Limits ========= */
 function calculateLimits() {
-  // Base starting limits
   const limits = {
     life: 3,
     stamina: 1,
@@ -309,14 +677,12 @@ function calculateLimits() {
     energy: 2
   };
 
-  // Get current attribute values
   const endurance = Number(loadState('Endurance', 0)) || 0;
   const skill = Number(loadState('Skill', 0)) || 0;
   const strength = Number(loadState('Strength', 0)) || 0;
   const potency = Number(loadState('Potency', 0)) || 0;
   const mastery = Number(loadState('Mastery', 0)) || 0;
 
-  // Helper function to sum bonuses up to a given rank
   function sumBonuses(bonusTable, rank) {
     let total = { life: 0, stamina: 0, mana: 0, energy: 0 };
     for (let i = 1; i <= rank && i < bonusTable.length; i++) {
@@ -330,14 +696,12 @@ function calculateLimits() {
     return total;
   }
 
-  // Add bonuses from each attribute
   const endBonus = sumBonuses(enduranceBonuses, endurance);
   const skillBonus = sumBonuses(skillBonuses, skill);
   const strBonus = sumBonuses(strengthBonuses, strength);
   const potBonus = sumBonuses(potencyBonuses, potency);
   const mastBonus = sumBonuses(masteryBonuses, mastery);
 
-  // Sum all bonuses
   limits.life += endBonus.life + skillBonus.life + strBonus.life + potBonus.life + mastBonus.life;
   limits.stamina += endBonus.stamina + skillBonus.stamina + strBonus.stamina + potBonus.stamina + mastBonus.stamina;
   limits.mana += endBonus.mana + skillBonus.mana + strBonus.mana + potBonus.mana + mastBonus.mana;
@@ -350,7 +714,6 @@ function calculateLimits() {
 const barUpdateFunctions = {};
 
 /* ========= Bars config with min/max ranges and defaults ========= */
-// Note: max values for life, stamina, mana, energy will be dynamically calculated
 const barsConfig = [
   { key:'life', label:'Life', dotClass:'dot-life', min: -10, max: 30, default: 3, dynamic: true },
   { key:'mana', label:'Mana', dotClass:'dot-mana', min: -1, max: 30, default: 0, dynamic: true },
@@ -362,10 +725,8 @@ const barsConfig = [
 
 const barsContainer = document.getElementById('bars');
 
-/* build bar cards with range limits */
 barsConfig.forEach(cfg => {
-  let value = Number(loadState(cfg.key, cfg.default)); // start at saved or default
-  // Clamp initial value to valid range
+  let value = Number(loadState(cfg.key, cfg.default));
   value = Math.max(cfg.min, Math.min(cfg.max, value));
   
   const card = document.createElement('div');
@@ -385,7 +746,6 @@ barsConfig.forEach(cfg => {
   const valSpan = document.createElement('div'); valSpan.className='bar-value';
   const plus = document.createElement('button'); plus.className='btn'; plus.textContent='+';
 
-  // Get current dynamic max
   function getCurrentMax() {
     if (cfg.dynamic) {
       const limits = calculateLimits();
@@ -394,7 +754,6 @@ barsConfig.forEach(cfg => {
     return cfg.max;
   }
 
-  // Update display text
   function updateDisplay() {
     if (cfg.dynamic) {
       const currentMax = getCurrentMax();
@@ -404,17 +763,14 @@ barsConfig.forEach(cfg => {
     }
   }
 
-  /* Update button states based on current value */
   function updateButtonStates() {
     const currentMax = getCurrentMax();
     minus.disabled = (value <= cfg.min);
     plus.disabled = (value >= currentMax);
   }
 
-  // Function to update this bar when attributes change
   function updateBar() {
     const currentMax = getCurrentMax();
-    // Clamp value to new max if needed
     if (value > currentMax) {
       value = currentMax;
       saveState(cfg.key, value);
@@ -423,12 +779,10 @@ barsConfig.forEach(cfg => {
     updateButtonStates();
   }
 
-  // Register update function
   if (cfg.dynamic) {
     barUpdateFunctions[cfg.key] = updateBar;
   }
 
-  /* handlers with range enforcement */
   minus.addEventListener('click', ()=> {
     const newValue = value - 1;
     if (newValue >= cfg.min) {
@@ -452,7 +806,6 @@ barsConfig.forEach(cfg => {
     }
   });
 
-  // Set initial display and button states
   updateDisplay();
   updateButtonStates();
 
@@ -466,12 +819,10 @@ barsConfig.forEach(cfg => {
   barsContainer.appendChild(card);
 });
 
-// Function to update all dynamic bars
 function updateAllBars() {
   Object.values(barUpdateFunctions).forEach(updateFn => updateFn());
 }
 
-/* small flash animation by temporarily lifting/shading (no layout shift) */
 function flashElement(el){
   el.style.transition = 'box-shadow .18s ease, transform .12s ease';
   el.style.transform = 'translateY(-2px)';
@@ -483,7 +834,6 @@ function flashElement(el){
 const attrConfig = ["Endurance","Skill","Strength","Potency","Mastery","Luck"];
 const attrsContainer = document.getElementById('attributes');
 
-// Track which attributes affect limits
 const limitAffectingAttrs = ["Endurance", "Skill", "Strength", "Potency", "Mastery"];
 
 attrConfig.forEach(name => {
@@ -503,11 +853,10 @@ attrConfig.forEach(name => {
 
   if(name === 'Luck'){
     card.classList.add('luck');
-    // Luck state variables
-    let luckValue = loadState('Luck', null); // persisted value or null
+    let luckValue = loadState('Luck', null);
     let showing = Boolean(loadState('luckShowing', false));
     let lastLuck = loadState('luckLast', null);
-    let cooldownUntil = loadState('luckCooldownUntil', null); // ms timestamp (nullable)
+    let cooldownUntil = loadState('luckCooldownUntil', null);
     let timerId = null;
 
     function formatLuck(n){ return (n>=0? '+'+n : String(n)); }
@@ -585,7 +934,6 @@ attrConfig.forEach(name => {
       return newVal;
     }
 
-    // initial display (restore persisted showing state)
     if(showing){
       luckValue = loadState('Luck', luckValue);
     } else {
@@ -596,21 +944,17 @@ attrConfig.forEach(name => {
     card.addEventListener('click', ()=>{
       const rem = getRemainingSec();
       if(rem > 0) {
-        // cooling - ignore clicks
         return;
       }
       if(!showing){
-        // roll and show
         luckValue = pickNewLuck();
         showing = true;
         saveState('Luck', luckValue);
         saveState('luckShowing', true);
-        // start cooldown 60s
         startCooldown(60);
         card.classList.add('pulse');
         setTimeout(()=> card.classList.remove('pulse'), 520);
       } else {
-        // currently showing and not cooling -> clicking hides value and returns to --
         showing = false;
         luckValue = null;
         saveState('Luck', null);
@@ -645,27 +989,22 @@ attrConfig.forEach(name => {
     }
 
   } else {
-    // Non-Luck attribute behavior
     let valNum = stored;
     let lockout = false;
 
     card.addEventListener('click', ()=>{
       if(lockout) return;
-      // increment 0..9 loop
       valNum = (valNum + 1) % 10;
       val.textContent = String(valNum);
       saveState(name, valNum);
 
-      // Update bars if this attribute affects limits
       if (limitAffectingAttrs.includes(name)) {
         updateAllBars();
       }
 
-      // visual pulse
       card.classList.add('pulse');
       setTimeout(()=> card.classList.remove('pulse'), 420);
 
-      // invisible 3-second lockout to prevent accidental double clicks
       lockout = true;
       setTimeout(()=> { lockout = false; }, 3000);
     });
@@ -695,6 +1034,342 @@ document.getElementById("resetBtn").onclick = () => {
     location.reload();
   }
 };
+
+/* ========= Relationship System ========= */
+const heartBtn = document.getElementById('heartBtn');
+const relationshipOverlay = document.getElementById('relationshipOverlay');
+const npcList = document.getElementById('npcList');
+const addNpcBtn = document.getElementById('addNpcBtn');
+const relationshipTitle = document.getElementById('relationshipTitle');
+
+// Update relationship title with player name
+function updateRelationshipTitle() {
+  const name = playerNameInput.value.trim() || 'Player';
+  relationshipTitle.textContent = `${name}'s Relationships`;
+}
+
+updateRelationshipTitle();
+
+// Toggle relationship overlay
+let isRelationshipOpen = false;
+
+// Check if player has a name
+function hasPlayerName() {
+  return playerNameInput.value.trim().length > 0;
+}
+
+// Update heart button state
+function updateHeartButtonState() {
+  if (hasPlayerName()) {
+    heartBtn.classList.remove('disabled');
+  } else {
+    heartBtn.classList.add('disabled');
+  }
+}
+
+heartBtn.addEventListener('click', () => {
+  if (!hasPlayerName()) {
+    alert('Please enter a player name first!');
+    return;
+  }
+  
+  isRelationshipOpen = !isRelationshipOpen;
+  if (isRelationshipOpen) {
+    relationshipOverlay.classList.add('visible');
+    heartBtn.classList.add('active');
+    updateRelationshipTitle();
+  } else {
+    relationshipOverlay.classList.remove('visible');
+    heartBtn.classList.remove('active');
+  }
+});
+
+// Update button state on player name change
+playerNameInput.addEventListener('input', () => {
+  updateHeartButtonState();
+  updateRelationshipTitle();
+});
+updateHeartButtonState();
+
+// Heart SVG path
+const heartPath = 'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z';
+
+// NPC data management
+let npcs = loadState('npcs', []);
+
+function saveNpcs() {
+  saveState('npcs', npcs);
+}
+
+function createNpcCard(npc, index) {
+  const card = document.createElement('div');
+  card.className = 'npc-card';
+  card.dataset.index = index;
+
+  // Delete button
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'delete-npc-btn';
+  deleteBtn.innerHTML = '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  deleteBtn.addEventListener('click', () => {
+    if (confirm('Delete this character?')) {
+      npcs.splice(index, 1);
+      saveNpcs();
+      renderNpcs();
+      updateAddButtonVisibility();
+    }
+  });
+
+  // Image placeholder
+  const imageDiv = document.createElement('div');
+  imageDiv.className = 'npc-image' + (npc.image ? ' has-image' : '');
+  
+  if (npc.image) {
+    const img = document.createElement('img');
+    img.src = npc.image;
+    imageDiv.appendChild(img);
+  } else {
+    imageDiv.innerHTML = '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
+  }
+
+  // Image upload
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*';
+  fileInput.style.display = 'none';
+  
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        npcs[index].image = event.target.result;
+        saveNpcs();
+        renderNpcs();
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  imageDiv.addEventListener('click', () => fileInput.click());
+
+  // Info section
+  const infoDiv = document.createElement('div');
+  infoDiv.className = 'npc-info';
+
+  const nameInput = document.createElement('input');
+  nameInput.className = 'npc-name';
+  nameInput.placeholder = 'Character Name';
+  nameInput.value = npc.name || '';
+  // Create name row container with input and checkmark
+  const nameRow = document.createElement('div');
+  nameRow.className = 'npc-name-row';
+
+  // Create checkmark button
+  const confirmBtn = document.createElement('button');
+  confirmBtn.className = 'name-confirm-btn';
+  confirmBtn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+  confirmBtn.title = 'Save name';
+
+  // Function to save the name and update hearts
+  function saveName() {
+    const oldName = npcs[index].name || '';
+    const newName = nameInput.value.trim();
+    
+    if (newName === oldName) {
+      confirmBtn.classList.remove('visible');
+      return;
+    }
+    
+    npcs[index].name = newName;
+    
+    // Auto-fill first heart when name is entered
+    if (oldName.length === 0 && newName.length > 0) {
+      npcs[index].hearts[0] = 1;
+    }
+    // Clear all hearts if name is removed
+    else if (newName.length === 0) {
+      npcs[index].hearts = [0, 0, 0, 0, 0, 0, 0];
+    }
+    
+    saveNpcs();
+    renderNpcs();
+  }
+
+  // Show checkmark when typing
+  nameInput.addEventListener('input', () => {
+    const currentValue = nameInput.value.trim();
+    const savedName = npcs[index].name || '';
+    
+    if (currentValue !== savedName && currentValue.length > 0) {
+      confirmBtn.classList.add('visible');
+    } else {
+      confirmBtn.classList.remove('visible');
+    }
+  });
+
+  // Save on Enter key
+  nameInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveName();
+      nameInput.blur();
+    }
+  });
+
+  // Save on checkmark click
+  confirmBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    saveName();
+  });
+
+  nameRow.appendChild(nameInput);
+  nameRow.appendChild(confirmBtn);
+
+  const statusInput = document.createElement('input');
+  statusInput.className = 'npc-status';
+  statusInput.placeholder = 'Relationship Status';
+  statusInput.value = npc.status || '';
+  statusInput.addEventListener('input', () => {
+    npcs[index].status = statusInput.value;
+    saveNpcs();
+  });
+
+  // Hearts
+  const heartsDiv = document.createElement('div');
+  heartsDiv.className = 'npc-hearts';
+
+  // Initialize hearts array if needed (7 hearts)
+  if (!npc.hearts || npc.hearts.length !== 7) {
+    npc.hearts = [0, 0, 0, 0, 0, 0, 0];
+  }
+
+  // Auto-fill first heart if NPC has a name
+  const hasName = npc.name && npc.name.trim().length > 0;
+  if (hasName && npc.hearts[0] === 0) {
+    npc.hearts[0] = 1;
+    saveNpcs();
+  }
+
+  // Create 7 hearts
+  for (let i = 0; i < 7; i++) {
+    const heartIcon = document.createElement('div');
+    heartIcon.className = 'heart-icon';
+    heartIcon.dataset.heartIndex = i;
+    
+    const heartLevel = npc.hearts[i];
+    
+    // Determine heart color based on index
+    // Heart 0: white, Hearts 1-2: blue, Hearts 3-4: purple, Hearts 5-6: red
+    if (heartLevel === 0) {
+      heartIcon.classList.add('empty');
+    } else {
+      if (i === 0) {
+        heartIcon.classList.add('filled-white');
+      } else if (i >= 1 && i <= 2) {
+        heartIcon.classList.add('filled-blue');
+      } else if (i >= 3 && i <= 4) {
+        heartIcon.classList.add('filled-purple');
+      } else if (i >= 5 && i <= 6) {
+        heartIcon.classList.add('filled-red');
+      }
+    }
+
+    // Add pulse animation to heart 7 when filled
+    if (i === 6 && heartLevel === 1) {
+      heartIcon.classList.add('pulse-heart');
+    }
+
+    // Check if heart is locked (previous heart not filled)
+    const isLocked = !hasName || (i > 0 && npc.hearts[i - 1] === 0);
+    if (isLocked) {
+      heartIcon.classList.add('locked');
+    }
+
+    heartIcon.innerHTML = `<svg viewBox="0 0 24 24"><path d="${heartPath}"/></svg><div class="heart-number">${i + 1}</div>`;
+
+    heartIcon.addEventListener('click', () => {
+      // Cannot click if no name
+      if (!hasName) {
+        alert('Please enter a character name first!');
+        return;
+      }
+
+      // Heart 1 (index 0) is auto-filled, cannot be toggled
+      if (i === 0) {
+        return;
+      }
+
+      // Check if previous heart is filled
+      if (i > 0 && npc.hearts[i - 1] === 0) {
+        return; // Locked
+      }
+
+      // Toggle heart
+      npcs[index].hearts[i] = npcs[index].hearts[i] === 0 ? 1 : 0;
+      
+      // If unfilling a heart, unfill all hearts after it
+      if (npcs[index].hearts[i] === 0) {
+        for (let j = i + 1; j < 7; j++) {
+          npcs[index].hearts[j] = 0;
+        }
+      }
+      
+      saveNpcs();
+      renderNpcs();
+    });
+
+    heartsDiv.appendChild(heartIcon);
+  }
+
+  infoDiv.appendChild(nameRow);
+  infoDiv.appendChild(statusInput);
+  infoDiv.appendChild(heartsDiv);
+
+  card.appendChild(deleteBtn);
+  card.appendChild(imageDiv);
+  card.appendChild(fileInput);
+  card.appendChild(infoDiv);
+
+  return card;
+}
+
+function renderNpcs() {
+  npcList.innerHTML = '';
+  npcs.forEach((npc, index) => {
+    npcList.appendChild(createNpcCard(npc, index));
+  });
+  updateAddButtonVisibility();
+}
+
+// Add new NPC
+addNpcBtn.addEventListener('click', () => {
+  if (npcs.length >= 3) {
+    alert('Maximum of 3 characters allowed');
+    return;
+  }
+  npcs.push({
+    name: '',
+    status: '',
+    image: null,
+    hearts: [0, 0, 0, 0, 0, 0, 0]
+  });
+  saveNpcs();
+  renderNpcs();
+  updateAddButtonVisibility();
+});
+
+// Update add button visibility
+function updateAddButtonVisibility() {
+  if (npcs.length >= 3) {
+    addNpcBtn.style.display = 'none';
+  } else {
+    addNpcBtn.style.display = 'flex';
+  }
+}
+
+// Initial render
+renderNpcs();
+updateAddButtonVisibility();
 </script>
 </body>
 </html>
