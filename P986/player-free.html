@@ -28,8 +28,8 @@
 
   .wrap{
     max-width:900px;
-    margin:14px auto;
-    padding:16px;
+    margin:16px auto;
+    padding:18px;
   }
 
   /* Player name */
@@ -84,7 +84,7 @@
   .bar-card{
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
     border-radius:20px;
-    padding:13px 16px;
+    padding:16px 18px;
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -120,12 +120,11 @@
   .bar-controls{ display:flex; align-items:center; gap:8px; }
 
   .bar-value{
-    width:80px;
+    min-width:50px;
     text-align:center;
     font-weight:700;
     font-size:1.10rem;
     color:#ffffff;
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
   }
 
   .btn {
@@ -230,134 +229,14 @@
 function saveState(key,value){ try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){} }
 function loadState(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
 
-/* ========= Stat Bonus Tables ========= */
-// Each array index represents the rank (1-indexed, so index 0 is unused)
-// Format: { life: number, stamina: number, mana: number, energy: number }
-
-const enduranceBonuses = [
-  null, // rank 0 (unused)
-  { life: 2, stamina: 1, mana: 0, energy: 0 }, // rank 1
-  { life: 2, stamina: 1, mana: 0, energy: 0 }, // rank 2
-  { life: 2, stamina: 1, mana: 0, energy: 0 }, // rank 3
-  { life: 2, stamina: 1, mana: 0, energy: 0 }, // rank 4
-  { life: 2, stamina: 1, mana: 0, energy: 0 }, // rank 5
-  { life: 2, stamina: 1, mana: 0, energy: 0 }, // rank 6
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 7 (diminished)
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 8 (diminished)
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 9 (diminished)
-];
-
-const skillBonuses = [
-  null, // rank 0 (unused)
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 1
-  { life: 1, stamina: 1, mana: 0, energy: 0 }, // rank 2
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 3
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 4
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 5
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 6
-  { life: 0, stamina: 0, mana: 0, energy: 0 }, // rank 7 (no bonus)
-  { life: 0, stamina: 0, mana: 0, energy: 0 }, // rank 8 (no bonus)
-  { life: 0, stamina: 0, mana: 0, energy: 0 }, // rank 9 (no bonus)
-];
-
-const strengthBonuses = [
-  null, // rank 0 (unused)
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 1
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 2
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 3
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 4
-  { life: 1, stamina: 1, mana: 0, energy: 0 }, // rank 5
-  { life: 1, stamina: 0, mana: 0, energy: 0 }, // rank 6
-  { life: 0, stamina: 0, mana: 0, energy: 0 }, // rank 7 (no bonus)
-  { life: 0, stamina: 0, mana: 0, energy: 0 }, // rank 8 (no bonus)
-  { life: 0, stamina: 0, mana: 0, energy: 0 }, // rank 9 (no bonus)
-];
-
-const potencyBonuses = [
-  null, // rank 0 (unused)
-  { life: 0, stamina: 0, mana: 3, energy: 0 }, // rank 1
-  { life: 0, stamina: 0, mana: 2, energy: 1 }, // rank 2
-  { life: 0, stamina: 0, mana: 3, energy: 0 }, // rank 3
-  { life: 0, stamina: 0, mana: 2, energy: 1 }, // rank 4
-  { life: 0, stamina: 0, mana: 3, energy: 0 }, // rank 5
-  { life: 0, stamina: 0, mana: 3, energy: 0 }, // rank 6
-  { life: 0, stamina: 0, mana: 2, energy: 0 }, // rank 7 (diminished)
-  { life: 0, stamina: 0, mana: 2, energy: 0 }, // rank 8 (diminished)
-  { life: 0, stamina: 0, mana: 3, energy: 0 }, // rank 9 (diminished)
-];
-
-const masteryBonuses = [
-  null, // rank 0 (unused)
-  { life: 0, stamina: 0, mana: 1, energy: 2 }, // rank 1
-  { life: 0, stamina: 0, mana: 0, energy: 3 }, // rank 2
-  { life: 0, stamina: 0, mana: 1, energy: 3 }, // rank 3
-  { life: 0, stamina: 0, mana: 0, energy: 3 }, // rank 4
-  { life: 0, stamina: 0, mana: 0, energy: 2 }, // rank 5
-  { life: 0, stamina: 0, mana: 0, energy: 2 }, // rank 6
-  { life: 0, stamina: 0, mana: 0, energy: 2 }, // rank 7 (diminished)
-  { life: 0, stamina: 0, mana: 0, energy: 2 }, // rank 8 (diminished)
-  { life: 0, stamina: 0, mana: 0, energy: 2 }, // rank 9 (diminished)
-];
-
-/* ========= Calculate Maximum Limits ========= */
-function calculateLimits() {
-  // Base starting limits
-  const limits = {
-    life: 3,
-    stamina: 1,
-    mana: 3,
-    energy: 2
-  };
-
-  // Get current attribute values
-  const endurance = Number(loadState('Endurance', 0)) || 0;
-  const skill = Number(loadState('Skill', 0)) || 0;
-  const strength = Number(loadState('Strength', 0)) || 0;
-  const potency = Number(loadState('Potency', 0)) || 0;
-  const mastery = Number(loadState('Mastery', 0)) || 0;
-
-  // Helper function to sum bonuses up to a given rank
-  function sumBonuses(bonusTable, rank) {
-    let total = { life: 0, stamina: 0, mana: 0, energy: 0 };
-    for (let i = 1; i <= rank && i < bonusTable.length; i++) {
-      if (bonusTable[i]) {
-        total.life += bonusTable[i].life;
-        total.stamina += bonusTable[i].stamina;
-        total.mana += bonusTable[i].mana;
-        total.energy += bonusTable[i].energy;
-      }
-    }
-    return total;
-  }
-
-  // Add bonuses from each attribute
-  const endBonus = sumBonuses(enduranceBonuses, endurance);
-  const skillBonus = sumBonuses(skillBonuses, skill);
-  const strBonus = sumBonuses(strengthBonuses, strength);
-  const potBonus = sumBonuses(potencyBonuses, potency);
-  const mastBonus = sumBonuses(masteryBonuses, mastery);
-
-  // Sum all bonuses
-  limits.life += endBonus.life + skillBonus.life + strBonus.life + potBonus.life + mastBonus.life;
-  limits.stamina += endBonus.stamina + skillBonus.stamina + strBonus.stamina + potBonus.stamina + mastBonus.stamina;
-  limits.mana += endBonus.mana + skillBonus.mana + strBonus.mana + potBonus.mana + mastBonus.mana;
-  limits.energy += endBonus.energy + skillBonus.energy + strBonus.energy + potBonus.energy + mastBonus.energy;
-
-  return limits;
-}
-
-/* ========= Bar Update Registry ========= */
-const barUpdateFunctions = {};
-
 /* ========= Bars config with min/max ranges and defaults ========= */
-// Note: max values for life, stamina, mana, energy will be dynamically calculated
 const barsConfig = [
-  { key:'life', label:'Life', dotClass:'dot-life', min: -10, max: 30, default: 3, dynamic: true },
-  { key:'mana', label:'Mana', dotClass:'dot-mana', min: -1, max: 30, default: 0, dynamic: true },
-  { key:'stamina', label:'Stamina', dotClass:'dot-stamina', min: -3, max: 9, default: 1, dynamic: true },
-  { key:'energy', label:'Energy', dotClass:'dot-energy', min: -1, max: 30, default: 0, dynamic: true },
-  { key:'empower', label:'Empower', dotClass:'dot-empower', min: 0, max: 12, default: 0, dynamic: false },
-  { key:'coalesce', label:'Coalesce', dotClass:'dot-coalesce', min: 0, max: 12, default: 3, dynamic: false }
+  { key:'life', label:'Life', dotClass:'dot-life', min: -10, max: 30, default: 3 },
+  { key:'mana', label:'Mana', dotClass:'dot-mana', min: -1, max: 30, default: 0 },
+  { key:'stamina', label:'Stamina', dotClass:'dot-stamina', min: -3, max: 9, default: 1 },
+  { key:'energy', label:'Energy', dotClass:'dot-energy', min: -1, max: 30, default: 0 },
+  { key:'empower', label:'Empower', dotClass:'dot-empower', min: 0, max: 12, default: 0 },
+  { key:'coalesce', label:'Coalesce', dotClass:'dot-coalesce', min: 0, max: 12, default: 3 }
 ];
 
 const barsContainer = document.getElementById('bars');
@@ -382,50 +261,13 @@ barsConfig.forEach(cfg => {
   const controls = document.createElement('div'); controls.className='bar-controls';
 
   const minus = document.createElement('button'); minus.className='btn'; minus.textContent='−';
-  const valSpan = document.createElement('div'); valSpan.className='bar-value';
+  const valSpan = document.createElement('div'); valSpan.className='bar-value'; valSpan.textContent = String(value);
   const plus = document.createElement('button'); plus.className='btn'; plus.textContent='+';
-
-  // Get current dynamic max
-  function getCurrentMax() {
-    if (cfg.dynamic) {
-      const limits = calculateLimits();
-      return limits[cfg.key];
-    }
-    return cfg.max;
-  }
-
-  // Update display text
-  function updateDisplay() {
-    if (cfg.dynamic) {
-      const currentMax = getCurrentMax();
-      valSpan.textContent = `${value} / ${currentMax}`;
-    } else {
-      valSpan.textContent = String(value);
-    }
-  }
 
   /* Update button states based on current value */
   function updateButtonStates() {
-    const currentMax = getCurrentMax();
     minus.disabled = (value <= cfg.min);
-    plus.disabled = (value >= currentMax);
-  }
-
-  // Function to update this bar when attributes change
-  function updateBar() {
-    const currentMax = getCurrentMax();
-    // Clamp value to new max if needed
-    if (value > currentMax) {
-      value = currentMax;
-      saveState(cfg.key, value);
-    }
-    updateDisplay();
-    updateButtonStates();
-  }
-
-  // Register update function
-  if (cfg.dynamic) {
-    barUpdateFunctions[cfg.key] = updateBar;
+    plus.disabled = (value >= cfg.max);
   }
 
   /* handlers with range enforcement */
@@ -433,7 +275,7 @@ barsConfig.forEach(cfg => {
     const newValue = value - 1;
     if (newValue >= cfg.min) {
       value = newValue;
-      updateDisplay();
+      valSpan.textContent = String(value);
       saveState(cfg.key, value);
       updateButtonStates();
       flashElement(card);
@@ -441,19 +283,17 @@ barsConfig.forEach(cfg => {
   });
   
   plus.addEventListener('click', ()=> {
-    const currentMax = getCurrentMax();
     const newValue = value + 1;
-    if (newValue <= currentMax) {
+    if (newValue <= cfg.max) {
       value = newValue;
-      updateDisplay();
+      valSpan.textContent = String(value);
       saveState(cfg.key, value);
       updateButtonStates();
       flashElement(card);
     }
   });
 
-  // Set initial display and button states
-  updateDisplay();
+  // Set initial button states
   updateButtonStates();
 
   controls.appendChild(minus);
@@ -466,15 +306,10 @@ barsConfig.forEach(cfg => {
   barsContainer.appendChild(card);
 });
 
-// Function to update all dynamic bars
-function updateAllBars() {
-  Object.values(barUpdateFunctions).forEach(updateFn => updateFn());
-}
-
 /* small flash animation by temporarily lifting/shading (no layout shift) */
 function flashElement(el){
   el.style.transition = 'box-shadow .18s ease, transform .12s ease';
-  el.style.transform = 'translateY(-2px)';
+  el.style.transform = 'translateY(-4px)';
   el.style.boxShadow = '0 14px 36px rgba(0,0,0,0.55)';
   setTimeout(()=>{ el.style.transform=''; el.style.boxShadow=''; }, 160);
 }
@@ -482,9 +317,6 @@ function flashElement(el){
 /* ========= Attributes (including Luck) ========= */
 const attrConfig = ["Endurance","Skill","Strength","Potency","Mastery","Luck"];
 const attrsContainer = document.getElementById('attributes');
-
-// Track which attributes affect limits
-const limitAffectingAttrs = ["Endurance", "Skill", "Strength", "Potency", "Mastery"];
 
 attrConfig.forEach(name => {
   let stored = loadState(name, name==='Luck' ? null : 0);
@@ -655,11 +487,6 @@ attrConfig.forEach(name => {
       valNum = (valNum + 1) % 10;
       val.textContent = String(valNum);
       saveState(name, valNum);
-
-      // Update bars if this attribute affects limits
-      if (limitAffectingAttrs.includes(name)) {
-        updateAllBars();
-      }
 
       // visual pulse
       card.classList.add('pulse');
