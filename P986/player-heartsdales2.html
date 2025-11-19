@@ -267,7 +267,7 @@
   }
 
   .relationship-content {
-    max-width: 660px;
+    max-width: 700px;
     margin: 0 auto;
   }
 
@@ -283,35 +283,32 @@
   .npc-card {
     background: rgba(255, 255, 255, 0.03);
     border-radius: 16px;
-    padding: 8px;
-    margin-bottom: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
     display: flex;
-    gap: 8px;
+    gap: 16px;
     align-items: stretch;
-    position: relative;
   }
 
-  /* NPC Image Placeholder - Simple & Clean */
+  /* NPC Image Placeholder */
   .npc-image {
-      width: 150px;
-      height: 150px;
-      min-width: 150px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px dashed rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      overflow: hidden;
+    width: 150px;
+    height: 150px;
+    min-width: 128px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
   }
-
   .npc-image:hover {
     border-color: rgba(255, 255, 255, 0.4);
     background: rgba(255, 255, 255, 0.08);
   }
-  
   .npc-image svg {
     width: 64px;
     height: 64px;
@@ -319,22 +316,15 @@
     stroke-width: 2;
     fill: none;
   }
-  
+  .npc-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+  }
   .npc-image.has-image {
     border-style: solid;
     border-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .npc-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover; /* Simple approach - fills container while preserving aspect ratio */
-      border-radius: 10px;
-      /* Limit maximum displayed size - prevent shrinking on narrow screens */
-      max-width: 320px;
-      max-height: 200px;
-      min-width: 150px;
-      min-height: 150px;
   }
 
   /* NPC Info */
@@ -412,9 +402,9 @@
   /* Hearts Container */
   .npc-hearts {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     margin-top: auto;
-    padding-top: 4px;
+    padding-top: 8px;
     flex-wrap: wrap;
   }
 
@@ -533,7 +523,9 @@
     opacity: 0;
     transition: all 0.2s ease;
   }
-
+  .npc-card {
+    position: relative;
+  }
   .npc-card:hover .delete-npc-btn {
     opacity: 1;
   }
@@ -553,11 +545,10 @@
       flex-direction: column;
       align-items: center;
     }
-    /* Keep images at original size on mobile - no shrinking */
     .npc-image {
-      width: 150px;
-      height: 150px;
-      min-width: 150px;
+      width: 100px;
+      height: 100px;
+      min-width: 100px;
     }
     .npc-info {
       width: 100%;
@@ -569,50 +560,6 @@
     }
     .npc-hearts {
       justify-content: center;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .npc-card {
-      flex-direction: row;
-      align-items: stretch;
-      max-width: 400px;
-      padding: 4px;
-    }
-    /* Keep images at original size on mobile - no shrinking */
-    .npc-image {
-      min-width: 150px;
-      width: 150px;
-      height: 150px;
-    }
-    .npc-info {
-      flex: 1;
-      align-items: flex-start;
-    }
-    .npc-name {
-      font-size: 1rem;
-      text-align: left;
-    }
-    .npc-status {
-      font-size: 0.8rem;
-      text-align: left;
-    }
-    .npc-hearts {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 4px;
-      justify-content: flex-start;
-      margin-top: 1px;
-    }
-    .heart-icon {
-      width: 48px;
-      height: 42px;
-    }
-    .heart-number {
-      font-size: 0.75rem;
-    }
-    .heart-icon:nth-child(5) {
-      grid-column: 2;
     }
   }
 </style>
@@ -1154,31 +1101,6 @@ function saveNpcs() {
   saveState('npcs', npcs);
 }
 
-// Calculate relationship status based on filled hearts
-function getRelationshipStatus(hearts) {
-  let filledCount = 0;
-  for (let i = 0; i < hearts.length; i++) {
-    if (hearts[i] === 1) {
-      filledCount++;
-    } else {
-      break; // Stop at first unfilled heart
-    }
-  }
-  
-  const statusMap = {
-    0: '',
-    1: 'Familiar',
-    2: 'Friendly',
-    3: 'Friend',
-    4: 'Accomplice',
-    5: 'Companion',
-    6: 'Partner',
-    7: 'Lover'
-  };
-  
-  return statusMap[filledCount] || '';
-}
-
 function createNpcCard(npc, index) {
   const card = document.createElement('div');
   card.className = 'npc-card';
@@ -1303,9 +1225,14 @@ function createNpcCard(npc, index) {
   nameRow.appendChild(nameInput);
   nameRow.appendChild(confirmBtn);
 
-  const statusInput = document.createElement('div');
+  const statusInput = document.createElement('input');
   statusInput.className = 'npc-status';
-  statusInput.textContent = npc.status || 'No Relationship';
+  statusInput.placeholder = 'Relationship Status';
+  statusInput.value = npc.status || '';
+  statusInput.addEventListener('input', () => {
+    npcs[index].status = statusInput.value;
+    saveNpcs();
+  });
 
   // Hearts
   const heartsDiv = document.createElement('div');
