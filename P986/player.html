@@ -169,7 +169,7 @@
 
   @keyframes clickPulse {
     0%{ transform: scale(1); box-shadow: 0 0 0 rgba(106,27,154,0.0); }
-    40%{ transform: scale(1.06); box-shadow: 0 8px 24px rgba(106,27,154,0.22); }
+    40%{ transform: scale(1.06); box-shadow: 8px 24px rgba(106,27,154,0.22); }
     100%{ transform: scale(1); box-shadow: 0 0 0 rgba(106,27,154,0.0); }
   }
   .pulse { animation: clickPulse .5s ease forwards; }
@@ -1166,17 +1166,24 @@ function getRelationshipStatus(hearts) {
   }
   
   const statusMap = {
-    0: '',
+    0: 'No Relationship',
     1: 'Familiar',
     2: 'Friendly',
-    3: 'Friend',
+    3: 'Friends',
     4: 'Accomplice',
     5: 'Companion',
     6: 'Partner',
     7: 'Lover'
   };
   
-  return statusMap[filledCount] || '';
+  return statusMap[filledCount] || 'No Relationship';
+}
+
+// Update NPC status when hearts change
+function updateNpcStatus(npcIndex) {
+  if (npcs[npcIndex]) {
+    npcs[npcIndex].status = getRelationshipStatus(npcs[npcIndex].hearts);
+  }
 }
 
 function createNpcCard(npc, index) {
@@ -1269,6 +1276,9 @@ function createNpcCard(npc, index) {
       npcs[index].hearts = [0, 0, 0, 0, 0, 0, 0];
     }
     
+    // Update the relationship status
+    updateNpcStatus(index);
+    
     saveNpcs();
     renderNpcs();
   }
@@ -1320,6 +1330,13 @@ function createNpcCard(npc, index) {
   const hasName = npc.name && npc.name.trim().length > 0;
   if (hasName && npc.hearts[0] === 0) {
     npc.hearts[0] = 1;
+    updateNpcStatus(index);
+    saveNpcs();
+  }
+
+  // Initialize status if not set
+  if (!npc.status) {
+    updateNpcStatus(index);
     saveNpcs();
   }
 
@@ -1387,6 +1404,9 @@ function createNpcCard(npc, index) {
         }
       }
       
+      // Update the relationship status
+      updateNpcStatus(index);
+      
       saveNpcs();
       renderNpcs();
     });
@@ -1422,7 +1442,7 @@ addNpcBtn.addEventListener('click', () => {
   }
   npcs.push({
     name: '',
-    status: '',
+    status: 'No Relationship',
     image: null,
     hearts: [0, 0, 0, 0, 0, 0, 0]
   });
