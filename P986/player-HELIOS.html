@@ -4,7 +4,6 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Player Tracker — Player</title>
-
 <style>
   :root{
     --bg:#121212;
@@ -170,7 +169,7 @@
 
   @keyframes clickPulse {
     0%{ transform: scale(1); box-shadow: 0 0 0 rgba(106,27,154,0.0); }
-    40%{ transform: scale(1.06); box-shadow: 8px 24px rgba(106,27,154,0.22); }
+    40%{ transform: scale(1.06); box-shadow: 0 8px 24px rgba(106,27,154,0.22); }
     100%{ transform: scale(1); box-shadow: 0 0 0 rgba(106,27,154,0.0); }
   }
   .pulse { animation: clickPulse .5s ease forwards; }
@@ -268,7 +267,7 @@
   }
 
   .relationship-content {
-    max-width: 660px;
+    max-width: 700px;
     margin: 0 auto;
   }
 
@@ -284,58 +283,48 @@
   .npc-card {
     background: rgba(255, 255, 255, 0.03);
     border-radius: 16px;
-    padding: 8px;
-    margin-bottom: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
     display: flex;
-    gap: 8px;
+    gap: 16px;
     align-items: stretch;
-    position: relative;
   }
 
-  /* NPC Image Placeholder - Simple & Clean */
+  /* NPC Image Placeholder */
   .npc-image {
-      width: 150px;
-      height: 150px;
-      min-width: 150px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px dashed rgba(255, 255, 255, 0.2);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      overflow: hidden;
+    width: 120px;
+    height: 120px;
+    min-width: 120px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
   }
-
   .npc-image:hover {
     border-color: rgba(255, 255, 255, 0.4);
     background: rgba(255, 255, 255, 0.08);
   }
-  
   .npc-image svg {
-    width: 64px;
-    height: 64px;
+    width: 32px;
+    height: 32px;
     stroke: rgba(255, 255, 255, 0.3);
     stroke-width: 2;
     fill: none;
   }
-  
+  .npc-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+  }
   .npc-image.has-image {
     border-style: solid;
     border-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .npc-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover; /* Simple approach - fills container while preserving aspect ratio */
-      border-radius: 10px;
-      /* Limit maximum displayed size - prevent shrinking on narrow screens */
-      max-width: 320px;
-      max-height: 200px;
-      min-width: 150px;
-      min-height: 150px;
   }
 
   /* NPC Info */
@@ -367,15 +356,12 @@
   }
 
   .name-confirm-btn {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
     background: rgba(76, 175, 80, 0.2);
-    border: 1px solid rgba(76, 175, 80, 0.5);
-    border-radius: 4px;
+    border: 2px solid rgba(76, 175, 80, 0.5);
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -416,9 +402,9 @@
   /* Hearts Container */
   .npc-hearts {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     margin-top: auto;
-    padding-top: 4px;
+    padding-top: 8px;
     flex-wrap: wrap;
   }
 
@@ -537,7 +523,9 @@
     opacity: 0;
     transition: all 0.2s ease;
   }
-
+  .npc-card {
+    position: relative;
+  }
   .npc-card:hover .delete-npc-btn {
     opacity: 1;
   }
@@ -557,11 +545,10 @@
       flex-direction: column;
       align-items: center;
     }
-    /* Keep images at original size on mobile - no shrinking */
     .npc-image {
-      width: 150px;
-      height: 150px;
-      min-width: 150px;
+      width: 100px;
+      height: 100px;
+      min-width: 100px;
     }
     .npc-info {
       width: 100%;
@@ -575,70 +562,6 @@
       justify-content: center;
     }
   }
-
-  @media (max-width: 640px) {
-    .npc-card {
-      flex-direction: row;
-      align-items: stretch;
-      max-width: 400px;
-      padding: 4px;
-    }
-    /* Keep images at original size on mobile - no shrinking */
-    .npc-image {
-      min-width: 150px;
-      width: 150px;
-      height: 150px;
-    }
-    .npc-info {
-      flex: 1;
-      align-items: flex-start;
-      padding-left: 8px;
-    }
-    .npc-name {
-      font-size: 1rem;
-      text-align: left;
-    }
-    .npc-status {
-      font-size: 0.8rem;
-      text-align: left;
-    }
-    .npc-hearts {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 2px;
-      justify-content: flex-start;
-      margin-top: 1px;
-      padding-left: 0;
-    }
-    .heart-icon {
-      width: 44px;
-      height: 32px;
-    }
-    .heart-number {
-      font-size: 0.7rem;
-    }
-    /* Fix alignment for hearts 5, 6, 7 to align left */
-    .heart-icon:nth-child(5) {
-      grid-column: 1;
-    }
-    .heart-icon:nth-child(6) {
-      grid-column: 2;
-    }
-    .heart-icon:nth-child(7) {
-      grid-column: 3;
-    }
-    /* Align both buttons properly on mobile */
-    .name-confirm-btn {
-      top: 6px;
-      right: 6px;
-    }
-    .delete-npc-btn {
-      bottom: 6px;
-      right: 6px;
-    }
-  }
-
-
 </style>
 </head>
 <body>
@@ -673,8 +596,6 @@
 
     <div class="attributes" id="attributes"></div>
   </div>
-
-
 
 <script>
 /* ========= Persistence helpers ========= */
@@ -1180,38 +1101,6 @@ function saveNpcs() {
   saveState('npcs', npcs);
 }
 
-// Calculate relationship status based on filled hearts
-function getRelationshipStatus(hearts) {
-  let filledCount = 0;
-  for (let i = 0; i < hearts.length; i++) {
-    if (hearts[i] === 1) {
-      filledCount++;
-    } else {
-      break; // Stop at first unfilled heart
-    }
-  }
-  
-  const statusMap = {
-    0: 'No Relationship',
-    1: 'Familiar',
-    2: 'Friendly',
-    3: 'Friends',
-    4: 'Accomplice',
-    5: 'Companion',
-    6: 'Partner',
-    7: 'Lover'
-  };
-  
-  return statusMap[filledCount] || 'No Relationship';
-}
-
-// Update NPC status when hearts change
-function updateNpcStatus(npcIndex) {
-  if (npcs[npcIndex]) {
-    npcs[npcIndex].status = getRelationshipStatus(npcs[npcIndex].hearts);
-  }
-}
-
 function createNpcCard(npc, index) {
   const card = document.createElement('div');
   card.className = 'npc-card';
@@ -1242,7 +1131,7 @@ function createNpcCard(npc, index) {
     imageDiv.innerHTML = '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
   }
 
-  // Image upload - Direct upload (no cropping)
+  // Image upload
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   fileInput.accept = 'image/*';
@@ -1251,21 +1140,8 @@ function createNpcCard(npc, index) {
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        alert('Please select an image file.');
-        return;
-      }
-      
-      // Validate file size (5MB limit)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Image file size must be less than 5MB.');
-        return;
-      }
-      
-      // Read and display image
       const reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = (event) => {
         npcs[index].image = event.target.result;
         saveNpcs();
         renderNpcs();
@@ -1315,9 +1191,6 @@ function createNpcCard(npc, index) {
       npcs[index].hearts = [0, 0, 0, 0, 0, 0, 0];
     }
     
-    // Update the relationship status
-    updateNpcStatus(index);
-    
     saveNpcs();
     renderNpcs();
   }
@@ -1352,9 +1225,14 @@ function createNpcCard(npc, index) {
   nameRow.appendChild(nameInput);
   nameRow.appendChild(confirmBtn);
 
-  const statusInput = document.createElement('div');
+  const statusInput = document.createElement('input');
   statusInput.className = 'npc-status';
-  statusInput.textContent = npc.status || 'No Relationship';
+  statusInput.placeholder = 'Relationship Status';
+  statusInput.value = npc.status || '';
+  statusInput.addEventListener('input', () => {
+    npcs[index].status = statusInput.value;
+    saveNpcs();
+  });
 
   // Hearts
   const heartsDiv = document.createElement('div');
@@ -1369,13 +1247,6 @@ function createNpcCard(npc, index) {
   const hasName = npc.name && npc.name.trim().length > 0;
   if (hasName && npc.hearts[0] === 0) {
     npc.hearts[0] = 1;
-    updateNpcStatus(index);
-    saveNpcs();
-  }
-
-  // Initialize status if not set
-  if (!npc.status) {
-    updateNpcStatus(index);
     saveNpcs();
   }
 
@@ -1443,9 +1314,6 @@ function createNpcCard(npc, index) {
         }
       }
       
-      // Update the relationship status
-      updateNpcStatus(index);
-      
       saveNpcs();
       renderNpcs();
     });
@@ -1459,7 +1327,6 @@ function createNpcCard(npc, index) {
 
   card.appendChild(deleteBtn);
   card.appendChild(imageDiv);
-  // Add file input to card
   card.appendChild(fileInput);
   card.appendChild(infoDiv);
 
@@ -1482,7 +1349,7 @@ addNpcBtn.addEventListener('click', () => {
   }
   npcs.push({
     name: '',
-    status: 'No Relationship',
+    status: '',
     image: null,
     hearts: [0, 0, 0, 0, 0, 0, 0]
   });
@@ -1503,12 +1370,6 @@ function updateAddButtonVisibility() {
 // Initial render
 renderNpcs();
 updateAddButtonVisibility();
-
-/*I need to figure out how to do 'profile pic' style image cropping so users can align their NPCs. 
-Also: maybe players must name their character first, then they can upload an image: if the name Matches one of the in-universe NPCs, it will autofill an image of their card or face art; otherwise the user can use the image-picker.
-Note: NAYA and The Courier only have 6 hearts.
-There are 5 FOEs that are also romance-able but their romance names are different from their FOE name.
-*/
 </script>
 </body>
 </html>
