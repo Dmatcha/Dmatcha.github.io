@@ -1214,6 +1214,36 @@ function updateNpcStatus(npcIndex) {
   }
 }
 
+/* === NPC NAME → AUTO IMAGE TABLE === */
+
+const officialNpcImages = {
+  "Hitomi":           "hearts/000.webp",
+  "Tsubasa":          "hearts/001.webp",
+  "Tress Bien":       "hearts/002.webp",
+  "Dante Alimor":     "hearts/003.webp",
+  "Evelynn":          "hearts/004.webp",
+  "Flare vey Byornn": "hearts/005.webp",
+  "Guy":              "hearts/006.webp",
+  "Hector Havel":     "hearts/007.webp",
+  "Jiu-lin Fan":      "hearts/008.webp",
+  "Shang Tian":       "hearts/009.webp",
+  "Marco":            "hearts/010.webp",
+  "Lumiere":          "hearts/011.webp",
+  "Anjali":           "hearts/012.webp",
+  "Chinara Ekine":    "hearts/013.webp",
+  "Ohm":              "hearts/014.webp",
+  "Jon Quixote":      "hearts/015.webp",
+  "Naya":             "hearts/016.webp",
+  "Million Redgate":  "hearts/017.webp",
+  "Captain Thiffany": "hearts/018.webp",
+  "The Courier":      "hearts/019.webp",
+  "Paarthi Lomedi":   "hearts/035.webp",
+  "Qing Xi":          "hearts/036.webp",
+  "Reeve S Basilisk": "hearts/037.webp",
+  "Vincent Pererez":  "hearts/038.webp",
+  "Taeonora 9C":      "hearts/039.webp"
+}
+
 function createNpcCard(npc, index) {
   const card = document.createElement('div');
   card.className = 'npc-card';
@@ -1225,7 +1255,12 @@ function createNpcCard(npc, index) {
   deleteBtn.innerHTML = '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
   deleteBtn.addEventListener('click', () => {
     if (confirm('Delete this character?')) {
+      // Remove "official" lock when NPC is deleted
+      if (npcs[index]) {
+        npcs[index].official = false;
+      }
       npcs.splice(index, 1);
+
       saveNpcs();
       renderNpcs();
       updateAddButtonVisibility();
@@ -1276,7 +1311,17 @@ function createNpcCard(npc, index) {
     }
   });
 
-  imageDiv.addEventListener('click', () => fileInput.click());
+  imageDiv.addEventListener('click', () => {
+    if (npcs[index].official) {
+      alert("This is an official character. Their portrait cannot be changed.");
+      return;
+    }
+    if (!npcs[index].name || npcs[index].name.trim().length === 0) {
+      alert("Please enter a name before selecting an image.");
+      return;
+    }
+    fileInput.click();
+  });
 
   // Info section
   const infoDiv = document.createElement('div');
@@ -1300,29 +1345,36 @@ function createNpcCard(npc, index) {
   function saveName() {
     const oldName = npcs[index].name || '';
     const newName = nameInput.value.trim();
-    
-    if (newName === oldName) {
-      confirmBtn.classList.remove('visible');
-      return;
-    }
-    
+
+    // Update local NPC name
     npcs[index].name = newName;
-    
-    // Auto-fill first heart when name is entered
+
+    // Handle hearts auto-fill / wipe
     if (oldName.length === 0 && newName.length > 0) {
       npcs[index].hearts[0] = 1;
+    } else if (newName.length === 0) {
+      npcs[index].hearts = [0,0,0,0,0,0,0];
+      npcs[index].image = null;
     }
-    // Clear all hearts if name is removed
-    else if (newName.length === 0) {
-      npcs[index].hearts = [0, 0, 0, 0, 0, 0, 0];
+
+    /* === AUTO-SELECT IMAGE IF NAME IS OFFICIAL === */
+    if (officialNpcImages[newName]) {
+      npcs[index].image = officialNpcImages[newName];
+      npcs[index].official = true;   // lock image editing
+    } else {
+      if (!npcs[index].official) {
+        // Only clear image if NPC was not official
+        // (prevents losing portraits accidentally)
+        // Leave existing custom image unchanged
+      }
+      npcs[index].official = false;
     }
-    
-    // Update the relationship status
+
     updateNpcStatus(index);
-    
     saveNpcs();
     renderNpcs();
   }
+
 
   // Show checkmark when typing
   nameInput.addEventListener('input', () => {
@@ -1511,6 +1563,9 @@ Also: maybe players must name their character first, then they can upload an ima
 Note: NAYA and The Courier only have 6 hearts.
 There are 5 FOEs that are also romance-able but their romance names are different from their FOE name.
 */
+
+
+
 </script>
 </body>
 </html>
