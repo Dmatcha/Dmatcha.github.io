@@ -1183,16 +1183,21 @@ function saveNpcs() {
 }
 
 // Calculate relationship status based on filled hearts
-function getRelationshipStatus(hearts) {
+function getRelationshipStatus(hearts, npcName) {
   let filledCount = 0;
   for (let i = 0; i < hearts.length; i++) {
     if (hearts[i] === 1) {
       filledCount++;
     } else {
-      break; // Stop at first unfilled heart
+      break;  // Stop at first unfilled heart?
     }
   }
-  
+
+  // Special case: Naya's rank 7 is "Best Friend"
+  if (npcName === "Naya" && filledCount === 7) {
+    return "Best Friend";
+  }
+
   const statusMap = {
     0: 'No Relationship',
     1: 'Familiar',
@@ -1207,10 +1212,15 @@ function getRelationshipStatus(hearts) {
   return statusMap[filledCount] || 'No Relationship';
 }
 
+
 // Update NPC status when hearts change
 function updateNpcStatus(npcIndex) {
   if (npcs[npcIndex]) {
-    npcs[npcIndex].status = getRelationshipStatus(npcs[npcIndex].hearts);
+    npcs[npcIndex].status = getRelationshipStatus(
+    npcs[npcIndex].hearts,
+    npcs[npcIndex].name
+    );
+
   }
 }
 
