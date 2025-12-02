@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gameplay Guide - Linear Chance System</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+
+body {
+  background: #1C1C30;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Main card container */
+.container {
+  width: 60vw;
+  max-width: 520px;
+  height: 80vh;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: background 0.8s ease;
+}
+
+/* Day and night background themes */
+.container.day-theme {
+  background: linear-gradient(145deg, #943a09, #f29422);
+  box-shadow: 0 0 40px rgba(240,200,30,0.5);
+}
+
+.container.night-theme {
+  background: linear-gradient(135deg, #202050, #0E0E20);
+  box-shadow: 0 0 40px rgba(100,100,255,0.5);
+}
+
+/* Header */
+.header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.day-label, .slot-label { font-size: 1.45rem; font-weight: bold; }
+
+/* Central text area */
+.text-area {
+  flex: 1;
+  margin: 16px 0;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-y: auto;
+  text-align: left;
+  line-height: 1.5;
+  font-size: 1.33rem;
+}
+
+/* Buttons */
+.button {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.50rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.35s ease;
+}
+.button:disabled { opacity: 0.4; cursor: default; }
+
+.act-btn { background: #ffb347; color: #1e1e2f; }
+.map-btn { background: #ffd700; color: #1e1e2f; }
+.next-btn { background: #ff7f50; color: #fff; }
+.dawn-btn { background: #87ceeb; color: #1e1e2f; }
+.night-btn { background: #6a5acd; color: #fff; }
+.interstitial-btn { background: #ff6347; color: #fff; }
+
+/* Checkbox styling */
+.checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 12px;
+  border: 2px solid #fff;
+  cursor: pointer;
+  transition: all 0.5s;
+  user-select: none;
+  font-size: 1.25rem;
+}
+.checkbox.checked {
+  background: #32cd32;
+  color: #1e1e2f;
+}
+
+/* Reset button */
+.reset-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 8px 12px;
+  background: #ff4d4d;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
+  z-index: 5;
+}
+
+/* Scrollbar styling */
+.text-area::-webkit-scrollbar { width: 8px; }
+.text-area::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 4px;
+}
+.text-area::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.4);
+}
+.button.interstitial-btn {
+  opacity: 0.4;
+  transition: all 0.5s ease;
+}
+.button.interstitial-btn.active {
+  opacity: 1;
+}
+
+/* Mobile: use wider relative width */
+@media (max-width: 600px) {
+  .container {
+    width: 92vw;
+    max-width: none;
+    min-width: 300px;
+  }
+}
+
+/* Flavor text styling by pool */
+.pool-0 { color: #87ceeb; font-style: italic; }
+.pool-1 { color: #ffd700; font-style: italic; }
+.pool-2 { color: #98fb98; font-style: italic; }
+.pool-3 { color: #dda0dd; font-style: italic; }
+</style>
+
+</head>
+<body>
+
+<button class="reset-btn" onclick="resetGame()">RESET</button>
+
+<div class="container">
+  <div class="header">
+    <div class="day-label" id="dayLabel">DAWN of Cycle 1</div>
+    <div class="slot-label" id="slotLabel">[0]</div>
+  </div>
+
+  <div class="text-area" id="textArea">ZERODAWN <br>YOU SHOULD NOT SEE THIS!
+  </div>
+  
+  <div id="checkboxes" style="display:none;">
+    <div class="checkbox" id="actCheckbox">ACT</div>
+    <div class="checkbox" id="mapCheckbox">REVEAL</div>
+  </div>
+  
+  <button class="button" id="mainButton">CONTINUE</button>
+</div>
+
+<script>
+/* State */
+let cycle = 1;
+let slot = 0;
+let isNight = false;
+let nightStep = 0;
+let phaseMode = null;
+
+/* Theme container ref */
+const container = document.querySelector('.container');
+
+/* Helper: set container color theme */
+function setContainerTheme(theme) {
+  container.classList.remove('day-theme', 'night-theme');
+  if (theme === 'day') container.classList.add('day-theme');
+  else if (theme === 'night') container.classList.add('night-theme');
+}
+
+/* --- Linear Chance System --- */
+
+// Calculate linear chance using formula: base + (rate * cycle)
+// Returns percentage as decimal (0.0 to 1.0)
+function calculateLinearChance(base, rate, cycle) {
+  return Math.max(0, Math.min(1, base + (rate * cycle)));
+}
+
+// Calculate step chance using formula with step intervals
+function calculateStepChance(startCycle, rate, cycle) {
+  if (cycle < startCycle) return 0;
+  const steps = Math.floor((cycle - startCycle) / 2); // Steps every 2 cycles
+  return steps * rate;
+}
+
+// Main text options for each slot (3 exclusive options per slot)
+const mainTextOptions = {
+  1: [
+    { text: "You may play any card.", base: 100, rate: -2 },        // 100-(2*Cycle)
+    { text: "You must play an Adventure card.", base: 0, rate: 1 },  // 0+(1*Cycle)
+    { text: "If you play an Adventure card, lose 1 stamina.", base: 0, rate: 1 } // 0+(1*Cycle)
+  ],
+  2: [
+    { text: "You may play any card.", base: 95, rate: -2.5 },           // 95-(2.5*Cycle)
+    { text: "Choose wisely - your actions have consequences.", base: 2, rate: 1.5 },  // 2+(1.5*Cycle)
+    { text: "The shadows grow stronger each day.", base: 3, rate: 1.5 }              // 3+(1.5*Cycle)
+  ],
+  3: [
+    { text: "You may play any card.", base: 90, rate: -3 },                // 90-(3*Cycle)
+    { text: "You must play a B or C card.", base: 5, rate: 1.5 },           // 5+(1.5*Cycle)
+    { text: "Strategic planning becomes more important.", base: 5, rate: 1.5 } // 5+(1.5*Cycle)
+  ],
+  4: [
+    { text: "You may play any card.", base: 85, rate: -3.5 },                 // 85-(3.5*Cycle)
+    { text: "Adventure cards provide crucial advantages.", base: 7, rate: 1.8 }, // 7+(1.8*Cycle)
+    { text: "The cost of exploration increases.", base: 8, rate: 1.7 }         // 8+(1.7*Cycle)
+  ],
+  5: [
+    { text: "You may play any card.", base: 80, rate: -4 },              // 80-(4*Cycle)
+    { text: "You must play a B or C card.", base: 10, rate: 2 },         // 10+(2*Cycle)
+    { text: "Time becomes a precious resource.", base: 10, rate: 2 }     // 10+(2*Cycle)
+  ],
+  6: [
+    { text: "You may play any card.", base: 75, rate: -4 },                  // 75-(4*Cycle)
+    { text: "Powerful abilities unlock at higher levels.", base: 12, rate: 2.3 }, // 12+(2.3*Cycle)
+    { text: "The night draws ever closer.", base: 13, rate: 2.2 }             // 13+(2.2*Cycle)
+  ],
+  7: [
+    { text: "You may play any card.", base: 70, rate: -4 },                // 70-(4*Cycle)
+    { text: "You must play a B or C card.", base: 15, rate: 2.5 },         // 15+(2.5*Cycle)
+    { text: "Survival requires sacrifice.", base: 15, rate: 2.5 }          // 15+(2.5*Cycle)
+  ],
+  8: [
+    { text: "You may play any card.", base: 65, rate: -4 },                // 65-(4*Cycle)
+    { text: "The final challenges approach.", base: 17, rate: 2.8 },       // 17+(2.8*Cycle)
+    { text: "Every choice echoes through eternity.", base: 18, rate: 2.7 } // 18+(2.7*Cycle)
+  ],
+  9: [
+    { text: "You may play any card.", base: 60, rate: -4 },              // 60-(4*Cycle)
+    { text: "Destiny awaits the bold.", base: 20, rate: 3 },             // 20+(3*Cycle)
+    { text: "The end draws near - be prepared.", base: 20, rate: 3 }    // 20+(3*Cycle)
+  ],
+  10: [
+    { text: "You may play any card.", base: 55, rate: -4 },               // 55-(4*Cycle)
+    { text: "The ultimate test begins.", base: 22, rate: 3.2 },           // 22+(3.2*Cycle)
+    { text: "All paths converge to the same fate.", base: 23, rate: 3.1 } // 23+(3.1*Cycle)
+  ],
+  11: [
+    { text: "You may play any card.", base: 50, rate: -4 },               // 50-(4*Cycle)
+    { text: "You must play a B or C card.", base: 25, rate: 3.5 },        // 25+(3.5*Cycle)
+    { text: "The cycle's end approaches rapidly.", base: 25, rate: 3.5 }  // 25+(3.5*Cycle)
+  ]
+};
+
+// Night main text options (different from day)
+const nightMainTextOptions = {
+  12: [
+    { text: "You must play a B card. <br><i>Add +1 coin to reward pile.</i>", base: 80, rate: -3 }, // 80-(3*Cycle)
+    { text: "Darkness consumes the light of hope.", base: 10, rate: 1.5 },                        // 10+(1.5*Cycle)
+    { text: "The shadows whisper of forgotten secrets.", base: 10, rate: 1.5 }                    // 10+(1.5*Cycle)
+  ],
+  13: [
+    { text: "You must play a C card. <br><i>Double reward pile.</i>", base: 75, rate: -3 },      // 75-(3*Cycle)
+    { text: "Fight cards become perilous in darkness.", base: 12, rate: 1.8 },                   // 12+(1.8*Cycle)
+    { text: "Courage wavers under the starless sky.", base: 13, rate: 1.7 }                      // 13+(1.7*Cycle)
+  ],
+  14: [
+    { text: "You must play a B card. <br><i>Double reward pile.</i>", base: 70, rate: -3 },      // 70-(3*Cycle)
+    { text: "Camp cards may be your only sanctuary.", base: 15, rate: 2 },                       // 15+(2*Cycle)
+    { text: "The night devours the unprepared.", base: 15, rate: 2 }                             // 15+(2*Cycle)
+  ],
+  15: [
+    { text: "You must play a C card. <br><i>Double reward pile.</i>", base: 65, rate: -3 },      // 65-(3*Cycle)
+    { text: "Time grows short in the eternal night.", base: 17, rate: 2.2 },                     // 17+(2.2*Cycle)
+    { text: "Every moment could be your last.", base: 18, rate: 2.1 }                            // 18+(2.1*Cycle)
+  ],
+  16: [
+    { text: "You must play a B card. <br><i>Double reward pile.</i>", base: 60, rate: -3 },      // 60-(3*Cycle)
+    { text: "The final confrontation approaches.", base: 20, rate: 2.5 },                        // 20+(2.5*Cycle)
+    { text: "Steel your resolve for what comes next.", base: 20, rate: 2.5 }                     // 20+(2.5*Cycle)
+  ],
+  17: [
+    { text: "You must play a C card. <br><i>The night coils and twists, the end is near...</i>", base: 55, rate: -3 }, // 55-(3*Cycle)
+    { text: "The ultimate darkness awaits.", base: 22, rate: 2.8 },                              // 22+(2.8*Cycle)
+    { text: "Face your destiny or flee into the void.", base: 23, rate: 2.7 }                    // 23+(2.7*Cycle)
+  ]
+};
+
+// Flavor text pools (Day vs Night) - Independent dice rolls
+const flavorPools = {
+  day: {
+    0: [ // Hints and basic mechanics
+      { text: "💡 <span class='pool-0'>Camp cards provide essential resources.</span>", base: 0, rate: 1.5 },    // 0+(1.5*Cycle)
+      { text: "💡 <span class='pool-0'>B and C cards work best when combined.</span>", base: 0, rate: 1.2 },      // 0+(1.2*Cycle)
+      { text: "💡 <span class='pool-0'>Energy management is crucial for survival.</span>", base: 0, rate: 1.0 }   // 0+(1.0*Cycle)
+    ],
+    1: [ // Strategic advice
+      { text: "🎯 <span class='pool-1'>Consider the long-term consequences of each choice.</span>", base: 0, rate: 0.8 },  // 0+(0.8*Cycle)
+      { text: "🎯 <span class='pool-1'>Resource allocation becomes more critical over time.</span>", base: 0, rate: 1.0 }, // 0+(1.0*Cycle)
+      { text: "🎯 <span class='pool-1'>Team coordination can overcome individual limitations.</span>", base: 0, rate: 1.2 } // 0+(1.2*Cycle)
+    ],
+    2: [ // Story elements
+      { text: "📖 <span class='pool-2'>Ancient wisdom speaks of cycles within cycles.</span>", base: 0, rate: 0.6 },    // 0+(0.6*Cycle)
+      { text: "📖 <span class='pool-2'>The landscape shifts with each dawn.</span>", base: 0, rate: 0.8 },             // 0+(0.8*Cycle)
+      { text: "📖 <span class='pool-2'>Legends warn of the approaching darkness.</span>", base: 0, rate: 1.0 }        // 0+(1.0*Cycle)
+    ],
+    3: [ // Atmospheric/mysterious
+      { text: "✨ <span class='pool-3'>The air tingles with anticipation...</span>", base: 0, rate: 0.5 },     // 0+(0.5*Cycle)
+      { text: "✨ <span class='pool-3'>Something stirs beyond the horizon.</span>", base: 0, rate: 0.7 },      // 0+(0.7*Cycle)
+      { text: "✨ <span class='pool-3'>Fate weaves its tapestry unseen.</span>", base: 0, rate: 0.9 }          // 0+(0.9*Cycle)
+    ]
+  },
+  night: {
+    0: [ // Night-specific hints
+      { text: "🌙 <span class='pool-0'>Shadows consume the unwary in darkness.</span>", base: 2, rate: 1.8 },      // 2+(1.8*Cycle)
+      { text: "🌙 <span class='pool-0'>Light becomes precious in the void of night.</span>", base: 1, rate: 1.5 }, // 1+(1.5*Cycle)
+      { text: "🌙 <span class='pool-0'>Night transforms all choices into risks.</span>", base: 0, rate: 1.2 }     // 0+(1.2*Cycle)
+    ],
+    1: [ // Night warnings
+      { text: "⚠️ <span class='pool-1'>The darkness judges your past actions.</span>", base: 0, rate: 1.5 },       // 0+(1.5*Cycle)
+      { text: "⚠️ <span class='pool-1'>Fear can be as dangerous as any enemy.</span>", base: 0, rate: 1.8 },       // 0+(1.8*Cycle)
+      { text: "⚠️ <span class='pool-1'>What you cannot see may yet harm you.</span>", base: 0, rate: 2.0 }        // 0+(2.0*Cycle)
+    ],
+    2: [ // Night lore
+      { text: "📚 <span class='pool-2'>Old tales speak of those who conquered the night.</span>", base: 0, rate: 1.0 },   // 0+(1.0*Cycle)
+      { text: "📚 <span class='pool-2'>The night has memory and seeks revenge.</span>", base: 0, rate: 1.2 },             // 0+(1.2*Cycle)
+      { text: "📚 <span class='pool-2'>Some say the night is eternal, others disagree.</span>", base: 0, rate: 1.5 }      // 0+(1.5*Cycle)
+    ],
+    3: [ // Night atmosphere
+      { text: "🌌 <span class='pool-3'>Stars hide behind clouds of dread.</span>", base: 0, rate: 0.8 },        // 0+(0.8*Cycle)
+      { text: "🌌 <span class='pool-3'>The void between worlds grows thinner.</span>", base: 0, rate: 1.0 },    // 0+(1.0*Cycle)
+      { text: "🌌 <span class='pool-3'>Time bends in the presence of absolute darkness.</span>", base: 0, rate: 1.2 } // 0+(1.2*Cycle)
+    ]
+  }
+};
+
+// Get main text for specific slot using independent chance calculation
+function getMainText(slotNum, isNight = false) {
+  const textOptions = isNight ? nightMainTextOptions[slotNum] : mainTextOptions[slotNum];
+  if (!textOptions) return "No text available for this slot.";
+  
+  // Calculate individual chances for each text
+  const chances = textOptions.map(option => {
+    const chancePercent = Math.max(0, option.base + (option.rate * cycle));
+    return {
+      text: option.text,
+      chance: Math.min(100, chancePercent) / 100 // Convert to decimal 0-1
+    };
+  });
+  
+  // Convert percentages to weighted selection
+  const totalChance = chances.reduce((sum, c) => sum + c.chance, 0);
+  
+  if (totalChance === 0) return textOptions[0].text; // Fallback
+  
+  const random = Math.random() * totalChance;
+  let cumulative = 0;
+  
+  for (const chance of chances) {
+    cumulative += chance.chance;
+    if (random <= cumulative) {
+      return chance.text;
+    }
+  }
+  
+  // Fallback to first option
+  return chances[0].text;
+}
+
+// Get flavor text from pools using independent dice rolls
+function getFlavorText(slotNum, isNight = false) {
+  const pools = isNight ? flavorPools.night : flavorPools.day;
+  let result = "";
+  
+  // Each pool rolls independently - multiple texts can appear or none
+  for (let poolIndex = 0; poolIndex < 4; poolIndex++) {
+    const poolTexts = pools[poolIndex];
+    if (!poolTexts) continue;
+    
+    // Roll for each text in the pool independently
+    for (const textObj of poolTexts) {
+      const chancePercent = Math.max(0, textObj.base + (textObj.rate * cycle));
+      const probability = Math.min(100, chancePercent) / 100;
+      
+      if (Math.random() < probability) {
+        result += "<br><br>" + textObj.text;
+      }
+    }
+  }
+  
+  return result;
+}
+
+/* Text composition functions */
+function getDayText(slot) {
+  let baseText = getMainText(slot, false);
+  baseText += getFlavorText(slot, false);
+  return baseText;
+}
+
+function getNightText(nightStep) {
+  const slotNum = 12 + nightStep;
+  let baseText = getMainText(slotNum, true);
+  baseText += getFlavorText(slotNum, true);
+  return baseText;
+}
+
+/* --- UI Update --- */
+function updateUI() {
+  cleanupTransientButtons();
+
+  if (slot === 0) {
+    setContainerTheme('day');
+    dayLabel.innerText = `DAWN of Cycle ${cycle}`;
+    slotLabel.innerText = '[0]';
+    textArea.innerHTML = "All players gain <strong>one level!</strong> <br>All players regain all <strong>light mana!</strong>";
+    checkboxesDiv.style.display = 'none';
+    mainButton.style.display = 'block';
+    mainButton.innerText = 'CONTINUE';
+    mainButton.disabled = false;
+    phaseMode = null;
+    return;
+  }
+
+  if (!isNight && slot > 0 && slot <= daySlots) {
+    setContainerTheme('day');
+    dayLabel.innerText = `The ${ordinal(cycle)} Day`;
+    slotLabel.innerText = `[${slot}]`;
+    textArea.innerHTML = getDayText(slot);
+    checkboxesDiv.style.display = 'flex';
+    restoreStableCheckboxes();
+    actCheckbox.classList.remove('checked');
+    mapCheckbox.classList.remove('checked');
+    mainButton.innerText = 'NEXT PLAYER';
+    mainButton.disabled = true;
+    mainButton.style.display = 'block';
+    phaseMode = null;
+    return;
+  }
+
+  if (isNight) {
+    setContainerTheme('night');
+    dayLabel.innerText = `The ${ordinal(cycle)} Night`;
+    slotLabel.innerText = `[${12 + nightStep}]`;
+    textArea.innerHTML = getNightText(nightStep);
+    checkboxesDiv.style.display = 'flex';
+    restoreStableCheckboxes();
+    actCheckbox.classList.remove('checked');
+    mapCheckbox.classList.remove('checked');
+    mainButton.innerText = (nightStep === nightSlots - 1) ? 'END THE NIGHT' : 'NEXT PLAYER';
+    mainButton.disabled = true;
+    mainButton.style.display = 'block';
+    phaseMode = null;
+    return;
+  }
+}
+
+const daySlots = 11;
+const nightSlots = 6;
+
+/* Elements */
+const dayLabel = document.getElementById('dayLabel');
+const slotLabel = document.getElementById('slotLabel');
+const textArea = document.getElementById('textArea');
+const mainButton = document.getElementById('mainButton');
+const checkboxesDiv = document.getElementById('checkboxes');
+let actCheckbox = document.getElementById('actCheckbox');
+let mapCheckbox = document.getElementById('mapCheckbox');
+
+/* Helpers */
+function ordinal(n) {
+  return ["First","Second","Third","Fourth","Fifth","Sixth","Seventh","Eighth","Ninth","Tenth","Eleventh","Twelfth","Thirteenth"][n - 1] || n + "th";
+}
+
+function enableMainIfBothChecked() {
+  if (!actCheckbox || !mapCheckbox) { mainButton.disabled = true; return; }
+  mainButton.disabled = !(actCheckbox.classList.contains('checked') && mapCheckbox.classList.contains('checked'));
+}
+
+/* Core transitions */
+function goToDawn(increment = true) {
+  if (increment) cycle++;
+  isNight = false;
+  nightStep = 0;
+  slot = 0;
+  phaseMode = null;
+  cleanupTransientButtons();
+  restoreStableCheckboxes();
+  updateUI();
+}
+
+function restoreStableCheckboxes() {
+  if (!document.getElementById('actCheckbox') || !document.getElementById('mapCheckbox')) {
+    checkboxesDiv.innerHTML = '<div class="checkbox" id="actCheckbox">ACT</div><div class="checkbox" id="mapCheckbox">REVEAL</div>';
+    actCheckbox = document.getElementById('actCheckbox');
+    mapCheckbox = document.getElementById('mapCheckbox');
+    actCheckbox.addEventListener('click', toggleCheckbox);
+    mapCheckbox.addEventListener('click', toggleCheckbox);
+  }
+  actCheckbox.classList.remove('checked');
+  mapCheckbox.classList.remove('checked');
+}
+
+function cleanupTransientButtons() {
+  document.querySelectorAll('.container button.dawn-btn, .container button.night-btn, .container button.interstitial-btn').forEach(b => b.remove());
+}
+
+function toggleCheckbox() {
+  this.classList.toggle('checked');
+  enableMainIfBothChecked();
+}
+
+/* DUSK */
+function showDuskChoice() {
+  checkboxesDiv.style.display = 'none';
+  mainButton.style.display = 'none';
+  textArea.innerHTML = "<strong>DUSK: </strong><br>Choose to proceed to DAWN... <br>...or enter the NIGHT.";
+
+  const dawnBtn = document.createElement('button');
+  dawnBtn.className = 'button dawn-btn';
+  dawnBtn.innerText = 'Proceed to DAWN';
+  dawnBtn.disabled = true;
+
+  const nightBtn = document.createElement('button');
+  nightBtn.className = 'button night-btn';
+  nightBtn.innerText = 'Enter the NIGHT';
+  nightBtn.disabled = true;
+
+  container.appendChild(dawnBtn);
+  container.appendChild(nightBtn);
+
+  setContainerTheme('night'); // transition during dusk
+
+  let cooldown = 3;
+  const interval = setInterval(() => {
+    cooldown--;
+    if (cooldown <= 0) {
+      dawnBtn.disabled = false;
+      nightBtn.disabled = false;
+      clearInterval(interval);
+    }
+  }, 1000);
+
+  dawnBtn.addEventListener('click', () => {
+    dawnBtn.remove(); nightBtn.remove();
+    goToDawn(true);
+  });
+
+  nightBtn.addEventListener('click', () => {
+    dawnBtn.remove(); nightBtn.remove();
+    isNight = true;
+    nightStep = 0;
+    slot = 12;
+    updateUI();
+  });
+}
+
+/* Night interstitial */
+function showContinueNightInterstitial() {
+  checkboxesDiv.style.display = 'none';
+  mainButton.style.display = 'none';
+  textArea.innerHTML = "Choose your next action wisely...";
+
+  const endBtn = document.createElement('button');
+  endBtn.className = 'button interstitial-btn';
+  endBtn.innerText = 'Loot rewards, proceed to the DAWN!';
+  endBtn.disabled = true;
+
+  const contBtn = document.createElement('button');
+  contBtn.className = 'button interstitial-btn';
+  contBtn.innerText = 'Continue deeper into the NIGHT...';
+  contBtn.disabled = true;
+
+  container.appendChild(endBtn);
+  container.appendChild(contBtn);
+
+  let cooldown = 1;
+  const interval = setInterval(() => {
+    cooldown--;
+    if (cooldown <= 0) {
+      endBtn.disabled = false;
+      contBtn.disabled = false;
+      endBtn.classList.add('active');
+      contBtn.classList.add('active');
+      clearInterval(interval);
+    }
+  }, 1000);
+
+  endBtn.addEventListener('click', () => {
+    endBtn.remove(); contBtn.remove();
+    goToDawn(true);
+  });
+
+  contBtn.addEventListener('click', () => {
+    endBtn.remove(); contBtn.remove();
+    nightStep++;
+    slot++;
+    updateUI();
+  });
+}
+
+/* Deep of Night */
+function showDeepOfNight() {
+  phaseMode = 'deep';
+  setContainerTheme('night');
+  dayLabel.innerText = `The Deep Of The ${ordinal(cycle)} Night`;
+  slotLabel.innerText = "[17]";
+  textArea.innerHTML = "Congratulations, you have survived the night...";
+
+  checkboxesDiv.innerHTML = '';
+  const lootBtn = document.createElement('div');
+  lootBtn.className = 'checkbox';
+  lootBtn.innerText = 'Loot the rewards!!';
+
+  const levelBtn = document.createElement('div');
+  levelBtn.className = 'checkbox';
+  levelBtn.innerText = 'Everyone gain 1 level!';
+
+  checkboxesDiv.appendChild(lootBtn);
+  checkboxesDiv.appendChild(levelBtn);
+  checkboxesDiv.style.display = 'flex';
+
+  mainButton.innerText = 'NEXT PLAYER';
+  mainButton.disabled = true;
+  mainButton.style.display = 'block';
+
+  function checkDeep() {
+    mainButton.disabled = !(lootBtn.classList.contains('checked') && levelBtn.classList.contains('checked'));
+  }
+
+  lootBtn.addEventListener('click', () => { lootBtn.classList.toggle('checked'); checkDeep(); });
+  levelBtn.addEventListener('click', () => { levelBtn.classList.toggle('checked'); checkDeep(); });
+}
+
+/* Main button */
+function handleMainButton() {
+  if (phaseMode === 'deep') { goToDawn(true); return; }
+
+  if (!isNight) {
+    if (slot === 0) { slot = 1; updateUI(); return; }
+    if (slot < daySlots) { slot++; updateUI(); return; }
+    showDuskChoice();
+    return;
+  } else {
+    if (nightStep < nightSlots - 1) { showContinueNightInterstitial(); return; }
+    else { showDeepOfNight(); return; }
+  }
+}
+
+/* Reset */
+function resetGame() {
+  if (!confirm("Are you sure you want to reset all game data?")) return;
+  cycle = 1; slot = 0; isNight = false; nightStep = 0; phaseMode = null;
+  cleanupTransientButtons();
+  checkboxesDiv.innerHTML = '<div class="checkbox" id="actCheckbox">ACT</div><div class="checkbox" id="mapCheckbox">REVEAL</div>';
+  actCheckbox = document.getElementById('actCheckbox');
+  mapCheckbox = document.getElementById('mapCheckbox');
+  actCheckbox.addEventListener('click', toggleCheckbox);
+  mapCheckbox.addEventListener('click', toggleCheckbox);
+  actCheckbox.classList.remove('checked');
+  mapCheckbox.classList.remove('checked');
+  checkboxesDiv.style.display = 'none';
+  dayLabel.innerText = "DAWN of Cycle 1";
+  slotLabel.innerText = "[0]";
+  textArea.innerHTML = "All players gain <strong>one level!</strong> <br>All players regain all <strong>light mana!</strong>";
+  mainButton.innerText = "CONTINUE";
+  mainButton.disabled = false;
+  mainButton.style.display = 'block';
+  setContainerTheme('day');
+}
+
+/* Attach listeners + init */
+mainButton.addEventListener('click', handleMainButton);
+actCheckbox.addEventListener('click', toggleCheckbox);
+mapCheckbox.addEventListener('click', toggleCheckbox);
+updateUI();
+</script>
+
+</body>
+</html>
