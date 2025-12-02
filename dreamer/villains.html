@@ -1,0 +1,508 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Friends - DEANSand</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: #1a1a2e; /* Fallback if video doesn't load */
+      font-family: Georgia, serif;
+    }
+
+    /* VIDEO BACKGROUND */
+    .video-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .video-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+      filter: blur(2px) brightness(0.95) contrast(1.1);
+      opacity: 0.99;
+      pointer-events: none;
+      transition: transform 0.3s ease;
+    }
+
+    /* Return button */
+    .return-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: white;
+      color: black;
+      padding: 10px 18px;
+      border-radius: 5px;
+      text-decoration: none;
+      z-index: 2000;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .return-button:hover {
+      background: red;
+      color: white;
+    }
+
+    /* Ensure content is above video */
+    .game-container,
+    .result-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ============================================
+       GAME CONTAINER - Selection Phase
+       ============================================ */
+    .game-container {
+      width: 100%;
+      min-height: 100vh;
+      padding-top: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cards-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      padding: 2%;
+    }
+
+    /* Card slot - 30% width, aspect ratio preserved */
+    .card-slot {
+      width: 30%;
+      aspect-ratio: 1218 / 1698;
+      position: relative;
+    }
+
+    .card {
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+      perspective: 1200px;
+      position: relative;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s ease;
+      position: relative;
+    }
+
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 36px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.35);
+      overflow: hidden;
+      background: #222;
+    }
+
+    .card-back {
+      transform: rotateY(0deg);
+    }
+
+    .card-front {
+      transform: rotateY(180deg);
+      background: #fff;
+    }
+
+    .card-face img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ============================================
+       RESULT PHASE - Card + Floating Text
+       ============================================ */
+    .result-wrapper {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+      padding: 80px 2% 40px 2%;
+    }
+
+    .result-wrapper.active {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 3%;
+    }
+
+    /* Result card - 30% width, floats left */
+    .result-card {
+      width: 30%;
+      aspect-ratio: 1218 / 1698;
+      flex-shrink: 0;
+    }
+
+    .result-card .card {
+      width: 100%;
+      height: 100%;
+      cursor: default;
+    }
+
+    /* Floating text card - floats right of the card */
+    .floating-text-card {
+      flex: 1;
+      min-width: 300px;
+      max-width: 55%;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .floating-text-card .char-name {
+      font-size: clamp(24px, 3vw, 36px);
+      color: #333;
+      margin: 0 0 20px 0;
+    }
+
+    .floating-text-card .char-desc {
+      font-size: clamp(15px, 1.6vw, 18px);
+      line-height: 1.8;
+      color: #444;
+      margin: 0;
+    }
+
+    /* Fade out animation for non-selected cards */
+    .fade-out {
+      animation: fadeAway 0.4s ease forwards;
+      pointer-events: none;
+    }
+
+    @keyframes fadeAway {
+      from { opacity: 1; transform: scale(1); }
+      to   { opacity: 0; transform: scale(0.7); }
+    }
+
+    /* Selected card - fixed position for animation */
+    .card.selected {
+      position: fixed !important;
+      z-index: 1000;
+      pointer-events: none;
+      transition: left 0.8s cubic-bezier(0.22, 0.9, 0.34, 1),
+                  top 0.8s cubic-bezier(0.22, 0.9, 0.34, 1),
+                  width 0.6s ease,
+                  height 0.6s ease;
+    }
+
+    /* ============================================
+       VERTICAL MODE (< 700px)
+       Cards height = 30% of viewport, stack vertically
+       ============================================ */
+    @media (max-width: 700px) {
+      .game-container {
+        align-items: flex-start;
+        padding-top: 80px;
+      }
+
+      .cards-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        padding: 3%;
+      }
+
+      /* In vertical mode: height = 30vh, width auto-calculated */
+      .card-slot {
+        width: auto;
+        height: 30vh;
+        aspect-ratio: 1218 / 1698;
+      }
+
+      /* Result wrapper stacks vertically */
+      .result-wrapper.active {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 80px 5% 40px 5%;
+      }
+
+      /* Result card - height limited to 40vh in vertical mode */
+      .result-card {
+        width: auto;
+        height: 40vh;
+        aspect-ratio: 1218 / 1698;
+      }
+
+      /* Text card goes below, full width, scrollable */
+      .floating-text-card {
+        width: 90%;
+        max-width: none;
+        min-width: auto;
+        max-height: none;
+        overflow-y: visible;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- VIDEO BACKGROUND -->
+  <div class="video-wrapper">
+    <video class="video-bg" autoplay muted loop playsinline>
+      <source src="../media/138556-769988117_medium.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <a class="return-button" href="../dreamer.html">Return To Dreaming</a>
+
+  <!-- SELECTION PHASE -->
+  <div class="game-container" id="gameContainer">
+    <div class="cards-row" id="cardsRow">
+      <div class="card-slot">
+        <div class="card" id="card1">
+          <div class="card-inner">
+            <div class="card-face card-back">
+              <img id="back1" src="../P986/cards/backs/020_back.webp" alt="Card Back">
+            </div>
+            <div class="card-face card-front">
+              <img id="front1" src="../P986/cards/fronts/020.webp" alt="Card Front">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-slot">
+        <div class="card" id="card2">
+          <div class="card-inner">
+            <div class="card-face card-back">
+              <img id="back2" src="../P986/cards/backs/020_back.webp" alt="Card Back">
+            </div>
+            <div class="card-face card-front">
+              <img id="front2" src="../P986/cards/fronts/020.webp" alt="Card Front">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-slot">
+        <div class="card" id="card3">
+          <div class="card-inner">
+            <div class="card-face card-back">
+              <img id="back3" src="../P986/cards/backs/020_back.webp" alt="Card Back">
+            </div>
+            <div class="card-face card-front">
+              <img id="front3" src="../P986/cards/fronts/020.webp" alt="Card Front">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT PHASE -->
+  <div class="result-wrapper" id="resultWrapper">
+    <div class="result-card" id="resultCard"></div>
+    <div class="floating-text-card" id="floatingText">
+      <h2 class="char-name" id="charName"></h2>
+      <p class="char-desc" id="charDesc"></p>
+    </div>
+  </div>
+
+  <script>
+  const characterData = {
+   "000": { name: "Hitomi — Hume — Aloof Sorceress", description: "Knowledge of Jade Tech and Empire, soulgems and distilleries. Aware of far-off planes and future events. Penchant for lies and thievery. Her irreverence waxes and wanes with the moon. Occasionally speaks and moves as if puppeted by an unseen master. Prefers whimsy; hates seriousness." },
+    "001": { name: "Tsubasa — Hume — Tactician", description: "Legendary warmaster and politician. Vast influence and top rank. Hesitant to share information. Master manipulator. Something surprising lay behind those eyes... A laugh said to enchant all. Values thoughtfulness." },
+    "002": { name: "Tress Bien — Wayward Hume — Hotheaded Mage", description: "Commands a band of rogues. Knowledge of politics. Freedom fighter. Expert in keys and traps. Collector of trinkets and jewellery. ...And what does she do? Her best. Boastful; egotistical; vain." },
+    "003": { name: "Dante Alimor — Hume — Slayer", description: "A legend among the slayer community. Knowledge of killing beasts, monsters, and more. Collector of weapons and artifacts. Part-time detective. Mysterious, seeks challenge." },
+    "004": { name: "Evelynn — Hume — Sorceress", description: "Knowledge of nature, blood, moon and worm sorcery. Politician, limited influence. Mysterious, dangerous. Drinker. Determined to carve her legacy across the world. Driven. Yearns for dominion." },
+    "005": { name: "Flare vey Byornn — Hume — Mageknight", description: "Knowledge of religious stories. Masterful in combat and sorcery. High ranking, powerful family. Can abate friends madness. Her smile is as powerful as she is. Values strength, kindness." },
+    "006": { name: "Guy — Sapphire Hume — Scoundrel", description: "Loyalty to crew, gold, contracts. Influential and well-known to specific people and places. Specialist with tools and explosives. Clever. Enigmatic. Beguiling. Values money and freedom." },
+    "007": { name: "Hector Havel — Hume — Diplomat", description: "Cult-leader. Knowledge is current. Wealthy and well-connected. High influence and charisma. Discard once during the night. Charmed by your eyes, the ears fail to hear the nature behind his words... Prefers obedience and worship." },
+    "008": { name: "Jiu-lin Fan — Jadian Hume — Trader", description: "Knowledge of almost everything; exchanges information for coin. Items and trinkets for sale vary upon revisit. Travels a lot. Shell break out of the endless stone cities one day. Then, shell be free. Values money and a good deal." },
+    "009": { name: "Shang Tian — Jadian Hume — Hunter", description: "Dauntless. Loyal contract killer. Skilled marksman, close-quarters-combat specialist. Quiet, prefers gestures to speech. Great shot. Terrible diction. Needs a target and a reason." },
+    "010": { name: "Marco — Hume — Scoundrel", description: "Knowledge of history, rumours, fables and fairytales. Seeks adventure and hedonism. Lucky coward. Marco, Marco, Marco... What trouble have you gotten yourself into now, Marco? Aloof; romantic. Enjoys music." },
+    "011": { name: "Lumiere — Topazian Hume — Mage Scholar", description: "Knowledge of history, spells. Middling rank and royalty. Moderate wealth and influence. Spells always gain favour. Knowledgeable when he cares to be. Values knowledge and intellect." },
+    "012": { name: "Anjali — Opalian Anim — Mist Scholar", description: "Seeks to gather her people, and others with her condition. Knowledge of mist and worms. Performs moonlight rituals. Appears wormridden; nigh any symptoms. Prefers calm and quiet." },
+    "013": { name: "Chinara Ekine — Opalian Hume — Politician", description: "Often styles her hair with accessories. Middling rank and royalty. Moderate wealth. Moderate influence. Seeks cities and governments to join the Opal Cities. Eloquent, as is written in papers. Enjoys banter and teasing." },
+    "014": { name: "Ohm — Anim — Historian", description: "Loosely associates with the Crimson Cause. Disdain for mages and royals. Connections with Anim folk. Wants something from you... Takes some understanding. Nods, disrespectingly. Easily rebuts everything. Grumpy, mean, prejudiced, unless..." },
+    "015": { name: "Jon Quixote — Hume — Adventurer", description: "Legendary amongst inns, taverns, brothels, and guilds. Slayer of monsters and bedmates. Legendary luck. Ragged and rough, smells like mossy waterfalls. Rumoured to be blessed. Enjoys drink, revelry, slaying." },
+    "016": { name: "Naya — Wormridden Child — Engineer", description: "Innate knowledge of mechanical objects, equipment. Strangely strong, tireless. Unaffiliated with any factions. Never meets her gaze, as the eyes are oft fixated upon on spinning, ticking, clicking. Innocent and inquisitive." },
+    "017": { name: "Million Redgate — Hume — Revolutionary", description: "Suffers from madness. Heroic aura, strong conviction. If you know what I know, you will do what I do. Seeks truth, charismatic." },
+    "018": { name: "Captain Thiffany — Sapphire Anim — Seafarer", description: "Courageous, adorable. Can sail any ship. Excellent navigator, famous and welcomed at any port. Replay any day card in the night. Put er there and welcome aboard! Self-conscious and very swoonable." },
+    "019": { name: "The Courier — Moon Anim — Porter", description: "Neutral entity, delivers anything and everything, anywhere and everywhere. No matter what. Must be paid for all services. Sign here please. Uncaring. Ambivalent. Aloof." }
+  };
+  
+
+  function getRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function formatCardNumber(num) {
+    return num.toString().padStart(3, '0');
+  }
+
+  function extractIDFromSrc(src) {
+    const match = src.match(/(\d{3})\.webp$/);
+    return match ? match[1] : null;
+  }
+
+  function isVerticalMode() {
+    return window.innerWidth <= 700;
+  }
+
+  let chosenAlready = false;
+
+  function initializeCards() {
+    const used = new Set();
+    for (let i = 1; i <= 3; i++) {
+      let num;
+      do { num = getRandomNumber(0, 19); } while (used.has(num));
+      used.add(num);
+      const formatted = formatCardNumber(num);
+      document.getElementById(`back${i}`).src = `../P986/cards/backs/${formatted}_back.webp`;
+      document.getElementById(`front${i}`).src = `../P986/cards/fronts/${formatted}.webp`;
+      const card = document.getElementById(`card${i}`);
+      card.dataset.cardNumber = formatted;
+      card.classList.remove('flipped', 'fade-out');
+    }
+    // Reset UI
+    document.getElementById('gameContainer').style.display = '';
+    document.getElementById('resultWrapper').classList.remove('active');
+    document.getElementById('resultCard').innerHTML = '';
+    chosenAlready = false;
+  }
+
+  function selectCard(cardEl) {
+    if (chosenAlready) return;
+    chosenAlready = true;
+
+    // Fade out other cards
+    const allCards = document.querySelectorAll('.card');
+    allCards.forEach(card => {
+      if (card !== cardEl) {
+        card.classList.add('fade-out');
+      }
+    });
+
+    // Get starting position
+    const startRect = cardEl.getBoundingClientRect();
+
+    // Calculate target position (left side, vertically centered)
+    let targetLeft, targetTop, targetWidth, targetHeight;
+    if (isVerticalMode()) {
+      // Vertical mode: center-top
+      targetWidth = window.innerHeight * 0.4 * (1218 / 1698); // 40vh height, maintain aspect ratio
+      targetHeight = window.innerHeight * 0.4;
+      targetLeft = (window.innerWidth - targetWidth) / 2;
+      targetTop = 90;
+    } else {
+      // Desktop: left side, 30% width
+      targetWidth = window.innerWidth * 0.30;
+      targetHeight = targetWidth * (1698 / 1218);
+      targetLeft = window.innerWidth * 0.05;
+      targetTop = (window.innerHeight - targetHeight) / 2;
+    }
+
+    // Set initial fixed position (current location)
+    cardEl.style.position = 'fixed';
+    cardEl.style.left = startRect.left + 'px';
+    cardEl.style.top = startRect.top + 'px';
+    cardEl.style.width = startRect.width + 'px';
+    cardEl.style.height = startRect.height + 'px';
+    cardEl.style.margin = '0';
+    cardEl.classList.add('selected');
+
+    // Move card to body for proper fixed positioning
+    document.body.appendChild(cardEl);
+
+    // Animate to target position
+    requestAnimationFrame(() => {
+      cardEl.style.left = targetLeft + 'px';
+      cardEl.style.top = targetTop + 'px';
+      cardEl.style.width = targetWidth + 'px';
+      cardEl.style.height = targetHeight + 'px';
+    });
+
+    // Flip card after slide animation
+    setTimeout(() => {
+      cardEl.classList.add('flipped');
+    }, 600);
+
+    // Get character data
+    const frontImg = cardEl.querySelector('.card-front img');
+    const id = extractIDFromSrc(frontImg.src);
+    const data = characterData[id] || { name: 'Unknown', description: 'No data available.' };
+
+    // Transition to result view after animations complete
+    setTimeout(() => {
+      // Hide game container and animated card
+      document.getElementById('gameContainer').style.display = 'none';
+      cardEl.style.display = 'none';
+
+      // Clone the card into result area
+      const resultCard = document.getElementById('resultCard');
+      const cardClone = cardEl.cloneNode(true);
+      cardClone.classList.remove('selected', 'fade-out');
+      cardClone.classList.add('flipped');
+      cardClone.style.cssText = ''; // Clear inline styles
+      cardClone.style.cursor = 'default';
+      resultCard.innerHTML = '';
+      resultCard.appendChild(cardClone);
+
+      // Set text content
+      document.getElementById('charName').textContent = data.name;
+      document.getElementById('charDesc').textContent = data.description;
+
+      // Show result wrapper
+      document.getElementById('resultWrapper').classList.add('active');
+    }, 1400);
+  }
+
+  function addCardListeners() {
+    const cards = document.querySelectorAll('#gameContainer .card');
+    cards.forEach(card => {
+      card.addEventListener('click', () => selectCard(card));
+    });
+  }
+
+  window.addEventListener('load', () => {
+    initializeCards();
+    addCardListeners();
+  });
+  </script>
+</body>
+</html>

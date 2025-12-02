@@ -150,6 +150,7 @@ body {
 .pool-1 { color: #ffd700; font-style: italic; }
 .pool-2 { color: #98fb98; font-style: italic; }
 .pool-3 { color: #dda0dd; font-style: italic; }
+.pool-4 { color: #ff69b4; font-style: italic; }
 </style>
 
 </head>
@@ -216,136 +217,164 @@ const mainTextOptions = {
   ],
   2: [
     { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "Choose wisely - your actions have consequences.", base: 0, rate: 1 },
-    { text: "The shadows grow stronger each day.", base: 0, rate: 1 }
+    { text: "You may play any card. If you play an event, regain 1 life immediately.", base: 0, rate: 1 },
+    { text: "You may play any card. If you play a discovery, gain 1 coin.", base: 0, rate: 1 }
   ],
   3: [
     { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "You must play a B or C card.", base: 0, rate: 1 },
-    { text: "Strategic planning becomes more important.", base: 0, rate: 1 }
+    { text: "Gain 1 empower if you play a B or C card.", base: 0, rate: 1 },
+    { text: "You may play any card. If all cards played so far are the same type, everyone regains 3 life.", base: 0, rate: 1 }
   ],
   4: [
     { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "Adventure cards provide crucial advantages.", base: 0, rate: 1 },
-    { text: "The cost of exploration increases.", base: 0, rate: 1 }
+    { text: "You may play any card. If you begin a combat encounter gain 1 empower.", base: 0, rate: 1 },
+    { text: "You may play any card. If you have no empower, lose 1 life.", base: 0, rate: 1 }
   ],
   5: [
     { text: "You may play any card.", base: 100, rate: -2 },
     { text: "You must play a B or C card.", base: 0, rate: 1 },
-    { text: "Time becomes a precious resource.", base: 0, rate: 1 }
+    { text: "You may play any card. Flip a coin: if heads gain 1 coin, if tails lose 1 coin.", base: 0, rate: 1 }
   ],
   6: [
     { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "Powerful abilities unlock at higher levels.", base: 0, rate: 1 },
-    { text: "The night draws ever closer.", base: 0, rate: 1 }
+    { text: "You must play a B or C card. Add 1 to the loot pile.", base: 0, rate: 1 },
+    { text: "You may play any card. If you play a B card, remove all your empower and add that many coins to the loot pile.", base: 0, rate: 1 }
   ],
   7: [
     { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "You must play a B or C card.", base: 0, rate: 1 },
-    { text: "Survival requires sacrifice.", base: 0, rate: 1 }
+    { text: "You must play a B card.", base: 0, rate: 1 },
+    { text: "You must play a A card.", base: 0, rate: 1 }
   ],
   8: [
     { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "The final challenges approach.", base: 0, rate: 1 },
-    { text: "Every choice echoes through eternity.", base: 0, rate: 1 }
+    { text: "You may play any card. If you have no coins, lose 1 madness.", base: 0, rate: 1 },
+    { text: "You may play any card. If you have more madness than coins, lose 1 life.", base: 0, rate: 1 }
   ],
   9: [
     { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "Destiny awaits the bold.", base: 0, rate: 1 },
-    { text: "The end draws near - be prepared.", base: 0, rate: 1 }
+    { text: "You may play any card. If you have a buddy, regain 1 life.", base: 0, rate: 1 },
+    { text: "You may play any card. If you have a blessing, regain 1 stamina.", base: 0, rate: 1 }
   ],
   10: [
     { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "The ultimate test begins.", base: 0, rate: 1 },
-    { text: "All paths converge to the same fate.", base: 0, rate: 1 }
+    { text: "You may play any card. Regain 1 life per relationship rank 6 or higher.", base: 0, rate: 1 },
+    { text: "You may play any card. Add 1 coin to the loot pile per relationship rank 5 or lower.", base: 0, rate: 1 }
   ],
   11: [
-    { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "You must play a B or C card.", base: 0, rate: 1 },
-    { text: "The cycle's end approaches rapidly.", base: 0, rate: 1 }
+    { text: "You must play a B or C card.", base: 100, rate: -2 },
+    { text: "You must play a B card.", base: 0, rate: 1 },
+    { text: "You must play a C card.", base: 0, rate: 1 }
   ]
 };
-
 
 // Night main text options (different from day)
 const nightMainTextOptions = {
   12: [
     { text: "You must play a B card. <br><i>Add +1 coin to reward pile.</i>", base: 100, rate: -2 },
-    { text: "Darkness consumes the light of hope.", base: 0, rate: 1 },
-    { text: "The shadows whisper of forgotten secrets.", base: 0, rate: 1 }
+    { text: "You must play a B card. <br><i>Add +2 coins to reward pile.</i>", base: 0, rate: 1 },
+    { text: "You must play a B card. <br><i>Add no coins to reward pile.</i>", base: 0, rate: 1 }
   ],
   13: [
     { text: "You must play a C card. <br><i>Double reward pile.</i>", base: 100, rate: -2 },
-    { text: "Fight cards become perilous in darkness.", base: 0, rate: 1 },
-    { text: "Courage wavers under the starless sky.", base: 0, rate: 1 }
+    { text: "You must play a C card. <br><i>Add +1 coin to reward pile.</i>", base: 0, rate: 1 },
+    { text: "You must play a C card. <br><i>An eerie howl creeps across the horizon...</i>", base: 0, rate: 1 }
   ],
   14: [
     { text: "You must play a B card. <br><i>Double reward pile.</i>", base: 100, rate: -2 },
-    { text: "Camp cards may be your only sanctuary.", base: 0, rate: 1 },
-    { text: "The night devours the unprepared.", base: 0, rate: 1 }
+    { text: "You must play a B card. <br><i>Add +1 coin to reward pile.</i>", base: 0, rate: 1 },
+    { text: "You must play a B card. <br><i>A foul stench creeps through the air...</i>", base: 0, rate: 1 }
   ],
   15: [
     { text: "You must play a C card. <br><i>Double reward pile.</i>", base: 100, rate: -2 },
-    { text: "Time grows short in the eternal night.", base: 0, rate: 1 },
-    { text: "Every moment could be your last.", base: 0, rate: 1 }
+    { text: "You must play a C card. <br><i>Add +1 coin to reward pile.</i>", base: 0, rate: 1 },
+    { text: "You must play a C card. <br><i>Chills bite at the hairs on your flesh...</i>", base: 0, rate: 1 }
   ],
   16: [
     { text: "You must play a B card. <br><i>Double reward pile.</i>", base: 100, rate: -2 },
-    { text: "The final confrontation approaches.", base: 0, rate: 1 },
-    { text: "Steel your resolve for what comes next.", base: 0, rate: 1 }
+    { text: "You must play a B card. <br><i>Add +1 coin to reward pile.</i>", base: 0, rate: 1 },
+    { text: "You must play a B card. <br><i>Shadows beckon at the edge of your vision...</i>", base: 0, rate: 1 }
   ],
   17: [
     { text: "You must play a C card. <br><i>The night coils and twists, the end is near...</i>", base: 100, rate: -2 },
-    { text: "The ultimate darkness awaits.", base: 0, rate: 1 },
-    { text: "Face your destiny or flee into the void.", base: 0, rate: 1 }
+    { text: "You must play a C card. <br><i>The night air sneers, knowing you intend to return...</i>", base: 0, rate: 1 },
+    { text: "You must play a C card. <br><i>The night coils and twists, the end is near...</i>", base: 0, rate: 1 }
   ]
 };
 
-
-// Flavor text pools (Day vs Night) - Independent dice rolls
+// Flavor text pools (Day vs Night) - 5 Pools × 5 Texts each
 const flavorPools = {
   day: {
-    0: [ // Hints and basic mechanics
-      { text: "💡 <span class='pool-0'>Camp cards provide essential resources.</span>", base: 0, rate: 1.5 },    // 0+(1.5*Cycle)
-      { text: "💡 <span class='pool-0'>B and C cards work best when combined.</span>", base: 0, rate: 1.2 },      // 0+(1.2*Cycle)
-      { text: "💡 <span class='pool-0'>Energy management is crucial for survival.</span>", base: 0, rate: 1.0 }   // 0+(1.0*Cycle)
+    0: [ // Hints and basic mechanics - High frequency, early game focus
+      { text: "💡 <span class='pool-0'>Camp cards provide essential resources.</span>", base: 0, rate: 1.8 },    // 0+(1.8*Cycle) - High growth
+      { text: "💡 <span class='pool-0'>B and C cards work best when combined.</span>", base: 0, rate: 1.5 },      // 0+(1.5*Cycle) - Medium-high
+      { text: "💡 <span class='pool-0'>Energy management is crucial for survival.</span>", base: 1, rate: 1.2 },  // 1+(1.2*Cycle) - Steady growth
+      { text: "💡 <span class='pool-0'>Quick thinking wins battles.</span>", base: 0, rate: 1.0 },               // 0+(1.0*Cycle) - Moderate
+      { text: "💡 <span class='pool-0'>Observation reveals hidden opportunities.</span>", base: 0, rate: 0.8 }    // 0+(0.8*Cycle) - Slower, later
     ],
-    1: [ // Strategic advice
-      { text: "🎯 <span class='pool-1'>Consider the long-term consequences of each choice.</span>", base: 0, rate: 0.8 },  // 0+(0.8*Cycle)
-      { text: "🎯 <span class='pool-1'>Resource allocation becomes more critical over time.</span>", base: 0, rate: 1.0 }, // 0+(1.0*Cycle)
-      { text: "🎯 <span class='pool-1'>Team coordination can overcome individual limitations.</span>", base: 0, rate: 1.2 } // 0+(1.2*Cycle)
+    1: [ // Strategic advice - Medium frequency, mid game focus
+      { text: "🎯 <span class='pool-1'>Consider the long-term consequences of each choice.</span>", base: 0, rate: 1.2 }, // 0+(1.2*Cycle)
+      { text: "🎯 <span class='pool-1'>Resource allocation becomes more critical over time.</span>", base: 0, rate: 1.0 },  // 0+(1.0*Cycle)
+      { text: "🎯 <span class='pool-1'>Team coordination can overcome individual limitations.</span>", base: 0, rate: 0.8 }, // 0+(0.8*Cycle)
+      { text: "🎯 <span class='pool-1'>Patience often reveals better paths.</span>", base: 2, rate: 0.6 },                   // 2+(0.6*Cycle)
+      { text: "🎯 <span class='pool-1'>Flexibility in strategy leads to victory.</span>", base: 0, rate: 0.9 }                // 0+(0.9*Cycle)
     ],
-    2: [ // Story elements
-      { text: "📖 <span class='pool-2'>Ancient wisdom speaks of cycles within cycles.</span>", base: 0, rate: 0.6 },    // 0+(0.6*Cycle)
-      { text: "📖 <span class='pool-2'>The landscape shifts with each dawn.</span>", base: 0, rate: 0.8 },             // 0+(0.8*Cycle)
-      { text: "📖 <span class='pool-2'>Legends warn of the approaching darkness.</span>", base: 0, rate: 1.0 }        // 0+(1.0*Cycle)
+    2: [ // Story elements - Low frequency, builds gradually
+      { text: "📖 <span class='pool-2'>Ancient wisdom speaks of cycles within cycles.</span>", base: 0, rate: 0.8 },          // 0+(0.8*Cycle)
+      { text: "📖 <span class='pool-2'>The landscape shifts with each dawn.</span>", base: 0, rate: 0.6 },                   // 0+(0.6*Cycle)
+      { text: "📖 <span class='pool-2'>Legends warn of the approaching darkness.</span>", base: 0, rate: 0.9 },             // 0+(0.9*Cycle)
+      { text: "📖 <span class='pool-2'>Time reveals the truth behind every mystery.</span>", base: 0, rate: 0.5 },           // 0+(0.5*Cycle)
+      { text: "📖 <span class='pool-2'>History repeats, but wisdom evolves.</span>", base: 0, rate: 0.7 }                    // 0+(0.7*Cycle)
     ],
-    3: [ // Atmospheric/mysterious
+    3: [ // Atmospheric/mysterious - Very low frequency, late game emphasis
       { text: "✨ <span class='pool-3'>The air tingles with anticipation...</span>", base: 0, rate: 0.5 },     // 0+(0.5*Cycle)
-      { text: "✨ <span class='pool-3'>Something stirs beyond the horizon.</span>", base: 0, rate: 0.7 },      // 0+(0.7*Cycle)
-      { text: "✨ <span class='pool-3'>Fate weaves its tapestry unseen.</span>", base: 0, rate: 0.9 }          // 0+(0.9*Cycle)
+      { text: "✨ <span class='pool-3'>Something stirs beyond the horizon.</span>", base: 0, rate: 0.4 },      // 0+(0.4*Cycle)
+      { text: "✨ <span class='pool-3'>Fate weaves its tapestry unseen.</span>", base: 0, rate: 0.6 },         // 0+(0.6*Cycle)
+      { text: "✨ <span class='pool-3'>The boundary between dreams and reality blurs.</span>", base: 0, rate: 0.3 }, // 0+(0.3*Cycle)
+      { text: "✨ <span class='pool-3'>Destiny whispers to those who listen.</span>", base: 0, rate: 0.7 }     // 0+(0.7*Cycle)
+    ],
+    4: [ // Advanced mechanics - Medium frequency, builds with experience
+      { text: "⚙️ <span class='pool-4'>Empower cards can turn the tide of battle.</span>", base: 0, rate: 1.1 },           // 0+(1.1*Cycle)
+      { text: "⚙️ <span class='pool-4'>Discovery cards hold secrets yet uncovered.</span>", base: 0, rate: 0.9 },          // 0+(0.9*Cycle)
+      { text: "⚙️ <span class='pool-4'>Insight reveals hidden patterns in chaos.</span>", base: 0, rate: 0.7 },            // 0+(0.7*Cycle)
+      { text: "⚙️ <span class='pool-4'>Advanced strategies emerge from mastering the basics.</span>", base: 0, rate: 0.8 }, // 0+(0.8*Cycle)
+      { text: "⚙️ <span class='pool-4'>The mechanics reward both boldness and prudence.</span>", base: 0, rate: 1.0 }       // 0+(1.0*Cycle)
     ]
   },
   night: {
-    0: [ // Night-specific hints
-      { text: "🌙 <span class='pool-0'>Shadows consume the unwary in darkness.</span>", base: 2, rate: 1.8 },      // 2+(1.8*Cycle)
-      { text: "🌙 <span class='pool-0'>Light becomes precious in the void of night.</span>", base: 1, rate: 1.5 }, // 1+(1.5*Cycle)
-      { text: "🌙 <span class='pool-0'>Night transforms all choices into risks.</span>", base: 0, rate: 1.2 }     // 0+(1.2*Cycle)
+    0: [ // Night-specific hints - Higher frequency, starts earlier
+      { text: "🌙 <span class='pool-0'>Shadows consume the unwary in darkness.</span>", base: 3, rate: 2.0 },      // 3+(2.0*Cycle) - High base + growth
+      { text: "🌙 <span class='pool-0'>Light becomes precious in the void of night.</span>", base: 2, rate: 1.8 }, // 2+(1.8*Cycle) - High
+      { text: "🌙 <span class='pool-0'>Night transforms all choices into risks.</span>", base: 1, rate: 1.5 },     // 1+(1.5*Cycle) - Medium-high
+      { text: "🌙 <span class='pool-0'>Darkness amplifies both fear and courage.</span>", base: 0, rate: 1.2 },    // 0+(1.2*Cycle) - Steady
+      { text: "🌙 <span class='pool-0'>The night tests your resolve.</span>", base: 2, rate: 1.4 }                 // 2+(1.4*Cycle) - Good base
     ],
-    1: [ // Night warnings
-      { text: "⚠️ <span class='pool-1'>The darkness judges your past actions.</span>", base: 0, rate: 1.5 },       // 0+(1.5*Cycle)
+    1: [ // Night warnings - High frequency, intensifies rapidly
+      { text: "⚠️ <span class='pool-1'>The darkness judges your past actions.</span>", base: 0, rate: 2.0 },       // 0+(2.0*Cycle)
       { text: "⚠️ <span class='pool-1'>Fear can be as dangerous as any enemy.</span>", base: 0, rate: 1.8 },       // 0+(1.8*Cycle)
-      { text: "⚠️ <span class='pool-1'>What you cannot see may yet harm you.</span>", base: 0, rate: 2.0 }        // 0+(2.0*Cycle)
+      { text: "⚠️ <span class='pool-1'>What you cannot see may yet harm you.</span>", base: 0, rate: 1.6 },        // 0+(1.6*Cycle)
+      { text: "⚠️ <span class='pool-1'>The night remembers every mistake.</span>", base: 1, rate: 1.9 },           // 1+(1.9*Cycle)
+      { text: "⚠️ <span class='pool-1'>Courage must overcome doubt in darkness.</span>", base: 0, rate: 1.7 }     // 0+(1.7*Cycle)
     ],
-    2: [ // Night lore
-      { text: "📚 <span class='pool-2'>Old tales speak of those who conquered the night.</span>", base: 0, rate: 1.0 },   // 0+(1.0*Cycle)
-      { text: "📚 <span class='pool-2'>The night has memory and seeks revenge.</span>", base: 0, rate: 1.2 },             // 0+(1.2*Cycle)
-      { text: "📚 <span class='pool-2'>Some say the night is eternal, others disagree.</span>", base: 0, rate: 1.5 }      // 0+(1.5*Cycle)
+    2: [ // Night lore - Medium frequency, story elements
+      { text: "📚 <span class='pool-2'>Old tales speak of those who conquered the night.</span>", base: 0, rate: 1.2 },   // 0+(1.2*Cycle)
+      { text: "📚 <span class='pool-2'>The night has memory and seeks revenge.</span>", base: 0, rate: 1.0 },             // 0+(1.0*Cycle)
+      { text: "📚 <span class='pool-2'>Some say the night is eternal, others disagree.</span>", base: 0, rate: 0.8 },      // 0+(0.8*Cycle)
+      { text: "📚 <span class='pool-2'>The darkest hour comes just before dawn.</span>", base: 0, rate: 1.1 },            // 0+(1.1*Cycle)
+      { text: "📚 <span class='pool-2'>Legends are born from those who survive the night.</span>", base: 0, rate: 0.9 }    // 0+(0.9*Cycle)
     ],
-    3: [ // Night atmosphere
-      { text: "🌌 <span class='pool-3'>Stars hide behind clouds of dread.</span>", base: 0, rate: 0.8 },        // 0+(0.8*Cycle)
-      { text: "🌌 <span class='pool-3'>The void between worlds grows thinner.</span>", base: 0, rate: 1.0 },    // 0+(1.0*Cycle)
-      { text: "🌌 <span class='pool-3'>Time bends in the presence of absolute darkness.</span>", base: 0, rate: 1.2 } // 0+(1.2*Cycle)
+    3: [ // Night atmosphere - Lower frequency, atmospheric focus
+      { text: "🌌 <span class='pool-3'>Stars hide behind clouds of dread.</span>", base: 0, rate: 0.9 },        // 0+(0.9*Cycle)
+      { text: "🌌 <span class='pool-3'>The void between worlds grows thinner.</span>", base: 0, rate: 0.7 },    // 0+(0.7*Cycle)
+      { text: "🌌 <span class='pool-3'>Time bends in the presence of absolute darkness.</span>", base: 0, rate: 0.6 }, // 0+(0.6*Cycle)
+      { text: "🌌 <span class='pool-3'>Silence carries its own kind of terror.</span>", base: 0, rate: 0.8 },    // 0+(0.8*Cycle)
+      { text: "🌌 <span class='pool-3'>The night sky offers no comfort to the lost.</span>", base: 0, rate: 0.5 } // 0+(0.5*Cycle)
+    ],
+    4: [ // Night mechanics - Specialized advice
+      { text: "🌟 <span class='pool-4'>Night battles favor the prepared and decisive.</span>", base: 0, rate: 1.3 },          // 0+(1.3*Cycle)
+      { text: "🌟 <span class='pool-4'>Quick actions carry greater weight in darkness.</span>", base: 0, rate: 1.1 },          // 0+(1.1*Cycle)
+      { text: "🌟 <span class='pool-4'>The night rewards those who adapt quickly.</span>", base: 0, rate: 0.9 },               // 0+(0.9*Cycle)
+      { text: "🌟 <span class='pool-4'>Strategic retreat often leads to victory.</span>", base: 0, rate: 0.8 },               // 0+(0.8*Cycle)
+      { text: "🌟 <span class='pool-4'>The night teaches lessons that daylight cannot.</span>", base: 0, rate: 1.0 }          // 0+(1.0*Cycle)
     ]
   }
 };
@@ -389,7 +418,7 @@ function getFlavorText(slotNum, isNight = false) {
   let result = "";
   
   // Each pool rolls independently - multiple texts can appear or none
-  for (let poolIndex = 0; poolIndex < 4; poolIndex++) {
+  for (let poolIndex = 0; poolIndex < 5; poolIndex++) {
     const poolTexts = pools[poolIndex];
     if (!poolTexts) continue;
     

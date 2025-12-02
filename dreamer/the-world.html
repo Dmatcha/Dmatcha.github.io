@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEANSand - The World</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+            font-family: 'Georgia', serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #4a6741 100%);
+            position: relative;
+        }
+
+        /* Video Background */
+        .video-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: brightness(0.7) contrast(1.1);
+        }
+
+        /* Main Content */
+        .main-container {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-top: 100px;
+        }
+
+        /* Header */
+        .header {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ecf0f1;
+            text-align: center;
+            z-index: 3;
+            opacity: 0;
+            animation: fadeIn 2s ease-out 0.5s forwards;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #bdc3c7;
+            opacity: 0.9;
+        }
+
+        /* Timeline Container */
+        .timeline-container {
+            position: relative;
+            margin: 100px auto 50px;
+            width: 90%;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+
+        /* Timeline Line */
+        .timeline-line {
+            position: relative;
+            height: 8px;
+            background: linear-gradient(90deg, #3498db, #e74c3c, #f39c12, #2ecc71, #9b59b6, #1abc9c);
+            border-radius: 4px;
+            margin: 50px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Timeline Segments */
+        .timeline-segment {
+            position: absolute;
+            height: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            z-index: 5;
+        }
+
+        .timeline-segment:hover {
+            transform: scaleY(1.5);
+            box-shadow: 0 0 20px currentColor;
+        }
+
+        .timeline-segment.active {
+            transform: scaleY(2);
+            box-shadow: 0 0 25px currentColor;
+        }
+
+        /* Different colors for different ages */
+        .age-first { 
+            background: #3498db;
+            left: 0%;
+            width: 15%;
+        }
+
+        .age-ancient { 
+            background: #e74c3c;
+            left: 15%;
+            width: 20%;
+        }
+
+        .age-golden { 
+            background: #f39c12;
+            left: 35%;
+            width: 18%;
+        }
+
+        .age-silver { 
+            background: #2ecc71;
+            left: 53%;
+            width: 15%;
+        }
+
+        .age-shadow { 
+            background: #9b59b6;
+            left: 68%;
+            width: 17%;
+        }
+
+        .age-current { 
+            background: #1abc9c;
+            left: 85%;
+            width: 15%;
+        }
+
+        /* Age Markers */
+        .age-marker {
+            position: absolute;
+            top: -15px;
+            transform: translateX(-50%);
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-align: center;
+            white-space: nowrap;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            z-index: 6;
+        }
+
+        .age-marker::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: currentColor;
+            border-radius: 50%;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        /* Lore Display */
+        .lore-display {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 50px auto;
+            max-width: 800px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            border: 3px solid transparent;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .lore-display.visible {
+            opacity: 1;
+            transform: translateY(0);
+            border-color: #3498db;
+        }
+
+        .lore-display h2 {
+            color: #2c3e50;
+            font-size: 2rem;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .lore-display .age-subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .lore-display p {
+            color: #34495e;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .lore-display p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            z-index: 3;
+        }
+
+        .back-btn {
+            padding: 12px 24px;
+            background: rgba(52, 73, 94, 0.9);
+            color: #ecf0f1;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 2px solid #34495e;
+        }
+
+        .back-btn:hover {
+            background: rgba(52, 73, 94, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 73, 94, 0.5);
+        }
+
+        /* Age Timeline Label */
+        .timeline-label {
+            text-align: center;
+            color: #ecf0f1;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateX(-50%) translateY(-20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(-50%) translateY(0); 
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .timeline-container { margin: 80px auto 30px; }
+            .timeline-line { margin: 30px 0; }
+            .age-marker { font-size: 0.8rem; }
+            .lore-display {
+                margin: 30px auto;
+                padding: 20px;
+            }
+            .lore-display h2 { font-size: 1.5rem; }
+            .lore-display p { font-size: 1rem; }
+        }
+
+        @media (max-width: 480px) {
+            .timeline-container {
+                padding: 0 10px;
+            }
+            .age-marker {
+                font-size: 0.7rem;
+            }
+            .lore-display {
+                margin: 20px 10px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Background -->
+    <div class="video-wrapper">
+        <video class="video-bg" autoplay muted loop playsinline>
+            <source src="media/138556-769988117_medium.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-container">
+        <a href="../dreamer.html" class="back-btn">← Back to Dream</a>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>The World</h1>
+        <p>Journey through the ages of the dream realm</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="timeline-container">
+            <div class="timeline-label">Click on any age to discover its lore</div>
+            
+            <div class="timeline-line">
+                <!-- Timeline Segments -->
+                <div class="timeline-segment age-first" data-age="first">
+                    <div class="age-marker">First Dawn</div>
+                </div>
+                <div class="timeline-segment age-ancient" data-age="ancient">
+                    <div class="age-marker">Ancient Wars</div>
+                </div>
+                <div class="timeline-segment age-golden" data-age="golden">
+                    <div class="age-marker">Golden Peace</div>
+                </div>
+                <div class="timeline-segment age-silver" data-age="silver">
+                    <div class="age-marker">Silver Dreams</div>
+                </div>
+                <div class="timeline-segment age-shadow" data-age="shadow">
+                    <div class="age-marker">Shadow Rising</div>
+                </div>
+                <div class="timeline-segment age-current" data-age="current">
+                    <div class="age-marker">Current Age</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lore Display -->
+        <div class="lore-display" id="loreDisplay">
+            <h2>The Ages of the Dream Realm</h2>
+            <p class="age-subtitle">Click on any period above to explore its history</p>
+            <p>The timeline above chronicles the major ages of our dream realm. Each era has shaped the world as we know it today, leaving behind mysteries, artifacts, and stories waiting to be discovered.</p>
+            <p>From the mystical First Dawn when the realm itself was born, through times of war and peace, prosperity and struggle, each age has contributed to the rich tapestry of our world's history.</p>
+        </div>
+    </div>
+
+    <script>
+        // Lore data for each age
+        const ageLore = {
+            first: {
+                title: "The First Dawn",
+                subtitle: "When Dreams Were Born",
+                content: `
+                    In the beginning, there was only void - endless, silent, and without form. But from this emptiness, the First Dawn emerged like a whisper becoming a song.
+                    
+                    The First Dreamer, a being of pure consciousness, dreamed the realm into existence. With each breath, mountains rose and valleys formed. With each heartbeat, the laws of reality took shape.
+                    
+                    During this age, the very air sparkled with raw creation energy. The First Dreamer molded the landscape with thoughts alone, creating floating islands, crystal seas, and forests where every tree held a different memory.
+                    
+                    The magic of this time was wild and untamed, responding to emotion rather than intention. Joy could raise mountains, while sorrow could summon floods. It was a time of infinite possibility, where the impossible was merely another word for "not yet discovered."
+                    
+                    But with creation came responsibility, and the First Dreamer soon realized that a world without structure would eventually collapse into chaos. Thus began the slow shaping of laws, the establishment of boundaries, and the gentle guidance of what would become mortal dreamers.
+                `
+            },
+            ancient: {
+                title: "The Ancient Wars",
+                subtitle: "When Titans Clashed",
+                content: `
+                    As the realm matured, powerful beings arose - the Titans of Dream and Nightmare, each commanding forces that could reshape reality with their will.
+                    
+                    The Great Schism split the ancient world into warring factions. The Dream Titans, led by Somnus the Wise, sought to bring order and peace to the realm. Their opponents, the Nightmare Lords, headed by Doloria the Destroyer, believed that only through struggle could true strength be forged.
+                    
+                    These were not mere battles of armies, but conflicts that rewrote the laws of physics. Mountains were lifted and hurled like spears. Entire seas were turned to crystal, then shattered into glittering storms. Time itself became a weapon, with some battles fought across multiple timelines simultaneously.
+                    
+                    The war raged for a thousand years, neither side able to claim decisive victory. Both sides began to realize that their eternal conflict was consuming the very essence that gave the realm life. The ancient magic that had once been plentiful began to wane.
+                    
+                    Finally, the most unlikely alliance was formed - the remaining Dream Titans and Nightmare Lords joined together to create the Compact of Eternal Balance, establishing the framework that would allow both dreams and nightmares to coexist without destroying the realm.
+                    
+                    The scars of these wars can still be seen today in the Crystallized Battlefields and the Echoing Mountains, where the sounds of ancient conflict still reverberate through time.
+                `
+            },
+            golden: {
+                title: "The Golden Peace",
+                subtitle: "The Age of Wonders",
+                content: `
+                    Born from the ashes of ancient conflict, the Golden Peace became the most prosperous era in the dream realm's history. The Compact of Eternal Balance had created stability, allowing civilization to flourish as never before.
+                    
+                    The great city-states arose during this time, each specializing in different aspects of dream magic. Luminara became the center of healing magic, where dream healers could cure both physical and spiritual ailments. Mysterion was known for its scholars and libraries, containing knowledge from across all ages.
+                    
+                    Magic academies flourished, teaching the new generation how to channel dream energy safely and effectively. The art of dream-weaving reached its peak, with master craftsmen able to create entire pocket dimensions, each with its own unique laws and wonders.
+                    
+                    It was also the age of great exploration. Dream sailors mapped the Sea of Consciousness, discovering islands that existed only during certain moon phases. The floating gardens of Aeria housed the most beautiful aerial cities, suspended by nothing more than concentrated will and careful planning.
+                    
+                    Trade flourished between the realms, with dream barges carrying exotic goods like bottled starlight, crystallized laughter, and mirrors that showed not your reflection, but your true self.
+                    
+                    The Golden Peace taught the realm that harmony was not the absence of conflict, but the presence of understanding. This lesson would prove invaluable in the darker times to come.
+                `
+            },
+            silver: {
+                title: "The Silver Dreams",
+                subtitle: "The Age of Reflection",
+                content: `
+                    As all golden ages must eventually end, the realm entered the Silver Dreams - a time of introspection and subtle magic, where the emphasis shifted from grand gestures to delicate refinements.
+                    
+                    During this era, dreamers learned to look inward rather than outward. The great libraries were replaced by personal memory vaults, where individuals collected and curated their most precious experiences. Magic became more personal, more intimate, focused on understanding rather than domination.
+                    
+                    The Silver Dreamers developed techniques for sharing dreams directly between minds, creating a new form of communication that transcended words. Empathy became a highly prized skill, and the ability to truly understand another being was considered more valuable than any treasure.
+                    
+                    Art reached new heights of expression. Dreamscapes became living paintings, where viewers could step into the artwork and experience the artist's vision from within. Music could literally move listeners through time and space, with symphonies that took audiences on journeys through memory and possibility.
+                    
+                    However, this inward focus also had its dangers. Some dreamers became so absorbed in their own inner worlds that they lost touch with reality altogether. The phenomenon of the Sleepwalking Cities - entire communities that lived in shared dreams while their physical forms remained dormant - became both a wonder and a concern.
+                    
+                    The Silver Dreams taught the realm that magic was not just about power, but about understanding. This wisdom would prove crucial when the shadows began to rise again.
+                `
+            },
+            shadow: {
+                title: "The Shadow Rising",
+                subtitle: "When Light Falters",
+                content: `
+                    The Silver Dreams ended not with war, but with a gradual dimming - as if the very light of the realm was being slowly consumed by some hungry darkness.
+                    
+                    The Shadow Rising began subtly. Dreams became darker, nightmares more frequent. Some dreamers found their abilities diminishing, while others discovered new and terrible powers they couldn't control. The shared dreams that had connected people began to fracture, leading to isolation and confusion.
+                    
+                    Scholars debate the true cause of this darkness. Some blame the natural cycling of cosmic forces, others point to the cumulative effects of centuries of dream magic use. A few whisper of an ancient entity stirring in the deep places between realities, feeding on the realm's ethereal energy.
+                    
+                    What is certain is that during this age, the realm became a place of stark contrasts. Where once there had been harmony between light and shadow, now there was only struggle. Entire regions fell under perpetual night, while others burned with perpetual day. Weather patterns became unpredictable, sometimes shifting from sunshine to storm in a single breath.
+                    
+                    The great city-states either fortified themselves against the darkness or embraced it completely, leading to a fragmentation of civilization. Some communities became paranoid isolationists, while others fell under the sway of dark cultists who promised protection in exchange for surrendering their dreams entirely.
+                    
+                    Yet even in this dark age, hope persisted. Underground networks formed, secret societies dedicated to preserving the old ways and finding new paths forward. These groups, though small, maintained the flame of knowledge and compassion that would be needed when the shadows eventually receded.
+                `
+            },
+            current: {
+                title: "The Current Age",
+                subtitle: "Finding the Balance",
+                content: `
+                    We live now in the Current Age - a time of both challenge and opportunity. The shadows of the Shadow Rising have not fully receded, but neither do they dominate the realm as they once did.
+                    
+                    Today's dreamers face a unique situation: the old magic is partially restored, but it works differently than before. The realm has learned to adapt, to flow around obstacles rather than simply smashing through them. This has created new forms of magic that are more resilient, more balanced.
+                    
+                    The great city-states have rebuilt, but they are different now - more diverse, more inclusive, more connected to the natural flow of dream energy. New forms of governance have emerged based on consensus and shared dreaming, where decisions are made not through debate but through collective unconscious exploration of possibilities.
+                    
+                    Modern dreamers possess abilities that would have seemed impossible in earlier ages. They can walk between different levels of reality, merge their consciousness with others to solve complex problems, and heal not just individuals but entire communities through shared therapeutic dreams.
+                    
+                    However, challenges remain. The Entity that may have caused the Shadow Rising still lurks somewhere in the deep places. Some of the ancient magical techniques have been lost forever. And there are still those who seek to return to the old ways, either the golden age of unlimited power or the silver age of pure reflection.
+                    
+                    The Current Age is defined by its uncertainty - and perhaps this is its greatest strength. With no single path forward, every dreamer must find their own way, creating new possibilities with each choice made. This is both terrifying and exhilarating, demanding both courage and wisdom.
+                    
+                    The future of the realm remains unwritten, and that is exactly as it should be.
+                `
+            }
+        };
+
+        let activeAge = null;
+
+        // Initialize timeline segments
+        function initializeTimeline() {
+            const segments = document.querySelectorAll('.timeline-segment');
+            
+            segments.forEach(segment => {
+                segment.addEventListener('click', () => handleAgeClick(segment));
+            });
+        }
+
+        function handleAgeClick(segment) {
+            const ageKey = segment.dataset.age;
+            const lore = ageLore[ageKey];
+            
+            // Remove active class from all segments
+            document.querySelectorAll('.timeline-segment').forEach(s => {
+                s.classList.remove('active');
+            });
+            
+            // Add active class to clicked segment
+            segment.classList.add('active');
+            
+            // Show lore information
+            showLore(lore);
+            activeAge = ageKey;
+        }
+
+        function showLore(lore) {
+            const loreDisplay = document.getElementById('loreDisplay');
+            
+            loreDisplay.innerHTML = `
+                <h2>${lore.title}</h2>
+                <p class="age-subtitle">${lore.subtitle}</p>
+                ${lore.content.split('\n\n').map(paragraph => `<p>${paragraph.trim()}</p>`).join('')}
+            `;
+            
+            loreDisplay.classList.add('visible');
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            initializeTimeline();
+        });
+    </script>
+</body>
+</html>

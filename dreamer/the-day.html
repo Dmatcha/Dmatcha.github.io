@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEANSand - The Day</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Georgia', serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            position: relative;
+        }
+
+        /* Video Background */
+        .video-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        .video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: brightness(1.2) saturate(1.3);
+        }
+
+        /* Main Content */
+        .main-container {
+            position: relative;
+            z-index: 2;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Header */
+        .header {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #2c5530;
+            text-align: center;
+            z-index: 3;
+            opacity: 0;
+            animation: fadeIn 2s ease-out 0.5s forwards;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.8), 0 0 20px rgba(255,215,0,0.6);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #4a6741;
+        }
+
+        /* Golden Ring */
+        .golden-ring-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            margin-top: 2rem;
+            opacity: 0;
+            animation: fadeInScale 2s ease-out 1s forwards;
+        }
+
+        .golden-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 400px;
+            height: 400px;
+            transform: translate(-50%, -50%);
+            border: 8px solid #ffd700;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, rgba(255,215,0,0.1) 0%, transparent 70%);
+            box-shadow: 0 0 50px rgba(255,215,0,0.4), inset 0 0 50px rgba(255,215,0,0.1);
+        }
+
+        /* Twinkling Points */
+        .twinkle-point {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #fff 0%, #ffd700 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            animation: twinkle 2s ease-in-out infinite alternate;
+            box-shadow: 0 0 20px rgba(255,215,0,0.8);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .twinkle-point:hover {
+            transform: scale(1.5);
+            box-shadow: 0 0 30px rgba(255,215,0,1), 0 0 50px rgba(255,215,0,0.6);
+            animation-duration: 0.5s;
+        }
+
+        .twinkle-point.active {
+            animation-duration: 0.3s;
+            transform: scale(1.8);
+        }
+
+        /* Position the twinkling points */
+        .point-12 { top: 10px; left: 50%; transform: translateX(-50%); }
+        .point-2 { top: 70px; right: 70px; }
+        .point-4 { top: 50%; right: 10px; transform: translateY(-50%); }
+        .point-6 { bottom: 10px; left: 50%; transform: translateX(-50%); }
+        .point-8 { top: 50%; left: 10px; transform: translateY(-50%); }
+        .point-10 { top: 70px; left: 70px; }
+        .point-center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+        /* Info Text Display */
+        .info-text {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 600px;
+            padding: 20px 30px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            border: 3px solid #ffd700;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            color: #2c5530;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+            z-index: 20;
+        }
+
+        .info-text.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .info-text h3 {
+            color: #4a6741;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .info-text p {
+            margin-bottom: 8px;
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            z-index: 3;
+        }
+
+        .back-btn {
+            padding: 12px 24px;
+            background: rgba(255,215,0,0.9);
+            color: #2c5530;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 2px solid #4a6741;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,215,0,1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,215,0,0.5);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes twinkle {
+            0% { 
+                opacity: 0.6;
+                transform: scale(1) rotate(0deg);
+            }
+            100% { 
+                opacity: 1;
+                transform: scale(1.1) rotate(180deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .golden-ring-container { width: 350px; height: 350px; }
+            .golden-ring { width: 280px; height: 280px; }
+            .twinkle-point { width: 15px; height: 15px; }
+            .info-text {
+                bottom: 50px;
+                margin: 0 20px;
+                padding: 15px 20px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .golden-ring-container { width: 300px; height: 300px; }
+            .golden-ring { width: 240px; height: 240px; }
+            .point-2 { top: 50px; right: 50px; }
+            .point-10 { top: 50px; left: 50px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Background -->
+    <div class="video-wrapper">
+        <video class="video-bg" autoplay muted loop playsinline>
+            <source src="media/138556-769988117_medium.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-container">
+        <a href="../dreamer.html" class="back-btn">← Back to Dream</a>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>The Day</h1>
+        <p>Where light illuminates truth and dreams take flight</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="golden-ring-container">
+            <div class="golden-ring"></div>
+            
+            <!-- Twinkling Points -->
+            <div class="twinkle-point point-12" data-info="12"></div>
+            <div class="twinkle-point point-2" data-info="2"></div>
+            <div class="twinkle-point point-4" data-info="4"></div>
+            <div class="twinkle-point point-6" data-info="6"></div>
+            <div class="twinkle-point point-8" data-info="8"></div>
+            <div class="twinkle-point point-10" data-info="10"></div>
+            <div class="twinkle-point point-center" data-info="center"></div>
+        </div>
+
+        <!-- Info Text Display -->
+        <div class="info-text" id="infoText">
+            <h3>Welcome to Daylight</h3>
+            <p>Click on the twinkling lights to discover the secrets of the day realm.</p>
+            <p>Each light holds wisdom about how daylight shapes the dreamscape.</p>
+        </div>
+    </div>
+
+    <script>
+        // Information data for each twinkling point
+        const dayInfo = {
+            "12": {
+                title: "The Dawn Light",
+                content: "At the highest point, dawn light pierces through the veil between sleep and waking. This is when the most profound dreams are born, filled with hope and new beginnings. Travelers who journey at this hour find their path illuminated with clarity and purpose."
+            },
+            "2": {
+                title: "The Rising Sun",
+                content: "As the sun climbs higher, its golden rays bring warmth to the dream realm's coldest corners. This energy empowers dreamers to manifest their deepest desires into reality. The light here is strongest for creating new friendships and alliances."
+            },
+            "4": {
+                title: "The Meridian Peak",
+                content: "At the sun's peak, all shadows shrink and truth becomes undeniable. This is the hour of maximum clarity, where lies dissolve and reality stabilizes. Perfect for making important decisions or seeing through deceptions that plague the realm."
+            },
+            "6": {
+                title: "The Evening Glow",
+                content: "As day transitions to evening, the light softens and takes on amber hues. This gentle illumination reveals hidden beauty in ordinary things. Dreams born here tend to be creative and artistic, filled with inspiration and gentle wisdom."
+            },
+            "8": {
+                title: "The Twilight Wisdom",
+                content: "In the space between day and night, twilight holds the memories of both. This liminal light shows glimpses of the past and hints at future possibilities. It is here that the most profound revelations about one's true nature are discovered."
+            },
+            "10": {
+                title: "The Star's First Light",
+                content: "Just as the first stars appear, day and night magic merge in perfect harmony. This rare moment allows dreamers to balance opposing forces within themselves. Those who master this time can walk between worlds with ease."
+            },
+            "center": {
+                title: "The Eternal Day",
+                content: "At the center of all light lies the source itself - pure illumination without beginning or end. This is where the dream realm's heart beats strongest, and where those pure of heart can find eternal peace. The center holds the power to heal any wound and mend any broken dream."
+            }
+        };
+
+        let activePoint = null;
+
+        // Initialize twinkling points
+        function initializePoints() {
+            const points = document.querySelectorAll('.twinkle-point');
+            
+            points.forEach(point => {
+                // Add staggered animation delays
+                const delay = Math.random() * 2;
+                point.style.animationDelay = delay + 's';
+                
+                point.addEventListener('click', () => handlePointClick(point));
+            });
+        }
+
+        function handlePointClick(point) {
+            const infoKey = point.dataset.info;
+            const info = dayInfo[infoKey];
+            
+            // Remove active class from all points
+            document.querySelectorAll('.twinkle-point').forEach(p => {
+                p.classList.remove('active');
+            });
+            
+            // Add active class to clicked point
+            point.classList.add('active');
+            
+            // Show info text
+            showInfoText(info);
+        }
+
+        function showInfoText(info) {
+            const infoText = document.getElementById('infoText');
+            
+            infoText.innerHTML = `
+                <h3>${info.title}</h3>
+                <p>${info.content}</p>
+            `;
+            
+            infoText.classList.add('visible');
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            initializePoints();
+            
+            // Show initial info after a delay
+            setTimeout(() => {
+                const infoText = document.getElementById('infoText');
+                infoText.classList.add('visible');
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

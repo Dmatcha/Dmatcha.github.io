@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEANSand - The Rules</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Georgia', serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            position: relative;
+        }
+
+        /* Video Background */
+        .video-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: 0;
+            opacity: 0.2;
+        }
+
+        .video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: brightness(1.1) contrast(0.9);
+        }
+
+        /* Main Content */
+        .main-container {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            padding: 50px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* Rules Container */
+        .rules-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            border: 3px solid #3498db;
+            margin: 20px 0;
+        }
+
+        /* Header */
+        .rules-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .rules-header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .rules-header p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        /* Rules Sections */
+        .rules-section {
+            margin-bottom: 30px;
+        }
+
+        .rules-section h2 {
+            color: #2980b9;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+
+        .rules-section h3 {
+            color: #34495e;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+
+        .rules-section p {
+            color: #2c3e50;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .rules-section ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .rules-section li {
+            color: #2c3e50;
+            line-height: 1.6;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        .highlight strong {
+            color: #2980b9;
+        }
+
+        /* Feature Box */
+        .feature-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .feature-box h3 {
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .feature-box p {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* Navigation */
+        .nav-container {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            z-index: 3;
+        }
+
+        .back-btn {
+            padding: 12px 24px;
+            background: rgba(52, 152, 219, 0.9);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 2px solid #2980b9;
+        }
+
+        .back-btn:hover {
+            background: rgba(52, 152, 219, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.5);
+        }
+
+        /* Decorative Elements */
+        .rule-number {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .rules-header h1 { font-size: 2rem; }
+            .rules-container {
+                padding: 25px;
+                margin: 10px;
+            }
+            .rules-section h2 { font-size: 1.3rem; }
+            .rules-section p, .rules-section li { font-size: 1rem; }
+            .nav-container {
+                top: 20px;
+                left: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .rules-header h1 { font-size: 1.8rem; }
+            .rules-container {
+                padding: 20px;
+            }
+            .rules-section h2 { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Background -->
+    <div class="video-wrapper">
+        <video class="video-bg" autoplay muted loop playsinline>
+            <source src="media/138556-769988117_medium.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-container">
+        <a href="../dreamer.html" class="back-btn">← Back to Dream</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="rules-container">
+            <!-- Header -->
+            <div class="rules-header">
+                <h1>The Rules of DEANSand</h1>
+                <p>A dreamer's guide to navigating the realm</p>
+            </div>
+
+            <!-- Welcome Section -->
+            <div class="rules-section">
+                <h2>Welcome, Dreamer</h2>
+                <div class="highlight">
+                    <p><strong>DEANSand</strong> is an interactive narrative experience where you explore a dreamscape through choices and interactions. There are no wrong answers, only different paths to discover.</p>
+                </div>
+            </div>
+
+            <!-- How to Play -->
+            <div class="rules-section">
+                <h2><span class="rule-number">1</span>How to Play</h2>
+                <h3>Navigation</h3>
+                <p>Begin your journey at the dreamer page, where a hexagonal grid awaits. Each hexagon represents a different aspect of the dream realm:</p>
+                <ul>
+                    <li><strong>Friends:</strong> Meet potential allies who may aid your journey</li>
+                    <li><strong>Villains:</strong> Encounter adversaries who challenge your resolve</li>
+                    <li><strong>The Day:</strong> Explore the realm's bright, inspiring aspects</li>
+                    <li><strong>The Night:</strong> Discover the hidden depths of shadow and mystery</li>
+                    <li><strong>The World:</strong> Uncover the history and lore of the realm</li>
+                    <li><strong>The Rules:</strong> This very page - your guide to understanding</li>
+                </ul>
+
+                <h3>Making Choices</h3>
+                <p>When you click on a hexagon, you'll be taken to that section's unique interface:</p>
+                <ul>
+                    <li><strong>Card Selection:</strong> Choose from three options - pick wisely, as each reveals different information</li>
+                    <li><strong>Interactive Elements:</strong> Click on twinkling lights, timeline segments, or other highlighted areas</li>
+                    <li><strong>Reading & Discovery:</strong> Some sections reveal their secrets through time and attention</li>
+                </ul>
+            </div>
+
+            <!-- Game Mechanics -->
+            <div class="rules-section">
+                <h2><span class="rule-number">2</span>Game Mechanics</h2>
+                
+                <div class="feature-box">
+                    <h3>The Dream Realm Philosophy</h3>
+                    <p>This is not a game of winning or losing, but of exploration and discovery. Every choice reveals new information, characters, and possibilities. There are no game-over states - only different stories waiting to be told.</p>
+                </div>
+
+                <h3>Character Interactions</h3>
+                <ul>
+                    <li>When you choose a character card, the unselected cards fade away as your focus narrows</li>
+                    <li>The chosen card animates to show its importance in your story</li>
+                    <li>Detailed character information appears, revealing personality, motivations, and potential quests</li>
+                    <li>Each character offers a unique perspective on the realm's nature</li>
+                </ul>
+
+                <h3>Exploration Elements</h3>
+                <ul>
+                    <li><strong>The Golden Ring:</strong> Click various points to discover how different times of day affect the realm</li>
+                    <li><strong>The Timeline:</strong> Different colored sections represent different ages - click to explore historical events</li>
+                    <li><strong>Atmospheric Elements:</strong> Some experiences unfold over time (like the letter-by-letter reveal of night text)</li>
+                </ul>
+            </div>
+
+            <!-- Story Elements -->
+            <div class="rules-section">
+                <h2><span class="rule-number">3</span>Story Elements</h2>
+                
+                <h3>Friends & Allies</h3>
+                <p>The characters you meet as Friends represent potential companions for your journey. Each has:</p>
+                <ul>
+                    <li>Unique personalities and motivations</li>
+                    <li>Individual fears and desires</li>
+                    <li>Special skills relevant to dream navigation</li>
+                    <li>Main quests they hope to accomplish</li>
+                </ul>
+
+                <h3>Villains & Challenges</h3>
+                <p>Your encounters with Villains are not necessarily about conflict, but about understanding:</p>
+                <ul>
+                    <li>Each foe has their own perspective and reasoning</li>
+                    <li>Some may become unexpected allies when understood</li>
+                    <li>Their powers and methods reveal different aspects of the dream realm's nature</li>
+                    <li>Even antagonists harbor secrets and hidden depths</li>
+                </ul>
+
+                <h3>Day & Night</h3>
+                <p>The cyclical nature of day and night represents the balance within the dream realm:</p>
+                <ul>
+                    <li><strong>Day</strong> brings clarity, hope, and manifestation of dreams</li>
+                    <li><strong>Night</strong> offers wisdom, mystery, and transformation</li>
+                    <li>Each time and season reveals different magical possibilities</li>
+                </ul>
+            </div>
+
+            <!-- Progression -->
+            <div class="rules-section">
+                <h2><span class="rule-number">4</span>Your Journey</h2>
+                
+                <div class="highlight">
+                    <p><strong>There is no final destination</strong> - the beauty of DEANSand lies in the journey itself. Return to any section at any time to discover new details or make different choices. Each exploration reveals new layers of the story.</p>
+                </div>
+
+                <h3>Creating Your Legend</h3>
+                <ul>
+                    <li>Your choices shape your understanding of the realm</li>
+                    <li>Different character selections create different narrative threads</li>
+                    <li>Combine knowledge from multiple sections to gain deeper insights</li>
+                    <li>Share your discoveries with other dreamers for richer conversations</li>
+                </ul>
+
+                <h3>Exploration Tips</h3>
+                <ul>
+                    <li>Take time to read all text - each character and lore piece contains meaningful information</li>
+                    <li>Return to sections after gaining new knowledge - you may notice details you missed</li>
+                    <li>Consider how different characters' stories might connect</li>
+                    <li>There are no time limits - explore at your own pace</li>
+                </ul>
+            </div>
+
+            <!-- Closing -->
+            <div class="rules-section">
+                <div class="feature-box">
+                    <h3>Remember</h3>
+                    <p>In the dream realm, imagination is the only limit. There are no right or wrong choices - only stories waiting to unfold. Embrace the mystery, enjoy the journey, and let the realm surprise you.</p>
+                    <p><strong>Welcome to DEANSand. Sweet dreams.</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
