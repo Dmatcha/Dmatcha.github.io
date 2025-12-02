@@ -2,7 +2,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Friends - DEANSand</title>
+  <title>Villains - DEANSand</title>
   <style>
     * {
       box-sizing: border-box;
@@ -23,7 +23,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      overflow: hidden;
+      /*overflow: hidden;*/
       z-index: 0;
       pointer-events: none;
     }
@@ -104,6 +104,8 @@
       perspective: 1200px;
       position: relative;
       transition: transform 0.3s ease;
+      border-radius: 23px;
+      /*overflow: hidden;*/
     }
 
     .card:hover {
@@ -127,9 +129,9 @@
       width: 100%;
       height: 100%;
       backface-visibility: hidden;
-      border-radius: 36px;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.35);
-      overflow: hidden;
+      border-radius: 23px;
+      box-shadow: 0 12px 30px rgba(222,20,160,0.35);
+      /*overflow: hidden;*/
       background: #222;
     }
 
@@ -188,7 +190,7 @@
       background: rgba(255, 255, 255, 0.95);
       border-radius: 16px;
       padding: 40px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
       max-height: 80vh;
       overflow-y: auto;
     }
@@ -276,6 +278,7 @@
         overflow-y: visible;
       }
     }
+    @media (min-width: 901px) {  .card-face { border-radius: 36px;  }  }
   </style>
 </head>
 <body>
@@ -344,26 +347,26 @@
 
   <script>
   const characterData = {
-   "000": { name: "Hitomi — Hume — Aloof Sorceress", description: "Knowledge of Jade Tech and Empire, soulgems and distilleries. Aware of far-off planes and future events. Penchant for lies and thievery. Her irreverence waxes and wanes with the moon. Occasionally speaks and moves as if puppeted by an unseen master. Prefers whimsy; hates seriousness." },
-    "001": { name: "Tsubasa — Hume — Tactician", description: "Legendary warmaster and politician. Vast influence and top rank. Hesitant to share information. Master manipulator. Something surprising lay behind those eyes... A laugh said to enchant all. Values thoughtfulness." },
-    "002": { name: "Tress Bien — Wayward Hume — Hotheaded Mage", description: "Commands a band of rogues. Knowledge of politics. Freedom fighter. Expert in keys and traps. Collector of trinkets and jewellery. ...And what does she do? Her best. Boastful; egotistical; vain." },
-    "003": { name: "Dante Alimor — Hume — Slayer", description: "A legend among the slayer community. Knowledge of killing beasts, monsters, and more. Collector of weapons and artifacts. Part-time detective. Mysterious, seeks challenge." },
-    "004": { name: "Evelynn — Hume — Sorceress", description: "Knowledge of nature, blood, moon and worm sorcery. Politician, limited influence. Mysterious, dangerous. Drinker. Determined to carve her legacy across the world. Driven. Yearns for dominion." },
-    "005": { name: "Flare vey Byornn — Hume — Mageknight", description: "Knowledge of religious stories. Masterful in combat and sorcery. High ranking, powerful family. Can abate friends madness. Her smile is as powerful as she is. Values strength, kindness." },
-    "006": { name: "Guy — Sapphire Hume — Scoundrel", description: "Loyalty to crew, gold, contracts. Influential and well-known to specific people and places. Specialist with tools and explosives. Clever. Enigmatic. Beguiling. Values money and freedom." },
-    "007": { name: "Hector Havel — Hume — Diplomat", description: "Cult-leader. Knowledge is current. Wealthy and well-connected. High influence and charisma. Discard once during the night. Charmed by your eyes, the ears fail to hear the nature behind his words... Prefers obedience and worship." },
-    "008": { name: "Jiu-lin Fan — Jadian Hume — Trader", description: "Knowledge of almost everything; exchanges information for coin. Items and trinkets for sale vary upon revisit. Travels a lot. Shell break out of the endless stone cities one day. Then, shell be free. Values money and a good deal." },
-    "009": { name: "Shang Tian — Jadian Hume — Hunter", description: "Dauntless. Loyal contract killer. Skilled marksman, close-quarters-combat specialist. Quiet, prefers gestures to speech. Great shot. Terrible diction. Needs a target and a reason." },
-    "010": { name: "Marco — Hume — Scoundrel", description: "Knowledge of history, rumours, fables and fairytales. Seeks adventure and hedonism. Lucky coward. Marco, Marco, Marco... What trouble have you gotten yourself into now, Marco? Aloof; romantic. Enjoys music." },
-    "011": { name: "Lumiere — Topazian Hume — Mage Scholar", description: "Knowledge of history, spells. Middling rank and royalty. Moderate wealth and influence. Spells always gain favour. Knowledgeable when he cares to be. Values knowledge and intellect." },
-    "012": { name: "Anjali — Opalian Anim — Mist Scholar", description: "Seeks to gather her people, and others with her condition. Knowledge of mist and worms. Performs moonlight rituals. Appears wormridden; nigh any symptoms. Prefers calm and quiet." },
-    "013": { name: "Chinara Ekine — Opalian Hume — Politician", description: "Often styles her hair with accessories. Middling rank and royalty. Moderate wealth. Moderate influence. Seeks cities and governments to join the Opal Cities. Eloquent, as is written in papers. Enjoys banter and teasing." },
-    "014": { name: "Ohm — Anim — Historian", description: "Loosely associates with the Crimson Cause. Disdain for mages and royals. Connections with Anim folk. Wants something from you... Takes some understanding. Nods, disrespectingly. Easily rebuts everything. Grumpy, mean, prejudiced, unless..." },
-    "015": { name: "Jon Quixote — Hume — Adventurer", description: "Legendary amongst inns, taverns, brothels, and guilds. Slayer of monsters and bedmates. Legendary luck. Ragged and rough, smells like mossy waterfalls. Rumoured to be blessed. Enjoys drink, revelry, slaying." },
-    "016": { name: "Naya — Wormridden Child — Engineer", description: "Innate knowledge of mechanical objects, equipment. Strangely strong, tireless. Unaffiliated with any factions. Never meets her gaze, as the eyes are oft fixated upon on spinning, ticking, clicking. Innocent and inquisitive." },
-    "017": { name: "Million Redgate — Hume — Revolutionary", description: "Suffers from madness. Heroic aura, strong conviction. If you know what I know, you will do what I do. Seeks truth, charismatic." },
-    "018": { name: "Captain Thiffany — Sapphire Anim — Seafarer", description: "Courageous, adorable. Can sail any ship. Excellent navigator, famous and welcomed at any port. Replay any day card in the night. Put er there and welcome aboard! Self-conscious and very swoonable." },
-    "019": { name: "The Courier — Moon Anim — Porter", description: "Neutral entity, delivers anything and everything, anywhere and everywhere. No matter what. Must be paid for all services. Sign here please. Uncaring. Ambivalent. Aloof." }
+    "020": { name: "Angelo Adair, The Distillery Baron", description: "Lead developer and engineer of soulgem distilleries; maniac. Empowers with soulgems. I am the architect. Every step I take brings us closer to godhood." },
+    "021": { name: "Byron vey Byornn, The Commander", description: "Commander of mageknight legion. Famous family name. Paranoid, delusions of grandeur. Extreme strength, basic light sorcery. We will have peace, order, justice in my lifetime. Ill raise that sun myself." },
+    "022": { name: "Ceng Zhangyi, The Artifice Scholar", description: "Expert in mixed martial arts; researches artifacts and Jade Empire. Jade Empire supremacist. Uses basic artifacts. Technology is our salvation. The answers, the truth of it all." },
+    "023": { name: "Daisuke Daioh, The Artificer", description: "Seasoned veteran of anti-rebellion battles; protects the status-quo. Elitism; royal supremacist. Uses gemstone powered artifacts. Find something that makes you powerful and stick to it." },
+    "024": { name: "Elizabeth Einsborough, The Royal Politician", description: "Founder and financier of sorcery academies; human trafficker. Retired sorceress. Well-connected. May use advanced magicks. Ha! My time is worth more than yours, I guarantee it; pay up or get out." },
+    "025": { name: "Fal, The Shaman", description: "Protector of Nyx. Superstitious, practices rituals and sacrifice; alchemist and hedonist. May use moon, blood, mist magicks. Ill carve you, make you mine forever. Stop squirming, little doll." },
+    "026": { name: "Gary Gigantes, The Smuggler", description: "Drug baron. Ruthless, cunning. Financier of Opal Cities United. Prefers run-and-gun guerilla tactics. Old, but proficient fencer; crossbows. Ive got an empire of my own to keep afloat. You understand, dont you?" },
+    "027": { name: "Hyunjin Halvela, The Bountyhunter", description: "Expert improviser; legendary killer. Moves instantly when unseen. Knows when to withdraw. May evade any attack; counterattack. Nothing personal. Hush." },
+    "028": { name: "Isaac Ivanson, The Moonworm Mage", description: "Longest surviving worm host. Insane. Talks to himself, communicates with moon and other entities. May use advanced moon, mist, worm spells; can summon wormridden things. If you knew what I knew, youd be me!" },
+    "029": { name: "JJ The Beast, The Boss", description: "Powerful family of multiple industries. Wealthy. Cunning. Power increases as health decreases. Extreme speed. Melee doublestrike. Bizarre? Golden." },
+    "030": { name: "Kleo, The Politician", description: "Strives for equal rights for the Anim people-- at any cost. Master manipulator, cunning. Moves at every possible moment. I spend my time playing their games so they fall easily into mine." },
+    "031": { name: "Li, The Fanatic", description: "Fanatic to the Crimson Cause. Expert in devilarms; firearms. Spreads gospel, recruits others. Must always resolve when acting. By my hand, it shall be done; the Crimson King wills it so." },
+    "032": { name: "Maelle, The Commander", description: "Commander of a Crimson Faction. Expert in devilarms; firearms. Adept in counterspells, antimagicks. Despite armour, excellent acrobatics. We rise, we go, we paint the world anew. That is the Crimson Cause." },
+    "033": { name: "Neville Schwarz, The Fanatic", description: "Shadow actor, usurper, and dealer for the Crimson Cause. Expert in illusory techniques, deception, and distraction. Uses poisons and other tools. Wrapped in ink, I go. Snuff out the blinding light. This must be done." },
+    "034": { name: "Olum Farhoud, The Herald", description: "Wanders the lands, aligning sub-religions to one religion. Adept in lightning and fire magicks. Knowledge of environments. Extend. Consume. Extinguish." },
+    "035": { name: "Paarth Lomedi, The Politician", description: "Political representative of the Crimson Cause. Owns lands, businesses, resources in kingdoms. Clever. Blackmail enthusiast. The people and places marching with us? Dried grasses ready to ignite." },
+    "036": { name: "Qing, The Spy", description: "Extremespeed; apex momentum. Can be swooned or persuaded. Swears oath to one master. Small projectiles and tools. Mysterious. Information is the deadliest substance. Knives and poison are second at best." },
+    "037": { name: "Reeve Basilisk, The Lord", description: "Seasoned veteran of the old war and smaller battles. Earned lordship via victory in combat. Access to high light spells; punches stun or blind. Order, and prosperity. I will hammer you down, your corpses build the future." },
+    "038": { name: "Vincent, The Gallant Fencer", description: "Summons and empowers Kyth. Commands wormridden creatures; resolve to regain control. Moon magicks and agile combat. As you see, we think quite differently." },
+    "039": { name: "Taeonora, The Pariah", description: "Hails from beyond the ocean. Intentions unknown. Overwhelmingly powerful aura; must resolve all actions against Taeonora. One who knows nothing can understand nothing." }
   };
   
 
@@ -390,7 +393,7 @@
     const used = new Set();
     for (let i = 1; i <= 3; i++) {
       let num;
-      do { num = getRandomNumber(0, 19); } while (used.has(num));
+      do { num = getRandomNumber(20, 39); } while (used.has(num));
       used.add(num);
       const formatted = formatCardNumber(num);
       document.getElementById(`back${i}`).src = `../P986/cards/backs/${formatted}_back.webp`;
