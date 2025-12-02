@@ -333,7 +333,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div>  
   </div>
 
   <!-- RESULT PHASE -->
@@ -347,26 +347,66 @@
 
   <script>
   const characterData = {
-    "020": { name: "Angelo Adair, The Distillery Baron", description: "Lead developer and engineer of soulgem distilleries; maniac. Empowers with soulgems. \"I am the architect. Every step I take brings us closer to godhood.\"" },
-    "021": { name: "Byron vey Byornn, The Commander", description: "Commander of mageknight legion. Famous family name. Paranoid, delusions of grandeur. Extreme strength, basic light sorcery. \"We will have peace, order, justice in my lifetime. I'll raise that sun myself.\"" },
-    "022": { name: "Ceng Zhangyi, The Artifice Scholar", description: "Expert in mixed martial arts; researches artifacts and Jade Empire. Jade Empire supremacist. Uses basic artifacts. \"Technology is our salvation. The answers, the truth of it all.\"" },
-    "023": { name: "Daisuke Daioh, The Artificer", description: "Seasoned veteran of anti-rebellion battles; protects the status-quo. Elitism; royal supremacist. Uses gemstone powered artifacts. \"Find something that makes you powerful and stick to it.\"" },
-    "024": { name: "Elizabeth Einsborough, The Royal Politician", description: "Founder and financier of sorcery academies; human trafficker. Retired sorceress. Well-connected. May use advanced magicks. \"Ha! My time is worth more than yours, I guarantee it; pay up or get out.\"" },
-    "025": { name: "Fal, The Shaman", description: "Protector of Nyx. Superstitious, practices rituals and sacrifice; alchemist and hedonist. May use moon, blood, mist magicks. \"I'll carve you, make you mine forever. Stop squirming, little doll.\"" },
-    "026": { name: "Gary Gigantes, The Smuggler", description: "Drug baron. Ruthless, cunning. Financier of Opal Cities United. Prefers run-and-gun guerilla tactics. Old, but proficient fencer; crossbows. \"I've got an empire of my own to keep afloat. You understand, dont you?\"" },
-    "027": { name: "Hyunjin Halvela, The Bountyhunter", description: "Expert improviser; legendary killer. Moves instantly when unseen. Knows when to withdraw. May evade any attack; counterattack. \"Nothing personal. Hush.\"" },
-    "028": { name: "Isaac Ivanson, The Moonworm Mage", description: "Longest surviving worm host. Insane. Talks to himself, communicates with moon and other entities. May use advanced moon, mist, worm spells; can summon wormridden things. \"If you knew what I knew, youd be me!\"" },
-    "029": { name: "JJ The Beast, The Boss", description: "Powerful family of multiple industries. Wealthy. Cunning. Power increases as health decreases. Extreme speed. Melee doublestrike. \"Bizarre? Golden.\"" },
-    "030": { name: "Kleo, The Politician", description: "Strives for equal rights for the Anim people-- at any cost. Master manipulator, cunning. Moves at every possible moment. \"I spend my time playing their games so they fall into mine.\"" },
-    "031": { name: "Li, The Fanatic", description: "Fanatic to the Crimson Cause. Expert in devilarms; firearms. Spreads gospel, recruits others. Must always resolve when acting. \"By my hand, it shall be done.\"" },
-    "032": { name: "Maelle, The Commander", description: "Commander of a Crimson Faction. Expert in devilarms; firearms. Adept in counterspells, antimagicks. Despite armour, excellent acrobatics. \"We rise, we go, we paint the world anew. That is the Crimson Cause.\"" },
-    "033": { name: "Neville Schwarz, The Fanatic", description: "Shadow actor, usurper, and dealer for the Crimson Cause. Expert in illusory techniques, deception, and distraction. Uses poisons and other tools. \"Wrapped in ink, I snuff out the blinding light.\"" },
-    "034": { name: "Olum Farhoud, The Herald", description: "Wanders the lands, aligning sub-religions to one religion. Adept in lightning and fire magicks. Knowledge of environments. \"Extend. Consume. Extinguish.\"" },
-    "035": { name: "Paarth Lomedi, The Politician", description: "Political representative of the Crimson Cause. Owns lands, businesses, resources in kingdoms. Clever. Blackmail enthusiast. \"The people and places marching with us? Dried grasses ready to ignite.\"" },
-    "036": { name: "Qing, The Spy", description: "Extremespeed; apex momentum. Can be swooned or persuaded. Swears oath to one master. Small projectiles and tools. Mysterious. \"Information is the deadliest substance. Knives and poison are second best.\"" },
-    "037": { name: "Reeve Basilisk, The Lord", description: "Seasoned veteran of the old war and smaller battles. Earned lordship via victory in combat. Access to high light spells; punches stun or blind. \"Order, and prosperity. I will hammer you down, your corpses build the future.\"" },
-    "038": { name: "Vincent, The Gallant Fencer", description: "Summons and empowers Kyth. Commands wormridden creatures; resolve to regain control. Moon magicks and agile combat. \"As you see, we think quite differently.\"" },
-    "039": { name: "Taeonora, The Pariah", description: "Hails from beyond the ocean. Intentions unknown. Overwhelmingly powerful aura; must resolve all actions against Taeonora. \"One who knows nothing can understand nothing.\"" }
+    "020": { 
+  name: "Angelo Adair, The Distillery Baron", 
+  description: "Lead developer and engineer of soulgem distilleries; maniac. Empowers with soulgems. \"I am the architect. Every step I take brings us closer to godhood.\"" },
+    "021": { 
+  name: "Byron vey Byornn, The Commander", 
+  description: "Commander of mageknight legion. Famous family name. Paranoid, delusions of grandeur. Extreme strength, basic light sorcery. \"We will have peace, order, justice in my lifetime. I'll raise that sun myself.\"" },
+    "022": { 
+  name: "Ceng Zhangyi, The Artifice Scholar", 
+  description: "Expert in mixed martial arts; researches artifacts and Jade Empire. Jade Empire supremacist. Uses basic artifacts. \"Technology is our salvation. The answers, the truth of it all.\"" },
+    "023": { 
+  name: "Daisuke Daioh, The Artificer", 
+  description: "Seasoned veteran of anti-rebellion battles; protects the status-quo. Elitism; royal supremacist. Uses gemstone powered artifacts. \"Find something that makes you powerful and stick to it.\"" },
+    "024": { 
+  name: "Elizabeth Einsborough, The Royal Politician", 
+  description: "Founder and financier of sorcery academies; human trafficker. Retired sorceress. Well-connected. May use advanced magicks. \"Ha! My time is worth more than yours, I guarantee it; pay up or get out.\"" },
+    "025": { 
+  name: "Fal, The Shaman", 
+  description: "Protector of Nyx. Superstitious, practices rituals and sacrifice; alchemist and hedonist. May use moon, blood, mist magicks. \"I'll carve you, make you mine forever. Stop squirming, little doll.\"" },
+    "026": { 
+  name: "Gary Gigantes, The Smuggler", 
+  description: "Drug baron. Ruthless, cunning. Financier of Opal Cities United. Prefers run-and-gun guerilla tactics. Old, but proficient fencer; crossbows. \"I've got an empire of my own to keep afloat. You understand, dont you?\"" },
+    "027": { 
+  name: "Hyunjin Halvela, The Bountyhunter", 
+  description: "Expert improviser; legendary killer. Moves instantly when unseen. Knows when to withdraw. May evade any attack; counterattack. \"Nothing personal. Hush.\"" },
+    "028": { 
+  name: "Isaac Ivanson, The Moonworm Mage", 
+  description: "Longest surviving worm host. Insane. Talks to himself, communicates with moon and other entities. May use advanced moon, mist, worm spells; can summon wormridden things. \"If you knew what I knew, youd be me!\"" },
+    "029": { 
+  name: "JJ The Beast, The Boss", 
+  description: "Powerful family of multiple industries. Wealthy. Cunning. Power increases as health decreases. Extreme speed. Melee doublestrike. \"Bizarre? Golden.\"" },
+    "030": { 
+  name: "Kleo, The Politician", 
+  description: "Strives for equal rights for the Anim people-- at any cost. Master manipulator, cunning. Moves at every possible moment. \"I spend my time playing their games so they fall into mine.\"" },
+    "031": { 
+  name: "Li, The Fanatic", 
+  description: "Fanatic to the Crimson Cause. Expert in devilarms; firearms. Spreads gospel, recruits others. Must always resolve when acting. \"By my hand, it shall be done.\"" },
+    "032": { 
+  name: "Maelle, The Commander", 
+  description: "Commander of a Crimson Faction. Expert in devilarms; firearms. Adept in counterspells, antimagicks. Despite armour, excellent acrobatics. \"We rise, we go, we paint the world anew. That is the Crimson Cause.\"" },
+    "033": { 
+  name: "Neville Schwarz, The Fanatic", 
+  description: "Shadow actor, usurper, and dealer for the Crimson Cause. Expert in illusory techniques, deception, and distraction. Uses poisons and other tools. \"Wrapped in ink, I snuff out the blinding light.\"" },
+    "034": { 
+  name: "Olum Farhoud, The Herald", 
+  description: "Wanders the lands, aligning sub-religions to one religion. Adept in lightning and fire magicks. Knowledge of environments. \"Extend. Consume. Extinguish.\"" },
+    "035": { 
+  name: "Paarth Lomedi, The Politician", 
+  description: "Political representative of the Crimson Cause. Owns lands, businesses, resources in kingdoms. Clever. Blackmail enthusiast. \"The people and places marching with us? Dried grasses ready to ignite.\"" },
+    "036": { 
+  name: "Qing, The Spy", 
+  description: "Extremespeed; apex momentum. Can be swooned or persuaded. Swears oath to one master. Small projectiles and tools. Mysterious. \"Information is the deadliest substance. Knives and poison are second best.\"" },
+    "037": { 
+  name: "Reeve Basilisk, The Lord", 
+  description: "Seasoned veteran of the old war and smaller battles. Earned lordship via victory in combat. Access to high light spells; punches stun or blind. \"Order, and prosperity. I will hammer you down, your corpses build the future.\"" },
+    "038": { 
+  name: "Vincent, The Gallant Fencer", 
+  description: "Summons and empowers Kyth. Commands wormridden creatures; resolve to regain control. Moon magicks and agile combat. \"As you see, we think quite differently.\"" },
+    "039": { 
+  name: "Taeonora, The Pariah", 
+  description: "Hails from beyond the ocean. Intentions unknown. Overwhelmingly powerful aura; must resolve all actions against Taeonora. \"One who knows nothing can understand nothing.\"" }
   };
   
 
@@ -468,7 +508,9 @@
     // Get character data
     const frontImg = cardEl.querySelector('.card-front img');
     const id = extractIDFromSrc(frontImg.src);
-    const data = characterData[id] || { name: 'Unknown', description: 'No data available.' };
+    const data = characterData[id] || { 
+  name: 'Unknown', 
+  description: 'No data available.' };
 
     // Transition to result view after animations complete
     setTimeout(() => {
@@ -488,7 +530,7 @@
 
       // Set text content
       document.getElementById('charName').textContent = data.name;
-      document.getElementById('charDesc').textContent = data.description;
+      document.getElementById('charDesc').innerHTML = data.description;
 
       // Show result wrapper
       document.getElementById('resultWrapper').classList.add('active');
