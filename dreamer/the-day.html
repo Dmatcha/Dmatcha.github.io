@@ -46,13 +46,16 @@ body {
       box-shadow: 0 6px 20px rgba(0,0,0,0.06);
     }
 
-    .bar-left, .bar-center, .bar-right { display:flex; align-items:center; gap:12px; }
+    .bar-left, .bar-right { display:none; }
+    .bar-center { display:flex; }
     
-    /* Hidden by default, shown on mobile */
+    /* Desktop top row layout */
     .top-row { 
-      display: none; 
+      display: flex;
       align-items: center;
       gap: 12px;
+      width: 100%;
+      justify-content: space-between;
     }
 
     /* Return button */
