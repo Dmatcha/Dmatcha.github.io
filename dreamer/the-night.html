@@ -133,7 +133,7 @@ body {
       justify-content:space-between;
     }
 
-    /* Moon capsule (default) and expanded panel */
+    /* Sun capsule (default) and expanded panel */
     .sun {
       flex:1 1 0;
       min-width:260px;
@@ -146,14 +146,9 @@ body {
       position:relative;
     }
 
-    /* The glowing moon */
-    .moon .orb {
-      width:180px;height:180px;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.9) 0px, rgba(240,240,240,1) 12%,
-                        rgba(200,200,200,0.8) 45%, rgba(150,150,150,0.6) 75%, transparent 100%),
-        radial-gradient(circle at 60% 70%, rgba(255,255,255,0.15), transparent 60%);
-      box-shadow: 0 10px 40px rgba(200,200,200,0.25), inset 0 -8px 30px rgba(150,150,150,0.2);
+    /* The glowing ball - now SVG-based */
+    .sun .orb {
+      width:180px;height:180px;border-radius:50%;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -161,11 +156,10 @@ body {
       transition: transform .35s ease, box-shadow .35s ease, filter .35s ease;
       animation: floatOrb 4.5s ease-in-out infinite;
       user-select:none;
-      
-      /* Create triangular moon shape */
-      clip-path: polygon(50% 0%, 100% 80%, 0% 80%);
     }
-    .orb:hover{ transform: scale(1.06); box-shadow: 0 14px 54px rgba(220,220,220,0.35); filter:brightness(1.04) saturate(1.03); }
+    .sun .orb:hover{ transform: scale(1.06); }
+    .sun .orb svg { transition: transform .35s ease, filter .35s ease; }
+    .sun .orb:hover svg{ filter:brightness(1.04) saturate(1.03); }
 
     @keyframes floatOrb {
       0%{ transform: translateY(0) }
@@ -174,8 +168,8 @@ body {
     }
 
     /* Orb label below */
-    .moon .label {
-      margin-top:18px;
+    .sun .label {
+      margin-top:8px;
       font-weight:800;
       text-transform:uppercase;
       letter-spacing:1px;
@@ -289,7 +283,7 @@ body {
       .page-inner{ margin:120px 18px 48px }
       .suns-row{flex-direction:column; gap:18px}
       .sun{max-width:100%}
-      .moon .orb{ width:140px;height:140px; clip-path: polygon(50% 0%, 100% 80%, 0% 80%); }
+      .sun .orb{ width:140px;height:140px; }
       .panel .fade-image{ height:160px }
       
       /* Mobile top bar layout - stacked layout */
@@ -422,75 +416,11 @@ body {
     <section class="suns-row" aria-label="Chapters of the night">
 
       <!-- THE DUSK -->
-      <article class="sun moon" id="dusk" data-key="dusk" aria-labelledby="dusk-label">
-        <div class="orb" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Dusk">
-          <!-- Dusk moon SVG -->
-          <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
-            <defs>
-              <!-- Main moon body gradient -->
-              <radialGradient id="dusk-main" cx="30%" cy="25%" r="70%">
-                <stop offset="0%" stop-color="#fefefe" />
-                <stop offset="15%" stop-color="#f0f0f0" />
-                <stop offset="35%" stop-color="#d0d0d0" />
-                <stop offset="55%" stop-color="#a0a0a0" />
-                <stop offset="75%" stop-color="#808080" />
-                <stop offset="90%" stop-color="#606060" />
-                <stop offset="100%" stop-color="#404040" />
-              </radialGradient>
-              
-              <!-- Inner glow gradient -->
-              <radialGradient id="dusk-glow" cx="40%" cy="35%" r="40%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
-                <stop offset="50%" stop-color="#f0f0f0" stop-opacity="0.6" />
-                <stop offset="100%" stop-color="#c0c0c0" stop-opacity="0" />
-              </radialGradient>
-              
-              <!-- Ray gradient -->
-              <linearGradient id="dusk-ray" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#c0c0c0" stop-opacity="0.6" />
-                <stop offset="50%" stop-color="#909090" stop-opacity="0.3" />
-                <stop offset="100%" stop-color="#606060" stop-opacity="0" />
-              </linearGradient>
-              
-              <!-- Sparkle gradient -->
-              <radialGradient id="dusk-sparkle" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#ffffff" />
-                <stop offset="60%" stop-color="#f0f0f0" stop-opacity="0.7" />
-                <stop offset="100%" stop-color="#c0c0c0" stop-opacity="0" />
-              </radialGradient>
-            </defs>
-            
-            <!-- Moon rays -->
-            <g opacity="0.5">
-              <path d="M50 10 L52 20 L48 20 Z" fill="url(#dusk-ray)" />
-              <path d="M50 90 L52 80 L48 80 Z" fill="url(#dusk-ray)" />
-              <path d="M10 50 L20 52 L20 48 Z" fill="url(#dusk-ray)" />
-              <path d="M90 50 L80 52 L80 48 Z" fill="url(#dusk-ray)" />
-              <path d="M22 22 L30 26 L26 34 Z" fill="url(#dusk-ray)" />
-              <path d="M78 78 L70 74 L74 66 Z" fill="url(#dusk-ray)" />
-              <path d="M22 78 L26 70 L34 74 Z" fill="url(#dusk-ray)" />
-              <path d="M78 22 L70 26 L74 34 Z" fill="url(#dusk-ray)" />
-            </g>
-            
-            <!-- Main moon body -->
-            <circle cx="50" cy="50" r="32" fill="url(#dusk-main)" />
-            
-            <!-- Inner glow -->
-            <circle cx="50" cy="50" r="20" fill="url(#dusk-glow)" />
-            
-            <!-- Surface texture dots -->
-            <circle cx="42" cy="45" r="1.5" fill="#c0c0c0" opacity="0.6" />
-            <circle cx="58" cy="55" r="1" fill="#a0a0a0" opacity="0.7" />
-            <circle cx="46" cy="60" r="1.2" fill="#808080" opacity="0.5" />
-            <circle cx="55" cy="42" r="0.8" fill="#d0d0d0" opacity="0.8" />
-            <circle cx="48" cy="52" r="1" fill="#b0b0b0" opacity="0.6" />
-            
-            <!-- Sparkles -->
-            <circle cx="38" cy="35" r="2" fill="url(#dusk-sparkle)" opacity="0.8" />
-            <circle cx="62" cy="65" r="1.5" fill="url(#dusk-sparkle)" opacity="0.6" />
-            <circle cx="45" cy="30" r="1" fill="url(#dusk-sparkle)" opacity="0.7" />
-          </svg>
-        </div>
+      <article class="sun" id="dusk" data-key="dusk" aria-labelledby="dusk-label">
+        <!-- The Dusk moon SVG -->
+        <svg class="orb" width="180" height="180" viewBox="0 0 512 512" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Dusk">
+          <defs><filter id="shadow-1" height="300%" width="300%" x="-100%" y="-100%"><feFlood flood-color="rgba(189, 16, 224, 1)" result="flood"></feFlood><feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"></feComposite><feGaussianBlur in="composite" stdDeviation="15" result="blur"></feGaussianBlur><feOffset dx="0" dy="0" result="offset"></feOffset><feComposite in="SourceGraphic" in2="offset" operator="over"></feComposite></filter><radialGradient id="lorc-moon-gradient-0"><stop offset="0%" stop-color="#9013fe" stop-opacity="1"></stop><stop offset="100%" stop-color="#000000" stop-opacity="1"></stop></radialGradient></defs><circle cx="256" cy="256" r="251" fill="url(#lorc-moon-gradient-0)" stroke="#bd10e0" stroke-opacity="1" stroke-width="5"></circle><g class="" transform="translate(0,0)" style=""><path d="M253.125 18.563c-131.53 0-238.375 106.813-238.375 238.343 0 131.53 106.846 238.344 238.375 238.344 131.53 0 238.344-106.815 238.344-238.344 0-131.528-106.816-238.344-238.345-238.344zm-23.938 52.093c40.517 0 77.988 12.904 108.532 34.813a154.099 154.099 0 0 0-17.064-.97c-84.157 0-152.375 68.25-152.375 152.406 0 84.157 68.22 152.375 152.376 152.375 5.762 0 11.467-.313 17.063-.936-30.545 21.91-68.016 34.812-108.533 34.812-102.98 0-186.28-83.272-186.28-186.25 0-102.977 83.3-186.25 186.28-186.25z" fill="#ffffff" fill-opacity="1" transform="translate(0, 0) scale(1, 1) rotate(90, 256, 256) skewX(0) skewY(0)" filter="url(#shadow-1)"></path></g>
+        </svg>
         <div class="label" id="dusk-label">The Dusk</div>
 
         <div class="panel" aria-hidden="true">
@@ -515,106 +445,17 @@ body {
         </div>
       </article>
 
-      <!-- THE FULL MOON -->
-      <article class="sun moon" id="fullmoon" data-key="fullmoon" aria-labelledby="fullmoon-label">
-        <div class="orb" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Full Moon">
-          <!-- Full moon SVG -->
-          <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
-            <defs>
-              <!-- Main moon body gradient -->
-              <radialGradient id="fullmoon-main" cx="25%" cy="20%" r="80%">
-                <stop offset="0%" stop-color="#ffffff" />
-                <stop offset="25%" stop-color="#f8f8f8" />
-                <stop offset="45%" stop-color="#e8e8e8" />
-                <stop offset="65%" stop-color="#d0d0d0" />
-                <stop offset="85%" stop-color="#b0b0b0" />
-                <stop offset="100%" stop-color="#909090" />
-              </radialGradient>
-              
-              <!-- Inner glow gradient -->
-              <radialGradient id="fullmoon-glow" cx="30%" cy="25%" r="50%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
-                <stop offset="30%" stop-color="#f8f8f8" stop-opacity="0.8" />
-                <stop offset="70%" stop-color="#e0e0e0" stop-opacity="0.4" />
-                <stop offset="100%" stop-color="#c0c0c0" stop-opacity="0" />
-              </radialGradient>
-              
-              <!-- Ray gradient -->
-              <linearGradient id="fullmoon-ray" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#e8e8e8" stop-opacity="0.6" />
-                <stop offset="50%" stop-color="#c0c0c0" stop-opacity="0.4" />
-                <stop offset="100%" stop-color="#909090" stop-opacity="0" />
-              </linearGradient>
-              
-              <!-- Sparkle gradient -->
-              <radialGradient id="fullmoon-sparkle" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#ffffff" />
-                <stop offset="50%" stop-color="#f8f8f8" stop-opacity="0.9" />
-                <stop offset="100%" stop-color="#e8e8e8" stop-opacity="0" />
-              </radialGradient>
-              
-              <!-- Cycle ring gradient -->
-              <linearGradient id="fullmoon-ring" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#e8e8e8" stop-opacity="0.6" />
-                <stop offset="50%" stop-color="#c0c0c0" stop-opacity="0.3" />
-                <stop offset="100%" stop-color="#909090" stop-opacity="0" />
-              </linearGradient>
-            </defs>
-            
-            <!-- Dynamic curved rays -->
-            <g opacity="0.4">
-              <path d="M50 5 Q55 15 50 25 Q45 15 50 5 Z" fill="url(#fullmoon-ray)" />
-              <path d="M95 50 Q85 45 75 50 Q85 55 95 50 Z" fill="url(#fullmoon-ray)" />
-              <path d="M50 95 Q45 85 50 75 Q55 85 50 95 Z" fill="url(#fullmoon-ray)" />
-              <path d="M5 50 Q15 55 25 50 Q15 45 5 50 Z" fill="url(#fullmoon-ray)" />
-              
-              <!-- Curved corner rays -->
-              <path d="M15 15 Q25 20 30 30 Q20 25 15 15 Z" fill="url(#fullmoon-ray)" />
-              <path d="M85 85 Q75 80 70 70 Q80 75 85 85 Z" fill="url(#fullmoon-ray)" />
-              <path d="M85 15 Q75 20 70 30 Q80 25 85 15 Z" fill="url(#fullmoon-ray)" />
-              <path d="M15 85 Q25 80 30 70 Q20 75 15 85 Z" fill="url(#fullmoon-ray)" />
-            </g>
-            
-            <!-- Main moon body -->
-            <circle cx="50" cy="50" r="30" fill="url(#fullmoon-main)" />
-            
-            <!-- Cycle ring around the moon -->
-            <circle cx="50" cy="50" r="36" fill="none" stroke="url(#fullmoon-ring)" stroke-width="3" opacity="0.4" />
-            <circle cx="50" cy="50" r="38" fill="none" stroke="url(#fullmoon-ring)" stroke-width="1" opacity="0.2" />
-            
-            <!-- Inner glow -->
-            <circle cx="50" cy="50" r="18" fill="url(#fullmoon-glow)" />
-            
-            <!-- Surface texture with cycle pattern -->
-            <circle cx="43" cy="43" r="1.5" fill="#d0d0d0" opacity="0.7" />
-            <circle cx="57" cy="57" r="1.2" fill="#b0b0b0" opacity="0.6" />
-            <circle cx="47" cy="60" r="1" fill="#909090" opacity="0.8" />
-            <circle cx="53" cy="40" r="1.3" fill="#c0c0c0" opacity="0.7" />
-            <circle cx="42" cy="52" r="0.8" fill="#e0e0e0" opacity="0.6" />
-            <circle cx="58" cy="48" r="1" fill="#a0a0a0" opacity="0.5" />
-            
-            <!-- More intense sparkles -->
-            <circle cx="35" cy="35" r="2.5" fill="url(#fullmoon-sparkle)" opacity="0.9" />
-            <circle cx="65" cy="65" r="2" fill="url(#fullmoon-sparkle)" opacity="0.8" />
-            <circle cx="40" cy="65" r="1.5" fill="url(#fullmoon-sparkle)" opacity="0.7" />
-            <circle cx="60" cy="35" r="1.8" fill="url(#fullmoon-sparkle)" opacity="0.8" />
-            <circle cx="50" cy="30" r="1.2" fill="url(#fullmoon-sparkle)" opacity="0.6" />
-            
-            <!-- Central bright core -->
-            <circle cx="50" cy="50" r="10" fill="#ffffff" opacity="0.9" />
-            
-            <!-- Cycle dots moving around -->
-            <circle cx="68" cy="50" r="1.5" fill="#e8e8e8" opacity="0.8" />
-            <circle cx="32" cy="50" r="1.5" fill="#e8e8e8" opacity="0.8" />
-            <circle cx="50" cy="68" r="1.2" fill="#d0d0d0" opacity="0.7" />
-            <circle cx="50" cy="32" r="1.2" fill="#d0d0d0" opacity="0.7" />
-          </svg>
-        </div>
-        <div class="label" id="fullmoon-label">The Moon Rises</div>
+      <!-- The Dark -->
+      <article class="sun" id="fullmoon" data-key="fullmoon" aria-labelledby="fullmoon-label">
+        <!-- The Dark SVG -->
+        <svg class="orb" width="180" height="180" viewBox="0 0 512 512" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Dark">
+          <defs><filter id="shadow-1" height="300%" width="300%" x="-100%" y="-100%"><feFlood flood-color="rgba(252, 136, 252, 1)" result="flood"></feFlood><feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"></feComposite><feGaussianBlur in="composite" stdDeviation="15" result="blur"></feGaussianBlur><feOffset dx="0" dy="0" result="offset"></feOffset><feComposite in="SourceGraphic" in2="offset" operator="over"></feComposite></filter><radialGradient id="lorc-night-sky-gradient-0"><stop offset="0%" stop-color="#000000" stop-opacity="1"></stop><stop offset="100%" stop-color="#9013fe" stop-opacity="1"></stop></radialGradient></defs><circle cx="256" cy="256" r="249" fill="url(#lorc-night-sky-gradient-0)" stroke="#000000" stroke-opacity="1" stroke-width="7"></circle><g class="" transform="translate(0,0)" style=""><path d="M253.813 15.625c-132.32 0-239.782 107.46-239.782 239.78s107.463 239.782 239.782 239.782c132.32 0 239.782-107.46 239.782-239.78S386.132 15.624 253.814 15.624zm0 17.906c122.653 0 221.906 99.223 221.906 221.876 0 30.738-6.26 59.99-17.533 86.594l-42.343-34.72c-49.613 13.98-110.337 9.033-138.906-60.874l-41.97 152.938c-8.837-45.53-23.35-81.28-47.905-115.22-19.71 13.855-32.352 32.63-39.72 50.97L88.94 237.03c-17.85 27.32-33.77 56.565-45.032 90.47-7.744-22.6-11.968-46.852-11.968-72.094 0-26.013 4.484-50.973 12.687-74.156 2.752 6.608 9.27 11.25 16.875 11.25 10.093 0 18.28-8.157 18.28-18.25s-8.187-18.28-18.28-18.28c-2.385 0-4.66.48-6.75 1.31 27.537-55.83 77.83-98.368 138.844-115.5a21.977 21.977 0 0 0-.844 6.095c0 12.146 9.823 22 21.97 22 12.144 0 22-9.854 22-22 0-4.99-1.67-9.59-4.47-13.28 7.092-.683 14.29-1.064 21.563-1.064zm18.75 27.657a11.65 11.65 0 0 0-11.657 11.657c0 6.443 5.213 11.687 11.656 11.687 6.444 0 11.688-5.243 11.688-11.686 0-6.444-5.244-11.656-11.688-11.656zM198.03 90.22c-6.02.06-12.132.868-18.218 2.5-38.945 10.434-62.06 50.46-51.625 89.405 10.436 38.946 50.463 62.06 89.407 51.625 21.712-5.818 38.48-20.85 47.28-39.75a54.993 54.993 0 0 1-26.155 15.75c-29.504 7.905-59.846-9.59-67.75-39.094-7.907-29.504 9.62-59.813 39.124-67.72 10.41-2.788 20.906-2.417 30.5.533-12.28-8.598-27.116-13.405-42.563-13.25zm155.282.81c-9.408 0-17.03 7.624-17.03 17.032 0 9.41 7.622 17.032 17.03 17.032 9.41 0 17.032-7.623 17.032-17.03 0-9.41-7.623-17.033-17.03-17.033zm-248.937 27.376c-6.443 0-11.656 5.244-11.656 11.688 0 6.443 5.212 11.656 11.655 11.656s11.656-5.213 11.656-11.656c0-6.444-5.212-11.688-11.655-11.688zm275.688 40.813-.625 29.843-28.22 9.812 28.22 9.813.625 29.843 18.03-23.78 28.563 8.625-17.03-24.5 17.03-24.53L398.094 183l-18.03-23.78zm-72.094 11.593c-6.445 0-11.658 5.212-11.658 11.656 0 6.442 5.213 11.686 11.657 11.686 6.442 0 11.686-5.244 11.686-11.687 0-6.445-5.244-11.657-11.687-11.657zm139 74.75c-6.445 0-11.658 5.244-11.658 11.687s5.213 11.656 11.657 11.656c6.442 0 11.686-5.213 11.686-11.656 0-6.443-5.244-11.688-11.687-11.688zm-127.314 3.5c-6.443 0-11.656 5.244-11.656 11.687s5.213 11.656 11.656 11.656a11.648 11.648 0 0 0 11.656-11.656c0-6.443-5.212-11.688-11.656-11.688z" fill="#ffffff" fill-opacity="1" filter="url(#shadow-1)" stroke="#000000" stroke-opacity="1" stroke-width="1"></path></g>
+        </svg>
+        <div class="label" id="fullmoon-label">The Dark</div>
 
         <div class="panel" aria-hidden="true">
-          <button class="close-x" aria-label="Close The Full Moon">✕</button>
-          <div class="panel-title">The Moon Rises</div>
+          <button class="close-x" aria-label="Close The Dark">✕</button>
+          <div class="panel-title">The Dark</div>
           <img class="fade-image" alt="Full moon image" src=..\media\nightmoon.webp?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=6f9b5f6a2b3b1f0c1a3a6f2f8c7e8d9a>
           <div class="panel-body">
             <p><strong>LAYOUT</strong>: Arrange the area with night zones in mind: six spaces are needed for the NIGHT phase, typically nested within the outer ring of the DAY.</p>
@@ -632,93 +473,17 @@ body {
         </div>
       </article>
 
-      <!-- THE CRESCENT MOON -->
-      <article class="sun moon" id="crescent" data-key="crescent" aria-labelledby="crescent-label">
-        <div class="orb" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Crescent Moon">
-          <!-- Crescent moon SVG -->
-          <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
-            <defs>
-              <!-- Main moon body gradient -->
-              <radialGradient id="crescent-main" cx="35%" cy="30%" r="75%">
-                <stop offset="0%" stop-color="#ffffff" />
-                <stop offset="20%" stop-color="#f0f0f0" />
-                <stop offset="40%" stop-color="#e0e0e0" />
-                <stop offset="60%" stop-color="#c0c0c0" />
-                <stop offset="80%" stop-color="#a0a0a0" />
-                <stop offset="95%" stop-color="#808080" />
-                <stop offset="100%" stop-color="#606060" />
-              </radialGradient>
-              
-              <!-- Inner glow gradient -->
-              <radialGradient id="crescent-glow" cx="45%" cy="40%" r="45%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
-                <stop offset="40%" stop-color="#f8f8f8" stop-opacity="0.7" />
-                <stop offset="80%" stop-color="#e0e0e0" stop-opacity="0.2" />
-                <stop offset="100%" stop-color="#c0c0c0" stop-opacity="0" />
-              </radialGradient>
-              
-              <!-- Ray gradient -->
-              <linearGradient id="crescent-ray" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#d0d0d0" stop-opacity="0.7" />
-                <stop offset="50%" stop-color="#b0b0b0" stop-opacity="0.4" />
-                <stop offset="100%" stop-color="#909090" stop-opacity="0" />
-              </linearGradient>
-              
-              <!-- Sparkle gradient -->
-              <radialGradient id="crescent-sparkle" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#ffffff" />
-                <stop offset="70%" stop-color="#f8f8f8" stop-opacity="0.8" />
-                <stop offset="100%" stop-color="#e0e0e0" stop-opacity="0" />
-              </radialGradient>
-            </defs>
-            
-            <!-- Extended moon rays -->
-            <g opacity="0.6">
-              <path d="M50 8 L51.5 22 L48.5 22 Z" fill="url(#crescent-ray)" />
-              <path d="M50 92 L51.5 78 L48.5 78 Z" fill="url(#crescent-ray)" />
-              <path d="M8 50 L22 51.5 L22 48.5 Z" fill="url(#crescent-ray)" />
-              <path d="M92 50 L78 51.5 L78 48.5 Z" fill="url(#crescent-ray)" />
-              <path d="M20 20 L30 27 L27 37 Z" fill="url(#crescent-ray)" />
-              <path d="M80 80 L70 73 L73 63 Z" fill="url(#crescent-ray)" />
-              <path d="M20 80 L27 70 L37 73 Z" fill="url(#crescent-ray)" />
-              <path d="M80 20 L73 27 L63 30 Z" fill="url(#crescent-ray)" />
-              
-              <!-- Additional intermediate rays -->
-              <path d="M35 12 L42 18 L38 26 Z" fill="url(#crescent-ray)" opacity="0.5" />
-              <path d="M88 35 L82 42 L74 38 Z" fill="url(#crescent-ray)" opacity="0.5" />
-              <path d="M65 88 L58 82 L50 74 Z" fill="url(#crescent-ray)" opacity="0.5" />
-              <path d="M12 65 L18 58 L26 50 Z" fill="url(#crescent-ray)" opacity="0.5" />
-            </g>
-            
-            <!-- Main moon body -->
-            <circle cx="50" cy="50" r="34" fill="url(#crescent-main)" />
-            
-            <!-- Inner glow -->
-            <circle cx="50" cy="50" r="22" fill="url(#crescent-glow)" />
-            
-            <!-- Surface texture dots -->
-            <circle cx="44" cy="42" r="1.8" fill="#d0d0d0" opacity="0.7" />
-            <circle cx="56" cy="58" r="1.3" fill="#b0b0b0" opacity="0.6" />
-            <circle cx="41" cy="59" r="1.1" fill="#909090" opacity="0.8" />
-            <circle cx="59" cy="41" r="0.9" fill="#c0c0c0" opacity="0.7" />
-            <circle cx="50" cy="55" r="1.4" fill="#a0a0a0" opacity="0.5" />
-            <circle cx="45" cy="48" r="0.7" fill="#e0e0e0" opacity="0.6" />
-            
-            <!-- Sparkles -->
-            <circle cx="40" cy="33" r="2.2" fill="url(#crescent-sparkle)" opacity="0.9" />
-            <circle cx="60" cy="67" r="1.8" fill="url(#crescent-sparkle)" opacity="0.7" />
-            <circle cx="35" cy="60" r="1.2" fill="url(#crescent-sparkle)" opacity="0.8" />
-            <circle cx="65" cy="40" r="1" fill="url(#crescent-sparkle)" opacity="0.6" />
-            
-            <!-- Central bright core -->
-            <circle cx="50" cy="50" r="8" fill="#ffffff" opacity="0.8" />
-          </svg>
-        </div>
-        <div class="label" id="crescent-label">The Deep Of Night</div>
+      <!-- The Deep -->
+      <article class="sun" id="crescent" data-key="crescent" aria-labelledby="crescent-label">
+        <!-- The Deep SVG -->
+        <svg class="orb" width="180" height="180" viewBox="0 0 512 512" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Deep">
+          <defs><filter id="shadow-1" height="300%" width="300%" x="-100%" y="-100%"><feFlood flood-color="rgba(189, 16, 224, 1)" result="flood"></feFlood><feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"></feComposite><feGaussianBlur in="composite" stdDeviation="15" result="blur"></feGaussianBlur><feOffset dx="0" dy="0" result="offset"></feOffset><feComposite in="SourceGraphic" in2="offset" operator="over"></feComposite></filter><radialGradient id="lorc-evil-moon-gradient-0"><stop offset="0%" stop-color="#9013fe" stop-opacity="1"></stop><stop offset="100%" stop-color="#000000" stop-opacity="1"></stop></radialGradient></defs><circle cx="256" cy="256" r="251" fill="url(#lorc-evil-moon-gradient-0)" stroke="#bd10e0" stroke-opacity="1" stroke-width="5"></circle><g class="" transform="translate(0,0)" style=""><path d="M255.938 19.938C124.514 19.938 17.78 126.67 17.78 258.094c0 131.422 106.735 238.156 238.157 238.156 131.423 0 238.157-106.734 238.157-238.156 0-131.422-106.734-238.156-238.156-238.156zm0 18.687c121.322 0 219.468 98.147 219.468 219.47 0 26.08-4.548 51.085-12.875 74.28-20.99 8.188-43.686 12.75-67.624 12.75-22.242 0-43.584-3.855-63.406-10.938l12.094 44.594-71.75-12.467 18.844 51.562c-57.855 7.1-108.19-15.432-130.47-49.28l81.313 1.78-23.56-48.438 72.436-8.062.688.063c-16.83-11.135-31.777-24.876-44.22-40.688 30.674-18.014 66.44-28.814 102.782-22.844-43.234-49.45-95.713-64.09-139.437-57.437a187.763 187.763 0 0 1-3.345-35.314c0-45.286 16.2-86.562 42.938-118.937 2.04-.057 4.072-.095 6.125-.095zM139.188 180.78c.638-.006 1.268-.013 1.906 0 19.467.437 38.24 10.748 48.687 28.845 15.923 27.577 6.48 62.83-21.093 78.75-27.572 15.92-62.828 6.483-78.75-21.094-15.92-27.576-6.478-62.86 21.094-78.78a57.431 57.431 0 0 1 28.157-7.72zm-.063 21.064c-20.26 0-36.906 16.643-36.906 36.906 0 20.263 16.644 36.875 36.905 36.875 20.26 0 36.875-16.612 36.875-36.875s-16.614-36.906-36.875-36.906zm0 18.687c10.16 0 18.188 8.058 18.188 18.22 0 10.162-8.028 18.188-18.188 18.188-10.16 0-18.22-8.026-18.22-18.188 0-10.162 8.06-18.22 18.22-18.22z" fill="#ffffff" fill-opacity="1" transform="translate(0, 0) scale(1, 1) rotate(45, 256, 256) skewX(0) skewY(0)" filter="url(#shadow-1)"></path></g>
+        </svg>
+        <div class="label" id="crescent-label">The Deep</div>
 
         <div class="panel" aria-hidden="true">
-          <button class="close-x" aria-label="Close The Crescent Moon">✕</button>
-          <div class="panel-title">The Deep Of Night</div>
+          <button class="close-x" aria-label="Close The Deep">✕</button>
+          <div class="panel-title">The Deep</div>
           <img class="fade-image" alt="Crescent moon image" src="..\media\night.webp?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=8a9e2a2b7b1f2d3f4c5b6c7d8e9a0b1c">
           <div class="panel-body">
             <p><strong>LONGPLAY</strong>: Regardless of entering the night, as the cycle increases at DAWN the night cycle count will also increase. This has various effects on continuing gameplay.</p>
@@ -736,6 +501,9 @@ body {
       </article>
 
     </section>
+    
+    <!-- Bottom spacer to provide breathing room for the last entry -->
+    <div style="height: 30px;"></div>
   </main>
 
   <script>

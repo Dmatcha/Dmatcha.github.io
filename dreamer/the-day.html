@@ -145,14 +145,9 @@ body {
       position:relative;
     }
 
-    /* The glowing ball */
+    /* The glowing ball - now SVG-based */
     .sun .orb {
       width:180px;height:180px;border-radius:50%;
-      background:
-        radial-gradient(circle at 35% 25%, rgba(255,255,255,0.95) 0px, rgba(255,248,200,1) 8%,
-                        rgba(255,200,60,0.9) 40%, rgba(255,150,0,0.6) 70%, transparent 100%),
-        radial-gradient(circle at 60% 70%, rgba(255,255,255,0.1), transparent 60%);
-      box-shadow: 0 10px 40px rgba(255,180,0,0.18), inset 0 -8px 30px rgba(255,220,120,0.12);
       display:flex;
       align-items:center;
       justify-content:center;
@@ -161,7 +156,9 @@ body {
       animation: floatOrb 4.5s ease-in-out infinite;
       user-select:none;
     }
-    .orb:hover{ transform: scale(1.06); box-shadow: 0 14px 54px rgba(255,190,0,0.26); filter:brightness(1.04) saturate(1.03); }
+    .sun .orb:hover{ transform: scale(1.06); }
+    .sun .orb svg { transition: transform .35s ease, filter .35s ease; }
+    .sun .orb:hover svg{ filter:brightness(1.04) saturate(1.03); }
 
     @keyframes floatOrb {
       0%{ transform: translateY(0) }
@@ -402,74 +399,13 @@ body {
 
       <!-- THE DAWN -->
       <article class="sun" id="dawn" data-key="dawn" aria-labelledby="dawn-label">
-        <div class="orb" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Dawn">
-          <!-- Enhanced shiny warm glowy sun svg -->
-          <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
-            <defs>
-              <!-- Main sun body gradient -->
-              <radialGradient id="dawn-main" cx="30%" cy="25%" r="70%">
-                <stop offset="0%" stop-color="#fffef0" />
-                <stop offset="15%" stop-color="#fff6cc" />
-                <stop offset="35%" stop-color="#ffe89a" />
-                <stop offset="55%" stop-color="#ffd166" />
-                <stop offset="75%" stop-color="#ffb347" />
-                <stop offset="90%" stop-color="#ff9500" />
-                <stop offset="100%" stop-color="#ff6b35" />
-              </radialGradient>
-              
-              <!-- Inner glow gradient -->
-              <radialGradient id="dawn-glow" cx="40%" cy="35%" r="40%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
-                <stop offset="50%" stop-color="#fffacd" stop-opacity="0.6" />
-                <stop offset="100%" stop-color="#ffd700" stop-opacity="0" />
-              </radialGradient>
-              
-              <!-- Ray gradient -->
-              <linearGradient id="dawn-ray" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#ffd700" stop-opacity="0.8" />
-                <stop offset="50%" stop-color="#ffb347" stop-opacity="0.4" />
-                <stop offset="100%" stop-color="#ff9500" stop-opacity="0" />
-              </linearGradient>
-              
-              <!-- Sparkle gradient -->
-              <radialGradient id="dawn-sparkle" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#ffffff" />
-                <stop offset="60%" stop-color="#fffef0" stop-opacity="0.7" />
-                <stop offset="100%" stop-color="#ffd700" stop-opacity="0" />
-              </radialGradient>
-            </defs>
-            
-            <!-- Sun rays -->
-            <g opacity="0.7">
-              <path d="M50 10 L52 20 L48 20 Z" fill="url(#dawn-ray)" />
-              <path d="M50 90 L52 80 L48 80 Z" fill="url(#dawn-ray)" />
-              <path d="M10 50 L20 52 L20 48 Z" fill="url(#dawn-ray)" />
-              <path d="M90 50 L80 52 L80 48 Z" fill="url(#dawn-ray)" />
-              <path d="M22 22 L30 26 L26 34 Z" fill="url(#dawn-ray)" />
-              <path d="M78 78 L70 74 L74 66 Z" fill="url(#dawn-ray)" />
-              <path d="M22 78 L26 70 L34 74 Z" fill="url(#dawn-ray)" />
-              <path d="M78 22 L70 26 L74 34 Z" fill="url(#dawn-ray)" />
-            </g>
-            
-            <!-- Main sun body -->
-            <circle cx="50" cy="50" r="32" fill="url(#dawn-main)" />
-            
-            <!-- Inner glow -->
-            <circle cx="50" cy="50" r="20" fill="url(#dawn-glow)" />
-            
-            <!-- Surface texture dots -->
-            <circle cx="42" cy="45" r="1.5" fill="#fffacd" opacity="0.6" />
-            <circle cx="58" cy="55" r="1" fill="#ffe066" opacity="0.7" />
-            <circle cx="46" cy="60" r="1.2" fill="#ffdd44" opacity="0.5" />
-            <circle cx="55" cy="42" r="0.8" fill="#fffacd" opacity="0.8" />
-            <circle cx="48" cy="52" r="1" fill="#ffd700" opacity="0.6" />
-            
-            <!-- Sparkles -->
-            <circle cx="38" cy="35" r="2" fill="url(#dawn-sparkle)" opacity="0.8" />
-            <circle cx="62" cy="65" r="1.5" fill="url(#dawn-sparkle)" opacity="0.6" />
-            <circle cx="45" cy="30" r="1" fill="url(#dawn-sparkle)" opacity="0.7" />
-          </svg>
-        </div>
+        <svg class="orb" width="180" height="180" viewBox="0 0 512 512" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Dawn">
+          <!-- Sunrise SVG -->
+          <circle cx="256" cy="256" r="251" fill="#f5a623" fill-opacity="1" stroke="#000000" stroke-opacity="1" stroke-width="5"></circle>
+          <g class="" transform="translate(0,10)" style="">
+            <path d="M259.375 16.25c-132.32 0-239.78 107.46-239.78 239.78s107.46 239.783 239.78 239.783 239.78-107.462 239.78-239.782-107.46-239.78-239.78-239.78zm33.5 20.406c26.563 4.015 51.57 12.708 74.156 25.25L308.907 209.03c-14.573-7.215-30.96-11.344-48.312-11.53l32.28-160.844zm-67.72.094 23.97 161.22c-17.2 1.56-33.28 6.986-47.313 15.436l-51-151a220.436 220.436 0 0 1 74.344-25.656zm193.25 64.5c17.683 18.164 32.28 39.32 42.94 62.688l-107.658 85.468a111.724 111.724 0 0 0-34.968-34.875l99.686-113.28zm-319.092 1.063L192.5 219.686a111.684 111.684 0 0 0-32.063 37.75L56.5 166c10.527-23.725 25.082-45.226 42.813-63.688zm378.75 115.906a223.777 223.777 0 0 1 3.218 37.81c0 11.49-.882 22.768-2.56 33.783l-107.876 16.062a111.18 111.18 0 0 0-12-47.375l119.22-40.28zM40.25 221.093l115.844 45.75a111.338 111.338 0 0 0-8.188 39l-107.844-16.03A224.206 224.206 0 0 1 37.5 256.03c0-11.89.954-23.554 2.75-34.936zm130.563 89.53h177.125L467 334.532c-31.674 83.843-112.62 143.376-207.625 143.376-95.018 0-175.968-59.548-207.625-143.406l119.063-23.875z" fill="#fff" fill-opacity="1" transform="translate(25.6, 25.6) scale(0.9, 0.9) rotate(0, 256, 256) skewX(0) skewY(0)"></path>
+          </g>
+        </svg>
         <div class="label" id="dawn-label">The Dawn</div>
 
         <div class="panel" aria-hidden="true">
@@ -492,99 +428,26 @@ body {
 
       <!-- THE WHEEL -->
       <article class="sun" id="wheel" data-key="wheel" aria-labelledby="wheel-label">
-        <div class="orb" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Wheel">
-          <!-- Enhanced shiny warm glowy sun svg (Cycle style) -->
-          <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
-            <defs>
-              <!-- Main sun body gradient -->
-              <radialGradient id="wheel-main" cx="25%" cy="20%" r="80%">
-                <stop offset="0%" stop-color="#fffdf5" />
-                <stop offset="25%" stop-color="#fff0b3" />
-                <stop offset="45%" stop-color="#ffd75e" />
-                <stop offset="65%" stop-color="#ffbe0b" />
-                <stop offset="85%" stop-color="#ff8f00" />
-                <stop offset="100%" stop-color="#ff6b1a" />
-              </radialGradient>
-              
-              <!-- Inner glow gradient -->
-              <radialGradient id="wheel-glow" cx="30%" cy="25%" r="50%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
-                <stop offset="30%" stop-color="#fff9e6" stop-opacity="0.8" />
-                <stop offset="70%" stop-color="#ffda79" stop-opacity="0.4" />
-                <stop offset="100%" stop-color="#ff8f00" stop-opacity="0" />
-              </radialGradient>
-              
-              <!-- Ray gradient -->
-              <linearGradient id="wheel-ray" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#ffeb3b" stop-opacity="0.8" />
-                <stop offset="50%" stop-color="#ffc107" stop-opacity="0.6" />
-                <stop offset="100%" stop-color="#ff5722" stop-opacity="0" />
-              </linearGradient>
-              
-              <!-- Sparkle gradient -->
-              <radialGradient id="wheel-sparkle" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#ffffff" />
-                <stop offset="50%" stop-color="#fffde7" stop-opacity="0.9" />
-                <stop offset="100%" stop-color="#ffeb3b" stop-opacity="0" />
-              </radialGradient>
-              
-              <!-- Cycle ring gradient -->
-              <linearGradient id="wheel-ring" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#ffd700" stop-opacity="0.8" />
-                <stop offset="50%" stop-color="#ffa500" stop-opacity="0.4" />
-                <stop offset="100%" stop-color="#ff6b1a" stop-opacity="0" />
-              </linearGradient>
-            </defs>
-            
-            <!-- Dynamic curved rays -->
-            <g opacity="0.6">
-              <path d="M50 5 Q55 15 50 25 Q45 15 50 5 Z" fill="url(#wheel-ray)" />
-              <path d="M95 50 Q85 45 75 50 Q85 55 95 50 Z" fill="url(#wheel-ray)" />
-              <path d="M50 95 Q45 85 50 75 Q55 85 50 95 Z" fill="url(#wheel-ray)" />
-              <path d="M5 50 Q15 55 25 50 Q15 45 5 50 Z" fill="url(#wheel-ray)" />
-              
-              <!-- Curved corner rays -->
-              <path d="M15 15 Q25 20 30 30 Q20 25 15 15 Z" fill="url(#wheel-ray)" />
-              <path d="M85 85 Q75 80 70 70 Q80 75 85 85 Z" fill="url(#wheel-ray)" />
-              <path d="M85 15 Q75 20 70 30 Q80 25 85 15 Z" fill="url(#wheel-ray)" />
-              <path d="M15 85 Q25 80 30 70 Q20 75 15 85 Z" fill="url(#wheel-ray)" />
-            </g>
-            
-            <!-- Main sun body -->
-            <circle cx="50" cy="50" r="30" fill="url(#wheel-main)" />
-            
-            <!-- Cycle ring around the sun -->
-            <circle cx="50" cy="50" r="36" fill="none" stroke="url(#wheel-ring)" stroke-width="3" opacity="0.6" />
-            <circle cx="50" cy="50" r="38" fill="none" stroke="url(#wheel-ring)" stroke-width="1" opacity="0.4" />
-            
-            <!-- Inner glow -->
-            <circle cx="50" cy="50" r="18" fill="url(#wheel-glow)" />
-            
-            <!-- Surface texture with cycle pattern -->
-            <circle cx="43" cy="43" r="1.5" fill="#fff0b3" opacity="0.7" />
-            <circle cx="57" cy="57" r="1.2" fill="#ffd75e" opacity="0.6" />
-            <circle cx="47" cy="60" r="1" fill="#ffbe0b" opacity="0.8" />
-            <circle cx="53" cy="40" r="1.3" fill="#fff0b3" opacity="0.7" />
-            <circle cx="42" cy="52" r="0.8" fill="#ffda79" opacity="0.6" />
-            <circle cx="58" cy="48" r="1" fill="#ffbe0b" opacity="0.5" />
-            
-            <!-- More intense sparkles -->
-            <circle cx="35" cy="35" r="2.5" fill="url(#wheel-sparkle)" opacity="0.9" />
-            <circle cx="65" cy="65" r="2" fill="url(#wheel-sparkle)" opacity="0.8" />
-            <circle cx="40" cy="65" r="1.5" fill="url(#wheel-sparkle)" opacity="0.7" />
-            <circle cx="60" cy="35" r="1.8" fill="url(#wheel-sparkle)" opacity="0.8" />
-            <circle cx="50" cy="30" r="1.2" fill="url(#wheel-sparkle)" opacity="0.6" />
-            
-            <!-- Central bright core -->
-            <circle cx="50" cy="50" r="10" fill="#ffffff" opacity="0.9" />
-            
-            <!-- Cycle dots moving around -->
-            <circle cx="68" cy="50" r="1.5" fill="#ffeb3b" opacity="0.8" />
-            <circle cx="32" cy="50" r="1.5" fill="#ffeb3b" opacity="0.8" />
-            <circle cx="50" cy="68" r="1.2" fill="#ffc107" opacity="0.7" />
-            <circle cx="50" cy="32" r="1.2" fill="#ffc107" opacity="0.7" />
-          </svg>
-        </div>
+        <svg class="orb" width="180" height="180" viewBox="0 0 512 512" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Wheel">
+          <!-- Sundial SVG -->
+          <defs>
+            <filter id="shadow-1" height="300%" width="300%" x="-100%" y="-100%">
+              <feFlood flood-color="rgba(255, 255, 255, 1)" result="flood"></feFlood>
+              <feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"></feComposite>
+              <feGaussianBlur in="composite" stdDeviation="15" result="blur"></feGaussianBlur>
+              <feOffset dx="0" dy="0" result="offset"></feOffset>
+              <feComposite in="SourceGraphic" in2="offset" operator="over"></feComposite>
+            </filter>
+            <radialGradient id="lorc-sundial-gradient-0">
+              <stop offset="0%" stop-color="#f8e71c" stop-opacity="1"></stop>
+              <stop offset="100%" stop-color="#f5a623" stop-opacity="1"></stop>
+            </radialGradient>
+          </defs>
+          <circle cx="256" cy="256" r="256" fill="url(#lorc-sundial-gradient-0)"></circle>
+          <g class="" transform="translate(0,0)" style="">
+            <path d="m227.02 45.682-2.01 150.17a193.007 193.007 0 0 0-31.334 9.423l-34.46-54.44 10.48 65.913a195.292 195.292 0 0 0-31.362 22.043l-85.387-73.01 60.914 98.26a194.793 194.793 0 0 0-26.725 43.73l-37.89-9.674 32.146 24.228a193.34 193.34 0 0 0-10.036 46.89l-52.426 1.497 151.115 58.343c-5.937-13.1-9.244-27.634-9.244-42.922 0-57.535 46.842-104.378 104.378-104.378 57.535 0 104.377 46.843 104.377 104.38 0 14.662-3.05 28.628-8.535 41.304-.054.597-.1 1.188-.16 1.79l138.406-59.548-40.56-3.928a193.154 193.154 0 0 0-16.17-59.607l29.804-34.71-41.317 13.08a195.764 195.764 0 0 0-32.937-40.292l58.926-131.802-93.026 106.238a193.489 193.489 0 0 0-42.377-18.64l2.535-65.838-24.547 60.54a195.367 195.367 0 0 0-34.405-3.04c-2.4 0-4.785.06-7.164.146L227.02 45.682zm38.173 164.685c9.258 0 18.345.717 27.213 2.09l-19.693 48.572-10.74-50.622c1.072-.02 2.143-.04 3.22-.04zm-40.44 4.664-.515 38.53-20.392-32.218a174.6 174.6 0 0 1 20.908-6.31zm96.112 4.312a174.717 174.717 0 0 1 30.63 13.578l-32.585 37.213 1.955-50.79zm-148.03 17.15 5.85 36.803-26.048-22.274a176.35 176.35 0 0 1 20.197-14.528zm217.186 25.766a176.319 176.319 0 0 1 22.673 28.056l-41.02 12.987 18.348-41.042zm-265.73 18.605 26.808 43.24-45.643-11.654a175.599 175.599 0 0 1 18.836-31.587zM265.18 300.44c-47.435 0-85.69 38.256-85.69 85.69 0 47.436 38.255 85.688 85.69 85.688 47.435 0 85.687-38.252 85.687-85.687 0-47.434-38.252-85.69-85.687-85.69zm163.808 21.484a174.997 174.997 0 0 1 10.707 41.984l-43.17-4.18 32.463-37.804zM97.11 334.176l43.853 33.054-50.805 1.45a175.414 175.414 0 0 1 6.953-34.504z" fill="#ffc5af" fill-opacity="0.92" transform="translate(25.6, 25.6) scale(0.9, 0.9) rotate(0, 256, 256) skewX(0) skewY(0)" filter="url(#shadow-1)" stroke="#f5a623" stroke-opacity="1" stroke-width="5"></path>
+          </g>
+        </svg>
         <div class="label" id="wheel-label">The Wheel</div>
 
         <div class="panel" aria-hidden="true">
@@ -609,86 +472,22 @@ body {
 
       <!-- THE CYCLE -->
       <article class="sun" id="cycle" data-key="cycle" aria-labelledby="cycle-label">
-        <div class="orb" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Cycle">
-          <!-- Enhanced shiny warm glowy sun svg (Wheel style) -->
-          <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
-            <defs>
-              <!-- Main sun body gradient -->
-              <radialGradient id="cycle-main" cx="35%" cy="30%" r="75%">
-                <stop offset="0%" stop-color="#fffef5" />
-                <stop offset="20%" stop-color="#fff3c4" />
-                <stop offset="40%" stop-color="#ffe890" />
-                <stop offset="60%" stop-color="#ffcc33" />
-                <stop offset="80%" stop-color="#ffa500" />
-                <stop offset="95%" stop-color="#ff8c00" />
-                <stop offset="100%" stop-color="#ff7f50" />
-              </radialGradient>
-              
-              <!-- Inner glow gradient -->
-              <radialGradient id="cycle-glow" cx="45%" cy="40%" r="45%">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
-                <stop offset="40%" stop-color="#fff8dc" stop-opacity="0.7" />
-                <stop offset="80%" stop-color="#ffd700" stop-opacity="0.2" />
-                <stop offset="100%" stop-color="#ffa500" stop-opacity="0" />
-              </radialGradient>
-              
-              <!-- Ray gradient -->
-              <linearGradient id="cycle-ray" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#ffda79" stop-opacity="0.9" />
-                <stop offset="50%" stop-color="#ffcc44" stop-opacity="0.5" />
-                <stop offset="100%" stop-color="#ff9500" stop-opacity="0" />
-              </linearGradient>
-              
-              <!-- Sparkle gradient -->
-              <radialGradient id="cycle-sparkle" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#ffffff" />
-                <stop offset="70%" stop-color="#fffef0" stop-opacity="0.8" />
-                <stop offset="100%" stop-color="#ffda79" stop-opacity="0" />
-              </radialGradient>
-            </defs>
-            
-            <!-- Extended sun rays for wheel -->
-            <g opacity="0.8">
-              <path d="M50 8 L51.5 22 L48.5 22 Z" fill="url(#cycle-ray)" />
-              <path d="M50 92 L51.5 78 L48.5 78 Z" fill="url(#cycle-ray)" />
-              <path d="M8 50 L22 51.5 L22 48.5 Z" fill="url(#cycle-ray)" />
-              <path d="M92 50 L78 51.5 L78 48.5 Z" fill="url(#cycle-ray)" />
-              <path d="M20 20 L30 27 L27 37 Z" fill="url(#cycle-ray)" />
-              <path d="M80 80 L70 73 L73 63 Z" fill="url(#cycle-ray)" />
-              <path d="M20 80 L27 70 L37 73 Z" fill="url(#cycle-ray)" />
-              <path d="M80 20 L73 27 L63 30 Z" fill="url(#cycle-ray)" />
-              
-              <!-- Additional intermediate rays -->
-              <path d="M35 12 L42 18 L38 26 Z" fill="url(#cycle-ray)" opacity="0.7" />
-              <path d="M88 35 L82 42 L74 38 Z" fill="url(#cycle-ray)" opacity="0.7" />
-              <path d="M65 88 L58 82 L50 74 Z" fill="url(#cycle-ray)" opacity="0.7" />
-              <path d="M12 65 L18 58 L26 50 Z" fill="url(#cycle-ray)" opacity="0.7" />
-            </g>
-            
-            <!-- Main sun body -->
-            <circle cx="50" cy="50" r="34" fill="url(#cycle-main)" />
-            
-            <!-- Inner glow -->
-            <circle cx="50" cy="50" r="22" fill="url(#cycle-glow)" />
-            
-            <!-- Surface texture dots -->
-            <circle cx="44" cy="42" r="1.8" fill="#fff3c4" opacity="0.7" />
-            <circle cx="56" cy="58" r="1.3" fill="#ffe066" opacity="0.6" />
-            <circle cx="41" cy="59" r="1.1" fill="#ffcc33" opacity="0.8" />
-            <circle cx="59" cy="41" r="0.9" fill="#fff3c4" opacity="0.7" />
-            <circle cx="50" cy="55" r="1.4" fill="#ffda79" opacity="0.5" />
-            <circle cx="45" cy="48" r="0.7" fill="#ffa500" opacity="0.6" />
-            
-            <!-- Sparkles -->
-            <circle cx="40" cy="33" r="2.2" fill="url(#cycle-sparkle)" opacity="0.9" />
-            <circle cx="60" cy="67" r="1.8" fill="url(#cycle-sparkle)" opacity="0.7" />
-            <circle cx="35" cy="60" r="1.2" fill="url(#cycle-sparkle)" opacity="0.8" />
-            <circle cx="65" cy="40" r="1" fill="url(#cycle-sparkle)" opacity="0.6" />
-            
-            <!-- Central bright core -->
-            <circle cx="50" cy="50" r="8" fill="#ffffff" opacity="0.8" />
-          </svg>
-        </div>
+        <svg class="orb" width="180" height="180" viewBox="0 0 512 512" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Cycle">
+          <!-- Sun SVG -->
+          <defs>
+            <filter id="shadow-1" height="300%" width="300%" x="-100%" y="-100%">
+              <feFlood flood-color="rgba(245, 166, 35, 1)" result="flood"></feFlood>
+              <feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"></feComposite>
+              <feGaussianBlur in="composite" stdDeviation="15" result="blur"></feGaussianBlur>
+              <feOffset dx="0" dy="0" result="offset"></feOffset>
+              <feComposite in="SourceGraphic" in2="offset" operator="over"></feComposite>
+            </filter>
+          </defs>
+          <circle cx="256" cy="256" r="251" fill="#ffe0af" fill-opacity="1" stroke="#000000" stroke-opacity="1" stroke-width="5"></circle>
+          <g class="" transform="translate(0,0)" style="">
+            <path d="M320.063 19.72c-72.258 14.575-19.248 71.693-74.344 108.81 4.846-.49 9.746-.702 14.655-.624 16.288.26 32.785 3.72 48.594 10.72a126.431 126.431 0 0 1 14.25 7.405c12.107-47.476-37.103-96.38-3.158-126.31zM136.75 44.47c-40.76 61.357 36.984 64.33 24.406 129.405 17.407-21.255 41.17-35.9 67.156-42.313-25.006-42.138-94.4-41.924-91.562-87.093zm297.313 75.405c-32.547.872-45.475 46.314-96.594 36.22 21.35 17.42 36.034 41.25 42.467 67.31 42.306-24.92 42.053-94.466 87.282-91.624-13.43-8.92-24.06-12.15-33.158-11.905zm-177.97 26.656c-23.656.46-46.53 8.82-64.906 23.626l18.657 36.156L170 193.156a107.628 107.628 0 0 0-9.406 16.938c-8.726 19.708-11.002 40.59-7.78 60.344l44.78 2.125-34 30.312c10.798 20.622 28.414 37.852 51.406 48.03a107.842 107.842 0 0 0 9.313 3.626l24.53-38.25 9.095 43.814c27.3.075 53.737-10.387 73.593-29.188l-19.186-37.125 38.406 12.658a108.49 108.49 0 0 0 5.03-9.938c9.746-22.01 11.457-45.498 6.44-67.22l-37.626-1.75 27.687-24.718c-10.83-20.194-28.236-37.07-50.874-47.093a107.405 107.405 0 0 0-4.125-1.72l-25.874 40.313-9.906-47.75c-.5-.016-1-.023-1.5-.032-1.3-.02-2.61-.024-3.906 0zM133.407 186.5c-41.652.725-82.483 34.847-108.72 5.094 14.573 72.234 71.664 19.3 108.783 74.312-2.154-20.972.934-42.758 10.06-63.375a126.36 126.36 0 0 1 7.345-14.093c-5.822-1.47-11.642-2.038-17.47-1.937zm249.5 53.97a124.649 124.649 0 0 1-10.03 63.624l-.188.375a126.38 126.38 0 0 1-7.22 13.78c47.524 12.244 96.507-37.137 126.47-3.156-14.603-72.388-71.92-19.04-109.032-74.625zM136.53 283.405c-42.123 25.014-41.928 94.37-87.093 91.53 61.422 40.803 64.322-37.123 129.594-24.342-21.344-17.385-36.03-41.167-42.5-67.188zm219.064 48.906c-17.406 21.46-41.236 36.24-67.344 42.72 24.944 42.263 94.497 42.004 91.656 87.218 40.867-61.52-37.402-64.358-24.312-129.938zM193.406 360.72c-12.047 47.456 37.087 96.33 3.156 126.25 72.305-14.587 19.195-71.79 74.47-108.908-21.04 2.204-42.898-.9-63.594-10.062a126.43 126.43 0 0 1-14.032-7.28z" fill="#f8e71c" fill-opacity="1" transform="translate(25.6, 25.6) scale(0.9, 0.9) rotate(15, 256, 256) skewX(0) skewY(0)" filter="url(#shadow-1)" stroke="#4a90e2" stroke-opacity="1" stroke-width="8"></path>
+          </g>
+        </svg>
         <div class="label" id="cycle-label">The Cycle</div>
 
         <div class="panel" aria-hidden="true">
@@ -712,6 +511,7 @@ body {
       </article>
 
     </section>
+    <div style="height: 30px;"></div>
   </main>
 
   <script>
