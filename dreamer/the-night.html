@@ -1,413 +1,865 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEANSand - The Night</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The NIGHT — Redesigned</title>
+  <style>
+    /* -------------------------
+       Base / Reset
+       ------------------------- */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: "Georgia", serif;
+      background: linear-gradient(135deg,#1a1a2e 0%, #16213e 40%, #0f3460 100%);
+      color:#e8e8e8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-y:auto;
+    }
+body {
+  background: linear-gradient(135deg,#1a1a2e 0%, #16213e 40%, #0f3460 100%);
+  background-repeat: no-repeat;   /* STOP repeating */
+  background-attachment: fixed;   /* Stays in place while scrolling */
+  background-size: cover;         /* Fills whole viewport */
+}
 
-        html, body {
-            height: 100%;
-            overflow: hidden;
-            font-family: 'Georgia', serif;
-        }
+    /* -------------------------
+       Top fixed bar
+       ------------------------- */
+    .top-bar{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:64px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 28px;
+      gap:12px;
+      z-index:1000;
+      backdrop-filter: blur(6px) saturate(.9);
+      background: linear-gradient(180deg, rgba(26,26,46,0.95), rgba(16,33,62,0.8));
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
 
-        body {
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
-            position: relative;
-        }
+    .bar-left, .bar-center, .bar-right { display:none; }
+    
+    /* Desktop top row layout */
+    .top-row { 
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      justify-content: space-between;
+    }
 
-        /* Video Background */
-        .video-wrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            z-index: 0;
-            opacity: 0.3;
-        }
+    /* Return button */
+    .return-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 16px;
+      border-radius:8px;
+      cursor:pointer;
+      text-decoration:none;
+      font-weight:700;
+      background:rgba(255,255,255,0.1);
+      color:#ffffff;
+      border:2px solid rgba(255,255,255,0.15);
+      transition: background .22s ease, color .22s ease, transform .12s ease, border-color .22s ease;
+    }
+    .return-btn:hover,
+    .return-btn:focus{
+      background:#e94560; /* crimson red */
+      color:#fff;
+      border-color:#e94560;
+      outline:none;
+      transform:translateY(-1px);
+      box-shadow:0 8px 20px rgba(233,69,96,0.25);
+    }
 
-        .video-bg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-            filter: brightness(0.2) contrast(1.2) hue-rotate(180deg);
-        }
+    /* Title */
+    .title {
+      font-size:20px;
+      letter-spacing:2px;
+      font-weight:800;
+      text-align:center;
+      color:#f0f0f0;
+      text-transform:uppercase;
+      padding:6px 12px;
+      position:relative;
+    }
+    .title::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:-8px;
+      width:60px;
+      height:6px;
+      border-radius:6px;
+      background:linear-gradient(90deg,#4a4a8a,#6a6aaa);
+      filter:drop-shadow(0 6px 16px rgba(106,106,170,0.3));
+      opacity:.85;
+    }
 
-        /* Night Sky Effects */
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            opacity: 0;
-            animation: fadeInStars 3s ease-out 2s forwards;
-        }
+    /* Info (?) button */
+    .info-btn{
+      width:44px;height:44px;border-radius:10px;border:none;
+      background:transparent;cursor:pointer;font-weight:700;
+      display:inline-grid;place-items:center;font-size:18px;
+      color:#f0f0f0;
+      transition:transform .12s ease, background .12s ease;
+    }
+    .info-btn:hover{ transform:translateY(-1px); background: rgba(255,255,255,0.08); }
 
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkleStar 3s ease-in-out infinite alternate;
-        }
+    /* -------------------------
+       Main layout (Widescreen >=800px)
+       ------------------------- */
+    .page-inner{
+      max-width:1200px;
+      margin: 96px auto 80px; /* leave room for fixed bar */
+      padding: 28px;
+    }
 
-        /* Main Content */
-        .main-container {
-            position: relative;
-            z-index: 2;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
+    .suns-row{
+      display:flex;
+      gap:28px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
 
-        /* Header */
-        .header {
-            position: absolute;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #e6e6fa;
-            text-align: center;
-            z-index: 3;
-            opacity: 0;
-            animation: fadeIn 2s ease-out 1s forwards;
-        }
+    /* Moon capsule (default) and expanded panel */
+    .sun {
+      flex:1 1 0;
+      min-width:260px;
+      max-width:360px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      transition: transform .45s cubic-bezier(.2,.9,.28,1), opacity .35s ease;
+      will-change: transform, opacity;
+      position:relative;
+    }
 
-        .header h1 {
-            font-size: 3rem;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.8), 0 0 30px rgba(138,43,226,0.6);
-            margin-bottom: 10px;
-            font-weight: bold;
-            color: #9370db;
-        }
+    /* The glowing moon */
+    .moon .orb {
+      width:180px;height:180px;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.9) 0px, rgba(240,240,240,1) 12%,
+                        rgba(200,200,200,0.8) 45%, rgba(150,150,150,0.6) 75%, transparent 100%),
+        radial-gradient(circle at 60% 70%, rgba(255,255,255,0.15), transparent 60%);
+      box-shadow: 0 10px 40px rgba(200,200,200,0.25), inset 0 -8px 30px rgba(150,150,150,0.2);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      transition: transform .35s ease, box-shadow .35s ease, filter .35s ease;
+      animation: floatOrb 4.5s ease-in-out infinite;
+      user-select:none;
+      
+      /* Create triangular moon shape */
+      clip-path: polygon(50% 0%, 100% 80%, 0% 80%);
+    }
+    .orb:hover{ transform: scale(1.06); box-shadow: 0 14px 54px rgba(220,220,220,0.35); filter:brightness(1.04) saturate(1.03); }
 
-        .header p {
-            font-size: 1.2rem;
-            color: #b8b8dc;
-            opacity: 0.9;
-        }
+    @keyframes floatOrb {
+      0%{ transform: translateY(0) }
+      50%{ transform: translateY(-8px) }
+      100%{ transform: translateY(0) }
+    }
 
-        /* Night Text Container */
-        .night-text-container {
-            position: relative;
-            max-width: 800px;
-            padding: 40px;
-            margin-top: 2rem;
-            text-align: center;
-            z-index: 10;
-        }
+    /* Orb label below */
+    .moon .label {
+      margin-top:18px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      color:#f0f0f0;
+      font-size:14px;
+    }
 
-        .night-text {
-            color: #e6e6fa;
-            font-size: 1.3rem;
-            line-height: 1.8;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            opacity: 0;
-        }
+    /* Expanded panel */
+    .panel {
+      position: relative;
+      width: 100%;
+      margin-top: 18px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(40,40,60,0.95), rgba(30,30,50,0.98));
+      box-shadow: 0 18px 40px rgba(0,0,0,0.4);
+      transform-origin: top center;
+      opacity: 0;
+      max-height: 0;
+      padding: 0 22px;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition:
+        opacity .4s ease,
+        max-height .75s ease;   /* slowed for smoother expansion */
+    }
 
-        .letter {
-            opacity: 0;
-            display: inline-block;
-            animation: letterFadeIn 0.1s ease-in-out forwards;
-        }
+    /* when expanded */
+    .sun.expanded .panel {
+      opacity: 1;
+      max-height: 2000px;        /* HIGH VALUE to allow full text height */
+      padding: 18px 22px 30px;
+    }
 
-        .letter.space {
-            width: 0.3em;
-        }
+    /* when expanded */
+    .sun.expanded{
+      transform:translateY(-2px) scale(1.02);
+      z-index:30;
+    }
 
-        .letter.newline {
-            display: block;
-            width: 100%;
-            height: 1em;
-        }
+    /* Close button (top-left inside panel) */
+    .close-x{
+      position:absolute;
+      left:14px;
+      top:14px;
+      width:36px;height:36px;border-radius:8px;
+      display:inline-grid;place-items:center;
+      cursor:pointer;border:none;background:transparent;font-weight:700;
+      color:#f0f0f0;
+      transition: transform .12s ease;
+    }
+    .close-x:hover{ transform:translateY(-2px); background: rgba(255,255,255,0.08); }
 
-        /* Navigation */
-        .nav-container {
-            position: absolute;
-            top: 50px;
-            left: 50px;
-            z-index: 3;
-        }
+    /* Panel title */
+    .panel .panel-title{
+      text-transform:uppercase;
+      font-weight:900;
+      letter-spacing:1.5px;
+      font-size:18px;
+      margin-left:58px; /* leave space for close button */
+      margin-bottom:12px;
+      color:#f0f0f0;
+    }
 
-        .back-btn {
-            padding: 12px 24px;
-            background: rgba(138,43,226,0.9);
-            color: #e6e6fa;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            border: 2px solid #9370db;
-        }
+    /* Image with faded/dissolved top border */
+    .panel .fade-image{
+      width:100%;
+      height:220px;
+      border-radius:10px;
+      object-fit:cover;
+      display:block;
+        mask-image: radial-gradient(circle, 
+            rgba(0,0,0,1) 40%, 
+            rgba(0,0,0,0.5) 70%, 
+            rgba(0,0,0,0) 100%
+        );
+        -webkit-mask-image: radial-gradient(circle, 
+            rgba(0,0,0,1) 40%, 
+            rgba(0,0,0,0.5) 70%, 
+            rgba(0,0,0,0) 100%
+        );
+      box-shadow: inset 0 30px 60px rgba(0,0,0,0.2);
+      margin-bottom:14px;
+      background:linear-gradient(180deg,#2a2a3e,#1a1a2e);
+    }
 
-        .back-btn:hover {
-            background: rgba(138,43,226,1);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(138,43,226,0.5);
-        }
+    /* Text area */
+    .panel .panel-body {
+      font-size:15px;
+      line-height:1.6;
+      color:#d0d0d0;
+    }
+    .panel .panel-body p{ margin-bottom:12px }
+    .panel .panel-body ul{ margin-left:18px; margin-bottom:12px }
+    .panel .panel-body li{ margin-bottom:6px }
 
-        /* Moon Effect */
-        .moon {
-            position: absolute;
-            top: 100px;
-            right: 100px;
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle at 30% 30%, #f5f5dc 0%, #e6e6fa 50%, #d3d3d3 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 40px rgba(245,245,220,0.6);
-            opacity: 0;
-            animation: moonRise 2s ease-out 3s forwards;
-        }
+    /* When another orb is expanded, all others fully fade & slide down */
+    .sun.dimmed{
+      opacity: 0;                 /* fully invisible */
+      transform: translateY(60px) scale(.94);
+      pointer-events: none;
+      filter: blur(4px);          /* optional atmospheric blur */
+      transition:
+        opacity .45s ease,
+        transform .55s cubic-bezier(.2,.9,.28,1),
+        filter .35s ease;
+    }
+    /* -------------------------
+       Tablet and mobile screens
+       ------------------------- */
+    @media (max-width: 800px) {
+      .page-inner{ margin:120px 18px 48px }
+      .suns-row{flex-direction:column; gap:18px}
+      .sun{max-width:100%}
+      .moon .orb{ width:140px;height:140px; clip-path: polygon(50% 0%, 100% 80%, 0% 80%); }
+      .panel .fade-image{ height:160px }
+      
+      /* Mobile top bar layout - stacked layout */
+      .top-bar{
+        height: auto;
+        min-height: 96px;
+        padding: 12px 18px;
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+      }
+      
+      /* Make top-bar children stack properly on mobile */
+      .top-bar > * {
+        width: 100%;
+      }
+      
+      /* Desktop layout elements are already hidden */
+      
+      /* Mobile top row styling */
+      .top-row {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0;
+      }
+      
+      /* Show and center title on mobile */
+      .top-bar .bar-center {
+        display: flex;
+        position: static;
+        transform: none;
+        width: 100%;
+        justify-content: center;
+        margin: 0;
+        order: 2; /* Put title below the buttons on mobile */
+      }
+      
+      /* Adjust top-row order for mobile */
+      .top-bar .top-row {
+        order: 1; /* Put buttons on top for mobile */
+      }
+      
+      .title {
+        font-size: 18px;
+        letter-spacing: 1.5px;
+        margin: 0;
+      }
+      
+      /* Return button styling on mobile */
+      .top-row .return-btn {
+        padding: 8px 12px;
+        font-size: 14px;
+        margin: 0;
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+      
+      /* Info button styling on mobile */
+      .top-row .info-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+        margin: 0;
+        display: inline-grid !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+    }
 
-        .moon::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 25px;
-            width: 15px;
-            height: 15px;
-            background: #c0c0c0;
-            border-radius: 50%;
-            box-shadow: 
-                40px 10px 0 #c0c0c0,
-                25px 35px 0 #c0c0c0,
-                15px 25px 0 #c0c0c0;
-            opacity: 0.8;
-        }
+    .sun.dimmed .orb{
+      filter: brightness(1.4) blur(10px);
+    }
+/*    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between; // keep left/right in place 
+      padding: 0 28px;
+      gap: 12px;
+      z-index: 1000;
+      backdrop-filter: blur(6px) saturate(.9);
+      background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.6));
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    }*/
 
-        /* Animations */
-        @keyframes fadeIn {
-            from { 
-                opacity: 0; 
-                transform: translateX(-50%) translateY(-20px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateX(-50%) translateY(0); 
-            }
-        }
+    /* PERFECT CENTERING FIX */
+    .bar-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
 
-        @keyframes fadeInStars {
-            from { opacity: 0; }
-            to { opacity: 0.7; }
-        }
-
-        @keyframes twinkleStar {
-            0% { 
-                opacity: 0.3;
-                transform: scale(1);
-            }
-            100% { 
-                opacity: 1;
-                transform: scale(1.2);
-            }
-        }
-
-        @keyframes letterFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes moonRise {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Paragraph styling */
-        .night-text p {
-            margin-bottom: 1.5em;
-        }
-
-        .night-text p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Special emphasis */
-        .night-text .emphasis {
-            color: #9370db;
-            font-weight: bold;
-            text-shadow: 0 0 10px rgba(147,112,219,0.8);
-        }
-
-        .night-text .whisper {
-            font-style: italic;
-            opacity: 0.8;
-            color: #b8b8dc;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 { font-size: 2rem; }
-            .night-text { font-size: 1.1rem; }
-            .night-text-container {
-                padding: 20px;
-                margin: 1rem;
-            }
-            .moon {
-                top: 50px;
-                right: 50px;
-                width: 60px;
-                height: 60px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .night-text { font-size: 1rem; }
-            .night-text-container {
-                padding: 15px;
-            }
-        }
-    </style>
+  </style>
 </head>
 <body>
-    <!-- Video Background -->
-    <div class="video-wrapper">
-        <video class="video-bg" autoplay muted loop playsinline>
-            <source src="media/138556-769988117_medium.mp4" type="video/mp4">
-        </video>
+
+  <!-- Top bar -->
+  <header class="top-bar" role="banner" aria-label="Top navigation">
+    <div class="top-row">
+      <a href="../dreamer.html" class="return-btn" title="Return To Dreaming…">← Return To Dreaming…</a>
+      <button class="info-btn" id="openInfo" aria-expanded="false" aria-controls="infoPanel" title="More information">?</button>
     </div>
 
-    <!-- Stars Background -->
-    <div class="stars" id="stars"></div>
-
-    <!-- Moon -->
-    <div class="moon"></div>
-
-    <!-- Navigation -->
-    <div class="nav-container">
-        <a href="../dreamer.html" class="back-btn">← Back to Dream</a>
+    <div class="bar-center">
+      <div class="title" aria-hidden="true">THE NIGHT</div>
     </div>
+  </header>
 
-    <!-- Header -->
-    <div class="header">
-        <h1>The Night</h1>
-        <p>Where shadows speak and secrets unfold</p>
-    </div>
+  <!-- Supplemental info modal/panel -->
+  <div id="infoPanel" role="dialog" aria-modal="true" aria-hidden="true"
+       style="position:fixed; right:22px; top:80px; width:360px; max-width:calc(100% - 48px); z-index:1200;
+              border-radius:12px; background:linear-gradient(180deg,#2a2a3e,#1a1a2e); padding:18px; box-shadow:0 20px 60px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1); display:none;">
+    <button id="closeInfo" style="position:absolute; right:10px; top:10px; border:none; background:transparent; cursor:pointer; font-weight:700; color:#f0f0f0;">✕</button>
+    <h3 style="margin-bottom:8px; font-size:16px; text-transform:uppercase; letter-spacing:1px; color:#f0f0f0;">About The Night</h3>
+    <p style="font-size:14px; line-height:1.5; color:#d0d0d0;">
+      This panel holds supplemental context and worldbuilding for "The Night".
+      Click any moon to expand its chapter. When one expands, the others fade and slide down to emphasise the active chapter.
+    </p>
+  </div>
 
-    <!-- Main Content -->
-    <div class="main-container">
-        <div class="night-text-container">
-            <div class="night-text" id="nightText">
-                <!-- Text will be revealed letter by letter -->
-            </div>
+  <main class="page-inner" id="main" role="main">
+    <section class="suns-row" aria-label="Chapters of the night">
+
+      <!-- THE DUSK -->
+      <article class="sun moon" id="dusk" data-key="dusk" aria-labelledby="dusk-label">
+        <div class="orb" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Dusk">
+          <!-- Dusk moon SVG -->
+          <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
+            <defs>
+              <!-- Main moon body gradient -->
+              <radialGradient id="dusk-main" cx="30%" cy="25%" r="70%">
+                <stop offset="0%" stop-color="#fefefe" />
+                <stop offset="15%" stop-color="#f0f0f0" />
+                <stop offset="35%" stop-color="#d0d0d0" />
+                <stop offset="55%" stop-color="#a0a0a0" />
+                <stop offset="75%" stop-color="#808080" />
+                <stop offset="90%" stop-color="#606060" />
+                <stop offset="100%" stop-color="#404040" />
+              </radialGradient>
+              
+              <!-- Inner glow gradient -->
+              <radialGradient id="dusk-glow" cx="40%" cy="35%" r="40%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
+                <stop offset="50%" stop-color="#f0f0f0" stop-opacity="0.6" />
+                <stop offset="100%" stop-color="#c0c0c0" stop-opacity="0" />
+              </radialGradient>
+              
+              <!-- Ray gradient -->
+              <linearGradient id="dusk-ray" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#c0c0c0" stop-opacity="0.6" />
+                <stop offset="50%" stop-color="#909090" stop-opacity="0.3" />
+                <stop offset="100%" stop-color="#606060" stop-opacity="0" />
+              </linearGradient>
+              
+              <!-- Sparkle gradient -->
+              <radialGradient id="dusk-sparkle" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="60%" stop-color="#f0f0f0" stop-opacity="0.7" />
+                <stop offset="100%" stop-color="#c0c0c0" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+            
+            <!-- Moon rays -->
+            <g opacity="0.5">
+              <path d="M50 10 L52 20 L48 20 Z" fill="url(#dusk-ray)" />
+              <path d="M50 90 L52 80 L48 80 Z" fill="url(#dusk-ray)" />
+              <path d="M10 50 L20 52 L20 48 Z" fill="url(#dusk-ray)" />
+              <path d="M90 50 L80 52 L80 48 Z" fill="url(#dusk-ray)" />
+              <path d="M22 22 L30 26 L26 34 Z" fill="url(#dusk-ray)" />
+              <path d="M78 78 L70 74 L74 66 Z" fill="url(#dusk-ray)" />
+              <path d="M22 78 L26 70 L34 74 Z" fill="url(#dusk-ray)" />
+              <path d="M78 22 L70 26 L74 34 Z" fill="url(#dusk-ray)" />
+            </g>
+            
+            <!-- Main moon body -->
+            <circle cx="50" cy="50" r="32" fill="url(#dusk-main)" />
+            
+            <!-- Inner glow -->
+            <circle cx="50" cy="50" r="20" fill="url(#dusk-glow)" />
+            
+            <!-- Surface texture dots -->
+            <circle cx="42" cy="45" r="1.5" fill="#c0c0c0" opacity="0.6" />
+            <circle cx="58" cy="55" r="1" fill="#a0a0a0" opacity="0.7" />
+            <circle cx="46" cy="60" r="1.2" fill="#808080" opacity="0.5" />
+            <circle cx="55" cy="42" r="0.8" fill="#d0d0d0" opacity="0.8" />
+            <circle cx="48" cy="52" r="1" fill="#b0b0b0" opacity="0.6" />
+            
+            <!-- Sparkles -->
+            <circle cx="38" cy="35" r="2" fill="url(#dusk-sparkle)" opacity="0.8" />
+            <circle cx="62" cy="65" r="1.5" fill="url(#dusk-sparkle)" opacity="0.6" />
+            <circle cx="45" cy="30" r="1" fill="url(#dusk-sparkle)" opacity="0.7" />
+          </svg>
         </div>
-    </div>
+        <div class="label" id="dusk-label">The Dusk</div>
 
-    <script>
-        // Night text content
-        const nightText = `
-            In the realm of shadows and silence, where daylight fades and mystery blooms, the Night holds dominion over all that lies hidden.
-            
-            Here, beneath the velvet sky, dreams take on deeper meaning. The boundary between sleeping and waking dissolves, and the subconscious mind roams free through landscapes shaped by emotion and memory.
-            
-            The Night does not bring endings, but rather the space between breaths where transformation occurs. It is the time when the soul examines itself, when fears and hopes merge in the twilight of consciousness.
-            
-            In this sacred darkness, secrets are revealed not through sight, but through feeling. The wise learn to read the whispers of the wind, the language of shadows, and the stories written in starlight.
-            
-            Those who embrace the Night discover that darkness is not empty, but full - pregnant with possibility, rich with the seeds of tomorrow's dawn.
-            
-            The Night teaches patience, for all things in their proper time. It shows that strength often lies not in fighting the darkness, but in learning to dance within it.
-            
-            Remember, dear dreamer: every ending is a beginning, and every night carries within it the promise of a new day.
-        `;
+        <div class="panel" aria-hidden="true">
+          <button class="close-x" aria-label="Close The Dusk">✕</button>
+          <div class="panel-title">The Dusk</div>
+          <!-- image: replace src with your own; masked to fade near top -->
+          <img class="fade-image" alt="Dusk image" src="..\media\sunset1.webp?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=5f6b4a6c6f79c2b2f9d2c79e2d5d9b0d">
+          <div class="panel-body">
+            <p><strong>SUNSET</strong>: After concluding the eleventh space, the next player will make a decision.</p>
+            <p>PROCEED to...</p>
+            <ul>
+              <li>DAWN: conclude the current cycle and move to the next cycle.</li>
+              <li>Resolve any effects.</li>
+              <li>The player whom decided to proceed to DAWN takes their turn immediately after DAWN is concluded.</li>
+              <li>NIGHT: begin the NIGHT phase.</li>
+              <li>Night effects on map cards must be activated.</li>
+              <li>Night effects for players activate immediately or on the beginning of their turn.</li>
+              <li>The player whom decided to enter the NIGHT takes their turn immediately.</li>
+            </ul>
+            <p><em>Notes:</em> The narrator may enhance the difficulty of A/B/C cards at night arbitrarily.</p>
+          </div>
+        </div>
+      </article>
 
-        // Generate stars
-        function generateStars() {
-            const starsContainer = document.getElementById('stars');
-            const numStars = 100;
+      <!-- THE FULL MOON -->
+      <article class="sun moon" id="fullmoon" data-key="fullmoon" aria-labelledby="fullmoon-label">
+        <div class="orb" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Full Moon">
+          <!-- Full moon SVG -->
+          <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
+            <defs>
+              <!-- Main moon body gradient -->
+              <radialGradient id="fullmoon-main" cx="25%" cy="20%" r="80%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="25%" stop-color="#f8f8f8" />
+                <stop offset="45%" stop-color="#e8e8e8" />
+                <stop offset="65%" stop-color="#d0d0d0" />
+                <stop offset="85%" stop-color="#b0b0b0" />
+                <stop offset="100%" stop-color="#909090" />
+              </radialGradient>
+              
+              <!-- Inner glow gradient -->
+              <radialGradient id="fullmoon-glow" cx="30%" cy="25%" r="50%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+                <stop offset="30%" stop-color="#f8f8f8" stop-opacity="0.8" />
+                <stop offset="70%" stop-color="#e0e0e0" stop-opacity="0.4" />
+                <stop offset="100%" stop-color="#c0c0c0" stop-opacity="0" />
+              </radialGradient>
+              
+              <!-- Ray gradient -->
+              <linearGradient id="fullmoon-ray" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#e8e8e8" stop-opacity="0.6" />
+                <stop offset="50%" stop-color="#c0c0c0" stop-opacity="0.4" />
+                <stop offset="100%" stop-color="#909090" stop-opacity="0" />
+              </linearGradient>
+              
+              <!-- Sparkle gradient -->
+              <radialGradient id="fullmoon-sparkle" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="50%" stop-color="#f8f8f8" stop-opacity="0.9" />
+                <stop offset="100%" stop-color="#e8e8e8" stop-opacity="0" />
+              </radialGradient>
+              
+              <!-- Cycle ring gradient -->
+              <linearGradient id="fullmoon-ring" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#e8e8e8" stop-opacity="0.6" />
+                <stop offset="50%" stop-color="#c0c0c0" stop-opacity="0.3" />
+                <stop offset="100%" stop-color="#909090" stop-opacity="0" />
+              </linearGradient>
+            </defs>
             
-            for (let i = 0; i < numStars; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                
-                // Random position
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                
-                // Random size
-                const size = Math.random() * 3 + 1;
-                star.style.width = size + 'px';
-                star.style.height = size + 'px';
-                
-                // Random animation delay
-                star.style.animationDelay = Math.random() * 3 + 's';
-                
-                starsContainer.appendChild(star);
-            }
-        }
+            <!-- Dynamic curved rays -->
+            <g opacity="0.4">
+              <path d="M50 5 Q55 15 50 25 Q45 15 50 5 Z" fill="url(#fullmoon-ray)" />
+              <path d="M95 50 Q85 45 75 50 Q85 55 95 50 Z" fill="url(#fullmoon-ray)" />
+              <path d="M50 95 Q45 85 50 75 Q55 85 50 95 Z" fill="url(#fullmoon-ray)" />
+              <path d="M5 50 Q15 55 25 50 Q15 45 5 50 Z" fill="url(#fullmoon-ray)" />
+              
+              <!-- Curved corner rays -->
+              <path d="M15 15 Q25 20 30 30 Q20 25 15 15 Z" fill="url(#fullmoon-ray)" />
+              <path d="M85 85 Q75 80 70 70 Q80 75 85 85 Z" fill="url(#fullmoon-ray)" />
+              <path d="M85 15 Q75 20 70 30 Q80 25 85 15 Z" fill="url(#fullmoon-ray)" />
+              <path d="M15 85 Q25 80 30 70 Q20 75 15 85 Z" fill="url(#fullmoon-ray)" />
+            </g>
+            
+            <!-- Main moon body -->
+            <circle cx="50" cy="50" r="30" fill="url(#fullmoon-main)" />
+            
+            <!-- Cycle ring around the moon -->
+            <circle cx="50" cy="50" r="36" fill="none" stroke="url(#fullmoon-ring)" stroke-width="3" opacity="0.4" />
+            <circle cx="50" cy="50" r="38" fill="none" stroke="url(#fullmoon-ring)" stroke-width="1" opacity="0.2" />
+            
+            <!-- Inner glow -->
+            <circle cx="50" cy="50" r="18" fill="url(#fullmoon-glow)" />
+            
+            <!-- Surface texture with cycle pattern -->
+            <circle cx="43" cy="43" r="1.5" fill="#d0d0d0" opacity="0.7" />
+            <circle cx="57" cy="57" r="1.2" fill="#b0b0b0" opacity="0.6" />
+            <circle cx="47" cy="60" r="1" fill="#909090" opacity="0.8" />
+            <circle cx="53" cy="40" r="1.3" fill="#c0c0c0" opacity="0.7" />
+            <circle cx="42" cy="52" r="0.8" fill="#e0e0e0" opacity="0.6" />
+            <circle cx="58" cy="48" r="1" fill="#a0a0a0" opacity="0.5" />
+            
+            <!-- More intense sparkles -->
+            <circle cx="35" cy="35" r="2.5" fill="url(#fullmoon-sparkle)" opacity="0.9" />
+            <circle cx="65" cy="65" r="2" fill="url(#fullmoon-sparkle)" opacity="0.8" />
+            <circle cx="40" cy="65" r="1.5" fill="url(#fullmoon-sparkle)" opacity="0.7" />
+            <circle cx="60" cy="35" r="1.8" fill="url(#fullmoon-sparkle)" opacity="0.8" />
+            <circle cx="50" cy="30" r="1.2" fill="url(#fullmoon-sparkle)" opacity="0.6" />
+            
+            <!-- Central bright core -->
+            <circle cx="50" cy="50" r="10" fill="#ffffff" opacity="0.9" />
+            
+            <!-- Cycle dots moving around -->
+            <circle cx="68" cy="50" r="1.5" fill="#e8e8e8" opacity="0.8" />
+            <circle cx="32" cy="50" r="1.5" fill="#e8e8e8" opacity="0.8" />
+            <circle cx="50" cy="68" r="1.2" fill="#d0d0d0" opacity="0.7" />
+            <circle cx="50" cy="32" r="1.2" fill="#d0d0d0" opacity="0.7" />
+          </svg>
+        </div>
+        <div class="label" id="fullmoon-label">The Moon Rises</div>
 
-        // Type out text letter by letter
-        function typeOutText() {
-            const textContainer = document.getElementById('nightText');
-            const text = nightText.trim();
-            
-            let index = 0;
-            const delay = 80; // Milliseconds between letters
-            
-            function typeNextLetter() {
-                if (index < text.length) {
-                    const char = text[index];
-                    const letterSpan = document.createElement('span');
-                    
-                    if (char === ' ') {
-                        letterSpan.className = 'letter space';
-                        letterSpan.textContent = ' ';
-                    } else if (char === '\n') {
-                        letterSpan.className = 'letter newline';
-                    } else {
-                        letterSpan.className = 'letter';
-                        letterSpan.textContent = char;
-                    }
-                    
-                    textContainer.appendChild(letterSpan);
-                    
-                    // Trigger animation
-                    setTimeout(() => {
-                        letterSpan.style.animationPlayState = 'running';
-                    }, 10);
-                    
-                    index++;
-                    setTimeout(typeNextLetter, delay);
-                }
-            }
-            
-            // Start typing after a delay
-            setTimeout(typeNextLetter, 2000);
-        }
+        <div class="panel" aria-hidden="true">
+          <button class="close-x" aria-label="Close The Full Moon">✕</button>
+          <div class="panel-title">The Moon Rises</div>
+          <img class="fade-image" alt="Full moon image" src=..\media\cycler.webp?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=6f9b5f6a2b3b1f0c1a3a6f2f8c7e8d9a>
+          <div class="panel-body">
+            <p><strong>LAYOUT</strong>: Arrange the area with night zones in mind: six spaces are needed for the NIGHT phase, typically nested within the outer ring of the DAY.</p>
+            <p>Setup:</p>
+            <ul>
+              <li>Arrange six spaces for playing Bravery and Challenge cards (B and C cards).</li>
+              <li>The first NIGHT card must be a Bravery (B) card.</li>            
+              <li>The second NIGHT card must be a Challenge (C) card.</li>            
+              <li>Alternate B and C cards until a total of six cards have been played.</li>            
+              <li>Upon completing any card at NIGHT, move on to the next player.</li>
+              <li>Upon the next player's turn, they may choose to flee the NIGHT and continue to DAWN, or to continue deeper into the NIGHT.</li>
+            </ul>
+            <p><em>Notes:</em> You may always appeal to the narrator during the night, especially when consulting your NPCs.</p>
+          </div>
+        </div>
+      </article>
 
-        // Initialize everything when page loads
-        window.addEventListener('load', () => {
-            generateStars();
-            typeOutText();
+      <!-- THE CRESCENT MOON -->
+      <article class="sun moon" id="crescent" data-key="crescent" aria-labelledby="crescent-label">
+        <div class="orb" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Crescent Moon">
+          <!-- Crescent moon SVG -->
+          <svg width="80" height="80" viewBox="0 0 100 100" aria-hidden="true">
+            <defs>
+              <!-- Main moon body gradient -->
+              <radialGradient id="crescent-main" cx="35%" cy="30%" r="75%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="20%" stop-color="#f0f0f0" />
+                <stop offset="40%" stop-color="#e0e0e0" />
+                <stop offset="60%" stop-color="#c0c0c0" />
+                <stop offset="80%" stop-color="#a0a0a0" />
+                <stop offset="95%" stop-color="#808080" />
+                <stop offset="100%" stop-color="#606060" />
+              </radialGradient>
+              
+              <!-- Inner glow gradient -->
+              <radialGradient id="crescent-glow" cx="45%" cy="40%" r="45%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+                <stop offset="40%" stop-color="#f8f8f8" stop-opacity="0.7" />
+                <stop offset="80%" stop-color="#e0e0e0" stop-opacity="0.2" />
+                <stop offset="100%" stop-color="#c0c0c0" stop-opacity="0" />
+              </radialGradient>
+              
+              <!-- Ray gradient -->
+              <linearGradient id="crescent-ray" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#d0d0d0" stop-opacity="0.7" />
+                <stop offset="50%" stop-color="#b0b0b0" stop-opacity="0.4" />
+                <stop offset="100%" stop-color="#909090" stop-opacity="0" />
+              </linearGradient>
+              
+              <!-- Sparkle gradient -->
+              <radialGradient id="crescent-sparkle" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="70%" stop-color="#f8f8f8" stop-opacity="0.8" />
+                <stop offset="100%" stop-color="#e0e0e0" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+            
+            <!-- Extended moon rays -->
+            <g opacity="0.6">
+              <path d="M50 8 L51.5 22 L48.5 22 Z" fill="url(#crescent-ray)" />
+              <path d="M50 92 L51.5 78 L48.5 78 Z" fill="url(#crescent-ray)" />
+              <path d="M8 50 L22 51.5 L22 48.5 Z" fill="url(#crescent-ray)" />
+              <path d="M92 50 L78 51.5 L78 48.5 Z" fill="url(#crescent-ray)" />
+              <path d="M20 20 L30 27 L27 37 Z" fill="url(#crescent-ray)" />
+              <path d="M80 80 L70 73 L73 63 Z" fill="url(#crescent-ray)" />
+              <path d="M20 80 L27 70 L37 73 Z" fill="url(#crescent-ray)" />
+              <path d="M80 20 L73 27 L63 30 Z" fill="url(#crescent-ray)" />
+              
+              <!-- Additional intermediate rays -->
+              <path d="M35 12 L42 18 L38 26 Z" fill="url(#crescent-ray)" opacity="0.5" />
+              <path d="M88 35 L82 42 L74 38 Z" fill="url(#crescent-ray)" opacity="0.5" />
+              <path d="M65 88 L58 82 L50 74 Z" fill="url(#crescent-ray)" opacity="0.5" />
+              <path d="M12 65 L18 58 L26 50 Z" fill="url(#crescent-ray)" opacity="0.5" />
+            </g>
+            
+            <!-- Main moon body -->
+            <circle cx="50" cy="50" r="34" fill="url(#crescent-main)" />
+            
+            <!-- Inner glow -->
+            <circle cx="50" cy="50" r="22" fill="url(#crescent-glow)" />
+            
+            <!-- Surface texture dots -->
+            <circle cx="44" cy="42" r="1.8" fill="#d0d0d0" opacity="0.7" />
+            <circle cx="56" cy="58" r="1.3" fill="#b0b0b0" opacity="0.6" />
+            <circle cx="41" cy="59" r="1.1" fill="#909090" opacity="0.8" />
+            <circle cx="59" cy="41" r="0.9" fill="#c0c0c0" opacity="0.7" />
+            <circle cx="50" cy="55" r="1.4" fill="#a0a0a0" opacity="0.5" />
+            <circle cx="45" cy="48" r="0.7" fill="#e0e0e0" opacity="0.6" />
+            
+            <!-- Sparkles -->
+            <circle cx="40" cy="33" r="2.2" fill="url(#crescent-sparkle)" opacity="0.9" />
+            <circle cx="60" cy="67" r="1.8" fill="url(#crescent-sparkle)" opacity="0.7" />
+            <circle cx="35" cy="60" r="1.2" fill="url(#crescent-sparkle)" opacity="0.8" />
+            <circle cx="65" cy="40" r="1" fill="url(#crescent-sparkle)" opacity="0.6" />
+            
+            <!-- Central bright core -->
+            <circle cx="50" cy="50" r="8" fill="#ffffff" opacity="0.8" />
+          </svg>
+        </div>
+        <div class="label" id="crescent-label">The Deep Of Night</div>
+
+        <div class="panel" aria-hidden="true">
+          <button class="close-x" aria-label="Close The Crescent Moon">✕</button>
+          <div class="panel-title">The Deep Of Night</div>
+          <img class="fade-image" alt="Crescent moon image" src="..\media\nightmoon.webp?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=8a9e2a2b7b1f2d3f4c5b6c7d8e9a0b1c">
+          <div class="panel-body">
+            <p><strong>LONGPLAY</strong>: Regardless of entering the night, as the cycle increases at DAWN the night cycle count will also increase. This has various effects on continuing gameplay.</p>
+            <p>Examples:</p>
+            <ul>
+              <li>Chances for creature encounters increase.</li>
+              <li>The number and power of enemies increase.</li>
+              <li>Negative fateful encounters occur more frequently.</li>
+              <li>Weather and seasons become more extreme and foreboding.</li>
+              <li>Night survival becomes more challenging.</li>
+            </ul>
+            <p><em>Note:</em> The narrator may add or negate such effects to their whim.</p>
+          </div>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <script>
+    // -------------------------
+    // Core interactions
+    // -------------------------
+    (function(){
+      const suns = Array.from(document.querySelectorAll('.sun'));
+      const infoBtn = document.getElementById('openInfo');
+      const infoPanel = document.getElementById('infoPanel');
+      const closeInfo = document.getElementById('closeInfo');
+
+      // Helpers
+      function closeAllExcept(key){
+        suns.forEach(s => {
+          const k = s.dataset.key;
+          if(k !== key){
+            s.classList.remove('expanded');
+            s.querySelector('.panel').setAttribute('aria-hidden','true');
+            s.querySelector('.orb').setAttribute('aria-pressed','false');
+            s.classList.add('dimmed');
+          } else {
+            s.classList.add('expanded');
+            s.classList.remove('dimmed');
+            s.querySelector('.panel').setAttribute('aria-hidden','false');
+            s.querySelector('.orb').setAttribute('aria-pressed','true');
+          }
         });
-    </script>
+
+        // If same key is null => close all
+        if(!key){
+          suns.forEach(s=>{
+            s.classList.remove('expanded','dimmed');
+            s.querySelector('.panel').setAttribute('aria-hidden','true');
+            s.querySelector('.orb').setAttribute('aria-pressed','false');
+          });
+        }
+      }
+
+      // Toggle logic: open clicked, dim others and slide them down (CSS handles translation via .dimmed)
+      suns.forEach(sun => {
+        const orb = sun.querySelector('.orb');
+        const panel = sun.querySelector('.panel');
+        const close = sun.querySelector('.close-x');
+
+        function expand(){
+          const isExpanded = sun.classList.contains('expanded');
+          if(isExpanded){
+            // collapse
+            sun.classList.remove('expanded');
+            panel.setAttribute('aria-hidden','true');
+            orb.setAttribute('aria-pressed','false');
+            // restore all
+            suns.forEach(other=> other.classList.remove('dimmed'));
+          } else {
+            // expand this one
+            closeAllExcept(sun.dataset.key);
+            // scroll into view smoothly (center active)
+            setTimeout(()=> {
+              sun.scrollIntoView({behavior:'smooth', block:'center'});
+            }, 60);
+          }
+        }
+
+        orb.addEventListener('click', expand);
+        orb.addEventListener('keydown', (ev) => {
+          if(ev.key === 'Enter' || ev.key === ' '){
+            ev.preventDefault();
+            expand();
+          }
+        });
+
+        close.addEventListener('click', (e) => {
+          e.stopPropagation();
+          sun.classList.remove('expanded');
+          panel.setAttribute('aria-hidden','true');
+          orb.setAttribute('aria-pressed','false');
+          suns.forEach(other=> other.classList.remove('dimmed'));
+        });
+      });
+
+      // Click outside: if click on background area, close all
+      document.addEventListener('click', (e) => {
+        const inMain = e.target.closest('.suns-row') || e.target.closest('.panel') || e.target.closest('.orb');
+        const inInfo = e.target.closest('#infoPanel') || e.target.closest('#openInfo');
+        if(!inMain && !inInfo){
+          closeAllExcept(null);
+        }
+      });
+
+      // Info panel toggle
+      infoBtn.addEventListener('click', (e) => {
+        const visible = infoPanel.style.display !== 'none';
+        if(visible){
+          infoPanel.style.display = 'none';
+          infoBtn.setAttribute('aria-expanded','false');
+          infoPanel.setAttribute('aria-hidden','true');
+        } else {
+          infoPanel.style.display = 'block';
+          infoBtn.setAttribute('aria-expanded','true');
+          infoPanel.setAttribute('aria-hidden','false');
+        }
+      });
+      closeInfo.addEventListener('click', ()=> {
+        infoPanel.style.display = 'none';
+        infoBtn.setAttribute('aria-expanded','false');
+        infoPanel.setAttribute('aria-hidden','true');
+      });
+
+      // keyboard: ESC closes expanded panels and info panel
+      document.addEventListener('keydown', (ev) => {
+        if(ev.key === 'Escape'){
+          closeAllExcept(null);
+          infoPanel.style.display = 'none';
+          infoBtn.setAttribute('aria-expanded','false');
+          infoPanel.setAttribute('aria-hidden','true');
+        }
+      });
+
+      // Prevent pointer events for dimmed nodes after transition (cleanup)
+      // (Optional) Add small delay to re-enable pointer events after expansion finished.
+      // We rely on pointer-events:none applied via .dimmed (see CSS) so no further JS required.
+
+    })();
+  </script>
 </body>
 </html>
