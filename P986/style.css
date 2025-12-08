@@ -57,15 +57,15 @@ body {
 /* Card base styles */
 .card {
   width: 100%;
-  aspect-ratio: 63 / 88;
-  -webkit-aspect-ratio: 63 / 88;
+  aspect-ratio: 1218 / 1698;
+  -webkit-aspect-ratio: 1218 / 1698;
   perspective: 1000px;
   -webkit-perspective: 1000px;
 }
 
 .map-card {
-  aspect-ratio: 88 / 63;
-  -webkit-aspect-ratio: 88 / 63;
+  aspect-ratio: 1698 / 1218;
+  -webkit-aspect-ratio: 1698 / 1218;
 }
 
 /* Flip animation */

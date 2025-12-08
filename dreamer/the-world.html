@@ -1,518 +1,674 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEANSand - The World</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The WORLD — Redesigned</title>
+  <style>
+    /* -------------------------
+       Base / Reset
+       ------------------------- */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family: "Georgia", serif;
+      background: linear-gradient(135deg,#8B4513 0%, #D2691E 30%, #F4A460 60%, #DEB887 100%);
+      color:#2F1B14;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-y:auto;
+    }
+body {
+  background: linear-gradient(135deg,#8B4513 0%, #D2691E 30%, #F4A460 60%, #DEB887 100%);
+  background-repeat: no-repeat;   /* STOP repeating */
+  background-attachment: fixed;   /* Stays in place while scrolling */
+  background-size: cover;         /* Fills whole viewport */
+}
+    /* -------------------------
+       Top fixed bar
+       ------------------------- */
+    .top-bar{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:64px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 28px;
+      gap:12px;
+      z-index:1000;
+      backdrop-filter: blur(6px) saturate(.9);
+      background: linear-gradient(180deg, rgba(139,69,19,0.95), rgba(210,105,30,0.8));
+      border-bottom:2px solid rgba(184,134,11,0.6);
+      box-shadow: 0 6px 20px rgba(139,69,19,0.4);
+    }
 
-        html, body {
-            height: 100%;
-            overflow-x: hidden;
-            font-family: 'Georgia', serif;
-        }
+    .bar-left, .bar-right { display:none; }
+    .bar-center { display:flex; }
+    
+    /* Desktop top row layout */
+    .top-row { 
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      justify-content: space-between;
+    }
 
-        body {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #4a6741 100%);
-            position: relative;
-        }
+    /* Return button */
+    .return-btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 16px;
+      border-radius:8px;
+      cursor:pointer;
+      text-decoration:none;
+      font-weight:700;
+      background:rgba(255,255,255,0.1);
+      color:#ffffff;
+      border:2px solid rgba(255,255,255,0.15);
+      transition: background .22s ease, color .22s ease, transform .12s ease, border-color .22s ease;
+    }
+    .return-btn:hover,
+    .return-btn:focus{
+      background:#B8860B; /* dark goldenrod */
+      color:#fff;
+      border-color:#FFD700; /* gold */
+      outline:none;
+      transform:translateY(-1px);
+      box-shadow:0 8px 20px rgba(184,134,11,0.35);
+    }
 
-        /* Video Background */
-        .video-wrapper {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            z-index: 0;
-            opacity: 0.3;
-        }
+    /* Title */
+    .title {
+      font-size:20px;
+      letter-spacing:2px;
+      font-weight:800;
+      text-align:center;
+      color:#FFD700; /* gold */
+      text-transform:uppercase;
+      padding:6px 12px;
+      position:relative;
+      text-shadow: 2px 2px 4px rgba(139,69,19,0.7);
+    }
+    .title::after{
+      content:"";
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:-8px;
+      width:60px;
+      height:6px;
+      border-radius:6px;
+      background:linear-gradient(90deg,#FFD700,#B8860B);
+      filter:drop-shadow(0 6px 16px rgba(184,134,11,0.4));
+      opacity:.85;
+    }
 
-        .video-bg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            min-width: 100%;
-            min-height: 100%;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-            filter: brightness(0.7) contrast(1.1);
-        }
+    /* Info (?) button */
+    .info-btn{
+      width:44px;height:44px;border-radius:10px;border:none;
+      background:transparent;cursor:pointer;font-weight:700;
+      display:inline-grid;place-items:center;font-size:18px;
+      color:#FFD700; /* gold */
+      transition:transform .12s ease, background .12s ease;
+    }
+    .info-btn:hover{ transform:translateY(-1px); background: rgba(184,134,11,0.2); }
 
-        /* Main Content */
-        .main-container {
-            position: relative;
-            z-index: 2;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding-top: 100px;
-        }
+    /* -------------------------
+       Main layout (Widescreen >=800px)
+       ------------------------- */
+    .page-inner{
+      max-width:1200px;
+      margin: 96px auto 80px; /* leave room for fixed bar */
+      padding: 28px;
+    }
 
-        /* Header */
-        .header {
-            position: absolute;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #ecf0f1;
-            text-align: center;
-            z-index: 3;
-            opacity: 0;
-            animation: fadeIn 2s ease-out 0.5s forwards;
-        }
+    .suns-row{
+      display:flex;
+      gap:28px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
 
-        .header h1 {
-            font-size: 2.5rem;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
+    /* Moon capsule (default) and expanded panel */
+    .sun {
+      flex:1 1 0;
+      min-width:260px;
+      max-width:360px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      transition: transform .45s cubic-bezier(.2,.9,.28,1), opacity .35s ease;
+      will-change: transform, opacity;
+      position:relative;
+    }
 
-        .header p {
-            font-size: 1.1rem;
-            color: #bdc3c7;
-            opacity: 0.9;
-        }
+    /* The shooting star webp images - maintain aspect ratio 1698:1218 */
+    .moon .orb {
+      width:300px;
+      height:215px; /* maintain aspect ratio 1698:1218 */
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      transition: transform .35s ease, box-shadow .35s ease, filter .35s ease;
+      animation: shootingStar 3s ease-in-out infinite;
+      user-select:none;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 3px solid #B8860B;
+      box-shadow: 
+        0 0 20px rgba(255,215,0,0.3),
+        0 8px 25px rgba(139,69,19,0.4),
+        inset 0 0 20px rgba(184,134,11,0.1);
+    }
+    
+    .moon .orb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 13px;
+    }
+    
+    .orb:hover{ 
+      transform: scale(1.06); 
+      box-shadow: 
+        0 0 30px rgba(255,215,0,0.5),
+        0 12px 35px rgba(139,69,19,0.5),
+        inset 0 0 25px rgba(184,134,11,0.2);
+      filter:brightness(1.1) saturate(1.1) contrast(1.05);
+      border-color: #FFD700;
+    }
 
-        /* Timeline Container */
-        .timeline-container {
-            position: relative;
-            margin: 100px auto 50px;
-            width: 90%;
-            max-width: 1200px;
-            padding: 0 20px;
-        }
+    @keyframes shootingStar {
+      0%{ 
+        transform: translateY(0) rotate(0deg);
+        filter: drop-shadow(0 0 5px rgba(255,215,0,0.3));
+      }
+      25% {
+        transform: translateY(-3px) rotate(1deg);
+        filter: drop-shadow(0 0 15px rgba(255,215,0,0.6));
+      }
+      50%{ 
+        transform: translateY(-12px) rotate(0deg);
+        filter: drop-shadow(0 0 25px rgba(255,215,0,0.8));
+      }
+      75% {
+        transform: translateY(-3px) rotate(-1deg);
+        filter: drop-shadow(0 0 15px rgba(255,215,0,0.6));
+      }
+      100%{ 
+        transform: translateY(0) rotate(0deg);
+        filter: drop-shadow(0 0 5px rgba(255,215,0,0.3));
+      }
+    }
 
-        /* Timeline Line */
-        .timeline-line {
-            position: relative;
-            height: 8px;
-            background: linear-gradient(90deg, #3498db, #e74c3c, #f39c12, #2ecc71, #9b59b6, #1abc9c);
-            border-radius: 4px;
-            margin: 50px 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
+    /* Shooting star label below */
+    .moon .label {
+      margin-top:18px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      color:#2F1B14;
+      font-size:14px;
+      text-shadow: 1px 1px 2px rgba(255,215,0,0.3);
+      background: rgba(222,184,135,0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(184,134,11,0.4);
+    }
 
-        /* Timeline Segments */
-        .timeline-segment {
-            position: absolute;
-            height: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-radius: 4px;
-            z-index: 5;
-        }
+    /* Expanded panel */
+    .panel {
+      position: relative;
+      width: 100%;
+      margin-top: 18px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(245,222,179,0.95), rgba(222,184,135,0.98));
+      box-shadow: 0 18px 40px rgba(139,69,19,0.4);
+      transform-origin: top center;
+      opacity: 0;
+      max-height: 0;
+      padding: 0 22px;
+      border: 2px solid rgba(184,134,11,0.4);
+      transition:
+        opacity .4s ease,
+        max-height .75s ease;   /* slowed for smoother expansion */
+    }
 
-        .timeline-segment:hover {
-            transform: scaleY(1.5);
-            box-shadow: 0 0 20px currentColor;
-        }
+    /* when expanded */
+    .sun.expanded .panel {
+      opacity: 1;
+      max-height: 2000px;        /* HIGH VALUE to allow full text height */
+      padding: 18px 22px 30px;
+    }
 
-        .timeline-segment.active {
-            transform: scaleY(2);
-            box-shadow: 0 0 25px currentColor;
-        }
+    /* when expanded */
+    .sun.expanded{
+      transform:translateY(-2px) scale(1.02);
+      z-index:30;
+    }
 
-        /* Different colors for different ages */
-        .age-first { 
-            background: #3498db;
-            left: 0%;
-            width: 15%;
-        }
+    /* Close button (top-left inside panel) */
+    .close-x{
+      position:absolute;
+      left:14px;
+      top:14px;
+      width:36px;height:36px;border-radius:8px;
+      display:inline-grid;place-items:center;
+      cursor:pointer;border:none;background:transparent;font-weight:700;
+      color:#8B4513;
+      transition: transform .12s ease;
+    }
+    .close-x:hover{ transform:translateY(-2px); background: rgba(184,134,11,0.2); }
 
-        .age-ancient { 
-            background: #e74c3c;
-            left: 15%;
-            width: 20%;
-        }
+    /* Panel title */
+    .panel .panel-title{
+      text-transform:uppercase;
+      font-weight:900;
+      letter-spacing:1.5px;
+      font-size:18px;
+      margin-left:58px; /* leave space for close button */
+      margin-bottom:12px;
+      color:#8B4513;
+      text-shadow: 1px 1px 2px rgba(255,215,0,0.2);
+    }
 
-        .age-golden { 
-            background: #f39c12;
-            left: 35%;
-            width: 18%;
-        }
+    /* Image with faded/dissolved top border */
+    .panel .fade-image{
+      width:100%;
+      height:220px;
+      border-radius:10px;
+      object-fit:cover;
+      display:block;
+        mask-image: radial-gradient(circle, 
+            rgba(0,0,0,1) 40%, 
+            rgba(0,0,0,0.5) 70%, 
+            rgba(0,0,0,0) 100%
+        );
+        -webkit-mask-image: radial-gradient(circle, 
+            rgba(0,0,0,1) 40%, 
+            rgba(0,0,0,0.5) 70%, 
+            rgba(0,0,0,0) 100%
+        );
+      box-shadow: inset 0 30px 60px rgba(139,69,19,0.3);
+      margin-bottom:14px;
+      background:linear-gradient(180deg,#F5DEB3,#DEB887);
+      border: 1px solid rgba(184,134,11,0.3);
+    }
 
-        .age-silver { 
-            background: #2ecc71;
-            left: 53%;
-            width: 15%;
-        }
+    /* Text area */
+    .panel .panel-body {
+      font-size:15px;
+      line-height:1.6;
+      color:#2F1B14;
+    }
+    .panel .panel-body p{ margin-bottom:12px }
+    .panel .panel-body ul{ margin-left:18px; margin-bottom:12px }
+    .panel .panel-body li{ margin-bottom:6px }
 
-        .age-shadow { 
-            background: #9b59b6;
-            left: 68%;
-            width: 17%;
-        }
+    /* When another orb is expanded, all others fully fade & slide down */
+    .sun.dimmed{
+      opacity: 0;                 /* fully invisible */
+      transform: translateY(60px) scale(.94);
+      pointer-events: none;
+      filter: blur(4px);          /* optional atmospheric blur */
+      transition:
+        opacity .45s ease,
+        transform .55s cubic-bezier(.2,.9,.28,1),
+        filter .35s ease;
+    }
+    /* -------------------------
+       Tablet and mobile screens
+       ------------------------- */
+    @media (max-width: 800px) {
+      .page-inner{ margin:120px 18px 48px }
+      .suns-row{flex-direction:column; gap:18px}
+      .sun{max-width:100%}
+      .moon .orb{ width:200px; height:144px; } /* maintain aspect ratio on mobile */
+      .panel .fade-image{ height:160px }
+      
+      /* Mobile top bar layout - stacked layout */
+      .top-bar{
+        height: auto;
+        min-height: 96px;
+        padding: 12px 18px;
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+      }
+      
+      /* Make top-bar children stack properly on mobile */
+      .top-bar > * {
+        width: 100%;
+      }
+      
+      /* Desktop layout elements are already hidden */
+      
+      /* Mobile top row styling */
+      .top-row {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0;
+      }
+      
+      /* Show and center title on mobile */
+      .top-bar .bar-center {
+        display: flex;
+        position: static;
+        transform: none;
+        width: 100%;
+        justify-content: center;
+        margin: 0;
+        order: 2; /* Put title below the buttons on mobile */
+      }
+      
+      /* Adjust top-row order for mobile */
+      .top-bar .top-row {
+        order: 1; /* Put buttons on top for mobile */
+      }
+      
+      .title {
+        font-size: 18px;
+        letter-spacing: 1.5px;
+        margin: 0;
+      }
+      
+      /* Return button styling on mobile */
+      .top-row .return-btn {
+        padding: 8px 12px;
+        font-size: 14px;
+        margin: 0;
+        display: inline-flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+      
+      /* Info button styling on mobile */
+      .top-row .info-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+        margin: 0;
+        display: inline-grid !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+    }
 
-        .age-current { 
-            background: #1abc9c;
-            left: 85%;
-            width: 15%;
-        }
+    .sun.dimmed .orb{
+      filter: brightness(0.7) blur(8px) sepia(0.3);
+    }
+/*    .top-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between; // keep left/right in place 
+      padding: 0 28px;
+      gap: 12px;
+      z-index: 1000;
+      backdrop-filter: blur(6px) saturate(.9);
+      background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.6));
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    }*/
 
-        /* Age Markers */
-        .age-marker {
-            position: absolute;
-            top: -15px;
-            transform: translateX(-50%);
-            color: white;
-            font-weight: bold;
-            font-size: 0.9rem;
-            text-align: center;
-            white-space: nowrap;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            z-index: 6;
-        }
+    /* PERFECT CENTERING FIX */
+    .bar-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
 
-        .age-marker::before {
-            content: '';
-            position: absolute;
-            top: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 12px;
-            height: 12px;
-            background: currentColor;
-            border-radius: 50%;
-            box-shadow: 0 0 10px currentColor;
-        }
-
-        /* Lore Display */
-        .lore-display {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 30px;
-            margin: 50px auto;
-            max-width: 800px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            border: 3px solid transparent;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease;
-        }
-
-        .lore-display.visible {
-            opacity: 1;
-            transform: translateY(0);
-            border-color: #3498db;
-        }
-
-        .lore-display h2 {
-            color: #2c3e50;
-            font-size: 2rem;
-            margin-bottom: 15px;
-            text-align: center;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 10px;
-        }
-
-        .lore-display .age-subtitle {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-            text-align: center;
-            margin-bottom: 20px;
-            font-style: italic;
-        }
-
-        .lore-display p {
-            color: #34495e;
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .lore-display p:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Navigation */
-        .nav-container {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            z-index: 3;
-        }
-
-        .back-btn {
-            padding: 12px 24px;
-            background: rgba(52, 73, 94, 0.9);
-            color: #ecf0f1;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            border: 2px solid #34495e;
-        }
-
-        .back-btn:hover {
-            background: rgba(52, 73, 94, 1);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 73, 94, 0.5);
-        }
-
-        /* Age Timeline Label */
-        .timeline-label {
-            text-align: center;
-            color: #ecf0f1;
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
-        }
-
-        /* Animations */
-        @keyframes fadeIn {
-            from { 
-                opacity: 0; 
-                transform: translateX(-50%) translateY(-20px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateX(-50%) translateY(0); 
-            }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 { font-size: 2rem; }
-            .timeline-container { margin: 80px auto 30px; }
-            .timeline-line { margin: 30px 0; }
-            .age-marker { font-size: 0.8rem; }
-            .lore-display {
-                margin: 30px auto;
-                padding: 20px;
-            }
-            .lore-display h2 { font-size: 1.5rem; }
-            .lore-display p { font-size: 1rem; }
-        }
-
-        @media (max-width: 480px) {
-            .timeline-container {
-                padding: 0 10px;
-            }
-            .age-marker {
-                font-size: 0.7rem;
-            }
-            .lore-display {
-                margin: 20px 10px;
-                padding: 15px;
-            }
-        }
-    </style>
+  </style>
 </head>
 <body>
-    <!-- Video Background -->
-    <div class="video-wrapper">
-        <video class="video-bg" autoplay muted loop playsinline>
-            <source src="media/138556-769988117_medium.mp4" type="video/mp4">
-        </video>
+
+  <!-- Top bar -->
+  <header class="top-bar" role="banner" aria-label="Top navigation">
+    <div class="top-row">
+      <a href="../dreamer.html" class="return-btn" title="Return To Dreaming…">← Return To Dreaming…</a>
+      <button class="info-btn" id="openInfo" aria-expanded="false" aria-controls="infoPanel" title="More information">?</button>
     </div>
 
-    <!-- Navigation -->
-    <div class="nav-container">
-        <a href="../dreamer.html" class="back-btn">← Back to Dream</a>
+    <div class="bar-center">
+      <div class="title" aria-hidden="true">THE WORLD</div>
     </div>
+  </header>
 
-    <!-- Header -->
-    <div class="header">
-        <h1>The World</h1>
-        <p>Journey through the ages of the dream realm</p>
-    </div>
+  <!-- Supplemental info modal/panel -->
+  <div id="infoPanel" role="dialog" aria-modal="true" aria-hidden="true"
+       style="position:fixed; right:22px; top:80px; width:360px; max-width:calc(100% - 48px); z-index:1200;
+              border-radius:12px; background:linear-gradient(180deg,#F5DEB3,#DEB887); padding:18px; box-shadow:0 20px 60px rgba(139,69,19,0.6); border:2px solid rgba(184,134,11,0.4); display:none;">
+    <button id="closeInfo" style="position:absolute; right:10px; top:10px; border:none; background:transparent; cursor:pointer; font-weight:700; color:#8B4513;">✕</button>
+    <h3 style="margin-bottom:8px; font-size:16px; text-transform:uppercase; letter-spacing:1px; color:#8B4513;">About The World</h3>
+    <p style="font-size:14px; line-height:1.5; color:#2F1B14;">
+      This panel holds supplemental context and worldbuilding for "The World".
+      Click any image to expand its chapter. When one expands, the others fade and slide down to emphasise the active chapter.
+    </p>
+  </div>
 
-    <!-- Main Content -->
-    <div class="main-container">
-        <div class="timeline-container">
-            <div class="timeline-label">Click on any age to discover its lore</div>
-            
-            <div class="timeline-line">
-                <!-- Timeline Segments -->
-                <div class="timeline-segment age-first" data-age="first">
-                    <div class="age-marker">First Dawn</div>
-                </div>
-                <div class="timeline-segment age-ancient" data-age="ancient">
-                    <div class="age-marker">Ancient Wars</div>
-                </div>
-                <div class="timeline-segment age-golden" data-age="golden">
-                    <div class="age-marker">Golden Peace</div>
-                </div>
-                <div class="timeline-segment age-silver" data-age="silver">
-                    <div class="age-marker">Silver Dreams</div>
-                </div>
-                <div class="timeline-segment age-shadow" data-age="shadow">
-                    <div class="age-marker">Shadow Rising</div>
-                </div>
-                <div class="timeline-segment age-current" data-age="current">
-                    <div class="age-marker">Current Age</div>
-                </div>
-            </div>
+  <main class="page-inner" id="main" role="main">
+    <section class="suns-row" aria-label="Chapters of the world">
+
+      <!-- THE DUSK -->
+      <article class="sun moon" id="dusk" data-key="dusk" aria-labelledby="dusk-label">
+        <div class="orb" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Dusk">
+          <img src="../P986/cards/backs/550_back.webp" alt="The Dusk background image" />
         </div>
+        <div class="label" id="dusk-label">Adventure</div>
 
-        <!-- Lore Display -->
-        <div class="lore-display" id="loreDisplay">
-            <h2>The Ages of the Dream Realm</h2>
-            <p class="age-subtitle">Click on any period above to explore its history</p>
-            <p>The timeline above chronicles the major ages of our dream realm. Each era has shaped the world as we know it today, leaving behind mysteries, artifacts, and stories waiting to be discovered.</p>
-            <p>From the mystical First Dawn when the realm itself was born, through times of war and peace, prosperity and struggle, each age has contributed to the rich tapestry of our world's history.</p>
+        <div class="panel" aria-hidden="true">
+          <button class="close-x" aria-label="Close The Dusk">✕</button>
+          <div class="panel-title">Adventure "A" Cards</div>
+          <!-- image: replace src with your own; masked to fade near top -->
+          <img class="fade-image" alt="Dusk image" src="..\media\sunset2.webp?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=5f6b4a6c6f79c2b2f9d2c79e2d5d9b0d">
+          <div class="panel-body">
+            <p><strong>SUNSET</strong>: After concluding the eleventh space, the next player will make a decision.</p>
+            <p>PROCEED to...</p>
+            <ul>
+              <li>DAWN: conclude the current cycle and move to the next cycle.</li>
+              <li>Resolve any effects.</li>
+              <li>The player whom decided to proceed to DAWN takes their turn immediately after DAWN is concluded.</li>
+              <li>NIGHT: begin the NIGHT phase.</li>
+              <li>Night effects on map cards must be activated.</li>
+              <li>Night effects for players activate immediately or on the beginning of their turn.</li>
+              <li>The player whom decided to enter the NIGHT takes their turn immediately.</li>
+            </ul>
+            <p><em>Notes:</em> The narrator may enhance the difficulty of A/B/C cards at night arbitrarily.</p>
+          </div>
         </div>
-    </div>
+      </article>
 
-    <script>
-        // Lore data for each age
-        const ageLore = {
-            first: {
-                title: "The First Dawn",
-                subtitle: "When Dreams Were Born",
-                content: `
-                    In the beginning, there was only void - endless, silent, and without form. But from this emptiness, the First Dawn emerged like a whisper becoming a song.
-                    
-                    The First Dreamer, a being of pure consciousness, dreamed the realm into existence. With each breath, mountains rose and valleys formed. With each heartbeat, the laws of reality took shape.
-                    
-                    During this age, the very air sparkled with raw creation energy. The First Dreamer molded the landscape with thoughts alone, creating floating islands, crystal seas, and forests where every tree held a different memory.
-                    
-                    The magic of this time was wild and untamed, responding to emotion rather than intention. Joy could raise mountains, while sorrow could summon floods. It was a time of infinite possibility, where the impossible was merely another word for "not yet discovered."
-                    
-                    But with creation came responsibility, and the First Dreamer soon realized that a world without structure would eventually collapse into chaos. Thus began the slow shaping of laws, the establishment of boundaries, and the gentle guidance of what would become mortal dreamers.
-                `
-            },
-            ancient: {
-                title: "The Ancient Wars",
-                subtitle: "When Titans Clashed",
-                content: `
-                    As the realm matured, powerful beings arose - the Titans of Dream and Nightmare, each commanding forces that could reshape reality with their will.
-                    
-                    The Great Schism split the ancient world into warring factions. The Dream Titans, led by Somnus the Wise, sought to bring order and peace to the realm. Their opponents, the Nightmare Lords, headed by Doloria the Destroyer, believed that only through struggle could true strength be forged.
-                    
-                    These were not mere battles of armies, but conflicts that rewrote the laws of physics. Mountains were lifted and hurled like spears. Entire seas were turned to crystal, then shattered into glittering storms. Time itself became a weapon, with some battles fought across multiple timelines simultaneously.
-                    
-                    The war raged for a thousand years, neither side able to claim decisive victory. Both sides began to realize that their eternal conflict was consuming the very essence that gave the realm life. The ancient magic that had once been plentiful began to wane.
-                    
-                    Finally, the most unlikely alliance was formed - the remaining Dream Titans and Nightmare Lords joined together to create the Compact of Eternal Balance, establishing the framework that would allow both dreams and nightmares to coexist without destroying the realm.
-                    
-                    The scars of these wars can still be seen today in the Crystallized Battlefields and the Echoing Mountains, where the sounds of ancient conflict still reverberate through time.
-                `
-            },
-            golden: {
-                title: "The Golden Peace",
-                subtitle: "The Age of Wonders",
-                content: `
-                    Born from the ashes of ancient conflict, the Golden Peace became the most prosperous era in the dream realm's history. The Compact of Eternal Balance had created stability, allowing civilization to flourish as never before.
-                    
-                    The great city-states arose during this time, each specializing in different aspects of dream magic. Luminara became the center of healing magic, where dream healers could cure both physical and spiritual ailments. Mysterion was known for its scholars and libraries, containing knowledge from across all ages.
-                    
-                    Magic academies flourished, teaching the new generation how to channel dream energy safely and effectively. The art of dream-weaving reached its peak, with master craftsmen able to create entire pocket dimensions, each with its own unique laws and wonders.
-                    
-                    It was also the age of great exploration. Dream sailors mapped the Sea of Consciousness, discovering islands that existed only during certain moon phases. The floating gardens of Aeria housed the most beautiful aerial cities, suspended by nothing more than concentrated will and careful planning.
-                    
-                    Trade flourished between the realms, with dream barges carrying exotic goods like bottled starlight, crystallized laughter, and mirrors that showed not your reflection, but your true self.
-                    
-                    The Golden Peace taught the realm that harmony was not the absence of conflict, but the presence of understanding. This lesson would prove invaluable in the darker times to come.
-                `
-            },
-            silver: {
-                title: "The Silver Dreams",
-                subtitle: "The Age of Reflection",
-                content: `
-                    As all golden ages must eventually end, the realm entered the Silver Dreams - a time of introspection and subtle magic, where the emphasis shifted from grand gestures to delicate refinements.
-                    
-                    During this era, dreamers learned to look inward rather than outward. The great libraries were replaced by personal memory vaults, where individuals collected and curated their most precious experiences. Magic became more personal, more intimate, focused on understanding rather than domination.
-                    
-                    The Silver Dreamers developed techniques for sharing dreams directly between minds, creating a new form of communication that transcended words. Empathy became a highly prized skill, and the ability to truly understand another being was considered more valuable than any treasure.
-                    
-                    Art reached new heights of expression. Dreamscapes became living paintings, where viewers could step into the artwork and experience the artist's vision from within. Music could literally move listeners through time and space, with symphonies that took audiences on journeys through memory and possibility.
-                    
-                    However, this inward focus also had its dangers. Some dreamers became so absorbed in their own inner worlds that they lost touch with reality altogether. The phenomenon of the Sleepwalking Cities - entire communities that lived in shared dreams while their physical forms remained dormant - became both a wonder and a concern.
-                    
-                    The Silver Dreams taught the realm that magic was not just about power, but about understanding. This wisdom would prove crucial when the shadows began to rise again.
-                `
-            },
-            shadow: {
-                title: "The Shadow Rising",
-                subtitle: "When Light Falters",
-                content: `
-                    The Silver Dreams ended not with war, but with a gradual dimming - as if the very light of the realm was being slowly consumed by some hungry darkness.
-                    
-                    The Shadow Rising began subtly. Dreams became darker, nightmares more frequent. Some dreamers found their abilities diminishing, while others discovered new and terrible powers they couldn't control. The shared dreams that had connected people began to fracture, leading to isolation and confusion.
-                    
-                    Scholars debate the true cause of this darkness. Some blame the natural cycling of cosmic forces, others point to the cumulative effects of centuries of dream magic use. A few whisper of an ancient entity stirring in the deep places between realities, feeding on the realm's ethereal energy.
-                    
-                    What is certain is that during this age, the realm became a place of stark contrasts. Where once there had been harmony between light and shadow, now there was only struggle. Entire regions fell under perpetual night, while others burned with perpetual day. Weather patterns became unpredictable, sometimes shifting from sunshine to storm in a single breath.
-                    
-                    The great city-states either fortified themselves against the darkness or embraced it completely, leading to a fragmentation of civilization. Some communities became paranoid isolationists, while others fell under the sway of dark cultists who promised protection in exchange for surrendering their dreams entirely.
-                    
-                    Yet even in this dark age, hope persisted. Underground networks formed, secret societies dedicated to preserving the old ways and finding new paths forward. These groups, though small, maintained the flame of knowledge and compassion that would be needed when the shadows eventually receded.
-                `
-            },
-            current: {
-                title: "The Current Age",
-                subtitle: "Finding the Balance",
-                content: `
-                    We live now in the Current Age - a time of both challenge and opportunity. The shadows of the Shadow Rising have not fully receded, but neither do they dominate the realm as they once did.
-                    
-                    Today's dreamers face a unique situation: the old magic is partially restored, but it works differently than before. The realm has learned to adapt, to flow around obstacles rather than simply smashing through them. This has created new forms of magic that are more resilient, more balanced.
-                    
-                    The great city-states have rebuilt, but they are different now - more diverse, more inclusive, more connected to the natural flow of dream energy. New forms of governance have emerged based on consensus and shared dreaming, where decisions are made not through debate but through collective unconscious exploration of possibilities.
-                    
-                    Modern dreamers possess abilities that would have seemed impossible in earlier ages. They can walk between different levels of reality, merge their consciousness with others to solve complex problems, and heal not just individuals but entire communities through shared therapeutic dreams.
-                    
-                    However, challenges remain. The Entity that may have caused the Shadow Rising still lurks somewhere in the deep places. Some of the ancient magical techniques have been lost forever. And there are still those who seek to return to the old ways, either the golden age of unlimited power or the silver age of pure reflection.
-                    
-                    The Current Age is defined by its uncertainty - and perhaps this is its greatest strength. With no single path forward, every dreamer must find their own way, creating new possibilities with each choice made. This is both terrifying and exhilarating, demanding both courage and wisdom.
-                    
-                    The future of the realm remains unwritten, and that is exactly as it should be.
-                `
-            }
-        };
+      <!-- THE FULL MOON -->
+      <article class="sun moon" id="fullmoon" data-key="fullmoon" aria-labelledby="fullmoon-label">
+        <div class="orb" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Full Moon">
+          <img src="../P986/cards/backs/560_back.webp" alt="The Moon Rises background image" />
+        </div>
+        <div class="label" id="fullmoon-label">Bravery</div>
 
-        let activeAge = null;
+        <div class="panel" aria-hidden="true">
+          <button class="close-x" aria-label="Close The Full Moon">✕</button>
+          <div class="panel-title">Bravery "B" Cards</div>
+          <img class="fade-image" alt="Full moon image" src=..\media\nightmoon.webp?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=6f9b5f6a2b3b1f0c1a3a6f2f8c7e8d9a>
+          <div class="panel-body">
+            <p><strong>LAYOUT</strong>: Arrange the area with night zones in mind: six spaces are needed for the NIGHT phase, typically nested within the outer ring of the DAY.</p>
+            <p>Setup:</p>
+            <ul>
+              <li>Arrange six spaces for playing Bravery and Challenge cards (B and C cards).</li>
+              <li>The first NIGHT card must be a Bravery (B) card.</li>            
+              <li>The second NIGHT card must be a Challenge (C) card.</li>            
+              <li>Alternate B and C cards until a total of six cards have been played.</li>            
+              <li>Upon completing any card at NIGHT, move on to the next player.</li>
+              <li>Upon the next player's turn, they may choose to flee the NIGHT and continue to DAWN, or to continue deeper into the NIGHT.</li>
+            </ul>
+            <p><em>Notes:</em> You may always appeal to the narrator during the night, especially when consulting your NPCs.</p>
+          </div>
+        </div>
+      </article>
 
-        // Initialize timeline segments
-        function initializeTimeline() {
-            const segments = document.querySelectorAll('.timeline-segment');
-            
-            segments.forEach(segment => {
-                segment.addEventListener('click', () => handleAgeClick(segment));
-            });
-        }
+      <!-- THE CRESCENT MOON -->
+      <article class="sun moon" id="crescent" data-key="crescent" aria-labelledby="crescent-label">
+        <div class="orb" role="button" tabindex="0" aria-pressed="false" aria-label="Open The Crescent Moon">
+          <img src="../P986/cards/backs/590_back.webp" alt="The Deep Of Night background image" />
+        </div>
+        <div class="label" id="crescent-label">Challenge</div>
 
-        function handleAgeClick(segment) {
-            const ageKey = segment.dataset.age;
-            const lore = ageLore[ageKey];
-            
-            // Remove active class from all segments
-            document.querySelectorAll('.timeline-segment').forEach(s => {
-                s.classList.remove('active');
-            });
-            
-            // Add active class to clicked segment
-            segment.classList.add('active');
-            
-            // Show lore information
-            showLore(lore);
-            activeAge = ageKey;
-        }
+        <div class="panel" aria-hidden="true">
+          <button class="close-x" aria-label="Close The Crescent Moon">✕</button>
+          <div class="panel-title">Challenge "C" Cards</div>
+          <img class="fade-image" alt="Crescent moon image" src="..\media\night.webp?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3&s=8a9e2a2b7b1f2d3f4c5b6c7d8e9a0b1c">
+          <div class="panel-body">
+            <p><strong>LONGPLAY</strong>: Regardless of entering the night, as the cycle increases at DAWN the night cycle count will also increase. This has various effects on continuing gameplay.</p>
+            <p>Examples:</p>
+            <ul>
+              <li>Chances for creature encounters increase.</li>
+              <li>The number and power of enemies increase.</li>
+              <li>Negative fateful encounters occur more frequently.</li>
+              <li>Weather and seasons become more extreme and foreboding.</li>
+              <li>Night survival becomes more challenging.</li>
+            </ul>
+            <p><em>Note:</em> The narrator may add or negate such effects to their whim.</p>
+          </div>
+        </div>
+      </article>
 
-        function showLore(lore) {
-            const loreDisplay = document.getElementById('loreDisplay');
-            
-            loreDisplay.innerHTML = `
-                <h2>${lore.title}</h2>
-                <p class="age-subtitle">${lore.subtitle}</p>
-                ${lore.content.split('\n\n').map(paragraph => `<p>${paragraph.trim()}</p>`).join('')}
-            `;
-            
-            loreDisplay.classList.add('visible');
-        }
+    </section>
+  </main>
 
-        // Initialize when page loads
-        window.addEventListener('load', () => {
-            initializeTimeline();
+  <script>
+    // -------------------------
+    // Core interactions
+    // -------------------------
+    (function(){
+      const suns = Array.from(document.querySelectorAll('.sun'));
+      const infoBtn = document.getElementById('openInfo');
+      const infoPanel = document.getElementById('infoPanel');
+      const closeInfo = document.getElementById('closeInfo');
+
+      // Helpers
+      function closeAllExcept(key){
+        suns.forEach(s => {
+          const k = s.dataset.key;
+          if(k !== key){
+            s.classList.remove('expanded');
+            s.querySelector('.panel').setAttribute('aria-hidden','true');
+            s.querySelector('.orb').setAttribute('aria-pressed','false');
+            s.classList.add('dimmed');
+          } else {
+            s.classList.add('expanded');
+            s.classList.remove('dimmed');
+            s.querySelector('.panel').setAttribute('aria-hidden','false');
+            s.querySelector('.orb').setAttribute('aria-pressed','true');
+          }
         });
-    </script>
+
+        // If same key is null => close all
+        if(!key){
+          suns.forEach(s=>{
+            s.classList.remove('expanded','dimmed');
+            s.querySelector('.panel').setAttribute('aria-hidden','true');
+            s.querySelector('.orb').setAttribute('aria-pressed','false');
+          });
+        }
+      }
+
+      // Toggle logic: open clicked, dim others and slide them down (CSS handles translation via .dimmed)
+      suns.forEach(sun => {
+        const orb = sun.querySelector('.orb');
+        const panel = sun.querySelector('.panel');
+        const close = sun.querySelector('.close-x');
+
+        function expand(){
+          const isExpanded = sun.classList.contains('expanded');
+          if(isExpanded){
+            // collapse
+            sun.classList.remove('expanded');
+            panel.setAttribute('aria-hidden','true');
+            orb.setAttribute('aria-pressed','false');
+            // restore all
+            suns.forEach(other=> other.classList.remove('dimmed'));
+          } else {
+            // expand this one
+            closeAllExcept(sun.dataset.key);
+            // scroll into view smoothly (center active)
+            setTimeout(()=> {
+              sun.scrollIntoView({behavior:'smooth', block:'center'});
+            }, 60);
+          }
+        }
+
+        orb.addEventListener('click', expand);
+        orb.addEventListener('keydown', (ev) => {
+          if(ev.key === 'Enter' || ev.key === ' '){
+            ev.preventDefault();
+            expand();
+          }
+        });
+
+        close.addEventListener('click', (e) => {
+          e.stopPropagation();
+          sun.classList.remove('expanded');
+          panel.setAttribute('aria-hidden','true');
+          orb.setAttribute('aria-pressed','false');
+          suns.forEach(other=> other.classList.remove('dimmed'));
+        });
+      });
+
+      // Click outside: if click on background area, close all
+      document.addEventListener('click', (e) => {
+        const inMain = e.target.closest('.suns-row') || e.target.closest('.panel') || e.target.closest('.orb');
+        const inInfo = e.target.closest('#infoPanel') || e.target.closest('#openInfo');
+        if(!inMain && !inInfo){
+          closeAllExcept(null);
+        }
+      });
+
+      // Info panel toggle
+      infoBtn.addEventListener('click', (e) => {
+        const visible = infoPanel.style.display !== 'none';
+        if(visible){
+          infoPanel.style.display = 'none';
+          infoBtn.setAttribute('aria-expanded','false');
+          infoPanel.setAttribute('aria-hidden','true');
+        } else {
+          infoPanel.style.display = 'block';
+          infoBtn.setAttribute('aria-expanded','true');
+          infoPanel.setAttribute('aria-hidden','false');
+        }
+      });
+      closeInfo.addEventListener('click', ()=> {
+        infoPanel.style.display = 'none';
+        infoBtn.setAttribute('aria-expanded','false');
+        infoPanel.setAttribute('aria-hidden','true');
+      });
+
+      // keyboard: ESC closes expanded panels and info panel
+      document.addEventListener('keydown', (ev) => {
+        if(ev.key === 'Escape'){
+          closeAllExcept(null);
+          infoPanel.style.display = 'none';
+          infoBtn.setAttribute('aria-expanded','false');
+          infoPanel.setAttribute('aria-hidden','true');
+        }
+      });
+
+      // Prevent pointer events for dimmed nodes after transition (cleanup)
+      // (Optional) Add small delay to re-enable pointer events after expansion finished.
+      // We rely on pointer-events:none applied via .dimmed (see CSS) so no further JS required.
+
+    })();
+  </script>
 </body>
 </html>
