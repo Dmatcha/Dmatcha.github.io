@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gameplay Guide</title>
+<title>Gameplay Guide - Linear Chance System</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -129,22 +129,27 @@ body {
   background: rgba(255,255,255,0.4);
 }
 .button.interstitial-btn {
-  opacity: 0.4;          /* faded at start */
+  opacity: 0.4;
   transition: all 0.5s ease;
 }
 .button.interstitial-btn.active {
   opacity: 1;
 }
 
-
 /* Mobile: use wider relative width */
 @media (max-width: 600px) {
   .container {
     width: 92vw;
-    max-width: none; /* optional: remove desktop cap */
-    min-width: 300px; /* optional: don’t get too narrow */
+    max-width: none;
+    min-width: 300px;
   }
 }
+
+/* Flavor text styling by pool */
+.pool-0 { color: #87ceeb; font-style: italic; }
+.pool-1 { color: #ffd700; font-style: italic; }
+.pool-2 { color: #98fb98; font-style: italic; }
+.pool-3 { color: #dda0dd; font-style: italic; }
 </style>
 
 </head>
@@ -187,108 +192,233 @@ function setContainerTheme(theme) {
   else if (theme === 'night') container.classList.add('night-theme');
 }
 
-/* --- Dynamic Flavor Text Configuration --- */
-const dayFlavorTable = {
+/* --- Linear Chance System --- */
+
+// Calculate linear chance using formula: base + (rate * cycle)
+// Returns percentage as decimal (0.0 to 1.0)
+function calculateLinearChance(base, rate, cycle) {
+  return Math.max(0, Math.min(1, base + (rate * cycle)));
+}
+
+// Calculate step chance using formula with step intervals
+function calculateStepChance(startCycle, rate, cycle) {
+  if (cycle < startCycle) return 0;
+  const steps = Math.floor((cycle - startCycle) / 2); // Steps every 2 cycles
+  return steps * rate;
+}
+
+// Main text options for each slot (3 exclusive options per slot)
+const mainTextOptions = {
   1: [
-    { text: "<i>If you play a Camp card, find a coin.</i>", chance: 0.15 },
-    { text: "<i>If you choose a <strong>B</strong> or <strong>C</strong> card, gain one empower.</i>", chance: 0.15 },
+    { text: "You may play any card.", base: 100, rate: -2 },
+    { text: "You must play an Adventure card.", base: 0, rate: 1 },
+    { text: "If you play an Adventure card, lose 1 stamina.", base: 0, rate: 1 }
   ],
   2: [
-    { text: "<i>If you play an Event card, find a coin.</i>", chance: 0.15 },
-    { text: "<i>If you play a Discovery card, find a coin.</i>", chance: 0.10 },
+    { text: "You may play any card.", base: 100, rate: -2 },
+    { text: "Choose wisely - your actions have consequences.", base: 0, rate: 1 },
+    { text: "The shadows grow stronger each day.", base: 0, rate: 1 }
   ],
   3: [
-    { text: "<i>If you choose a <strong>B</strong> or <strong>C</strong> card, gain one empower.</i>", chance: 0.90 },
-    { text: "<i>If you have a gem, everyone regains all energy.</i>", chance: 0.05 },
+    { text: "You may play any card.", base: 100, rate: -2 },
+    { text: "You must play a B or C card.", base: 0, rate: 1 },
+    { text: "Strategic planning becomes more important.", base: 0, rate: 1 }
   ],
   4: [
-    { text: "<i>If you play a Camp or Event card, show and freely discard the other cards.</i>", chance: 0.10 },
-    { text: "<i>If you play a Discovery card, show and freely discard the other cards.</i>", chance: 0.10 },
+    { text: "You may play any card.", base: 100, rate: -2 },
+    { text: "Adventure cards provide crucial advantages.", base: 0, rate: 1 },
+    { text: "The cost of exploration increases.", base: 0, rate: 1 }
   ],
-  5: [{ text: "<i>If you play a Discovery card, find a coin.</i>", chance: 0.10 }],
+  5: [
+    { text: "You may play any card.", base: 100, rate: -2 },
+    { text: "You must play a B or C card.", base: 0, rate: 1 },
+    { text: "Time becomes a precious resource.", base: 0, rate: 1 }
+  ],
   6: [
-    { text: "<i>If you play a Fight or Story card, gain quick and insight.</i>", chance: 0.10 },
-    { text: "<i>The shadows whisper. Gain 1 madness or lose 1 life.</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.01 * c) },
+    { text: "You may play any card.", base: 100, rate: -2 },
+    { text: "Powerful abilities unlock at higher levels.", base: 0, rate: 1 },
+    { text: "The night draws ever closer.", base: 0, rate: 1 }
   ],
-  7: [{ text: "<i>If you play a Discovery card, <strong>lose</strong> a coin.</i>", chance: 0.05 }],
-  8: [{ text: "<i>If you play a Discovery card, find a coin.</i>", chance: 0.10 }],
-  9: [{ text: "<i>If you play an Adventure card, find a coin.</i>", chance: 0.15 }],
+  7: [
+    { text: "You may play any card.", base: 100, rate: -2 },
+    { text: "You must play a B or C card.", base: 0, rate: 1 },
+    { text: "Survival requires sacrifice.", base: 0, rate: 1 }
+  ],
+  8: [
+    { text: "You may play any card.", base: 100, rate: -2 },
+    { text: "The final challenges approach.", base: 0, rate: 1 },
+    { text: "Every choice echoes through eternity.", base: 0, rate: 1 }
+  ],
+  9: [
+    { text: "You may play any card.", base: 100, rate: -2 },
+    { text: "Destiny awaits the bold.", base: 0, rate: 1 },
+    { text: "The end draws near - be prepared.", base: 0, rate: 1 }
+  ],
   10: [
-    { text: "<i>If you play a card without a combat encounter, find a coin.</i>", chance: 0.15 },
-    { text: "<i>The shadows flicker angrily. Gain 1 madness and lose 1 life.</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.03 * c) },
+    { text: "You may play any card.", base: 100, rate: -2 },
+    { text: "The ultimate test begins.", base: 0, rate: 1 },
+    { text: "All paths converge to the same fate.", base: 0, rate: 1 }
   ],
+  11: [
+    { text: "You may play any card.", base: 100, rate: -2 },
+    { text: "You must play a B or C card.", base: 0, rate: 1 },
+    { text: "The cycle's end approaches rapidly.", base: 0, rate: 1 }
+  ]
 };
 
-const nightFlavorTable = {
+
+// Night main text options (different from day)
+const nightMainTextOptions = {
   12: [
-    { text: "<i>A faint light flickers in the darkness...</i>", chance: 0.05 },
-    { text: "<i>The shadow remains cast!</i>", chance: 0.03 },
-    { text: "<i>Lose all your stamina!</i>", chance: 0.03 },
-    { text: "<i>All players lose 1 stamina!</i>", chance: 0.04 },
+    { text: "You must play a B card. <br><i>Add +1 coin to reward pile.</i>", base: 100, rate: -2 },
+    { text: "Darkness consumes the light of hope.", base: 0, rate: 1 },
+    { text: "The shadows whisper of forgotten secrets.", base: 0, rate: 1 }
   ],
   13: [
-    { text: "<i>If you play a card without a combat encounter, you must encounter humanoid enemies after resolving the card.</i>", chance: 0.10 },
-    { text: "<i>If you play a Fight card, lose 1 madness and gain 1 stamina.</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.01 * c) },
+    { text: "You must play a C card. <br><i>Double reward pile.</i>", base: 100, rate: -2 },
+    { text: "Fight cards become perilous in darkness.", base: 0, rate: 1 },
+    { text: "Courage wavers under the starless sky.", base: 0, rate: 1 }
   ],
   14: [
-    { text: "<i>If you play a Discovery card, discard it and play another card instead.</i>", chance: 0.05 },
-    { text: "<i>If you play an Event card, discard it and play another card instead.</i>", chance: 0.05 },
-    { text: "<i>If you play a any card without a combat encounter, first encounter monsters before resolving the card.</i>", chance: 0.05 },
-    { text: "<i>Pay life or stamina equal to the number of coins in the loot pile.</i>", chance: 0.05 },
-    { text: "<i>Regain life and stamina equal to your current soul.</i>", chance: 0.05 },
-    { text: "<i>Resolve madness now. If you fail, immediately activate a madness effect or all players gain 1 madness.</i>", chance: 0.05 },
-    { text: "<i>Resolve madness now. If you fail, become wormridden.</i>", chance: 0.05 },
+    { text: "You must play a B card. <br><i>Double reward pile.</i>", base: 100, rate: -2 },
+    { text: "Camp cards may be your only sanctuary.", base: 0, rate: 1 },
+    { text: "The night devours the unprepared.", base: 0, rate: 1 }
   ],
   15: [
-    { text: "<i>If you play a Camp card, resolve it then leave the night immediately. Do not loot rewards. Move to the next player.</i>", chance: 0.05 },
-    { text: "<i>If you play a card with night effects, resolve it twice.</i>", chance: 0.15 },
+    { text: "You must play a C card. <br><i>Double reward pile.</i>", base: 100, rate: -2 },
+    { text: "Time grows short in the eternal night.", base: 0, rate: 1 },
+    { text: "Every moment could be your last.", base: 0, rate: 1 }
   ],
   16: [
-    { text: "<i>If you play a Camp card, resolve it then leave the night immediately. Do not loot rewards. Move to the next player.</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.02 * c) },
+    { text: "You must play a B card. <br><i>Double reward pile.</i>", base: 100, rate: -2 },
+    { text: "The final confrontation approaches.", base: 0, rate: 1 },
+    { text: "Steel your resolve for what comes next.", base: 0, rate: 1 }
   ],
+  17: [
+    { text: "You must play a C card. <br><i>The night coils and twists, the end is near...</i>", base: 100, rate: -2 },
+    { text: "The ultimate darkness awaits.", base: 0, rate: 1 },
+    { text: "Face your destiny or flee into the void.", base: 0, rate: 1 }
+  ]
 };
 
-/* Helper: roll flavor text */
-function getSlotFlavor(slotNum, cycleCount, table) {
-  const flavors = table[slotNum] || [];
-  let result = "";
-  flavors.forEach(f => {
-    let prob = f.chance;
-    if (f.cycleModifier) prob = f.cycleModifier(cycleCount);
-    if (Math.random() < prob) result += "<br><br>" + f.text;
+
+// Flavor text pools (Day vs Night) - Independent dice rolls
+const flavorPools = {
+  day: {
+    0: [ // Hints and basic mechanics
+      { text: "💡 <span class='pool-0'>Camp cards provide essential resources.</span>", base: 0, rate: 1.5 },    // 0+(1.5*Cycle)
+      { text: "💡 <span class='pool-0'>B and C cards work best when combined.</span>", base: 0, rate: 1.2 },      // 0+(1.2*Cycle)
+      { text: "💡 <span class='pool-0'>Energy management is crucial for survival.</span>", base: 0, rate: 1.0 }   // 0+(1.0*Cycle)
+    ],
+    1: [ // Strategic advice
+      { text: "🎯 <span class='pool-1'>Consider the long-term consequences of each choice.</span>", base: 0, rate: 0.8 },  // 0+(0.8*Cycle)
+      { text: "🎯 <span class='pool-1'>Resource allocation becomes more critical over time.</span>", base: 0, rate: 1.0 }, // 0+(1.0*Cycle)
+      { text: "🎯 <span class='pool-1'>Team coordination can overcome individual limitations.</span>", base: 0, rate: 1.2 } // 0+(1.2*Cycle)
+    ],
+    2: [ // Story elements
+      { text: "📖 <span class='pool-2'>Ancient wisdom speaks of cycles within cycles.</span>", base: 0, rate: 0.6 },    // 0+(0.6*Cycle)
+      { text: "📖 <span class='pool-2'>The landscape shifts with each dawn.</span>", base: 0, rate: 0.8 },             // 0+(0.8*Cycle)
+      { text: "📖 <span class='pool-2'>Legends warn of the approaching darkness.</span>", base: 0, rate: 1.0 }        // 0+(1.0*Cycle)
+    ],
+    3: [ // Atmospheric/mysterious
+      { text: "✨ <span class='pool-3'>The air tingles with anticipation...</span>", base: 0, rate: 0.5 },     // 0+(0.5*Cycle)
+      { text: "✨ <span class='pool-3'>Something stirs beyond the horizon.</span>", base: 0, rate: 0.7 },      // 0+(0.7*Cycle)
+      { text: "✨ <span class='pool-3'>Fate weaves its tapestry unseen.</span>", base: 0, rate: 0.9 }          // 0+(0.9*Cycle)
+    ]
+  },
+  night: {
+    0: [ // Night-specific hints
+      { text: "🌙 <span class='pool-0'>Shadows consume the unwary in darkness.</span>", base: 2, rate: 1.8 },      // 2+(1.8*Cycle)
+      { text: "🌙 <span class='pool-0'>Light becomes precious in the void of night.</span>", base: 1, rate: 1.5 }, // 1+(1.5*Cycle)
+      { text: "🌙 <span class='pool-0'>Night transforms all choices into risks.</span>", base: 0, rate: 1.2 }     // 0+(1.2*Cycle)
+    ],
+    1: [ // Night warnings
+      { text: "⚠️ <span class='pool-1'>The darkness judges your past actions.</span>", base: 0, rate: 1.5 },       // 0+(1.5*Cycle)
+      { text: "⚠️ <span class='pool-1'>Fear can be as dangerous as any enemy.</span>", base: 0, rate: 1.8 },       // 0+(1.8*Cycle)
+      { text: "⚠️ <span class='pool-1'>What you cannot see may yet harm you.</span>", base: 0, rate: 2.0 }        // 0+(2.0*Cycle)
+    ],
+    2: [ // Night lore
+      { text: "📚 <span class='pool-2'>Old tales speak of those who conquered the night.</span>", base: 0, rate: 1.0 },   // 0+(1.0*Cycle)
+      { text: "📚 <span class='pool-2'>The night has memory and seeks revenge.</span>", base: 0, rate: 1.2 },             // 0+(1.2*Cycle)
+      { text: "📚 <span class='pool-2'>Some say the night is eternal, others disagree.</span>", base: 0, rate: 1.5 }      // 0+(1.5*Cycle)
+    ],
+    3: [ // Night atmosphere
+      { text: "🌌 <span class='pool-3'>Stars hide behind clouds of dread.</span>", base: 0, rate: 0.8 },        // 0+(0.8*Cycle)
+      { text: "🌌 <span class='pool-3'>The void between worlds grows thinner.</span>", base: 0, rate: 1.0 },    // 0+(1.0*Cycle)
+      { text: "🌌 <span class='pool-3'>Time bends in the presence of absolute darkness.</span>", base: 0, rate: 1.2 } // 0+(1.2*Cycle)
+    ]
+  }
+};
+
+// Get main text for specific slot using independent chance calculation
+function getMainText(slotNum, isNight = false) {
+  const textOptions = isNight ? nightMainTextOptions[slotNum] : mainTextOptions[slotNum];
+  if (!textOptions) return "No text available for this slot.";
+  
+  // Calculate individual chances for each text
+  const chances = textOptions.map(option => {
+    const chancePercent = Math.max(0, option.base + (option.rate * cycle));
+    return {
+      text: option.text,
+      chance: Math.min(100, chancePercent) / 100 // Convert to decimal 0-1
+    };
   });
+  
+  // Convert percentages to weighted selection
+  const totalChance = chances.reduce((sum, c) => sum + c.chance, 0);
+  
+  if (totalChance === 0) return textOptions[0].text; // Fallback
+  
+  const random = Math.random() * totalChance;
+  let cumulative = 0;
+  
+  for (const chance of chances) {
+    cumulative += chance.chance;
+    if (random <= cumulative) {
+      return chance.text;
+    }
+  }
+  
+  // Fallback to first option
+  return chances[0].text;
+}
+
+// Get flavor text from pools using independent dice rolls
+function getFlavorText(slotNum, isNight = false) {
+  const pools = isNight ? flavorPools.night : flavorPools.day;
+  let result = "";
+  
+  // Each pool rolls independently - multiple texts can appear or none
+  for (let poolIndex = 0; poolIndex < 4; poolIndex++) {
+    const poolTexts = pools[poolIndex];
+    if (!poolTexts) continue;
+    
+    // Roll for each text in the pool independently
+    for (const textObj of poolTexts) {
+      const chancePercent = Math.max(0, textObj.base + (textObj.rate * cycle));
+      const probability = Math.min(100, chancePercent) / 100;
+      
+      if (Math.random() < probability) {
+        result += "<br><br>" + textObj.text;
+      }
+    }
+  }
+  
   return result;
 }
 
 /* Text composition functions */
 function getDayText(slot) {
-  let baseText = [
-    "You may play any card.",
-    "You may play any card.",
-    "You may play any card.",
-    "You may play any card.",
-    "You may play any card.",
-    "You <strong>must</strong> play a <strong>B</strong> or <strong>C</strong> card.",
-    "You may play any card.",
-    "You may play any card.",
-    "You may play any card.",
-    "You may play any card.",
-    "You <strong>must</strong> play a <strong>B</strong> or <strong>C</strong> card.",
-  ][slot - 1] || "";
-  baseText += getSlotFlavor(slot, cycle, dayFlavorTable);
+  let baseText = getMainText(slot, false);
+  baseText += getFlavorText(slot, false);
   return baseText;
 }
 
-function getNightText(nStep) {
-  const baseText = [
-    "You <strong>must</strong> play a B card. <br><i>Add +1 coin to reward pile.</i>",
-    "You <strong>must</strong> play a C card. <br><i>Double reward pile.</i>",
-    "You <strong>must</strong> play a B card. <br><i>Double reward pile.</i>",
-    "You <strong>must</strong> play a C card. <br><i>Double reward pile.</i>",
-    "You <strong>must</strong> play a B card. <br><i>Double reward pile.</i>",
-    "You <strong>must</strong> play a C card. <br><i>The night coils and twists, the end is near...</i>",
-  ][nStep] || "";
-  return baseText + getSlotFlavor(12 + nStep, cycle, nightFlavorTable);
+function getNightText(nightStep) {
+  const slotNum = 12 + nightStep;
+  let baseText = getMainText(slotNum, true);
+  baseText += getFlavorText(slotNum, true);
+  return baseText;
 }
 
 /* --- UI Update --- */
@@ -450,30 +580,28 @@ function showContinueNightInterstitial() {
   const endBtn = document.createElement('button');
   endBtn.className = 'button interstitial-btn';
   endBtn.innerText = 'Loot rewards, proceed to the DAWN!';
-  endBtn.disabled = true;  // LOCKOUT
+  endBtn.disabled = true;
 
   const contBtn = document.createElement('button');
   contBtn.className = 'button interstitial-btn';
   contBtn.innerText = 'Continue deeper into the NIGHT...';
-  contBtn.disabled = true;  // LOCKOUT
+  contBtn.disabled = true;
 
   container.appendChild(endBtn);
   container.appendChild(contBtn);
 
-  // Countdown to unlock (like DUSK buttons)
-  let cooldown = 1; // seconds
+  let cooldown = 1;
   const interval = setInterval(() => {
     cooldown--;
     if (cooldown <= 0) {
       endBtn.disabled = false;
       contBtn.disabled = false;
-      endBtn.classList.add('active'); // fade to normal
+      endBtn.classList.add('active');
       contBtn.classList.add('active');
       clearInterval(interval);
     }
   }, 1000);
 
-  // Add click handlers (they will only fire after enabled)
   endBtn.addEventListener('click', () => {
     endBtn.remove(); contBtn.remove();
     goToDawn(true);
@@ -486,7 +614,6 @@ function showContinueNightInterstitial() {
     updateUI();
   });
 }
-
 
 /* Deep of Night */
 function showDeepOfNight() {
