@@ -21,7 +21,7 @@
             position: relative;
         }
 
-        /* Video Background */
+        /* VIDEO BACKGROUND - Matching gallery.html and dreamer.html approach */
         .video-wrapper {
             position: fixed;
             top: 0;
@@ -30,7 +30,7 @@
             height: 100vh;
             overflow: hidden;
             z-index: 0;
-            opacity: 0.2;
+            pointer-events: none;
         }
 
         .video-bg {
@@ -39,9 +39,30 @@
             left: 50%;
             min-width: 100%;
             min-height: 100%;
+            width: auto;
+            height: auto;
             transform: translate(-50%, -50%);
             object-fit: cover;
-            filter: brightness(1.1) contrast(0.9);
+            filter: blur(2px) brightness(0.95) contrast(1.1);
+            opacity: 0.99;
+            pointer-events: none;
+            transition: transform 0.3s ease;
+        }
+        /*
+        Source - https://stackoverflow.com/a
+        Posted by Ahmad Moghazi, modified by community. See post 'Timeline' for change history
+        Retrieved 2025-12-09, License - CC BY-SA 4.0
+        */
+
+        .spoiler{
+          background-color: gray;
+          color: transparent;
+          user-select: none;
+        }
+
+        .spoiler:hover{
+          background-color: inherit;
+          color: inherit;
         }
 
         /* Main Content */
@@ -220,10 +241,11 @@
     </style>
 </head>
 <body>
-    <!-- Video Background -->
+    <!-- 🔁 VIDEO BACKGROUND -->
     <div class="video-wrapper">
         <video class="video-bg" autoplay muted loop playsinline>
-            <source src="../media/138556-769988117_medium.mp4" type="video/mp4">
+            <source src="../media/138556-769988117_medium.mp4" type="video/mp4" />
+            Your browser does not support the VIDEO tag.
         </video>
     </div>
 
@@ -245,13 +267,13 @@
             <div class="rules-section">
                 <h2>Welcome, Dreamer</h2>
                 <div class="highlight">
-                    <p><strong>PREFACE:</strong> This is an interactive narrative experience where you explore the realm of <details><summary>spoilers</summary>Anufallas</details> through choices and interactions. There are no wrong answers, only different paths to discover.</p>
+                    <p><strong>PREFACE:</strong> This is an interactive narrative experience where you explore the realm of <span class="spoiler">Anufallas</span> through choices and interactions. There are no wrong answers, only different paths to discover.</p>
                 </div>
             </div>
 
             <!-- How to Play -->
             <div class="rules-section">
-                <h2><span class="rule-number">1</span>How to Play</h2>
+                <h2><span class="rule-number">1</span>How To Play</h2>
                 <h3>The Journey</h3>
                 <p>Begin your journey at the tower: Under the prying eye of the moon, you awaken at the top of a tall tower. Trapped between walls of books, your only reprieve is the lonely table in the center of the room. Coolly lit by moonlight, several spheres lay upon the table. They beckon to you. As you grasp each orb, something strange stirs within them: objects from somewhere you can't remember. When one of them strikes a chord wihin your very soul, the glass orb shatters peacefully, and the object finds you sheepishly. The lights snuff out, and you find yourself weary, weak. As you collapse, your vision snaps to the gaping window, as the moon itself barrels toward the tower. Certain doom, if only you could keep your eyes open... <br><br>You awake once more. Ah, this place. You remember this place. The world comes into focus, and it all comes rushing back to you...<br>The realm within:</p>
                 <ul>
@@ -418,5 +440,7 @@
             </div>
         </div>
     </div>
+
+
 </body>
 </html>
