@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Guider — Player Companion</title>
+  <meta name="description" content="Player companion for the World Walker game. Quick actions, resolving tips, and card anatomy." />
+  <style>
+    /* ---------------------------------------------
+       Base / Reset
+       --------------------------------------------- */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:#070717;color:#fff}
+
+    /* VIDEO BACKGROUND (full-bleed, behind content) */
+    .video-wrapper{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+    .video-bg{position:absolute;top:50%;left:50%;min-width:100%;min-height:100%;width:auto;height:auto;transform:translate(-50%,-50%);object-fit:cover;filter:blur(2px) brightness(.78) saturate(.95);opacity:.99}
+    .backdrop-overlay{position:fixed;inset:0;background:linear-gradient(180deg, rgba(12,8,16,0.35), rgba(6,6,18,0.6));z-index:1;pointer-events:none}
+
+    /* ---------------------------------------------
+       Layout
+       --------------------------------------------- */
+    .page{position:relative;z-index:2;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:86px 28px 56px}
+    .card{max-width:1100px;width:100%;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));border-radius:16px;padding:28px;box-shadow:0 30px 80px rgba(2,2,6,0.6);border:1px solid rgba(255,255,255,0.06);backdrop-filter: blur(6px)}
+
+    /* Back button (always present top-left) */
+    .back-wrap{position:fixed;left:18px;top:18px;z-index:2200}
+    .back-btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,0.95);color:#0e0e18;font-weight:700;text-decoration:none;border:2px solid rgba(0,0,0,0.08);box-shadow:0 6px 18px rgba(0,0,0,0.4);transition:transform .12s ease}
+    .back-btn:hover{transform:translateY(-3px)}
+    .back-btn svg{width:18px;height:18px}
+
+    /* Header */
+    .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .title{font-size:1.6rem;letter-spacing:0.6px;font-weight:800;color:#ffecb3}
+    .subtitle{font-size:.95rem;color:rgba(255,255,255,0.78)}
+
+    /* Grid layout for top sections */
+    .grid{display:grid;grid-template-columns:1fr 380px;gap:22px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr;}.card{padding:20px}}
+
+    /* Main column */
+    .main-section{display:flex;flex-direction:column;gap:16px}
+    .section{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+    .section h3{font-size:1.05rem;color:#fff;margin-bottom:8px}
+    .muted{color:rgba(255,255,255,0.7);font-size:.95rem}
+    .list{margin-top:10px;display:grid;gap:8px}
+    .list li{list-style:none;padding:10px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.02)}
+
+    /* Action suggestions */
+    .actions-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    @media (max-width:560px){.actions-grid{grid-template-columns:1fr}}
+    .action-card{padding:12px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03)}
+    .action-card strong{display:block;margin-bottom:6px;color:#fff}
+
+    /* Card anatomy (right column) */
+    .info-panel{position:relative}
+    .card-sample{position:relative;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border:1px solid rgba(255,255,255,0.03)}
+    .card-art{height:120px;border-radius:8px;background:linear-gradient(135deg,#2b2b3f 0%, #40324a 100%);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+    .card-legend{margin-top:10px;display:grid;gap:8px}
+    .legend-row{display:flex;gap:8px;align-items:flex-start}
+    .legend-key{min-width:84px;font-weight:700;color:#ffdead}
+    .legend-value{color:rgba(255,255,255,0.9)}
+
+    /* Accordion for deep-dive sections */
+    .accordion{margin-top:8px}
+    .acc-item{border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
+    .acc-head{display:flex;align-items:center;justify-content:space-between;padding:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));cursor:pointer}
+    .acc-head h4{font-size:.98rem}
+    .acc-body{max-height:0;overflow:hidden;padding:0 12px;transition:max-height .35s ease;padding-bottom:0}
+    .acc-body.open{padding:12px;border-top:1px solid rgba(255,255,255,0.02)}
+
+    /* Quick tips */
+    .tips{display:flex;flex-wrap:wrap;gap:10px}
+    .tip{padding:10px;border-radius:8px;background:linear-gradient(90deg,#ffb86b30,#ffd38f20);border:1px solid rgba(255,255,255,0.03);color:#fff}
+
+    /* Footer small print */
+    .small{font-size:.85rem;color:rgba(255,255,255,0.62);margin-top:8px}
+
+    /* subtle 'orb' decorative element */
+    .orb{position:absolute;right:-28px;top:-28px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(255,235,153,0.95), rgba(255,172,66,0.08));filter:blur(26px);opacity:.25;pointer-events:none}
+    @media (max-width:980px){.orb{display:none}}
+
+  </style>
+</head>
+<body>
+
+  <!-- Video background: Option A cinematic look -->
+  <div class="video-wrapper">
+    <video class="video-bg" autoplay muted loop playsinline>
+      <source src="../media/138556-769988117_medium.mp4" type="video/mp4">
+      <!-- fallback -->
+    </video>
+  </div>
+  <div class="backdrop-overlay" aria-hidden="true"></div>
+
+  <!-- Always-present Back button -->
+  <div class="back-wrap">
+    <a class="back-btn" href="../dreamer.html" aria-label="Back to Dream">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+      Back
+    </a>
+  </div>
+
+  <main class="page">
+    <article class="card" role="main">
+
+      <header class="header">
+        <div>
+          <div class="title">Player Guider</div>
+          <div class="subtitle">Quick actions, resolving tips, and card anatomy — optimized for table use.</div>
+        </div>
+        <div class="small">Designed for in-play clarity • Mobile-first responsive</div>
+      </header>
+
+      <div class="grid">
+
+        <!-- LEFT: Main guidance -->
+        <section class="main-section">
+
+          <section class="section" aria-labelledby="act-heading">
+            <h3 id="act-heading">How to <strong>ACT</strong> — What players can do</h3>
+            <p class="muted">When your turn comes, ACT is your chance to shape the scene. Use these suggestions as prompts → roleplay first, mechanics second.</p>
+
+            <ul class="list actions-grid" aria-hidden="false">
+              <li class="action-card"><strong>Observe & Investigate</strong>
+                <div class="muted">Look around, ask the narrator focused questions, search a specific object, request a hint.</div>
+              </li>
+
+              <li class="action-card"><strong>Interact with NPCs</strong>
+                <div class="muted">Converse, persuade, lie, trade → describe your approach and roll if prompted.</div>
+              </li>
+
+              <li class="action-card"><strong>Prepare & Craft</strong>
+                <div class="muted">Ready an item, set a trap, assemble a quick ritual → narrate the steps; ask for limited die checks if necessary.</div>
+              </li>
+
+              <li class="action-card"><strong>Team Support</strong>
+                <div class="muted">Give another player aid, shore up morale, share a resource, or give actionable advice that affects a roll.</div>
+              </li>
+
+              <li class="action-card"><strong>Roleplay Ideas</strong>
+                <div class="muted">Intentionally accept a risk to gain story leverage → say what you want to do and why.</div>
+              </li>
+
+              <li class="action-card"><strong>Use Ability or Item</strong>
+                <div class="muted">Short summary of ability and the expected immediate effect; narrator adjudicates the specifics.</div>
+              </li>
+            </ul>
+
+            <p class="small">Tip: keep ACT descriptions short and vivid. The narrator will convert description into mechanical effect.</p>
+          </section>
+
+          <section class="section" aria-labelledby="resolve-heading">
+            <h3 id="resolve-heading">Resolving Cards → Quick flow</h3>
+            <ol class="muted" style="margin-top:10px;line-height:1.6">
+              <li><strong>Reveal</strong>: Show the map card to everyone. Read the title & effect aloud.</li>
+              <li><strong>Clarify</strong>: Ask the narrator for any unknown terms or hidden requirements.</li>
+              <li><strong>Decide</strong>: Players choose options; if a requirement exists, ensure it is met before resolution.</li>
+              <li><strong>Resolve</strong>: Execute the outcomes (reward, damage, status changes). In disputes, narrator rules.</li>
+              <li><strong>Record</strong>: Update resources (coins, life, stamina, madness, soul) and move to the next player.</li>
+            </ol>
+
+            <div style="margin-top:12px" class="small">If a card is ambiguous: <em>ask</em>. The narrator prefers to interpret in favor of story →→→ but mechanically consistent rulings are fair.</div>
+
+            <div style="margin-top:12px" class="tips">
+              <div class="tip">Resolve immediately: do not defer a card for later, unless the narrator allows.</div>
+              <div class="tip">If a card says "must", treat it as enforced game-state, not an optional prompt.</div>
+              <div class="tip">Use ACT to change the conditions post resolve (e.g. bribe a guard after revealing).</div>
+            </div>
+          </section>
+
+          <section class="section" aria-labelledby="tutorial-heading">
+            <h3 id="tutorial-heading">Tiny Tutorial: A Short Example</h3>
+            <p class="muted">You have just finished Dawn and it is your turn in the morning zone. You ACT: "I use my arcane mastery to search the nearby hollowed wall for a hidden compartment." Narrator says: resolve 10 → player will roll a dice and add their arcane stat to score equal to or greater than 10 to succeed. They succeed. Narrator: your latent senses reward you, hidden away in the compartment was a coin. ACT finished → player must now reveal. You then REVEAL a Bravery card: "A Discovery! Moss-Covered Altar → Offer an item or offer a coin."</p>
+            <p class="muted">Players discuss: because of ACTing previously, you found a coin and can pay the coin, resolve the corresponding effect to show the current A and C cards → the narrator describes the scene of the altar adjusting your path forward. You discard the C card as it is a Fight card and replace it with another face-down C card. Having revealed and acted, your turn is finished and the next player begins their turn.</p>
+            <p class="small">This micro-example shows how ACT can shape the reveals — smart ACTing enables card choices.</p>
+          </section>
+
+          <section class="section" aria-labelledby="tips-heading">
+            <h3 id="tips-heading">Narrative Tips for Better Play</h3>
+            <ul class="list">
+              <li class="muted">Be concise — short, evocative phrases beat paragraphs during tense turns.</li>
+              <li class="muted">Ask for clarity early. If rules are unclear, the narrator can offer quick rulings to keep the game moving.</li>
+              <li class="muted">Use ACT to set conditions before revealing a card (reduce risk or stack reward).</li>
+              <li class="muted">Accept failure as opportunity — narratively, failures often produce richer scenes.</li>
+            </ul>
+          </section>
+
+        </section>
+
+        <!-- RIGHT: Card anatomy & reference -->
+        <aside class="info-panel" aria-labelledby="anatomy-heading">
+
+          <section class="section card-sample" id="anatomy" aria-label="Card Anatomy">
+            <h3 id="anatomy-heading">Card Anatomy — How to read a Map card</h3>
+            <div class="card-art" role="img" aria-label="Example map card art">MAP CARD ART</div>
+
+            <div class="card-legend">
+              <div class="legend-row"><div class="legend-key">Type</div><div class="legend-value">Adventure / Bravery / Challenge — dictates difficulty & reward flavour</div></div>
+              <div class="legend-row"><div class="legend-key">Subtype</div><div class="legend-value">Camp, Discovery, Event, etc...</div></div>
+              <div class="legend-row"><div class="legend-key">Effect</div><div class="legend-value">Immediate and often narrative results; may include rewards or penalties.</div></div>
+              <div class="legend-row"><div class="legend-key">Night</div><div class="legend-value">Indicates special night behaviors or added dangers.</div></div>
+              <div class="legend-row"><div class="legend-key">Rewards</div><div class="legend-value">Coins, items, or story advances.</div></div>
+            </div>
+
+            <div class="accordion" style="margin-top:12px">
+
+              <div class="acc-item">
+                <div class="acc-head" data-target="req">
+                  <h4>Common Requirement Examples</h4>
+                  <div class="chev">▸</div>
+                </div>
+                <div class="acc-body" id="req">
+                  <p class="muted">Requirements can be literal ("pay 1 coin"), conditional ("if you are cursed"), or action-based. If you can't meet a requirement, consult the narrator for alternate resolution or consequences.</p>
+                </div>
+              </div>
+
+              <div class="acc-item">
+                <div class="acc-head" data-target="night">
+                  <h4>Night Effects & Warnings</h4>
+                  <div class="chev">▸</div>
+                </div>
+                <div class="acc-body" id="night">
+                  <p class="muted">Night cards often escalate danger and change card resolution order: they may override, supercede, or amplify the card. Plan ACTs to mitigate night penalties.</p>
+                </div>
+              </div>
+
+              <div class="acc-item">
+                <div class="acc-head" data-target="reward">
+                  <h4>Rewards & Stacking</h4>
+                  <div class="chev">▸</div>
+                </div>
+                <div class="acc-body" id="reward">
+                  <p class="muted">Rewards can be immediate or conditional. When a card doubles rewards or references the reward pile, apply modifiers in the order listed on the card. Ask narrator if order is ambiguous.</p>
+                </div>
+              </div>
+
+            </div>
+
+          </section>
+
+          <section class="section" aria-labelledby="resources">
+            <h3 id="resources">Resource Glossary</h3>
+            <div style="margin-top:8px">
+              <div class="legend-row"><div class="legend-key">Life</div><div class="legend-value">Your hit points. If 0, you die but are still narratively present.</div></div>
+              <div class="legend-row"><div class="legend-key">Stamina</div><div class="legend-value">Action resource; use for action moves and resolves and some cards.</div></div>
+              <div class="legend-row"><div class="legend-key">Madness</div><div class="legend-value">A dangerous meter. High madness causes forced madness effects and narrative complications.</div></div>
+              <div class="legend-row"><div class="legend-key">Soul</div><div class="legend-value">While unknown to the player, the narrator will keep track of how much of your soul is siphoned off and trapped inside the game.</div></div>
+              <div class="legend-row"><div class="legend-key">Coins</div><div class="legend-value">Spendable currency for items and actions and NPC interactions.</div></div>
+            </div>
+            <div class="small">Note: please reference the Rules page.</div>
+          </section>
+
+          <div class="orb" aria-hidden="true"></div>
+
+        </aside>
+
+      </div>
+
+      <footer style="margin-top:18px;display:flex;gap:14px;flex-direction:column">
+        <div class="section">
+          <h3>Extra: Quick Resolution Cheatsheet</h3>
+          <p class="muted">If a card triggers: <strong>1)</strong> read effect aloud, <strong>2)</strong> identify requirement, <strong>3)</strong> players discuss, <strong>4)</strong> narrator adjudicates and resolves. Use this cheat to speed play.</p>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+          <div class="small">TBD: breakdown of all 12 card types.</div>
+          <div style="display:flex;gap:8px">
+            <a href="the-rules.html" class="back-btn" style="background:rgba(255,255,255,0.08);color:#fff;padding:8px 12px;border-radius:8px;font-weight:700;text-decoration:none;border:1px solid rgba(255,255,255,0.04)">Open Rules</a>
+            <a href="friends.html" class="back-btn" style="background:rgba(255,255,255,0.08);color:#fff;padding:8px 12px;border-radius:8px;font-weight:700;text-decoration:none;border:1px solid rgba(255,255,255,0.04)">Characters</a>
+          </div>
+        </div>
+
+      </footer>
+
+    </article>
+  </main>
+
+  <script>
+    // Accordion behavior (CSS-first progressive enhancement)
+    document.querySelectorAll('.acc-head').forEach(h => {
+      h.addEventListener('click', () => {
+        const targetId = h.dataset.target;
+        const body = document.getElementById(targetId);
+        const open = body.classList.contains('open');
+        // close all
+        document.querySelectorAll('.acc-body').forEach(b => { b.style.maxHeight = null; b.classList.remove('open'); });
+        // open selected
+        if(!open) {
+          body.classList.add('open');
+          body.style.maxHeight = body.scrollHeight + 'px';
+        }
+      });
+    });
+
+    // Improve accessibility: allow keyboard toggle
+    document.querySelectorAll('.acc-head').forEach(h=>{ h.setAttribute('role','button'); h.tabIndex=0; h.addEventListener('keydown', e=>{ if(e.key==='Enter' || e.key===' ') h.click(); }) });
+
+  </script>
+</body>
+</html>

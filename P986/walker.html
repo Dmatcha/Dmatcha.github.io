@@ -191,27 +191,31 @@ function setContainerTheme(theme) {
 const dayFlavorTable = {
   1: [
     { text: "<i>If you play a Camp card, find a coin.</i>", chance: 0.15 },
-    { text: "<i>If you choose a <b>B</b> or <b>C</b> card, gain one empower.</i>", chance: 0.15 },
+    { text: "<i>If you choose a <strong>B</strong> or <strong>C</strong> card, gain one empower.</i>", chance: 0.15 },
   ],
-  2: [{ text: "<i>If you play an Event card, find a coin.</i>", chance: 0.10 }],
+  2: [
+    { text: "<i>If you play an Event card, find a coin.</i>", chance: 0.15 },
+    { text: "<i>If you play a Discovery card, find a coin.</i>", chance: 0.10 },
+  ],
   3: [
-    { text: "<i>If you choose a <b>B</b> or <b>C</b> card, gain one empower.</i>", chance: 0.90 },
+    { text: "<i>If you choose a <strong>B</strong> or <strong>C</strong> card, gain one empower.</i>", chance: 0.90 },
     { text: "<i>If you have a gem, everyone regains all energy.</i>", chance: 0.05 },
   ],
   4: [
     { text: "<i>If you play a Camp or Event card, show and freely discard the other cards.</i>", chance: 0.10 },
+    { text: "<i>If you play a Discovery card, show and freely discard the other cards.</i>", chance: 0.10 },
   ],
   5: [{ text: "<i>If you play a Discovery card, find a coin.</i>", chance: 0.10 }],
   6: [
     { text: "<i>If you play a Fight or Story card, gain quick and insight.</i>", chance: 0.10 },
-    { text: "<i>The shadows whisper...</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.03 * c) },
+    { text: "<i>The shadows whisper. Gain 1 madness or lose 1 life.</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.01 * c) },
   ],
   7: [{ text: "<i>If you play a Discovery card, <strong>lose</strong> a coin.</i>", chance: 0.05 }],
   8: [{ text: "<i>If you play a Discovery card, find a coin.</i>", chance: 0.10 }],
-  9: [{ text: "<i>If you play a Discovery card, find a coin.</i>", chance: 0.15 }],
+  9: [{ text: "<i>If you play an Adventure card, find a coin.</i>", chance: 0.15 }],
   10: [
-    { text: "<i>If you play a Discovery card, find a coin.</i>", chance: 0.15 },
-    { text: "<i>The shadows seem to whisper...</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.03 * c) },
+    { text: "<i>If you play a card without a combat encounter, find a coin.</i>", chance: 0.15 },
+    { text: "<i>The shadows flicker angrily. Gain 1 madness and lose 1 life.</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.03 * c) },
   ],
 };
 
@@ -219,13 +223,25 @@ const nightFlavorTable = {
   12: [
     { text: "<i>A faint light flickers in the darkness...</i>", chance: 0.05 },
     { text: "<i>The shadow remains cast!</i>", chance: 0.03 },
+    { text: "<i>Lose all your stamina!</i>", chance: 0.03 },
+    { text: "<i>All players lose 1 stamina!</i>", chance: 0.04 },
   ],
   13: [
-    { text: "<i>If you play a Fight card, lose 1 life.</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.02 * c) },
+    { text: "<i>If you play a card without a combat encounter, you must encounter humanoid enemies after resolving the card.</i>", chance: 0.10 },
+    { text: "<i>If you play a Fight card, lose 1 madness and gain 1 stamina.</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.01 * c) },
   ],
-  14: [{ text: "<i>If you play a Camp card, discard it and play another card instead.</i>", chance: 0.05 }],
+  14: [
+    { text: "<i>If you play a Discovery card, discard it and play another card instead.</i>", chance: 0.05 }
+    { text: "<i>If you play an Event card, discard it and play another card instead.</i>", chance: 0.05 }
+    { text: "<i>If you play a any card without a combat encounter, first encounter monsters before resolving the card.</i>", chance: 0.05 }
+    { text: "<i>Pay life or stamina equal to the number of coins in the loot pile.</i>", chance: 0.05 }
+    { text: "<i>Regain life and stamina equal to your current soul.</i>", chance: 0.05 }
+    { text: "<i>Resolve madness now. If you fail, immediately activate a madness effect or all players gain 1 madness.</i>", chance: 0.05 }
+    { text: "<i>Resolve madness now. If you fail, become wormridden.</i>", chance: 0.05 }
+  ],
   15: [
     { text: "<i>If you play a Camp card, resolve it then leave the night immediately. Do not loot rewards. Move to the next player.</i>", chance: 0.05 },
+    { text: "<i>If you play a card with night effects, resolve it twice.</i>", chance: 0.15 },
   ],
   16: [
     { text: "<i>If you play a Camp card, resolve it then leave the night immediately. Do not loot rewards. Move to the next player.</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.02 * c) },
@@ -252,12 +268,12 @@ function getDayText(slot) {
     "You may play any card.",
     "You may play any card.",
     "You may play any card.",
-    "You <b>must</b> play a <b>B</b> or <b>C</b> card.",
+    "You <strong>must</strong> play a <strong>B</strong> or <strong>C</strong> card.",
     "You may play any card.",
     "You may play any card.",
     "You may play any card.",
     "You may play any card.",
-    "You <b>must</b> play a <b>B</b> or <b>C</b> card.",
+    "You <strong>must</strong> play a <strong>B</strong> or <strong>C</strong> card.",
   ][slot - 1] || "";
   baseText += getSlotFlavor(slot, cycle, dayFlavorTable);
   return baseText;
@@ -265,12 +281,12 @@ function getDayText(slot) {
 
 function getNightText(nStep) {
   const baseText = [
-    "You <b>must</b> play a B card. <br><i>Add +1 coin to reward pile.</i>",
-    "You <b>must</b> play a C card. <br><i>Double reward pile.</i>",
-    "You <b>must</b> play a B card. <br><i>Double reward pile.</i>",
-    "You <b>must</b> play a C card. <br><i>Double reward pile.</i>",
-    "You <b>must</b> play a B card. <br><i>Double reward pile.</i>",
-    "You <b>must</b> play a C card. <br><i>The night coils and twists, the end is near...</i>",
+    "You <strong>must</strong> play a B card. <br><i>Add +1 coin to reward pile.</i>",
+    "You <strong>must</strong> play a C card. <br><i>Double reward pile.</i>",
+    "You <strong>must</strong> play a B card. <br><i>Double reward pile.</i>",
+    "You <strong>must</strong> play a C card. <br><i>Double reward pile.</i>",
+    "You <strong>must</strong> play a B card. <br><i>Double reward pile.</i>",
+    "You <strong>must</strong> play a C card. <br><i>The night coils and twists, the end is near...</i>",
   ][nStep] || "";
   return baseText + getSlotFlavor(12 + nStep, cycle, nightFlavorTable);
 }
