@@ -19,6 +19,42 @@ body {
   overflow: hidden;
 }
 
+    /* VIDEO BACKGROUND */
+    .video-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .video-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+      filter: blur(2px) brightness(0.95) contrast(1.1);
+      opacity: 0.99;
+      pointer-events: none;
+      transition: transform 0.3s ease;
+    }
+
+    @media (orientation: portrait) {
+      .video-bg {
+        transform: translate(-50%, -50%) rotate(90deg);
+        min-width: 100%;
+        min-height: 100%;
+      }
+    }
+
 /* Main card container */
 .container {
   width: 60vw;
@@ -150,11 +186,19 @@ body {
 .pool-1 { color: #ffd700; font-style: italic; }
 .pool-2 { color: #98fb98; font-style: italic; }
 .pool-3 { color: #dda0dd; font-style: italic; }
+.pool-4 { color: #ff69b4; font-style: italic; }
 </style>
 
 </head>
 <body>
-
+<body>
+  <!-- 🔁 VIDEO BACKGROUND -->
+  <div class="video-wrapper">
+    <video class="video-bg" autoplay muted loop playsinline>
+      <source src="../media/12530-239934669_medium.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  </div>
 <button class="reset-btn" onclick="resetGame()">RESET</button>
 
 <div class="container">
@@ -210,142 +254,220 @@ function calculateStepChance(startCycle, rate, cycle) {
 // Main text options for each slot (3 exclusive options per slot)
 const mainTextOptions = {
   1: [
-    { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "You must play an Adventure card.", base: 0, rate: 1 },
-    { text: "If you play an Adventure card, lose 1 stamina.", base: 0, rate: 1 }
+    { text: `You may play any card.`, base: 100, rate: -2 },
+    { text: `You must play an Adventure card.`, base: 0, rate: 1 },
+    { text: `If you play an Adventure card, lose 1 stamina.`, base: 0, rate: 1 }
   ],
   2: [
-    { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "Choose wisely - your actions have consequences.", base: 0, rate: 1 },
-    { text: "The shadows grow stronger each day.", base: 0, rate: 1 }
+    { text: `You may play any card.`, base: 100, rate: -2 },
+    { text: `You may play any card. If you play an event, regain 1 life immediately.`, base: 0, rate: 1 },
+    { text: `You may play any card. If you play a discovery, gain 1 coin.`, base: 0, rate: 1 }
   ],
   3: [
-    { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "You must play a B or C card.", base: 0, rate: 1 },
-    { text: "Strategic planning becomes more important.", base: 0, rate: 1 }
+    { text: `You may play any card.`, base: 100, rate: -2 },
+    { text: `Gain 1 empower if you play a B or C card.`, base: 0, rate: 1 },
+    { text: `You may play any card. If all cards played so far are the same type, everyone regains 3 life.`, base: 0, rate: 1 }
   ],
   4: [
-    { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "Adventure cards provide crucial advantages.", base: 0, rate: 1 },
-    { text: "The cost of exploration increases.", base: 0, rate: 1 }
+    { text: `You may play any card.`, base: 100, rate: -2 },
+    { text: `You may play any card. If you begin a combat encounter gain 1 empower.`, base: 0, rate: 1 },
+    { text: `You may play any card. If you have no empower, lose 1 life.`, base: 0, rate: 1 }
   ],
   5: [
-    { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "You must play a B or C card.", base: 0, rate: 1 },
-    { text: "Time becomes a precious resource.", base: 0, rate: 1 }
+    { text: `You may play any card.`, base: 100, rate: -2 },
+    { text: `You must play a B or C card.`, base: 0, rate: 1 },
+    { text: `You may play any card. Flip a coin: if heads gain 1 coin, if tails lose 1 coin.`, base: 0, rate: 1 }
   ],
   6: [
-    { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "Powerful abilities unlock at higher levels.", base: 0, rate: 1 },
-    { text: "The night draws ever closer.", base: 0, rate: 1 }
+    { text: `You may play any card.`, base: 100, rate: -2 },
+    { text: `You must play a B or C card. Add 1 to the loot pile.`, base: 0, rate: 1 },
+    { text: `You may play any card. If you play a B card, remove all your empower and add that many coins to the loot pile.`, base: 0, rate: 1 }
   ],
   7: [
-    { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "You must play a B or C card.", base: 0, rate: 1 },
-    { text: "Survival requires sacrifice.", base: 0, rate: 1 }
+    { text: `You may play any card.`, base: 100, rate: -2 },
+    { text: `You must play a B card.`, base: 0, rate: 1 },
+    { text: `You must play a A card.`, base: 0, rate: 1 }
   ],
   8: [
-    { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "The final challenges approach.", base: 0, rate: 1 },
-    { text: "Every choice echoes through eternity.", base: 0, rate: 1 }
+    { text: `You may play any card.`, base: 100, rate: -2 },
+    { text: `You may play any card. If you have no coins, lose 1 madness.`, base: 0, rate: 1 },
+    { text: `You may play any card. If you have more madness than coins, lose 1 life.`, base: 0, rate: 1 }
   ],
   9: [
-    { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "Destiny awaits the bold.", base: 0, rate: 1 },
-    { text: "The end draws near - be prepared.", base: 0, rate: 1 }
+    { text: `You may play any card.`, base: 100, rate: -2 },
+    { text: `You may play any card. If you have a buddy, regain 1 life.`, base: 0, rate: 1 },
+    { text: `You may play any card. If you have a blessing, regain 1 stamina.`, base: 0, rate: 1 }
   ],
   10: [
-    { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "The ultimate test begins.", base: 0, rate: 1 },
-    { text: "All paths converge to the same fate.", base: 0, rate: 1 }
+    { text: `You may play any card.`, base: 100, rate: -2 },
+    { text: `You may play any card. Regain 1 life per relationship rank 6 or higher.`, base: 0, rate: 1 },
+    { text: `You may play any card. Add 1 coin to the loot pile per relationship rank 5 or lower.`, base: 0, rate: 1 }
   ],
   11: [
-    { text: "You may play any card.", base: 100, rate: -2 },
-    { text: "You must play a B or C card.", base: 0, rate: 1 },
-    { text: "The cycle's end approaches rapidly.", base: 0, rate: 1 }
+    { text: `You must play a B or C card.`, base: 100, rate: -2 },
+    { text: `You must play a B card.`, base: 0, rate: 1 },
+    { text: `You must play a C card.`, base: 0, rate: 1 }
   ]
 };
-
 
 // Night main text options (different from day)
 const nightMainTextOptions = {
   12: [
-    { text: "You must play a B card. <br><i>Add +1 coin to reward pile.</i>", base: 100, rate: -2 },
-    { text: "Darkness consumes the light of hope.", base: 0, rate: 1 },
-    { text: "The shadows whisper of forgotten secrets.", base: 0, rate: 1 }
+    { text: `You must play a B card. <br><i>Add +1 coin to reward pile.</i>`, base: 100, rate: -2 },
+    { text: `You must play a B card. <br><i>Add +2 coins to reward pile.</i>`, base: 0, rate: 1 },
+    { text: `You must play a B card. <br><i>Add no coins to reward pile.</i>`, base: 0, rate: 1 }
   ],
   13: [
-    { text: "You must play a C card. <br><i>Double reward pile.</i>", base: 100, rate: -2 },
-    { text: "Fight cards become perilous in darkness.", base: 0, rate: 1 },
-    { text: "Courage wavers under the starless sky.", base: 0, rate: 1 }
+    { text: `You must play a C card. <br><i>Double reward pile.</i>`, base: 100, rate: -2 },
+    { text: `You must play a C card. <br><i>Add +1 coin to reward pile.</i>`, base: 0, rate: 1 },
+    { text: `You must play a C card. <br><i>An eerie howl creeps across the horizon...</i>`, base: 0, rate: 1 }
   ],
   14: [
-    { text: "You must play a B card. <br><i>Double reward pile.</i>", base: 100, rate: -2 },
-    { text: "Camp cards may be your only sanctuary.", base: 0, rate: 1 },
-    { text: "The night devours the unprepared.", base: 0, rate: 1 }
+    { text: `You must play a B card. <br><i>Double reward pile.</i>`, base: 100, rate: -2 },
+    { text: `You must play a B card. <br><i>Add +1 coin to reward pile.</i>`, base: 0, rate: 1 },
+    { text: `You must play a B card. <br><i>A foul stench creeps through the air...</i>`, base: 0, rate: 1 }
   ],
   15: [
-    { text: "You must play a C card. <br><i>Double reward pile.</i>", base: 100, rate: -2 },
-    { text: "Time grows short in the eternal night.", base: 0, rate: 1 },
-    { text: "Every moment could be your last.", base: 0, rate: 1 }
+    { text: `You must play a C card. <br><i>Double reward pile.</i>`, base: 100, rate: -2 },
+    { text: `You must play a C card. <br><i>Add +1 coin to reward pile.</i>`, base: 0, rate: 1 },
+    { text: `You must play a C card. <br><i>Chills bite at the hairs on your flesh...</i>`, base: 0, rate: 1 }
   ],
   16: [
-    { text: "You must play a B card. <br><i>Double reward pile.</i>", base: 100, rate: -2 },
-    { text: "The final confrontation approaches.", base: 0, rate: 1 },
-    { text: "Steel your resolve for what comes next.", base: 0, rate: 1 }
+    { text: `You must play a B card. <br><i>Double reward pile.</i>`, base: 100, rate: -2 },
+    { text: `You must play a B card. <br><i>Add +1 coin to reward pile.</i>`, base: 0, rate: 1 },
+    { text: `You must play a B card. <br><i>Shadows beckon at the edge of your vision...</i>`, base: 0, rate: 1 }
   ],
   17: [
-    { text: "You must play a C card. <br><i>The night coils and twists, the end is near...</i>", base: 100, rate: -2 },
-    { text: "The ultimate darkness awaits.", base: 0, rate: 1 },
-    { text: "Face your destiny or flee into the void.", base: 0, rate: 1 }
+    { text: `You must play a C card. <br><i>The night coils and twists, the end is near...</i>`, base: 100, rate: -2 },
+    { text: `You must play a C card. <br><i>The night air sneers, knowing you intend to return...</i>`, base: 0, rate: 1 },
+    { text: `You must play a C card. <br><i>The night coils and twists, the end is near...</i>`, base: 0, rate: 1 }
   ]
 };
 
-
-// Flavor text pools (Day vs Night) - Independent dice rolls
+// Flavor text pools (Day vs Night) - 5 Pools × 5 Texts each
 const flavorPools = {
   day: {
-    0: [ // Hints and basic mechanics
-      { text: "💡 <span class='pool-0'>Camp cards provide essential resources.</span>", base: 0, rate: 1.5 },    // 0+(1.5*Cycle)
-      { text: "💡 <span class='pool-0'>B and C cards work best when combined.</span>", base: 0, rate: 1.2 },      // 0+(1.2*Cycle)
-      { text: "💡 <span class='pool-0'>Energy management is crucial for survival.</span>", base: 0, rate: 1.0 }   // 0+(1.0*Cycle)
+    0: [ // basic mechanics - High frequency, early game focus
+      { text: `💡 <span class='pool-0'>Camp cards provide essential resources.
+      </span>`, base: 1, rate: 1.8 },    // 1+(1.8*Cycle) - High growth
+      { text: `💡 <span class='pool-0'>Camp cards require additional resources.
+      </span>`, base: 1, rate: 1.5 },      // 1+(1.5*Cycle) - Medium-high
+      { text: `💡 <span class='pool-0'>Camp cards recover 1 physicks.
+      </span>`, base: 1, rate: 1.2 },  // 1+(1.2*Cycle) - Steady growth
+      { text: `💡 <span class='pool-0'>Camp cards recover 1 magicks.
+      </span>`, base: 1, rate: 1.0 },               // 1+(1.0*Cycle) - Moderate
+      { text: `💡 <span class='pool-0'>Camp cards recover 1 of all stats.
+      </span>`, base: 1, rate: 0.8 }    // 0+(0.8*Cycle) - Slower, later
     ],
-    1: [ // Strategic advice
-      { text: "🎯 <span class='pool-1'>Consider the long-term consequences of each choice.</span>", base: 0, rate: 0.8 },  // 0+(0.8*Cycle)
-      { text: "🎯 <span class='pool-1'>Resource allocation becomes more critical over time.</span>", base: 0, rate: 1.0 }, // 0+(1.0*Cycle)
-      { text: "🎯 <span class='pool-1'>Team coordination can overcome individual limitations.</span>", base: 0, rate: 1.2 } // 0+(1.2*Cycle)
+    1: [ // Strategic - Medium frequency, mid game focus
+      { text: `🎯 <span class='pool-1'>Merchants offer discounted items.
+      </span>`, base: 0, rate: 1.2 }, // 0+(1.2*Cycle)
+      { text: `🎯 <span class='pool-1'>If you have any equipment, regain 1 stamina.
+      </span>`, base: 0, rate: 1.0 },  // 0+(1.0*Cycle)
+      { text: `🎯 <span class='pool-1'>If you have any items, gain 1 energy.
+      </span>`, base: 0, rate: 0.8 }, // 0+(0.8*Cycle)
+      { text: `🎯 <span class='pool-1'>If you have any arcane items, regain 1 energy.
+      </span>`, base: 2, rate: 0.6 },                   // 2+(0.6*Cycle)
+      { text: `🎯 <span class='pool-1'>Regain 1 energy per soulgem and arcane item in your possession.
+      </span>`, base: 0, rate: 0.9 }                // 0+(0.9*Cycle)
     ],
-    2: [ // Story elements
-      { text: "📖 <span class='pool-2'>Ancient wisdom speaks of cycles within cycles.</span>", base: 0, rate: 0.6 },    // 0+(0.6*Cycle)
-      { text: "📖 <span class='pool-2'>The landscape shifts with each dawn.</span>", base: 0, rate: 0.8 },             // 0+(0.8*Cycle)
-      { text: "📖 <span class='pool-2'>Legends warn of the approaching darkness.</span>", base: 0, rate: 1.0 }        // 0+(1.0*Cycle)
+    2: [ // elements - Low frequency, builds gradually
+      { text: `📖 <span class='pool-2'>If you are enchanted, become blessed.
+      </span>`, base: 0, rate: 0.8 },          // 0+(0.8*Cycle)
+      { text: `📖 <span class='pool-2'>If you have any quick cards: after revealing you, may discard a map card once this turn.
+      </span>`, base: 0, rate: 0.6 },                   // 0+(0.6*Cycle)
+      { text: `📖 <span class='pool-2'>If you have more spells than madness, ignore madness resolves.
+      </span>`, base: 0, rate: 0.9 },             // 0+(0.9*Cycle)
+      { text: `📖 <span class='pool-2'>If you have any quick cards, gain 1 empower.
+      </span>`, base: 0, rate: 0.5 },           // 0+(0.5*Cycle)
+      { text: `📖 <span class='pool-2'>History repeats, but wisdom evolves. If you have the highest mastery, you may recycle a spell.
+      </span>`, base: 0, rate: 0.7 }                    // 0+(0.7*Cycle)
     ],
-    3: [ // Atmospheric/mysterious
-      { text: "✨ <span class='pool-3'>The air tingles with anticipation...</span>", base: 0, rate: 0.5 },     // 0+(0.5*Cycle)
-      { text: "✨ <span class='pool-3'>Something stirs beyond the horizon.</span>", base: 0, rate: 0.7 },      // 0+(0.7*Cycle)
-      { text: "✨ <span class='pool-3'>Fate weaves its tapestry unseen.</span>", base: 0, rate: 0.9 }          // 0+(0.9*Cycle)
+    3: [ // Atmospheric/mysterious - Very low frequency, late game emphasis
+      { text: `✨ <span class='pool-3'>The air tingles with anticipation... All players with less coalesce than you regain 1 coalesce.
+      </span>`, base: 0, rate: 0.5 },     // 0+(0.5*Cycle)
+      { text: `✨ <span class='pool-3'>Something stirs beyond the horizon. If you do not have a weapon, regain 1 coalesce.
+      </span>`, base: 0, rate: 0.4 },      // 0+(0.4*Cycle)
+      { text: `✨ <span class='pool-3'>Fate weaves its tapestry unseen. Regain 1 coalesce if you have more mastery than potency.
+      </span>`, base: 0, rate: 0.6 },         // 0+(0.6*Cycle)
+      { text: `✨ <span class='pool-3'>The boundary between dreams and reality blurs. Regain 3 coalesce if you have none. 
+      </span>`, base: 0, rate: 0.3 }, // 0+(0.3*Cycle)
+      { text: `✨ <span class='pool-3'>Destiny whispers to those who listen. You may regain 1 coalesce during your ACT.
+      </span>`, base: 0, rate: 0.7 }     // 0+(0.7*Cycle)
+    ],
+    4: [ // Advanced mechanics - Medium frequency, builds with experience
+      { text: `⚙️ <span class='pool-4'>Your vision dims. You cannot activate your iris power.
+      </span>`, base: 0, rate: 1.1 },           // 0+(1.1*Cycle)
+      { text: `⚙️ <span class='pool-4'>Discovery cards hold secrets yet uncovered: regain 1 more energy.
+      </span>`, base: 0, rate: 0.9 },          // 0+(0.9*Cycle)
+      { text: `⚙️ <span class='pool-4'>Insight reveals hidden patterns in chaos: you may ignore an event's negative consequences.
+      </span>`, base: 0, rate: 0.7 },            // 0+(0.7*Cycle)
+      { text: `⚙️ <span class='pool-4'>Advanced strategies emerge from mastering the basics: basic and simple actions are free during combat.
+      </span>`, base: 0, rate: 0.8 }, // 0+(0.8*Cycle)
+      { text: `⚙️ <span class='pool-4'>Reward both boldness and haste: players with quick succeed instantly.
+      </span>`, base: 0, rate: 1.0 }       // 0+(1.0*Cycle)
     ]
   },
   night: {
-    0: [ // Night-specific hints
-      { text: "🌙 <span class='pool-0'>Shadows consume the unwary in darkness.</span>", base: 2, rate: 1.8 },      // 2+(1.8*Cycle)
-      { text: "🌙 <span class='pool-0'>Light becomes precious in the void of night.</span>", base: 1, rate: 1.5 }, // 1+(1.5*Cycle)
-      { text: "🌙 <span class='pool-0'>Night transforms all choices into risks.</span>", base: 0, rate: 1.2 }     // 0+(1.2*Cycle)
+    0: [ // Night - Higher frequency, starts earlier
+      { text: `🌙 <span class='pool-0'>A chill up youre spine. Cards without empower injure the user if used.
+      </span>`, base: 3, rate: 2.0 },      // 3+(2.0*Cycle) - High base + growth
+      { text: `🌙 <span class='pool-0'>Bony fingers around your neck. Cards with mana injure the user if used.
+      </span>`, base: 2, rate: 1.8 }, // 2+(1.8*Cycle) - High
+      { text: `🌙 <span class='pool-0'>The caw of far off crows. Cards with energy injure the user if used. 
+      </span>`, base: 1, rate: 1.5 },     // 1+(1.5*Cycle) - Medium-high
+      { text: `🌙 <span class='pool-0'>Lay down and never rise again. Cards with stamina injure the user if used. 
+      </span>`, base: 0, rate: 1.2 },    // 0+(1.2*Cycle) - Steady
+      { text: `🌙 <span class='pool-0'>Suffocate in the night air. Physical actions cripple the user until dawn.
+      </span>`, base: 2, rate: 1.4 }     // 2+(1.4*Cycle) - Good base
     ],
-    1: [ // Night warnings
-      { text: "⚠️ <span class='pool-1'>The darkness judges your past actions.</span>", base: 0, rate: 1.5 },       // 0+(1.5*Cycle)
-      { text: "⚠️ <span class='pool-1'>Fear can be as dangerous as any enemy.</span>", base: 0, rate: 1.8 },       // 0+(1.8*Cycle)
-      { text: "⚠️ <span class='pool-1'>What you cannot see may yet harm you.</span>", base: 0, rate: 2.0 }        // 0+(2.0*Cycle)
+    1: [ // Night - High frequency, intensifies rapidly
+      { text: `⚠️ <span class='pool-1'>The darkness judges you, all players with a curse take 1 damage.
+      </span>`, base: 0, rate: 2.0 },       // 0+(2.0*Cycle)
+      { text: `⚠️ <span class='pool-1'>Fear can be as dangerous as any enemy. Players wil the highest madness take 1 damage.
+      </span>`, base: 0, rate: 1.8 },       // 0+(1.8*Cycle)
+      { text: `⚠️ <span class='pool-1'>What you cannot see may yet harm you. Gain dread until dawn.
+      </span>`, base: 0, rate: 1.6 },        // 0+(1.6*Cycle)
+      { text: `⚠️ <span class='pool-1'>The night remembers every mistake. Fail any resolve.
+      </span>`, base: 1, rate: 1.9 },           // 1+(1.9*Cycle)
+      { text: `⚠️ <span class='pool-1'>Courage must overcome doubt in darkness. Lose 1 madness.
+      </span>`, base: 0, rate: 1.7 }     // 0+(1.7*Cycle)
     ],
-    2: [ // Night lore
-      { text: "📚 <span class='pool-2'>Old tales speak of those who conquered the night.</span>", base: 0, rate: 1.0 },   // 0+(1.0*Cycle)
-      { text: "📚 <span class='pool-2'>The night has memory and seeks revenge.</span>", base: 0, rate: 1.2 },             // 0+(1.2*Cycle)
-      { text: "📚 <span class='pool-2'>Some say the night is eternal, others disagree.</span>", base: 0, rate: 1.5 }      // 0+(1.5*Cycle)
+    2: [ // Night lore - Medium frequency, story elements
+      { text: `📚 <span class='pool-2'>Old tales speak of those who conquered the night. Lose 1 madness if you have more potency than madness.
+      </span>`, base: 0, rate: 1.2 },   // 0+(1.2*Cycle)
+      { text: `📚 <span class='pool-2'>The night has memory and seeks revenge. Panic if you have more madness than potency.
+      </span>`, base: 0, rate: 1.0 },             // 0+(1.0*Cycle)
+      { text: `📚 <span class='pool-2'>Some say the night is eternal, others disagree. Lose 1 madness if you have more mastery than madness.
+      </span>`, base: 0, rate: 0.8 },      // 0+(0.8*Cycle)
+      { text: `📚 <span class='pool-2'>The darkest hour comes just before dawn. Untap one card.
+      </span>`, base: 0, rate: 1.1 },            // 0+(1.1*Cycle)
+      { text: `📚 <span class='pool-2'>Legends are born from those who survive the night. Gain quick until dawn.
+      </span>`, base: 0, rate: 0.9 }    // 0+(0.9*Cycle)
     ],
-    3: [ // Night atmosphere
-      { text: "🌌 <span class='pool-3'>Stars hide behind clouds of dread.</span>", base: 0, rate: 0.8 },        // 0+(0.8*Cycle)
-      { text: "🌌 <span class='pool-3'>The void between worlds grows thinner.</span>", base: 0, rate: 1.0 },    // 0+(1.0*Cycle)
-      { text: "🌌 <span class='pool-3'>Time bends in the presence of absolute darkness.</span>", base: 0, rate: 1.2 } // 0+(1.2*Cycle)
+    3: [ // Night atmosphere - Lower frequency, atmospheric focus
+      { text: `🌌 <span class='pool-3'>Stars peek behind clouds. Everyone regains 1 life per camp revealed so far this night.
+      </span>`, base: 0, rate: 0.9 },        // 0+(0.9*Cycle)
+      { text: `🌌 <span class='pool-3'>The void between worlds grows thinner. The player with the lowest mastery must resolve madness.
+      </span>`, base: 0, rate: 0.7 },    // 0+(0.7*Cycle)
+      { text: `🌌 <span class='pool-3'>The night sky offers no comfort to the lost. Lose mana equal to your current madness.
+      </span>`, base: 0, rate: 0.6 }, // 0+(0.6*Cycle)
+      { text: `🌌 <span class='pool-3'>Silence carries a boiling terror. The player with the lowest strength must resolve madness.
+      </span>`, base: 0, rate: 0.8 },    // 0+(0.8*Cycle)
+      { text: `🌌 <span class='pool-3'>A sense of doom befalls you. If you are cursed, lose all mana.
+      </span>`, base: 0, rate: 0.5 } // 0+(0.5*Cycle)
+    ],
+    4: [ // Night mechanics - Specialized advice
+      { text: `🌟 <span class='pool-4'>Night battles favor the prepared and decisive. If you have a weapon regain mana equal to your strength.
+      </span>`, base: 0, rate: 1.3 },          // 0+(1.3*Cycle)
+      { text: `🌟 <span class='pool-4'>Quick actions carry greater weight in darkness. If you have a weapon regain mana equal to your skill.
+      </span>`, base: 0, rate: 1.1 },          // 0+(1.1*Cycle)
+      { text: `🌟 <span class='pool-4'>The night rewards those who adapt quickly. If you have an arcane item regain mana and energy equal to your mastery.
+      </span>`, base: 0, rate: 0.9 },               // 0+(0.9*Cycle)
+      { text: `🌟 <span class='pool-4'>Strategic retreat often leads to victory. Gain 1 empower. Gain 1 more if your highest trait is skill.
+      </span>`, base: 0, rate: 0.8 },               // 0+(0.8*Cycle)
+      { text: `🌟 <span class='pool-4'>The night teaches lessons that daylight cannot. Resolve: if you fail, gaze up at the moon; mouth agape.
+      </span>`, base: 1, rate: 1.0 }          // 0+(1.0*Cycle)
     ]
   }
 };
@@ -389,7 +511,7 @@ function getFlavorText(slotNum, isNight = false) {
   let result = "";
   
   // Each pool rolls independently - multiple texts can appear or none
-  for (let poolIndex = 0; poolIndex < 4; poolIndex++) {
+  for (let poolIndex = 0; poolIndex < 5; poolIndex++) {
     const poolTexts = pools[poolIndex];
     if (!poolTexts) continue;
     
