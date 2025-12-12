@@ -6,50 +6,46 @@
   <title>Card Gallery</title>
   <link rel="stylesheet" href="style.css">
   <style>
-  /* VIDEO BACKGROUND; just copying cuz putting in CSS it won't work? */
-  .video-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  z-index: 0;
-  pointer-events: none;
-  }
-
-  .video-bg {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
-  transform: translate(-50%, -50%);
-  object-fit: cover;
-  filter: blur(2px) brightness(0.99) contrast(1.25);
-  opacity: 0.99;
-  pointer-events: none;
-  transition: transform 0.3s ease;
-  }
-
+    /* Video background specific styles for gallery */
+    .video-bg {
+      filter: blur(2px) brightness(0.99) contrast(1.25);
+    }
   </style>
-
 </head>
 <body>
-    <!-- 🔁 VIDEO BACKGROUND first render at back-->
-<div class="video-wrapper">
-  <video class="video-bg" autoplay muted loop playsinline>
-    <source src="../media/12530-239934669_medium.mp4" type="video/mp4" />
+  <!-- 🔁 VIDEO BACKGROUND -->
+  <video class="video-bg" autoplay muted loop playsinline preload="auto">
+    <source src="media/12530-239934669_medium.mp4" type="video/mp4" />
     Your browser does not support the VIDEO tag.
   </video>
-</div>
 
   <div class="card-container" id="standardCards"></div>
   <div class="map-card-container" id="mapCards"></div>
 
-  <script src="script.js"></script>
-</body>
+<script src="script.js"></script>
 
+<!-- Preload videos for faster navigation -->
+<script>
+// Preload other videos for faster navigation
+function preloadVideos(videoUrls) {
+  videoUrls.forEach(url => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'video';
+    link.href = url;
+    link.type = 'video/mp4';
+    document.head.appendChild(link);
+  });
+}
+
+// Preload videos after page load
+document.addEventListener('DOMContentLoaded', function() {
+  preloadVideos([
+    'media/background.mp4',
+    'media/138556-769988117_medium.mp4'
+  ]);
+});
+</script>
+
+</body>
 </html>

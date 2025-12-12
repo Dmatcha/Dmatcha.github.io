@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gameplay Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+
+body {
+  background: #1C1C30;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+        z-index: 0;
+
+}
+    /* VIDEO BACKGROUND */
+    .video-wrapper {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .video-bg {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+      filter: blur(2px) brightness(0.95) contrast(1.1);
+      opacity: 0.99;
+      pointer-events: none;
+      transition: transform 0.3s ease;
+    }
+
+    @media (orientation: portrait) {
+      .video-bg {
+        transform: translate(-50%, -50%) rotate(90deg);
+        min-width: 100%;
+        min-height: 100%;
+      }
+    }
+/* Main card container */
+.container {
+  width: 60vw;
+  max-width: 520px;
+  height: 80vh;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: background 0.8s ease;
+}
+
+/* Day and night background themes */
+.container.day-theme {
+  background: linear-gradient(145deg, #943a09, #f29422);
+  box-shadow: 0 0 40px rgba(240,200,30,0.5);
+}
+
+.container.night-theme {
+  background: linear-gradient(135deg, #202050, #0E0E20);
+  box-shadow: 0 0 40px rgba(100,100,255,0.5);
+}
+
+/* Header */
+.header { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.day-label, .slot-label { font-size: 1.45rem; font-weight: bold; }
+
+/* Central text area */
+.text-area {
+  flex: 1;
+  margin: 16px 0;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-y: auto;
+  text-align: left;
+  line-height: 1.5;
+  font-size: 1.33rem;
+}
+
+/* Buttons */
+.button {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.50rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.35s ease;
+}
+.button:disabled { opacity: 0.4; cursor: default; }
+
+.act-btn { background: #ffb347; color: #1e1e2f; }
+.map-btn { background: #ffd700; color: #1e1e2f; }
+.next-btn { background: #ff7f50; color: #fff; }
+.dawn-btn { background: #87ceeb; color: #1e1e2f; }
+.night-btn { background: #6a5acd; color: #fff; }
+.interstitial-btn { background: #ff6347; color: #fff; }
+
+/* Checkbox styling */
+.checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 12px;
+  border: 2px solid #fff;
+  cursor: pointer;
+  transition: all 0.5s;
+  user-select: none;
+  font-size: 1.25rem;
+}
+.checkbox.checked {
+  background: #32cd32;
+  color: #1e1e2f;
+}
+
+/* Reset button */
+.reset-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 8px 12px;
+  background: #ff4d4d;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
+  z-index: 5;
+}
+
+/* Scrollbar styling */
+.text-area::-webkit-scrollbar { width: 8px; }
+.text-area::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 4px;
+}
+.text-area::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.4);
+}
+.button.interstitial-btn {
+  opacity: 0.4;          /* faded at start */
+  transition: all 0.5s ease;
+}
+.button.interstitial-btn.active {
+  opacity: 1;
+}
+
+
+/* Mobile: use wider relative width */
+@media (max-width: 600px) {
+  .container {
+    width: 92vw;
+    max-width: none; /* optional: remove desktop cap */
+    min-width: 300px; /* optional: don’t get too narrow */
+  }
+}
+</style>
+
+</head>
+<body>
+  <!-- 🔁 VIDEO BACKGROUND -->
+  <div class="video-wrapper">
+    <video class="video-bg" autoplay muted loop playsinline>
+      <source src="../media/12530-239934669_medium.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+  </div>
+<button class="reset-btn" onclick="resetGame()">RESET</button>
+
+<div class="container">
+  <div class="header">
+    <div class="day-label" id="dayLabel">DAWN of Cycle 1</div>
+    <div class="slot-label" id="slotLabel">[0]</div>
+  </div>
+
+  <div class="text-area" id="textArea">ZERODAWN <br>YOU SHOULD NOT SEE THIS!
+  </div>
+  
+  <div id="checkboxes" style="display:none;">
+    <div class="checkbox" id="actCheckbox">ACT</div>
+    <div class="checkbox" id="mapCheckbox">REVEAL</div>
+  </div>
+  
+  <button class="button" id="mainButton">CONTINUE</button>
+</div>
+
+<script>
+/* State */
+let cycle = 1;
+let slot = 0;
+let isNight = false;
+let nightStep = 0;
+let phaseMode = null;
+
+/* Theme container ref */
+const container = document.querySelector('.container');
+
+/* Helper: set container color theme */
+function setContainerTheme(theme) {
+  container.classList.remove('day-theme', 'night-theme');
+  if (theme === 'day') container.classList.add('day-theme');
+  else if (theme === 'night') container.classList.add('night-theme');
+}
+
+/* --- Dynamic Flavor Text Configuration --- */
+const dayFlavorTable = {
+  1: [
+    { text: "<i>If you play a Camp card, find a coin.</i>", chance: 0.15 },
+    { text: "<i>If you choose a <strong>B</strong> or <strong>C</strong> card, gain one empower.</i>", chance: 0.15 },
+  ],
+  2: [
+    { text: "<i>If you play an Event card, find a coin.</i>", chance: 0.15 },
+    { text: "<i>If you play a Discovery card, find a coin.</i>", chance: 0.10 },
+  ],
+  3: [
+    { text: "<i>If you choose a <strong>B</strong> or <strong>C</strong> card, gain one empower.</i>", chance: 0.90 },
+    { text: "<i>If you have a gem, everyone regains all energy.</i>", chance: 0.05 },
+  ],
+  4: [
+    { text: "<i>If you play a Camp or Event card, show and freely discard the other cards.</i>", chance: 0.10 },
+    { text: "<i>If you play a Discovery card, show and freely discard the other cards.</i>", chance: 0.10 },
+  ],
+  5: [{ text: "<i>If you play a Discovery card, find a coin.</i>", chance: 0.10 }],
+  6: [
+    { text: "<i>If you play a Fight or Story card, gain quick and insight.</i>", chance: 0.10 },
+    { text: "<i>The shadows whisper. Gain 1 madness or lose 1 life.</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.01 * c) },
+  ],
+  7: [{ text: "<i>If you play a Discovery card, <strong>lose</strong> a coin.</i>", chance: 0.05 }],
+  8: [{ text: "<i>If you play a Discovery card, find a coin.</i>", chance: 0.10 }],
+  9: [{ text: "<i>If you play an Adventure card, find a coin.</i>", chance: 0.15 }],
+  10: [
+    { text: "<i>If you play a card without a combat encounter, find a coin.</i>", chance: 0.15 },
+    { text: "<i>The shadows flicker angrily. Gain 1 madness and lose 1 life.</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.03 * c) },
+  ],
+};
+
+const nightFlavorTable = {
+  12: [
+    { text: "<i>A faint light flickers in the darkness...</i>", chance: 0.05 },
+    { text: "<i>The shadow remains cast!</i>", chance: 0.03 },
+    { text: "<i>Lose all your stamina!</i>", chance: 0.03 },
+    { text: "<i>All players lose 1 stamina!</i>", chance: 0.04 },
+  ],
+  13: [
+    { text: "<i>If you play a card without a combat encounter, you must encounter humanoid enemies after resolving the card.</i>", chance: 0.10 },
+    { text: "<i>If you play a Fight card, lose 1 madness and gain 1 stamina.</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.01 * c) },
+  ],
+  14: [
+    { text: "<i>If you play a Discovery card, discard it and play another card instead.</i>", chance: 0.05 },
+    { text: "<i>If you play an Event card, discard it and play another card instead.</i>", chance: 0.05 },
+    { text: "<i>If you play a any card without a combat encounter, first encounter monsters before resolving the card.</i>", chance: 0.05 },
+    { text: "<i>Pay life or stamina equal to the number of coins in the loot pile.</i>", chance: 0.05 },
+    { text: "<i>Regain life and stamina equal to your current soul.</i>", chance: 0.05 },
+    { text: "<i>Resolve madness now. If you fail, immediately activate a madness effect or all players gain 1 madness.</i>", chance: 0.05 },
+    { text: "<i>Resolve madness now. If you fail, become wormridden.</i>", chance: 0.05 },
+  ],
+  15: [
+    { text: "<i>If you play a Camp card, resolve it then leave the night immediately. Do not loot rewards. Move to the next player.</i>", chance: 0.05 },
+    { text: "<i>If you play a card with night effects, resolve it twice.</i>", chance: 0.15 },
+  ],
+  16: [
+    { text: "<i>If you play a Camp card, resolve it then leave the night immediately. Do not loot rewards. Move to the next player.</i>", chance: 0.05, cycleModifier: (c) => Math.min(1, 0.05 + 0.02 * c) },
+  ],
+};
+
+/* Helper: roll flavor text */
+function getSlotFlavor(slotNum, cycleCount, table) {
+  const flavors = table[slotNum] || [];
+  let result = "";
+  flavors.forEach(f => {
+    let prob = f.chance;
+    if (f.cycleModifier) prob = f.cycleModifier(cycleCount);
+    if (Math.random() < prob) result += "<br><br>" + f.text;
+  });
+  return result;
+}
+
+/* Text composition functions */
+function getDayText(slot) {
+  let baseText = [
+    "You may play any card.",
+    "You may play any card.",
+    "You may play any card.",
+    "You may play any card.",
+    "You may play any card.",
+    "You <strong>must</strong> play a <strong>B</strong> or <strong>C</strong> card.",
+    "You may play any card.",
+    "You may play any card.",
+    "You may play any card.",
+    "You may play any card.",
+    "You <strong>must</strong> play a <strong>B</strong> or <strong>C</strong> card.",
+  ][slot - 1] || "";
+  baseText += getSlotFlavor(slot, cycle, dayFlavorTable);
+  return baseText;
+}
+
+function getNightText(nStep) {
+  const baseText = [
+    "You <strong>must</strong> play a B card. <br><i>Add +1 coin to reward pile.</i>",
+    "You <strong>must</strong> play a C card. <br><i>Double reward pile.</i>",
+    "You <strong>must</strong> play a B card. <br><i>Double reward pile.</i>",
+    "You <strong>must</strong> play a C card. <br><i>Double reward pile.</i>",
+    "You <strong>must</strong> play a B card. <br><i>Double reward pile.</i>",
+    "You <strong>must</strong> play a C card. <br><i>The night coils and twists, the end is near...</i>",
+  ][nStep] || "";
+  return baseText + getSlotFlavor(12 + nStep, cycle, nightFlavorTable);
+}
+
+/* --- UI Update --- */
+function updateUI() {
+  cleanupTransientButtons();
+
+  if (slot === 0) {
+    setContainerTheme('day');
+    dayLabel.innerText = `DAWN of Cycle ${cycle}`;
+    slotLabel.innerText = '[0]';
+    textArea.innerHTML = "All players gain <strong>one level!</strong> <br>All players regain all <strong>light mana!</strong>";
+    checkboxesDiv.style.display = 'none';
+    mainButton.style.display = 'block';
+    mainButton.innerText = 'CONTINUE';
+    mainButton.disabled = false;
+    phaseMode = null;
+    return;
+  }
+
+  if (!isNight && slot > 0 && slot <= daySlots) {
+    setContainerTheme('day');
+    dayLabel.innerText = `The ${ordinal(cycle)} Day`;
+    slotLabel.innerText = `[${slot}]`;
+    textArea.innerHTML = getDayText(slot);
+    checkboxesDiv.style.display = 'flex';
+    restoreStableCheckboxes();
+    actCheckbox.classList.remove('checked');
+    mapCheckbox.classList.remove('checked');
+    mainButton.innerText = 'NEXT PLAYER';
+    mainButton.disabled = true;
+    mainButton.style.display = 'block';
+    phaseMode = null;
+    return;
+  }
+
+  if (isNight) {
+    setContainerTheme('night');
+    dayLabel.innerText = `The ${ordinal(cycle)} Night`;
+    slotLabel.innerText = `[${12 + nightStep}]`;
+    textArea.innerHTML = getNightText(nightStep);
+    checkboxesDiv.style.display = 'flex';
+    restoreStableCheckboxes();
+    actCheckbox.classList.remove('checked');
+    mapCheckbox.classList.remove('checked');
+    mainButton.innerText = (nightStep === nightSlots - 1) ? 'END THE NIGHT' : 'NEXT PLAYER';
+    mainButton.disabled = true;
+    mainButton.style.display = 'block';
+    phaseMode = null;
+    return;
+  }
+}
+
+const daySlots = 11;
+const nightSlots = 6;
+
+/* Elements */
+const dayLabel = document.getElementById('dayLabel');
+const slotLabel = document.getElementById('slotLabel');
+const textArea = document.getElementById('textArea');
+const mainButton = document.getElementById('mainButton');
+const checkboxesDiv = document.getElementById('checkboxes');
+let actCheckbox = document.getElementById('actCheckbox');
+let mapCheckbox = document.getElementById('mapCheckbox');
+
+/* Helpers */
+function ordinal(n) {
+  return ["First","Second","Third","Fourth","Fifth","Sixth","Seventh","Eighth","Ninth","Tenth","Eleventh","Twelfth","Thirteenth"][n - 1] || n + "th";
+}
+
+function enableMainIfBothChecked() {
+  if (!actCheckbox || !mapCheckbox) { mainButton.disabled = true; return; }
+  mainButton.disabled = !(actCheckbox.classList.contains('checked') && mapCheckbox.classList.contains('checked'));
+}
+
+/* Core transitions */
+function goToDawn(increment = true) {
+  if (increment) cycle++;
+  isNight = false;
+  nightStep = 0;
+  slot = 0;
+  phaseMode = null;
+  cleanupTransientButtons();
+  restoreStableCheckboxes();
+  updateUI();
+}
+
+function restoreStableCheckboxes() {
+  if (!document.getElementById('actCheckbox') || !document.getElementById('mapCheckbox')) {
+    checkboxesDiv.innerHTML = '<div class="checkbox" id="actCheckbox">ACT</div><div class="checkbox" id="mapCheckbox">REVEAL</div>';
+    actCheckbox = document.getElementById('actCheckbox');
+    mapCheckbox = document.getElementById('mapCheckbox');
+    actCheckbox.addEventListener('click', toggleCheckbox);
+    mapCheckbox.addEventListener('click', toggleCheckbox);
+  }
+  actCheckbox.classList.remove('checked');
+  mapCheckbox.classList.remove('checked');
+}
+
+function cleanupTransientButtons() {
+  document.querySelectorAll('.container button.dawn-btn, .container button.night-btn, .container button.interstitial-btn').forEach(b => b.remove());
+}
+
+function toggleCheckbox() {
+  this.classList.toggle('checked');
+  enableMainIfBothChecked();
+}
+
+/* DUSK */
+function showDuskChoice() {
+  checkboxesDiv.style.display = 'none';
+  mainButton.style.display = 'none';
+  textArea.innerHTML = "<strong>DUSK: </strong><br>Choose to proceed to DAWN... <br>...or enter the NIGHT.";
+
+  const dawnBtn = document.createElement('button');
+  dawnBtn.className = 'button dawn-btn';
+  dawnBtn.innerText = 'Proceed to DAWN';
+  dawnBtn.disabled = true;
+
+  const nightBtn = document.createElement('button');
+  nightBtn.className = 'button night-btn';
+  nightBtn.innerText = 'Enter the NIGHT';
+  nightBtn.disabled = true;
+
+  container.appendChild(dawnBtn);
+  container.appendChild(nightBtn);
+
+  setContainerTheme('night'); // transition during dusk
+
+  let cooldown = 3;
+  const interval = setInterval(() => {
+    cooldown--;
+    if (cooldown <= 0) {
+      dawnBtn.disabled = false;
+      nightBtn.disabled = false;
+      clearInterval(interval);
+    }
+  }, 1000);
+
+  dawnBtn.addEventListener('click', () => {
+    dawnBtn.remove(); nightBtn.remove();
+    goToDawn(true);
+  });
+
+  nightBtn.addEventListener('click', () => {
+    dawnBtn.remove(); nightBtn.remove();
+    isNight = true;
+    nightStep = 0;
+    slot = 12;
+    updateUI();
+  });
+}
+
+/* Night interstitial */
+function showContinueNightInterstitial() {
+  checkboxesDiv.style.display = 'none';
+  mainButton.style.display = 'none';
+  textArea.innerHTML = "Choose your next action wisely...";
+
+  const endBtn = document.createElement('button');
+  endBtn.className = 'button interstitial-btn';
+  endBtn.innerText = 'Loot rewards, proceed to the DAWN!';
+  endBtn.disabled = true;  // LOCKOUT
+
+  const contBtn = document.createElement('button');
+  contBtn.className = 'button interstitial-btn';
+  contBtn.innerText = 'Continue deeper into the NIGHT...';
+  contBtn.disabled = true;  // LOCKOUT
+
+  container.appendChild(endBtn);
+  container.appendChild(contBtn);
+
+  // Countdown to unlock (like DUSK buttons)
+  let cooldown = 1; // seconds
+  const interval = setInterval(() => {
+    cooldown--;
+    if (cooldown <= 0) {
+      endBtn.disabled = false;
+      contBtn.disabled = false;
+      endBtn.classList.add('active'); // fade to normal
+      contBtn.classList.add('active');
+      clearInterval(interval);
+    }
+  }, 1000);
+
+  // Add click handlers (they will only fire after enabled)
+  endBtn.addEventListener('click', () => {
+    endBtn.remove(); contBtn.remove();
+    goToDawn(true);
+  });
+
+  contBtn.addEventListener('click', () => {
+    endBtn.remove(); contBtn.remove();
+    nightStep++;
+    slot++;
+    updateUI();
+  });
+}
+
+
+/* Deep of Night */
+function showDeepOfNight() {
+  phaseMode = 'deep';
+  setContainerTheme('night');
+  dayLabel.innerText = `The Deep Of The ${ordinal(cycle)} Night`;
+  slotLabel.innerText = "[17]";
+  textArea.innerHTML = "Congratulations, you have survived the night...";
+
+  checkboxesDiv.innerHTML = '';
+  const lootBtn = document.createElement('div');
+  lootBtn.className = 'checkbox';
+  lootBtn.innerText = 'Loot the rewards!!';
+
+  const levelBtn = document.createElement('div');
+  levelBtn.className = 'checkbox';
+  levelBtn.innerText = 'Everyone gain 1 level!';
+
+  checkboxesDiv.appendChild(lootBtn);
+  checkboxesDiv.appendChild(levelBtn);
+  checkboxesDiv.style.display = 'flex';
+
+  mainButton.innerText = 'NEXT PLAYER';
+  mainButton.disabled = true;
+  mainButton.style.display = 'block';
+
+  function checkDeep() {
+    mainButton.disabled = !(lootBtn.classList.contains('checked') && levelBtn.classList.contains('checked'));
+  }
+
+  lootBtn.addEventListener('click', () => { lootBtn.classList.toggle('checked'); checkDeep(); });
+  levelBtn.addEventListener('click', () => { levelBtn.classList.toggle('checked'); checkDeep(); });
+}
+
+/* Main button */
+function handleMainButton() {
+  if (phaseMode === 'deep') { goToDawn(true); return; }
+
+  if (!isNight) {
+    if (slot === 0) { slot = 1; updateUI(); return; }
+    if (slot < daySlots) { slot++; updateUI(); return; }
+    showDuskChoice();
+    return;
+  } else {
+    if (nightStep < nightSlots - 1) { showContinueNightInterstitial(); return; }
+    else { showDeepOfNight(); return; }
+  }
+}
+
+/* Reset */
+function resetGame() {
+  if (!confirm("Are you sure you want to reset all game data?")) return;
+  cycle = 1; slot = 0; isNight = false; nightStep = 0; phaseMode = null;
+  cleanupTransientButtons();
+  checkboxesDiv.innerHTML = '<div class="checkbox" id="actCheckbox">ACT</div><div class="checkbox" id="mapCheckbox">REVEAL</div>';
+  actCheckbox = document.getElementById('actCheckbox');
+  mapCheckbox = document.getElementById('mapCheckbox');
+  actCheckbox.addEventListener('click', toggleCheckbox);
+  mapCheckbox.addEventListener('click', toggleCheckbox);
+  actCheckbox.classList.remove('checked');
+  mapCheckbox.classList.remove('checked');
+  checkboxesDiv.style.display = 'none';
+  dayLabel.innerText = "DAWN of Cycle 1";
+  slotLabel.innerText = "[0]";
+  textArea.innerHTML = "All players gain <strong>one level!</strong> <br>All players regain all <strong>light mana!</strong>";
+  mainButton.innerText = "CONTINUE";
+  mainButton.disabled = false;
+  mainButton.style.display = 'block';
+  setContainerTheme('day');
+}
+
+/* Attach listeners + init */
+mainButton.addEventListener('click', handleMainButton);
+actCheckbox.addEventListener('click', toggleCheckbox);
+mapCheckbox.addEventListener('click', toggleCheckbox);
+updateUI();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Card Gallery</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+  /* VIDEO BACKGROUND; just copying cuz putting in CSS it won't work? */
+  .video-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+  }
+
+  .video-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  filter: blur(2px) brightness(0.99) contrast(1.25);
+  opacity: 0.99;
+  pointer-events: none;
+  transition: transform 0.3s ease;
+  }
+
+  </style>
+
+</head>
+<body>
+    <!-- 🔁 VIDEO BACKGROUND first render at back-->
+<div class="video-wrapper">
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="../media/12530-239934669_medium.mp4" type="video/mp4" />
+    Your browser does not support the VIDEO tag.
+  </video>
+</div>
+
+  <div class="card-container" id="standardCards"></div>
+  <div class="map-card-container" id="mapCards"></div>
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>
