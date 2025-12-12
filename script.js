@@ -17,7 +17,8 @@ function preloadVideo(videoElement) {
 }
 
 function initVideoBackgrounds() {
-  const videos = document.querySelectorAll('.video-bg');
+  // Only apply video optimization to videos that need it (not homepage videos)
+  const videos = document.querySelectorAll('.video-bg:not(.homepage-video)');
   videos.forEach(preloadVideo);
 }
 
@@ -37,10 +38,10 @@ function createCard(i) {
   card.innerHTML = `
     <div class="card-inner">
       <div class="card-back">
-        <img src="cards/backs/${String(i).padStart(3, '0')}_back.webp" alt="Card ${i} Back">
+        <img src="P986/cards/backs/${String(i).padStart(3, '0')}_back.webp" alt="Card ${i} Back">
       </div>
       <div class="card-front">
-        <img src="cards/fronts/${String(i).padStart(3, '0')}.webp" alt="Card ${i}">
+        <img src="P986/cards/fronts/${String(i).padStart(3, '0')}.webp" alt="Card ${i}">
       </div>
     </div>
   `;
