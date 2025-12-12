@@ -35,10 +35,10 @@ body {
   height: auto;
   transform: translate(-50%, -50%);
   object-fit: cover;
-  filter: blur(3px) brightness(0.95) contrast(1.15);
+  filter: blur(3px) /*brightness(0.95) contrast(1.15)*/;
   opacity: 0.99;
   pointer-events: none;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.9s ease;
 }
 
 .video-bg.loaded {
