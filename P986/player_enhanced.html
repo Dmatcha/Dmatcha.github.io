@@ -160,21 +160,21 @@
       transform var(--fade-out-duration) var(--easing-smooth);
   }
 
-  /* Icon SVG styling */
-  .bar-icon svg {
+  /* Icon image styling */
+  .bar-icon img {
     width: 100%;
     height: 100%;
-    fill: currentColor;
-    stroke: none;
+    object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    transition: filter var(--fade-in-duration) var(--easing-smooth);
   }
 
-  /* Icon color themes */
-  .bar-icon--life svg { color: #4ade80; }
-  .bar-icon--mana svg { color: #fbbf24; }
-  .bar-icon--stamina svg { color: #60a5fa; }
-  .bar-icon--energy svg { color: #22d3ee; }
-  .bar-icon--empower svg { color: #f87171; }
-  .bar-icon--coalesce svg { color: #e5e7eb; }
+  /* Enhanced hover states with better visual feedback */
+  .bar-card:hover .bar-icon img {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)) brightness(1.1);
+  }
 
   /* Enhanced hover states with better visual feedback */
   .bar-card:hover .bar-icon {
@@ -997,8 +997,8 @@ const barsContainer = document.getElementById('bars');
 /* ========= ICON MANAGEMENT SYSTEM ========= */
 
 /**
- * Creates SVG icon elements for each bar type
- * Uses modern SVG techniques and accessibility best practices
+ * Creates PNG icon elements for each bar type
+ * Uses modern image techniques and accessibility best practices
  */
 function createBarIcon(barKey, barLabel) {
   const iconContainer = document.createElement('div');
@@ -1006,28 +1006,24 @@ function createBarIcon(barKey, barLabel) {
   iconContainer.setAttribute('role', 'img');
   iconContainer.setAttribute('aria-label', `${barLabel} icon`);
   
-  // Create SVG with modern structure
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('viewBox', '0 0 24 24');
-  svg.setAttribute('width', '24');
-  svg.setAttribute('height', '24');
+  // Create PNG image element
+  const img = document.createElement('img');
+  img.alt = `${barLabel} icon`;
+  img.decoding = 'async';
+  img.loading = 'lazy';
   
-  // Create path element based on bar type
-  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  
-  // Define icon paths for each bar type (simplified geometric shapes)
+  // Define PNG file paths for each bar type
   const iconPaths = {
-    life: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',
-    mana: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
-    stamina: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z',
-    energy: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z',
-    empower: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
-    coalesce: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'
+    life: '../icons/life1.png',
+    mana: '../icons/mana1.png',
+    stamina: '../icons/stamina1.png',
+    energy: '../icons/energy1.png',
+    empower: '../icons/empower1.png',
+    coalesce: '../icons/crys.svg'
   };
   
-  path.setAttribute('d', iconPaths[barKey] || iconPaths.life);
-  svg.appendChild(path);
-  iconContainer.appendChild(svg);
+  img.src = iconPaths[barKey] || iconPaths.life;
+  iconContainer.appendChild(img);
   
   return iconContainer;
 }
