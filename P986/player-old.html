@@ -79,7 +79,7 @@
   .bar-card{
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
     border-radius:20px;
-    padding:10px 12px;
+    padding:13px 16px;
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -150,7 +150,7 @@
   .attr{
     background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
     border-radius:10px;
-    padding:16px;
+    padding:20px;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -640,39 +640,6 @@
     }
   }
 
-  /* Bottom Stats Bar */
-  #bottomStats {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(18, 18, 18, 0.95);
-    padding: 8px 6px;
-    text-align: center;
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 1;
-  }
-  #bottomStats span {
-    display: inline-block;
-    margin: 0 6px;
-    font-weight: bold;
-    color: #fff;
-  }
-  #bottomStats .stat-label {
-    color: #FFF;
-    font-weight: 600;
-  }
-#bottomStats .stat-value { /*still looks bad but whatever*/
-  /*background: rgba(106, 27, 154, 0.3);*/
-  padding: 4px 16px;
-  border-radius: 4px;
-  border: 2px solid rgba(106, 27, 154, 0.5);
-  width: 14px;              /* Fixed width - this is not ideal */
-  text-align: center;       /* fixed width should look OK*/
-  display: inline-block;    /* behaves as inline-block with fixed width */
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* cheating character width */
-}
 
 </style>
 </head>
@@ -709,57 +676,12 @@
     <div class="attributes" id="attributes"></div>
   </div>
 
-  <!-- Bottom Stats Bar -->
-  <div id="bottomStats">
-    <span class="stat-label">Level:</span><span class="stat-value" id="levelValue" style="background-color: rgba(106, 27, 154, 0.3)">1</span>
-    <span class="stat-label">Tinge:</span><span class="stat-value" id="tingeValue" style="background: linear-gradient(180deg,#F5B727,#F57927)">0</span>
-    <span class="stat-label">Arcane:</span><span class="stat-value" id="arcaneValue" style="background: linear-gradient(45deg,#27F5CC,#133bbb)">0</span>
-  </div>
-
 
 
 <script>
 /* ========= Persistence helpers ========= */
 function saveState(key,value){ try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){} }
 function loadState(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
-
-/* ========= Bottom Stats Calculations ========= */
-function calculateLevel() {
-  const endurance = Number(loadState('Endurance', 0)) || 0;
-  const skill = Number(loadState('Skill', 0)) || 0;
-  const strength = Number(loadState('Strength', 0)) || 0;
-  const mastery = Number(loadState('Mastery', 0)) || 0;
-  const potency = Number(loadState('Potency', 0)) || 0;
-  
-  return 1 + endurance + skill + strength + mastery + potency;
-}
-
-function calculateTinge() {
-  const potency = Number(loadState('Potency', 0)) || 0;
-  const currentMana = Number(loadState('mana', 0)) || 0;
-  
-  console.log('Tinge calc - Potency:', potency, 'Current Mana:', currentMana, 'Total:', potency + currentMana);
-  return potency + currentMana;
-}
-
-function calculateArcane() {
-  const mastery = Number(loadState('Mastery', 0)) || 0;
-  const currentEnergy = Number(loadState('energy', 0)) || 0;
-  
-  console.log('Arcane calc - Mastery:', mastery, 'Current Energy:', currentEnergy, 'Total:', mastery + currentEnergy);
-  return mastery + currentEnergy;
-}
-
-function updateBottomStats() {
-  const level = calculateLevel();
-  const tinge = calculateTinge();
-  const arcane = calculateArcane();
-  
-  console.log('Bottom Stats Update - Level:', level, 'Tinge:', tinge, 'Arcane:', arcane);
-  document.getElementById('levelValue').textContent = level;
-  document.getElementById('tingeValue').textContent = tinge;
-  document.getElementById('arcaneValue').textContent = arcane;
-}
 
 /* ========= Stat Bonus Tables ========= */
 const enduranceBonuses = [
@@ -887,7 +809,6 @@ const barsContainer = document.getElementById('bars');
 barsConfig.forEach(cfg => {
   let value = Number(loadState(cfg.key, cfg.default));
   value = Math.max(cfg.min, Math.min(cfg.max, value));
-  console.log('Bar loaded - Key:', cfg.key, 'Value:', value, 'Default:', cfg.default);
   
   const card = document.createElement('div');
   card.className = 'bar-card';
@@ -940,13 +861,7 @@ barsConfig.forEach(cfg => {
   }
 
   if (cfg.dynamic) {
-    barUpdateFunctions[cfg.key] = () => {
-      updateBar();
-      // Update bottom stats when mana or energy changes
-      if (cfg.key === 'mana' || cfg.key === 'energy') {
-        updateBottomStats();
-      }
-    };
+    barUpdateFunctions[cfg.key] = updateBar;
   }
 
   minus.addEventListener('click', ()=> {
@@ -955,14 +870,7 @@ barsConfig.forEach(cfg => {
       value = newValue;
       updateDisplay();
       saveState(cfg.key, value);
-      console.log('Bar decreased - Key:', cfg.key, 'New Value:', value);
       updateButtonStates();
-      
-      // Update bottom stats when mana or energy changes
-      if (cfg.key === 'mana' || cfg.key === 'energy') {
-        updateBottomStats();
-      }
-      
       flashElement(card);
     }
   });
@@ -974,14 +882,7 @@ barsConfig.forEach(cfg => {
       value = newValue;
       updateDisplay();
       saveState(cfg.key, value);
-      console.log('Bar increased - Key:', cfg.key, 'New Value:', value);
       updateButtonStates();
-      
-      // Update bottom stats when mana or energy changes
-      if (cfg.key === 'mana' || cfg.key === 'energy') {
-        updateBottomStats();
-      }
-      
       flashElement(card);
     }
   });
@@ -1180,7 +1081,6 @@ attrConfig.forEach(name => {
 
       if (limitAffectingAttrs.includes(name)) {
         updateAllBars();
-        updateBottomStats();
       }
 
       card.classList.add('pulse');
@@ -1667,9 +1567,6 @@ function updateAddButtonVisibility() {
 // Initial render
 renderNpcs();
 updateAddButtonVisibility();
-
-// Initialize bottom stats
-updateBottomStats();
 
 /*I need to figure out how to do 'profile pic' style image cropping so users can align their NPCs. 
 Also: maybe players must name their character first, then they can upload an image: if the name Matches one of the in-universe NPCs, it will autofill an image of their card or face art; otherwise the user can use the image-picker.
