@@ -19,6 +19,13 @@
     --heart-purple: #9b59b6;
     --heart-red: #ff8fa3;
     --scarlet-pink: #ff8fa3;
+    
+    /* Animation timing variables for consistency */
+    --fade-in-duration: 0.3s;
+    --fade-out-duration: 2s;
+    --icon-linger-duration: 3s;
+    --easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
   html,body{height:100%;margin:0;}
@@ -86,6 +93,8 @@
     gap:20px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.6);
     transition: transform .14s ease, box-shadow .14s ease;
+    position: relative; /* For icon positioning */
+    overflow: hidden; /* Ensure icons don't overflow */
   }
   .bar-card:hover{ transform: translateY(-2px); box-shadow: 0 20px 30px rgba(0,0,0,0.7); }
 
@@ -94,6 +103,7 @@
     align-items:center;
     gap:14px;
     min-width: 0;
+    position: relative; /* For icon positioning */
   }
 
   .bar-dot{
@@ -102,6 +112,7 @@
     border-radius:50%;
     box-shadow: 0 2px 6px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(255,255,255,0.05);
     flex: 0 0 auto;
+    position: relative;
   }
   .dot-life{ background: linear-gradient(180deg,#5fd08f,#2fb96b); }
   .dot-stamina{ background: linear-gradient(180deg,#6fb8ff,#2b74ff); }
@@ -109,6 +120,66 @@
   .dot-energy{ background: linear-gradient(180deg,#6ff0ff,#13b6ff); }
   .dot-empower{ background: linear-gradient(180deg,#ff4d4d,#DC143C); }
   .dot-coalesce{ background: linear-gradient(180deg,#f5f7fa,#d9dde6); border:1px solid rgba(255,255,255,0.06); }
+
+  /* ===== ICON OVERLAY SYSTEM ===== */
+  
+  /* Icon positioning and base styles */
+  .bar-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    width: clamp(24px, 3vw, 40px);
+    height: clamp(24px, 3vw, 40px);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    
+    /* Hardware acceleration for smooth animations */
+    will-change: opacity, transform;
+    backface-visibility: hidden;
+    
+    /* Initial fade-in transition */
+    transition: 
+      opacity var(--fade-in-duration) var(--easing-smooth),
+      transform var(--fade-in-duration) var(--easing-bounce);
+  }
+
+  /* Icon visibility states */
+  .bar-icon.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .bar-icon.fading {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+    transition: 
+      opacity var(--fade-out-duration) var(--easing-smooth),
+      transform var(--fade-out-duration) var(--easing-smooth);
+  }
+
+  /* Icon SVG styling */
+  .bar-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+    stroke: none;
+  }
+
+  /* Icon color themes */
+  .bar-icon--life svg { color: #4ade80; }
+  .bar-icon--mana svg { color: #fbbf24; }
+  .bar-icon--stamina svg { color: #60a5fa; }
+  .bar-icon--energy svg { color: #22d3ee; }
+  .bar-icon--empower svg { color: #f87171; }
+  .bar-icon--coalesce svg { color: #e5e7eb; }
+
+  /* Enhanced hover states with better visual feedback */
+  .bar-card:hover .bar-icon {
+    /* Will be controlled by JavaScript for timing */
+  }
 
   .bar-label{ font-weight:600; font-size:1.38rem; color:#f1f5fb; white-space:nowrap; }
   .bar-controls{ display:flex; align-items:center; gap:8px; }
@@ -681,6 +752,38 @@
 }
 
 
+/* ===== ACCESSIBILITY & PERFORMANCE ===== */
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .bar-icon,
+  .bar-card,
+  .attr,
+  .heart-icon,
+  .btn {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .bar-icon {
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .bar-icon {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+  }
+}
+
+/* Focus management for accessibility */
+.bar-card:focus-within .bar-icon {
+  /* Optionally show icon on keyboard focus */
+}
+
+
 </style>
 </head>
 <body>
@@ -891,6 +994,133 @@ const barsConfig = [
 
 const barsContainer = document.getElementById('bars');
 
+/* ========= ICON MANAGEMENT SYSTEM ========= */
+
+/**
+ * Creates SVG icon elements for each bar type
+ * Uses modern SVG techniques and accessibility best practices
+ */
+function createBarIcon(barKey, barLabel) {
+  const iconContainer = document.createElement('div');
+  iconContainer.className = `bar-icon bar-icon--${barKey}`;
+  iconContainer.setAttribute('role', 'img');
+  iconContainer.setAttribute('aria-label', `${barLabel} icon`);
+  
+  // Create SVG with modern structure
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('width', '24');
+  svg.setAttribute('height', '24');
+  
+  // Create path element based on bar type
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  
+  // Define icon paths for each bar type (simplified geometric shapes)
+  const iconPaths = {
+    life: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',
+    mana: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
+    stamina: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z',
+    energy: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z',
+    empower: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
+    coalesce: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'
+  };
+  
+  path.setAttribute('d', iconPaths[barKey] || iconPaths.life);
+  svg.appendChild(path);
+  iconContainer.appendChild(svg);
+  
+  return iconContainer;
+}
+
+/**
+ * Manages icon visibility and animation timing
+ * Implements the 3-second linger + 2-second fade-out requirement
+ */
+class IconAnimationManager {
+  constructor() {
+    this.activeAnimations = new Map();
+    this.animationConfig = {
+      fadeInDuration: 300,    // 0.3s in ms
+      lingerDuration: 3000,   // 3s in ms  
+      fadeOutDuration: 2000   // 2s in ms
+    };
+  }
+
+  /**
+   * Shows icon with fade-in animation, then handles timing sequence
+   */
+  showIcon(iconElement) {
+    // Clear any existing animation for this icon
+    this.clearAnimation(iconElement);
+    
+    // Add visible class for fade-in
+    iconElement.classList.add('visible');
+    iconElement.classList.remove('fading');
+    
+    // Set timer for fade-out after linger duration
+    const timer = setTimeout(() => {
+      this.fadeOutIcon(iconElement);
+    }, this.animationConfig.lingerDuration);
+    
+    this.activeAnimations.set(iconElement, timer);
+  }
+
+  /**
+   * Fades out icon with smooth transition
+   */
+  fadeOutIcon(iconElement) {
+    // Clear existing timer
+    this.clearAnimation(iconElement);
+    
+    // Add fading class for smooth fade-out
+    iconElement.classList.add('fading');
+    
+    // Remove visible class after fade-out completes
+    setTimeout(() => {
+      iconElement.classList.remove('visible', 'fading');
+      this.activeAnimations.delete(iconElement);
+    }, this.animationConfig.fadeOutDuration);
+  }
+
+  /**
+   * Clears any active animation for an icon
+   */
+  clearAnimation(iconElement) {
+    const timer = this.activeAnimations.get(iconElement);
+    if (timer) {
+      clearTimeout(timer);
+      this.activeAnimations.delete(iconElement);
+    }
+  }
+
+  /**
+   * Handles hover events on bar cards
+   */
+  handleBarHover(barCard, isHovering) {
+    const icon = barCard.querySelector('.bar-icon');
+    if (!icon) return;
+
+    if (isHovering) {
+      this.showIcon(icon);
+    } else {
+      this.clearAnimation(icon);
+      icon.classList.remove('visible', 'fading');
+    }
+  }
+
+  /**
+   * Cleanup method to clear all active animations
+   */
+  cleanup() {
+    this.activeAnimations.forEach((timer) => clearTimeout(timer));
+    this.activeAnimations.clear();
+  }
+}
+
+// Initialize icon animation manager
+const iconManager = new IconAnimationManager();
+
+// Create bars with enhanced icon support
 barsConfig.forEach(cfg => {
   let value = Number(loadState(cfg.key, cfg.default));
   value = Math.max(cfg.min, Math.min(cfg.max, value));
@@ -899,6 +1129,7 @@ barsConfig.forEach(cfg => {
   const card = document.createElement('div');
   card.className = 'bar-card';
   card.dataset.key = cfg.key;
+  card.setAttribute('tabindex', '0'); // Enable keyboard navigation
 
   const left = document.createElement('div'); left.className='bar-left';
   const dot = document.createElement('div'); dot.className = 'bar-dot ' + cfg.dotClass;
@@ -906,6 +1137,10 @@ barsConfig.forEach(cfg => {
 
   left.appendChild(dot);
   left.appendChild(label);
+
+  // Add icon overlay to the dot
+  const icon = createBarIcon(cfg.key, cfg.label);
+  dot.appendChild(icon);
 
   const controls = document.createElement('div'); controls.className='bar-controls';
 
@@ -1003,6 +1238,14 @@ barsConfig.forEach(cfg => {
   card.appendChild(left);
   card.appendChild(controls);
 
+  // Add hover event listeners for icon animation
+  card.addEventListener('mouseenter', () => iconManager.handleBarHover(card, true));
+  card.addEventListener('mouseleave', () => iconManager.handleBarHover(card, false));
+  
+  // Add keyboard accessibility
+  card.addEventListener('focus', () => iconManager.handleBarHover(card, true));
+  card.addEventListener('blur', () => iconManager.handleBarHover(card, false));
+
   barsContainer.appendChild(card);
 });
 
@@ -1091,8 +1334,8 @@ attrConfig.forEach(name => {
 
     function rollLuckWeighted(){
       const options = [
-        {value:-2, weight:10},
         {value:-1, weight:10},
+        {value:0, weight:10},
         {value:1, weight:23},
         {value:2, weight:23},
         {value:3, weight:23},
@@ -1350,7 +1593,7 @@ const officialNpcImages = {
   "Chinara Ekine":    "hearts/013.webp",
   "Ohm":              "hearts/014.webp",
   "Jon Quixote":      "hearts/015.webp",
-  "Naya Rodin":       "hearts/016.webp",
+  "Naya":             "hearts/016.webp",
   "Million Redgate":  "hearts/017.webp",
   "Captain Thiffany": "hearts/018.webp",
   "The Courier":      "hearts/019.webp",
@@ -1678,13 +1921,10 @@ updateAddButtonVisibility();
 // Initialize bottom stats
 updateBottomStats();
 
-/*I need to figure out how to do 'profile pic' style image cropping so users can align their NPCs. 
-Also: maybe players must name their character first, then they can upload an image: if the name Matches one of the in-universe NPCs, it will autofill an image of their card or face art; otherwise the user can use the image-picker.
-Note: NAYA and The Courier only have 6 hearts.
-There are 5 FOEs that are also romance-able but their romance names are different from their FOE name.
-*/
-
-
+/* Cleanup on page unload */
+window.addEventListener('beforeunload', () => {
+  iconManager.cleanup();
+});
 
 </script>
 </body>
