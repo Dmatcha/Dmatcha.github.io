@@ -58,7 +58,7 @@
     padding:8px 4px;
     margin-bottom:14px;
   }
-  #playerName::placeholder{ color: rgba(255,255,255,0.25); }
+  #playerName::placeholder{ color: rgba(255,255,255,0.35); }
 
   /* ---------- Bars layout: grid 2 cols on wide, 1 col + reorder on small ---------- */
   .bars {
@@ -84,7 +84,7 @@
   }
 
   .bar-card{
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    background: linear-gradient(180deg, rgba(100,100,100,0.03), rgba(200,200,200,0.07));
     border-radius:20px;
     padding:10px 12px;
     display:flex;
@@ -197,7 +197,7 @@
     -webkit-appearance:none;
     appearance:none;
     border:0;
-    background: rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.09);
     color: #fff;
     padding:6px 10px;
     border-radius:8px;
@@ -209,6 +209,32 @@
   .btn:focus{ outline:none; box-shadow:0 0 0 3px rgba(102,204,255,0.12); }
   .btn:disabled{ opacity: 0.3; cursor: not-allowed; }
   .btn:hover { background: #ff00ff; }
+  .btn-icon:hover { background: rgba(255,255,255,0.11); /* same as idle */
+}
+
+  .btn-icon {
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon svg {
+  width: 22px;
+  height: 22px;
+  color: white;
+  transition: transform 0.12s ease, color 0.12s ease;
+}
+
+.btn-icon:hover svg {
+  transform: scale(1.1);
+  color: #ff00ff;
+}
+
+.btn-icon:disabled svg {
+  opacity: 0.3;
+}
+
 
   /* Attributes grid */
   .attributes{
@@ -600,7 +626,7 @@
     right: 8px;
     width: 24px;
     height: 24px;
-    background: rgba(255, 0, 0, 0.2);
+    background: rgba(255, 0, 0, 0.25);
     border: none;
     border-radius: 50%;
     cursor: pointer;
@@ -829,6 +855,49 @@
 
 
 <script>
+/* ========= SVG buttons ========= */
+const minusSVG = `
+<svg viewBox="0 0 24 24" aria-hidden="true">
+  <path opacity="0.5"
+        d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447
+           C4.92893 2 7.28595 2 12 2
+           C16.714 2 19.0711 2 20.5355 3.46447
+           C22 4.92893 22 7.28595 22 12
+           C22 16.714 22 19.0711 20.5355 20.5355
+           C19.0711 22 16.714 22 12 22
+           C7.28595 22 4.92893 22 3.46447 20.5355
+           C2 19.0711 2 16.714 2 12Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"/>
+  <path d="M15 12H9"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"/>
+</svg>
+`;
+
+const plusSVG = `
+<svg viewBox="0 0 24 24" aria-hidden="true">
+  <path opacity="0.5"
+        d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447
+           C4.92893 2 7.28595 2 12 2
+           C16.714 2 19.0711 2 20.5355 3.46447
+           C22 4.92893 22 7.28595 22 12
+           C22 16.714 22 19.0711 20.5355 20.5355
+           C19.0711 22 16.714 22 12 22
+           C7.28595 22 4.92893 22 3.46447 20.5355
+           C2 19.0711 2 16.714 2 12Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"/>
+  <path d="M12 9V15M9 12H15"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"/>
+</svg>
+`;
+
 /* ========= Persistence helpers ========= */
 function saveState(key,value){ try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){} }
 function loadState(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
@@ -1140,9 +1209,19 @@ barsConfig.forEach(cfg => {
 
   const controls = document.createElement('div'); controls.className='bar-controls';
 
-  const minus = document.createElement('button'); minus.className='btn'; minus.textContent='−';
+  //const minus = document.createElement('button'); minus.className='btn'; minus.textContent='−';
+  //const plus = document.createElement('button'); plus.className='btn'; plus.textContent='+';
   const valSpan = document.createElement('div'); valSpan.className='bar-value';
-  const plus = document.createElement('button'); plus.className='btn'; plus.textContent='+';
+  const minus = document.createElement('button');
+  minus.className = 'btn btn-icon';
+  minus.innerHTML = minusSVG;
+  minus.setAttribute('aria-label', 'Decrease');
+
+  const plus = document.createElement('button');
+  plus.className = 'btn btn-icon';
+  plus.innerHTML = plusSVG;
+  plus.setAttribute('aria-label', 'Increase');
+
 
   function getCurrentMax() {
     if (cfg.dynamic) {
