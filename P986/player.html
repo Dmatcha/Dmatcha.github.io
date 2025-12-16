@@ -257,8 +257,8 @@
     user-select:none;
     
     /* Professional touch target sizing */
-    min-height: 3rem; /* 48px */
-    min-width: 3rem;  /* 48px */
+    min-height: 1rem; /* 48px */
+    min-width: 1rem;  /* 48px */
     
     touch-action: manipulation;
     
@@ -404,11 +404,11 @@
   @media(max-width:28rem){ /* >440px */
     .bar-card{ padding:0.35rem; }
     .bar-controls{ padding-right: 0.5rem; }
-    .attributes{ gap:1rem; margin-top:3rem; }
+    .attributes{ gap:1rem; margin-top:3rem; grid-template-columns: repeat(3, 1fr); }
     
     .attr {
-      min-height: 2rem;
-      min-width: 2rem;
+      min-height: 1rem;
+      min-width: 1rem;
     }
     
     .attr .attr-label {
