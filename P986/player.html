@@ -265,6 +265,10 @@
     transform: translateY(-2px);
     box-shadow: 0 0 8px rgba(140, 50, 230, 0.6);
   }
+.attr.holding {
+  box-shadow: 0 0 12px rgba(255, 0, 255, 0.6);
+  transform: scale(0.97);
+}
 
   .attr .attr-label{ font-weight:700; color:#f4f6fb; white-space: nowrap;}
   .attr .attr-val{ font-weight:800; font-size:1.05rem; color:#eaeef8; }
@@ -285,10 +289,11 @@
   .muted{ color: rgba(255,255,255,0.54); font-size:0.88rem; }
   .center{ text-align:center; }
 
-  @media(max-width:430px){
-    .bar-card{ padding:6px; }
+  @media(max-width:440px){
+    .bar-card{ padding:5px; }
     /*.btn{ padding: 1px; border-radius:5px; }*/
-    .bar-controls{ padding-right: 5px; }
+    .bar-controls{ padding-right: 7px; }
+    .attributes{ gap:5px; margin-top:15px; }
   }
 
   #resetBtn {
@@ -879,6 +884,48 @@
 
 
 <script>
+/* ========= touchscreen misclick prevention ========= */
+const isTouchOnly = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+function addHoldToActivate(el, onActivate, holdMs = 2000) {
+  let timer = null;
+  let moved = false;
+
+  el.addEventListener('pointerdown', (e) => {
+    if (!isTouchOnly) return; // desktop = unchanged
+
+    moved = false;
+    el.classList.add('holding');
+
+    timer = setTimeout(() => {
+      el.classList.remove('holding');
+      onActivate();
+    }, holdMs);
+  });
+
+  el.addEventListener('pointermove', () => {
+    moved = true;
+    clearTimeout(timer);
+    el.classList.remove('holding');
+  });
+
+  el.addEventListener('pointerup', () => {
+    clearTimeout(timer);
+    el.classList.remove('holding');
+  });
+
+  el.addEventListener('pointercancel', () => {
+    clearTimeout(timer);
+    el.classList.remove('holding');
+  });
+
+  el.addEventListener('pointerleave', () => {
+    clearTimeout(timer);
+    el.classList.remove('holding');
+  });
+}
+
+
 /* ========= SVG buttons ========= */
 const minusSVG = `
 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1501,29 +1548,33 @@ attrConfig.forEach(name => {
     }
     updateLuckDisplay();
 
-    card.addEventListener('click', ()=>{
-      const rem = getRemainingSec();
-      if(rem > 0) {
-        return;
-      }
-      if(!showing){
-        luckValue = pickNewLuck();
-        showing = true;
-        saveState('Luck', luckValue);
-        saveState('luckShowing', true);
-        startCooldown(60);
-        card.classList.add('pulse');
-        setTimeout(()=> card.classList.remove('pulse'), 520);
-      } else {
-        showing = false;
-        luckValue = null;
-        saveState('Luck', null);
-        saveState('luckShowing', false);
-        updateLuckDisplay();
-        card.classList.add('pulse');
-        setTimeout(()=> card.classList.remove('pulse'), 320);
-      }
-    });
+function incrementAttribute() {
+  if (lockout) return;
+
+  valNum = (valNum + 1) % 10;
+  val.textContent = String(valNum);
+  saveState(name, valNum);
+
+  if (limitAffectingAttrs.includes(name)) {
+    updateAllBars();
+    updateBottomStats();
+  }
+
+  card.classList.add('pulse');
+  setTimeout(() => card.classList.remove('pulse'), 420);
+
+  lockout = true;
+  setTimeout(() => { lockout = false; }, 3000);
+}
+
+// Desktop behavior (unchanged)
+if (!isTouchOnly) {
+  card.addEventListener('click', incrementAttribute);
+} else {
+  // Mobile: press-and-hold
+  addHoldToActivate(card, incrementAttribute, 2000);
+}
+
 
     if(cooldownUntil){
       const rem = getRemainingSec();
