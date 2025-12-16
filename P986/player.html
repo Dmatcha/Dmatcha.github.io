@@ -397,15 +397,14 @@
   .muted{ color: rgba(255,255,255,0.54); font-size:0.88rem; }
   .center{ text-align:center; }
 
-  @media(max-width:27.5rem){ /* 440px */
+  @media(max-width:28rem){ /* 440px */
     .bar-card{ padding:0.35rem; }
     .bar-controls{ padding-right: 0.5rem; }
-    .attributes{ gap:1rem; margin-top:1rem; }
+    .attributes{ gap:1rem; margin-top:3rem; }
     
     .attr {
-      min-height: 3.25rem;
-      min-width: 3.25rem;
-      padding: 0.875rem;
+      min-height: 2rem;
+      min-width: 2rem;
     }
     
     .attr .attr-label {
@@ -1746,146 +1745,115 @@ attrConfig.forEach(name => {
   card.appendChild(valWrap);
   attrsContainer.appendChild(card);
 
-  if(name === 'Luck'){
-    card.classList.add('luck');
-    let luckValue = loadState('Luck', null);
-    let showing = Boolean(loadState('luckShowing', false));
-    let lastLuck = loadState('luckLast', null);
-    let cooldownUntil = loadState('luckCooldownUntil', null);
-    let timerId = null;
+    if(name === 'Luck'){
+      card.classList.add('luck');
 
-    function formatLuck(n){ return (n>=0? '+'+n : String(n)); }
+      let luckValue = loadState('Luck', null);
+      let showing = Boolean(loadState('luckShowing', false));
+      let lastLuck = loadState('luckLast', null);
+      let cooldownUntil = loadState('luckCooldownUntil', null);
+      let timerId = null;
+      let expired = false; // ✅ FIX #1
 
-    function getRemainingSec(){
-      if(!cooldownUntil) return 0;
-      const rem = Math.ceil((cooldownUntil - Date.now())/1000);
-      return rem>0? rem: 0;
-    }
-
-    function updateLuckDisplay(){
-      const rem = getRemainingSec();
-      if(showing && rem>0){
-        label.textContent = `Luck (${rem}s)`;
-        val.textContent = formatLuck(luckValue);
-        card.classList.add('cooling');
-      } else if(showing){
-        label.textContent = 'Luck';
-        val.textContent = formatLuck(luckValue);
-        card.classList.remove('cooling');
-      } else {
-        label.textContent = 'Luck';
-        val.textContent = '--';
-        card.classList.remove('cooling');
-      }
-    }
-
-    function startCooldown(seconds){
-      const until = Date.now() + seconds*1000;
-      cooldownUntil = until;
-      saveState('luckCooldownUntil', until);
-      updateLuckDisplay();
-      if(timerId) clearInterval(timerId);
-      timerId = setInterval(()=>{
+      function activateLuck() {
         const rem = getRemainingSec();
-        if(rem<=0){
-          clearInterval(timerId); timerId = null;
-          cooldownUntil = null; saveState('luckCooldownUntil', null);
+
+        // STATE 2: cooling
+        if (rem > 0) return;
+
+        // STATE 3: expired → reset
+        if (showing && expired) {
+          showing = false;
+          expired = false;
+          luckValue = null;
+
+          saveState('luckShowing', false);
+          saveState('Luck', null);
+
           updateLuckDisplay();
-        } else {
-          updateLuckDisplay();
+          return;
         }
-      }, 1000);
-    }
 
-    function rollLuckWeighted(){
-      const options = [
-        {value:-1, weight:10},
-        {value:0, weight:10},
-        {value:1, weight:23},
-        {value:2, weight:23},
-        {value:3, weight:23},
-        {value:4, weight:10},
-        {value:10, weight:1}
-      ];
-      const total = options.reduce((s,o)=>s+o.weight,0);
-      let r = Math.random()*total;
-      for(let i=0;i<options.length;i++){
-        if(r < options[i].weight) return options[i].value;
-        r -= options[i].weight;
-      }
-      return options[options.length-1].value;
-    }
+        // STATE 1: ready → roll
+        luckValue = pickNewLuck();
+        saveState('Luck', luckValue);
 
-    function pickNewLuck(){
-      let newVal;
-      let attempts = 0;
-      do {
-        newVal = rollLuckWeighted();
-        attempts++;
-        if(attempts>10) break;
-      } while(newVal === lastLuck);
-      lastLuck = newVal;
-      saveState('luckLast', lastLuck);
-      return newVal;
-    }
-
-    if(showing){
-      luckValue = loadState('Luck', luckValue);
-    } else {
-      luckValue = loadState('Luck', null);
-    }
-    updateLuckDisplay();
-
-function incrementAttribute() {
-  if (lockout) return;
-
-  valNum = (valNum + 1) % 10;
-  val.textContent = String(valNum);
-  saveState(name, valNum);
-
-  if (limitAffectingAttrs.includes(name)) {
-    updateAllBars();
-    updateBottomStats();
-  }
-
-  card.classList.add('pulse');
-  setTimeout(() => card.classList.remove('pulse'), 420);
-
-  lockout = true;
-  setTimeout(() => { lockout = false; }, 3000);
-}
-
-// Apply touch handling to Luck attribute with gold color
-touchManager.attach(card, incrementAttribute, {
-  ariaLabel: 'Press and hold to use Luck',
-  progressColor: '#D4AF37', // Gold color for Luck
-  flashColor: '#D4AF37'
-});
-
-    if(cooldownUntil){
-      const rem = getRemainingSec();
-      if(rem>0){
         showing = true;
+        expired = false;
         saveState('luckShowing', true);
+
         updateLuckDisplay();
+
+        card.classList.add('flash');
+        setTimeout(() => card.classList.remove('flash'), 400);
+
+        startCooldown(30);
+      }
+
+      function getRemainingSec(){
+        if(!cooldownUntil) return 0;
+        const rem = Math.ceil((cooldownUntil - Date.now())/1000);
+        return rem > 0 ? rem : 0;
+      }
+
+      function updateLuckDisplay(){
+        const rem = getRemainingSec();
+
+        if (showing && rem > 0) {
+          label.textContent = `Luck (${rem}s)`;
+          val.textContent = formatLuck(luckValue);
+          card.classList.add('cooling');
+          expired = false;
+        } 
+        else if (showing && expired) {
+          label.textContent = 'Luck';
+          val.textContent = formatLuck(luckValue);
+          card.classList.remove('cooling');
+        } 
+        else {
+          label.textContent = 'Luck';
+          val.textContent = '--';
+          card.classList.remove('cooling');
+        }
+      }
+
+      function startCooldown(seconds){
+        cooldownUntil = Date.now() + seconds*1000;
+        saveState('luckCooldownUntil', cooldownUntil);
+
         if(timerId) clearInterval(timerId);
-        timerId = setInterval(()=>{
-          const r = getRemainingSec();
-          if(r<=0){
-            clearInterval(timerId); timerId=null;
+        timerId = setInterval(() => {
+          if(getRemainingSec() <= 0){
+            clearInterval(timerId);
+            timerId = null;
             cooldownUntil = null;
             saveState('luckCooldownUntil', null);
+            expired = true; // ✅ state transition
             updateLuckDisplay();
-          } else updateLuckDisplay();
-        },1000);
-      } else {
-        cooldownUntil = null;
-        saveState('luckCooldownUntil', null);
-        updateLuckDisplay();
+          } else {
+            updateLuckDisplay();
+          }
+        }, 1000);
       }
-    }
 
-  } else {
+      // EVENTS (correct)
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+
+      card.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        activateLuck();
+      });
+
+      card.addEventListener('keydown', (e) => {
+        if (e.code === 'Enter' || e.code === 'Space') {
+          e.preventDefault();
+          activateLuck();
+        }
+      });
+
+      updateLuckDisplay();
+    } else {
     let valNum = stored;
     let lockout = false;
 
