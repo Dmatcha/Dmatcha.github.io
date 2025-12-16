@@ -245,7 +245,7 @@
     display:grid;
     grid-template-columns: repeat(auto-fit, minmax(110px,1fr));
     gap:15px;
-    margin-top:20px;
+    margin-top:5px;
   }
 
   .attr{
@@ -265,10 +265,6 @@
     transform: translateY(-2px);
     box-shadow: 0 0 8px rgba(140, 50, 230, 0.6);
   }
-.attr.holding {
-  box-shadow: 0 0 12px rgba(255, 0, 255, 0.6);
-  transform: scale(0.97);
-}
 
   .attr .attr-label{ font-weight:700; color:#f4f6fb; white-space: nowrap;}
   .attr .attr-val{ font-weight:800; font-size:1.05rem; color:#eaeef8; }
@@ -289,11 +285,10 @@
   .muted{ color: rgba(255,255,255,0.54); font-size:0.88rem; }
   .center{ text-align:center; }
 
-  @media(max-width:440px){
-    .bar-card{ padding:5px; }
+  @media(max-width:430px){
+    .bar-card{ padding:6px; }
     /*.btn{ padding: 1px; border-radius:5px; }*/
-    .bar-controls{ margin-right: 5px; padding-right: 3px; }
-    .attributes{ gap:8px; margin-top:16px; }
+    .bar-controls{ padding-right: 5px; }
   }
 
   #resetBtn {
@@ -884,78 +879,39 @@
 
 
 <script>
-/* ========= touchscreen misclick prevention ========= */
-const isTouchOnly = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
 
-function addHoldToActivate(el, onActivate, holdMs = 2000) {
-  let timer = null;
-  let moved = false;
-
-  el.addEventListener('pointerdown', (e) => {
-    if (!isTouchOnly) return; // desktop = unchanged
-
-    moved = false;
-    el.classList.add('holding');
-
-    timer = setTimeout(() => {
-      el.classList.remove('holding');
-      onActivate();
-    }, holdMs);
-  });
-
-  el.addEventListener('pointermove', () => {
-    moved = true;
-    clearTimeout(timer);
-    el.classList.remove('holding');
-  });
-
-  el.addEventListener('pointerup', () => {
-    clearTimeout(timer);
-    el.classList.remove('holding');
-  });
-
-  el.addEventListener('pointercancel', () => {
-    clearTimeout(timer);
-    el.classList.remove('holding');
-  });
-
-  el.addEventListener('pointerleave', () => {
-    clearTimeout(timer);
-    el.classList.remove('holding');
-  });
-}
-
-
-
-/* ========= MOBILE LONG-PRESS ATTRIBUTE SAFETY (FIXED) ========= */
+/* ========= MOBILE LONG-PRESS GUARDED CLICK (BULLETPROOF) ========= */
 const isMobileTouch = window.matchMedia('(pointer: coarse)').matches;
 
-function enableLongPress(el, callback, delay = 2000){
+function requireHold(card, activate, holdMs = 2000){
+  let armed = false;
   let timer = null;
-  let active = false;
 
-  const start = (e) => {
-    if(!isMobileTouch) return;
-    e.preventDefault(); // block synthetic click
-    active = true;
-    el.classList.add('holding');
-    timer = setTimeout(() => {
-      if(active){
-        callback();
-      }
-    }, delay);
-  };
+  if(isMobileTouch){
+    // Arm via touch anywhere on the card
+    card.addEventListener('touchstart', (e)=>{
+      e.preventDefault();
+      armed = false;
+      card.classList.add('holding');
+      timer = setTimeout(()=>{
+        armed = true;
+        card.classList.remove('holding');
+        activate();
+      }, holdMs);
+    }, {passive:false});
 
-  const cancel = () => {
-    active = false;
-    clearTimeout(timer);
-    el.classList.remove('holding');
-  };
+    const cancel = ()=>{
+      armed = false;
+      clearTimeout(timer);
+      card.classList.remove('holding');
+    };
 
-  el.addEventListener('touchstart', start, {passive:false});
-  el.addEventListener('touchend', cancel);
-  el.addEventListener('touchcancel', cancel);
-  el.addEventListener('touchmove', cancel);
+    card.addEventListener('touchend', cancel);
+    card.addEventListener('touchmove', cancel);
+    card.addEventListener('touchcancel', cancel);
+  } else {
+    card.addEventListener('click', activate);
+  }
 }
 
 
@@ -1581,33 +1537,29 @@ attrConfig.forEach(name => {
     }
     updateLuckDisplay();
 
-function incrementAttribute() {
-  if (lockout) return;
-
-  valNum = (valNum + 1) % 10;
-  val.textContent = String(valNum);
-  saveState(name, valNum);
-
-  if (limitAffectingAttrs.includes(name)) {
-    updateAllBars();
-    updateBottomStats();
-  }
-
-  card.classList.add('pulse');
-  setTimeout(() => card.classList.remove('pulse'), 420);
-
-  lockout = true;
-  setTimeout(() => { lockout = false; }, 3000);
-}
-
-// Desktop behavior (unchanged)
-if (!isTouchOnly) {
-  card.addEventListener('click', incrementAttribute);
-} else {
-  // Mobile: press-and-hold
-  addHoldToActivate(card, incrementAttribute, 2000);
-}
-
+    card.addEventListener('click', ()=>{
+      const rem = getRemainingSec();
+      if(rem > 0) {
+        return;
+      }
+      if(!showing){
+        luckValue = pickNewLuck();
+        showing = true;
+        saveState('Luck', luckValue);
+        saveState('luckShowing', true);
+        startCooldown(60);
+        card.classList.add('pulse');
+        setTimeout(()=> card.classList.remove('pulse'), 520);
+      } else {
+        showing = false;
+        luckValue = null;
+        saveState('Luck', null);
+        saveState('luckShowing', false);
+        updateLuckDisplay();
+        card.classList.add('pulse');
+        setTimeout(()=> card.classList.remove('pulse'), 320);
+      }
+    });
 
     if(cooldownUntil){
       const rem = getRemainingSec();
@@ -1636,7 +1588,7 @@ if (!isTouchOnly) {
     let valNum = stored;
     let lockout = false;
 
-    function incrementAttr(){
+    card.addEventListener('click', ()=>{
       if(lockout) return;
       valNum = (valNum + 1) % 10;
       val.textContent = String(valNum);
@@ -1652,15 +1604,7 @@ if (!isTouchOnly) {
 
       lockout = true;
       setTimeout(()=> { lockout = false; }, 3000);
-    }
-
-    if(isMobileTouch){
-      // mobile: long-press ONLY
-      enableLongPress(card, incrementAttr, 2000);
-    } else {
-      // desktop unchanged
-      card.addEventListener('click', incrementAttr);
-    }
+    });
   }
 });
 
