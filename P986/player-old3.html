@@ -107,8 +107,10 @@
   }
 
   .bar-dot{
-    width: clamp(22px, 2.5vw, 34px);
-    height: clamp(22px, 2.5vw, 34px);
+    /*width: clamp(2rem, 2.5vw, 34px);*/
+    /*height: clamp(2rem, 2.5vw, 34px);*/
+    width: 2.2rem;
+    height: 2.2rem;
     border-radius:50%;
     box-shadow: 0 2px 6px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(255,255,255,0.05);
     flex: 0 0 auto;
@@ -128,9 +130,11 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0.8);
-    width: clamp(24px, 3vw, 40px);
-    height: clamp(24px, 3vw, 40px);
+    transform: translate(-50%, -50%) scale(0.85);
+    /*width: clamp(24px, 3vw, 40px);*/
+    /*height: clamp(24px, 3vw, 40px);*/
+    width: 2.3rem;
+    height: 2.3rem;
     opacity: 0;
     pointer-events: none;
     z-index: 10;
@@ -182,7 +186,7 @@
   }
 
   .bar-label{ font-weight:600; font-size:1.38rem; color:#f1f5fb; white-space:nowrap; }
-  .bar-controls{ display:flex; align-items:center; gap:8px; }
+  .bar-controls{ display:flex; align-items:center; gap:7px; padding-right: 2px; }
 
   .bar-value{
     width:80px;
@@ -199,7 +203,7 @@
     border:0;
     background: rgba(255,255,255,0.09);
     color: #fff;
-    padding:2px 4px;
+    padding:6px 10px;
     border-radius:8px;
     cursor:pointer;
     font-weight:700;
@@ -220,19 +224,19 @@
 }
 
 .btn-icon svg {
-  width: 24px;
-  height: 24px;
+  width: 2rem;
+  height: 2rem;
   color: white;
-  transition: transform 0.15s ease, color 0.15s ease;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
 .btn-icon:hover svg {
-  transform: scale(1.15);
+  transform: scale(1.10);
   color: #ff00ff;
 }
 
 .btn-icon:disabled svg {
-  opacity: 0.45;
+  opacity: 0.6;
 }
 
 
@@ -240,27 +244,32 @@
   .attributes{
     display:grid;
     grid-template-columns: repeat(auto-fit, minmax(110px,1fr));
-    gap:20px;
-    margin-top:8px;
+    gap:16px;
+    margin-top:40px;
   }
 
   .attr{
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
     border-radius:10px;
-    padding:16px;
+    padding:14px;
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:6px;
+    gap:5px;
     cursor:pointer;
     transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
     user-select:none;
   }
   .attr:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0 8px rgba(138, 43, 226, 0.4);
+    box-shadow: 0 0 8px rgba(140, 50, 230, 0.6);
   }
+.attr.holding {
+  transform: scale(0.96);
+  box-shadow: 0 0 14px rgba(255,0,255,.65);
+}
+
 
   .attr .attr-label{ font-weight:700; color:#f4f6fb; white-space: nowrap;}
   .attr .attr-val{ font-weight:800; font-size:1.05rem; color:#eaeef8; }
@@ -281,9 +290,11 @@
   .muted{ color: rgba(255,255,255,0.54); font-size:0.88rem; }
   .center{ text-align:center; }
 
-  @media(max-width:420px){
-    .bar-card{ padding:10px; }
-    .btn{ padding:6px 8px; border-radius:7px; }
+  @media(max-width:440px){
+    .bar-card{ padding:5px; }
+    /*.btn{ padding: 1px; border-radius:5px; }*/
+    .bar-controls{ margin-right: 5px; padding-right: 3px; }
+    .attributes{ gap:1rem; margin-top:3.3rem; }
   }
 
   #resetBtn {
@@ -810,6 +821,25 @@
 }
 
 
+
+/* ===== ATTRIBUTE ICONS ===== */
+.attr-value-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.attr-icon {
+  width: 2rem;
+  height: 2rem;
+  padding: 1px;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+  flex-shrink: 0;
+}
+
 </style>
 </head>
 <body>
@@ -855,6 +885,48 @@
 
 
 <script>
+/* ========= touchscreen misclick prevention ========= */
+const isTouchOnly = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+function addHoldToActivate(el, onActivate, holdMs = 2000) {
+  let timer = null;
+  let moved = false;
+
+  el.addEventListener('pointerdown', (e) => {
+    if (!isTouchOnly) return; // desktop = unchanged
+
+    moved = false;
+    el.classList.add('holding');
+
+    timer = setTimeout(() => {
+      el.classList.remove('holding');
+      onActivate();
+    }, holdMs);
+  });
+
+  el.addEventListener('pointermove', () => {
+    moved = true;
+    clearTimeout(timer);
+    el.classList.remove('holding');
+  });
+
+  el.addEventListener('pointerup', () => {
+    clearTimeout(timer);
+    el.classList.remove('holding');
+  });
+
+  el.addEventListener('pointercancel', () => {
+    clearTimeout(timer);
+    el.classList.remove('holding');
+  });
+
+  el.addEventListener('pointerleave', () => {
+    clearTimeout(timer);
+    el.classList.remove('holding');
+  });
+}
+
+
 /* ========= SVG buttons ========= */
 const minusSVG = `
 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1335,6 +1407,16 @@ function flashElement(el){
   setTimeout(()=>{ el.style.transform=''; el.style.boxShadow=''; }, 160);
 }
 
+
+/* ===== ATTRIBUTE ICON MAP ===== */
+const STAT_ICONS = {
+  Endurance: '../icons/heart-shield.png',
+  Skill: '../icons/skl.png',
+  Strength: '../icons/str.png',
+  Potency: '../icons/potency8.png',
+  Mastery: '../icons/mastery4.png'
+};
+
 /* ========= Attributes (including Luck) ========= */
 const attrConfig = ["Endurance","Skill","Strength","Potency","Mastery","Luck"];
 const attrsContainer = document.getElementById('attributes');
@@ -1349,11 +1431,32 @@ attrConfig.forEach(name => {
   card.className = 'attr';
   card.dataset.name = name;
 
-  const label = document.createElement('div'); label.className='attr-label'; label.textContent = name;
-  const val = document.createElement('div'); val.className='attr-val'; val.textContent = (name==='Luck' ? '--' : stored);
+  const label = document.createElement('div');
+  label.className = 'attr-label';
+  label.textContent = name;
+
+  const valWrap = document.createElement('div');
+  valWrap.className = 'attr-value-wrap';
+
+  const icon = document.createElement('img');
+  icon.className = 'attr-icon';
+
+  if (STAT_ICONS[name]) {
+    icon.src = STAT_ICONS[name];
+    icon.alt = `${name} icon`;
+  } else {
+    icon.style.display = 'none';
+  }
+
+  const val = document.createElement('span');
+  val.className = 'attr-val';
+  val.textContent = (name === 'Luck' ? '--' : stored);
+
+  valWrap.appendChild(icon);
+  valWrap.appendChild(val);
 
   card.appendChild(label);
-  card.appendChild(val);
+  card.appendChild(valWrap);
   attrsContainer.appendChild(card);
 
   if(name === 'Luck'){
@@ -1446,29 +1549,33 @@ attrConfig.forEach(name => {
     }
     updateLuckDisplay();
 
-    card.addEventListener('click', ()=>{
-      const rem = getRemainingSec();
-      if(rem > 0) {
-        return;
-      }
-      if(!showing){
-        luckValue = pickNewLuck();
-        showing = true;
-        saveState('Luck', luckValue);
-        saveState('luckShowing', true);
-        startCooldown(60);
-        card.classList.add('pulse');
-        setTimeout(()=> card.classList.remove('pulse'), 520);
-      } else {
-        showing = false;
-        luckValue = null;
-        saveState('Luck', null);
-        saveState('luckShowing', false);
-        updateLuckDisplay();
-        card.classList.add('pulse');
-        setTimeout(()=> card.classList.remove('pulse'), 320);
-      }
-    });
+function incrementAttribute() {
+  if (lockout) return;
+
+  valNum = (valNum + 1) % 10;
+  val.textContent = String(valNum);
+  saveState(name, valNum);
+
+  if (limitAffectingAttrs.includes(name)) {
+    updateAllBars();
+    updateBottomStats();
+  }
+
+  card.classList.add('pulse');
+  setTimeout(() => card.classList.remove('pulse'), 420);
+
+  lockout = true;
+  setTimeout(() => { lockout = false; }, 3000);
+}
+
+// Desktop behavior (unchanged)
+if (!isTouchOnly) {
+  card.addEventListener('click', incrementAttribute);
+} else {
+  // Mobile: press-and-hold
+  addHoldToActivate(card, incrementAttribute, 2000);
+}
+
 
     if(cooldownUntil){
       const rem = getRemainingSec();
