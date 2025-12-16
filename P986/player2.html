@@ -926,6 +926,39 @@ function addHoldToActivate(el, onActivate, holdMs = 2000) {
 }
 
 
+
+/* ========= MOBILE LONG-PRESS ATTRIBUTE SAFETY (FIXED) ========= */
+const isMobileTouch = window.matchMedia('(pointer: coarse)').matches;
+
+function enableLongPress(el, callback, delay = 2000){
+  let timer = null;
+  let active = false;
+
+  const start = (e) => {
+    if(!isMobileTouch) return;
+    e.preventDefault(); // block synthetic click
+    active = true;
+    el.classList.add('holding');
+    timer = setTimeout(() => {
+      if(active){
+        callback();
+      }
+    }, delay);
+  };
+
+  const cancel = () => {
+    active = false;
+    clearTimeout(timer);
+    el.classList.remove('holding');
+  };
+
+  el.addEventListener('touchstart', start, {passive:false});
+  el.addEventListener('touchend', cancel);
+  el.addEventListener('touchcancel', cancel);
+  el.addEventListener('touchmove', cancel);
+}
+
+
 /* ========= SVG buttons ========= */
 const minusSVG = `
 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1603,7 +1636,7 @@ if (!isTouchOnly) {
     let valNum = stored;
     let lockout = false;
 
-    card.addEventListener('click', ()=>{
+    function incrementAttr(){
       if(lockout) return;
       valNum = (valNum + 1) % 10;
       val.textContent = String(valNum);
@@ -1619,7 +1652,15 @@ if (!isTouchOnly) {
 
       lockout = true;
       setTimeout(()=> { lockout = false; }, 3000);
-    });
+    }
+
+    if(isMobileTouch){
+      // mobile: long-press ONLY
+      enableLongPress(card, incrementAttr, 2000);
+    } else {
+      // desktop unchanged
+      card.addEventListener('click', incrementAttr);
+    }
   }
 });
 
