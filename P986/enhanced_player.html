@@ -26,6 +26,12 @@
     --icon-linger-duration: 3s;
     --easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
     --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Professional press-and-hold timing */
+    --hold-duration: 2500ms; /* 2.5 seconds as requested */
+    --hold-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --progress-color: #6a1b9a;
+    --progress-bg: rgba(106, 27, 154, 0.1);
   }
 
   html,body{height:100%;margin:0;}
@@ -107,8 +113,6 @@
   }
 
   .bar-dot{
-    /*width: clamp(2rem, 2.5vw, 34px);*/
-    /*height: clamp(2rem, 2.5vw, 34px);*/
     width: 2.2rem;
     height: 2.2rem;
     border-radius:50%;
@@ -131,8 +135,6 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.85);
-    /*width: clamp(24px, 3vw, 40px);*/
-    /*height: clamp(24px, 3vw, 40px);*/
     width: 2.3rem;
     height: 2.3rem;
     opacity: 0;
@@ -239,40 +241,144 @@
   opacity: 0.6;
 }
 
-
-  /* Attributes grid */
+  /* ========= PROFESSIONAL ATTRIBUTE PRESS-AND-HOLD STYLES ========= */
+  
+  /* Enhanced attributes grid with modern touch targets */
   .attributes{
     display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(110px,1fr));
-    gap:16px;
-    margin-top:40px;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* Increased from 110px */
+    gap:15px;
+    margin-top:20px;
   }
 
+  /* Professional attribute card with improved touch targets */
   .attr{
-    background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
-    border-radius:10px;
-    padding:14px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    border-radius:12px;
+    padding:16px; /* Increased padding for better touch target */
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:5px;
+    gap:8px;
     cursor:pointer;
     transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
     user-select:none;
+    
+    /* Professional touch target sizing - minimum 44x44px */
+    min-height: 48px; /* Ensures minimum touch target */
+    min-width: 48px;  /* Ensures minimum touch target */
+    
+    /* Modern touch-action to prevent unwanted gestures */
+    touch-action: manipulation; /* Prevents double-tap zoom, allows other gestures */
+    
+    /* Enhanced visual feedback states */
+    position: relative;
+    overflow: visible; /* Allow progress ring to show */
   }
-  .attr:hover {
+  
+  /* Hover state - desktop only */
+  .attr:hover:not(.mobile-only) {
     transform: translateY(-2px);
-    box-shadow: 0 0 8px rgba(140, 50, 230, 0.6);
+    box-shadow: 0 0 12px rgba(140, 50, 230, 0.6);
   }
-.attr.holding {
-  transform: scale(0.96);
-  box-shadow: 0 0 14px rgba(255,0,255,.65);
-}
+  
+  /* Active state for desktop */
+  .attr:active:not(.mobile-only) {
+    transform: scale(0.98);
+    box-shadow: 0 0 8px rgba(140, 50, 230, 0.8);
+  }
+  
+  /* Professional press-and-hold visual states */
+  .attr.holding {
+    transform: scale(0.97);
+    box-shadow: 0 0 16px rgba(106, 27, 154, 0.8), 0 0 32px rgba(106, 27, 154, 0.4);
+    border: 2px solid var(--progress-color);
+  }
+  
+  /* Success animation state */
+  .attr.level-up {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.8), 0 0 40px rgba(76, 175, 80, 0.4);
+    border: 2px solid #4caf50;
+  }
 
+  .attr .attr-label{ 
+    font-weight:700; 
+    color:#f4f6fb; 
+    white-space: nowrap;
+    font-size: 0.9rem; /* Responsive text sizing */
+  }
+  
+  .attr .attr-val{ 
+    font-weight:800; 
+    font-size:1.05rem; 
+    color:#eaeef8; 
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  }
 
-  .attr .attr-label{ font-weight:700; color:#f4f6fb; white-space: nowrap;}
-  .attr .attr-val{ font-weight:800; font-size:1.05rem; color:#eaeef8; }
+  /* ========= PROFESSIONAL PROGRESS RING ANIMATION ========= */
+  
+  /* Circular progress ring positioned absolutely */
+  .progress-ring {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  
+  .attr.holding .progress-ring {
+    opacity: 1;
+  }
+  
+  /* SVG circle for progress ring */
+  .progress-ring svg {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+  }
+  
+  /* Progress circle styling */
+  .progress-ring circle {
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    transform-origin: center;
+    transform: rotate(-90deg); /* Start from top */
+  }
+  
+  /* Background circle */
+  .progress-ring .progress-bg {
+    stroke: var(--progress-bg);
+  }
+  
+  /* Animated progress circle */
+  .progress-ring .progress-bar {
+    stroke: var(--progress-color);
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: none;
+  }
+  
+  /* Activate progress animation */
+  .attr.holding .progress-bar {
+    animation: fillProgress var(--hold-duration) var(--hold-easing) forwards;
+  }
+  
+  /* Keyframe animation for progress ring fill */
+  @keyframes fillProgress {
+    0% {
+      stroke-dashoffset: 100;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
 
   @keyframes clickPulse {
     0%{ transform: scale(1); box-shadow: 0 0 0 rgba(106,27,154,0.0); }
@@ -280,6 +386,17 @@
     100%{ transform: scale(1); box-shadow: 0 0 0 rgba(106,27,154,0.0); }
   }
   .pulse { animation: clickPulse .5s ease forwards; }
+
+  /* Enhanced level-up pulse animation */
+  @keyframes levelUpPulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 rgba(76, 175, 80, 0.0); }
+    50% { transform: scale(1.1); box-shadow: 0 0 30px rgba(76, 175, 80, 0.8); }
+    100% { transform: scale(1); box-shadow: 0 0 0 rgba(76, 175, 80, 0.0); }
+  }
+  
+  .level-up { 
+    animation: levelUpPulse 0.6s ease-out forwards; 
+  }
 
   .attr.luck{
     border: 1px solid var(--gold);
@@ -292,9 +409,38 @@
 
   @media(max-width:440px){
     .bar-card{ padding:5px; }
-    /*.btn{ padding: 1px; border-radius:5px; }*/
-    .bar-controls{ margin-right: 5px; padding-right: 3px; }
-    .attributes{ gap:1rem; margin-top:3.3rem; }
+    .bar-controls{ padding-right: 7px; }
+    .attributes{ gap:12px; margin-top:15px; }
+    
+    /* Mobile-specific adjustments for better touch targets */
+    .attr {
+      min-height: 52px;
+      min-width: 52px;
+      padding: 14px;
+    }
+    
+    .attr .attr-label {
+      font-size: 0.85rem;
+    }
+    
+    .attr .attr-val {
+      font-size: 1rem;
+    }
+  }
+
+  /* Mobile-specific touch handling */
+  @media (pointer: coarse) {
+    .attr {
+      /* Enhanced mobile touch behavior */
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent; /* Remove default iOS tap highlight */
+      user-select: none;
+    }
+    
+    .attr.mobile-only:hover {
+      transform: none; /* Disable hover effects on mobile */
+      box-shadow: 0 0 8px rgba(140, 50, 230, 0.6);
+    }
   }
 
   #resetBtn {
@@ -437,9 +583,8 @@
   .npc-image img {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* Simple approach - fills container while preserving aspect ratio */
+      object-fit: cover;
       border-radius: 10px;
-      /* Limit maximum displayed size - prevent shrinking on narrow screens */
       max-width: 320px;
       max-height: 200px;
       min-width: 150px;
@@ -667,7 +812,6 @@
       flex-direction: column;
       align-items: center;
     }
-    /* Keep images at original size on mobile - no shrinking */
     .npc-image {
       width: 150px;
       height: 150px;
@@ -693,7 +837,6 @@
       max-width: 400px;
       padding: 4px;
     }
-    /* Keep images at original size on mobile - no shrinking */
     .npc-image {
       min-width: 150px;
       width: 150px;
@@ -727,7 +870,6 @@
     .heart-number {
       font-size: 0.7rem;
     }
-    /* Fix alignment for hearts 5, 6, 7 to align left */
     .heart-icon:nth-child(5) {
       grid-column: 1;
     }
@@ -737,7 +879,6 @@
     .heart-icon:nth-child(7) {
       grid-column: 3;
     }
-    /* Align both buttons properly on mobile */
     .name-confirm-btn {
       top: 6px;
       right: 6px;
@@ -776,18 +917,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  width: 5ch;              /* fixed based on char */
-  padding: 2px 16px;          /* hor padding handled by width, kept as fallback */
+  width: 5ch;
+  padding: 2px 16px;
   box-sizing: border-box;
-
   border-radius: 4px;
   border: 2px solid rgba(230, 227, 200, 0.25);
-
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
-
 
 /* ===== ACCESSIBILITY & PERFORMANCE ===== */
 
@@ -806,6 +943,12 @@
     opacity: 1 !important;
     transform: translate(-50%, -50%) scale(1) !important;
   }
+  
+  /* Disable progress animation for reduced motion users */
+  .progress-ring .progress-bar {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+  }
 }
 
 /* High contrast mode support */
@@ -813,14 +956,16 @@
   .bar-icon {
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
   }
+  
+  .progress-ring circle {
+    stroke-width: 4;
+  }
 }
 
 /* Focus management for accessibility */
 .bar-card:focus-within .bar-icon {
   /* Optionally show icon on keyboard focus */
 }
-
-
 
 /* ===== ATTRIBUTE ICONS ===== */
 .attr-value-wrap {
@@ -838,6 +983,16 @@
   image-rendering: crisp-edges;
   filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
   flex-shrink: 0;
+}
+
+/* Professional focus indicators for accessibility */
+.attr:focus-visible {
+  outline: 2px solid #4caf50;
+  outline-offset: 2px;
+}
+
+.attr:focus-visible .progress-ring {
+  opacity: 1;
 }
 
 </style>
@@ -882,50 +1037,269 @@
     <span class="stat-label">Arcane:</span><span class="stat-value" id="arcaneValue" style="background: linear-gradient(45deg,#27F5CC,#133bbb)">0</span>
   </div>
 
-
-
 <script>
-/* ========= touchscreen misclick prevention ========= */
-const isTouchOnly = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+/* ========= MODERN TOUCH INTERACTION MANAGER ========= */
 
-function addHoldToActivate(el, onActivate, holdMs = 2000) {
-  let timer = null;
-  let moved = false;
-
-  el.addEventListener('pointerdown', (e) => {
-    if (!isTouchOnly) return; // desktop = unchanged
-
-    moved = false;
-    el.classList.add('holding');
-
-    timer = setTimeout(() => {
-      el.classList.remove('holding');
+/**
+ * Professional Press-and-Hold Manager
+ * Implements 2025 best practices for touch interactions
+ */
+class ProfessionalTouchManager {
+  constructor(options = {}) {
+    this.config = {
+      holdDuration: options.holdDuration || 2500, // 2.5 seconds
+      moveThreshold: options.moveThreshold || 10, // pixels
+      showProgress: options.showProgress !== false,
+      hapticFeedback: options.hapticFeedback !== false,
+      ...options
+    };
+    
+    this.activeHolds = new Map();
+    this.isTouchDevice = this.detectTouchDevice();
+    
+    // Bind methods
+    this.handlePointerDown = this.handlePointerDown.bind(this);
+    this.handlePointerMove = this.handlePointerMove.bind(this);
+    this.handlePointerUp = this.handlePointerUp.bind(this);
+    this.handlePointerCancel = this.handlePointerCancel.bind(this);
+  }
+  
+  /**
+   * Detect if device supports touch interactions
+   */
+  detectTouchDevice() {
+    return (
+      'ontouchstart' in window ||
+      navigator.maxTouchPoints > 0 ||
+      navigator.msMaxTouchPoints > 0
+    );
+  }
+  
+  /**
+   * Apply press-and-hold functionality to element
+   */
+  attach(element, onActivate, options = {}) {
+    const elementOptions = { ...this.config, ...options };
+    
+    // Add accessibility attributes
+    element.setAttribute('role', 'button');
+    element.setAttribute('aria-label', options.ariaLabel || 'Press and hold to activate');
+    element.setAttribute('tabindex', '0');
+    
+    // Prevent context menu on long press
+    element.addEventListener('contextmenu', (e) => e.preventDefault());
+    
+    // Pointer events (modern approach)
+    element.addEventListener('pointerdown', (e) => this.handlePointerDown(e, element, onActivate, elementOptions));
+    element.addEventListener('pointermove', (e) => this.handlePointerMove(e, element));
+    element.addEventListener('pointerup', (e) => this.handlePointerUp(e, element));
+    element.addEventListener('pointercancel', (e) => this.handlePointerCancel(e, element));
+    element.addEventListener('pointerleave', (e) => this.handlePointerCancel(e, element));
+    
+    // Keyboard support for accessibility
+    element.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' || e.code === 'Enter') {
+        e.preventDefault();
+        this.simulateHold(element, onActivate, elementOptions);
+      }
+    });
+    
+    // Desktop click fallback
+    if (!this.isTouchDevice) {
+      element.addEventListener('click', (e) => {
+        if (!element.hasAttribute('data-hold-activated')) {
+          onActivate();
+        }
+        element.removeAttribute('data-hold-activated');
+      });
+    }
+    
+    // Add mobile-only class for CSS differentiation
+    if (this.isTouchDevice) {
+      element.classList.add('mobile-only');
+    }
+  }
+  
+  /**
+   * Handle pointer down event
+   */
+  handlePointerDown(e, element, onActivate, options) {
+    if (!this.isTouchDevice && e.pointerType !== 'mouse') return;
+    
+    e.preventDefault();
+    
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startTime = Date.now();
+    
+    // Create progress ring if enabled
+    if (options.showProgress) {
+      this.createProgressRing(element);
+    }
+    
+    // Add visual feedback
+    element.classList.add('holding');
+    
+    // Store hold state
+    const holdState = {
+      timer: null,
+      startX,
+      startY,
+      startTime,
+      element,
+      onActivate,
+      options
+    };
+    
+    this.activeHolds.set(element, holdState);
+    
+    // Start hold timer
+    holdState.timer = setTimeout(() => {
+      this.completeHold(element, holdState);
+    }, options.holdDuration);
+    
+    // Haptic feedback if supported
+    if (options.hapticFeedback && 'vibrate' in navigator) {
+      navigator.vibrate(50);
+    }
+  }
+  
+  /**
+   * Handle pointer move event
+   */
+  handlePointerMove(e, element) {
+    const holdState = this.activeHolds.get(element);
+    if (!holdState) return;
+    
+    const deltaX = Math.abs(e.clientX - holdState.startX);
+    const deltaY = Math.abs(e.clientY - holdState.startY);
+    
+    // Cancel hold if finger moved too much
+    if (deltaX > this.config.moveThreshold || deltaY > this.config.moveThreshold) {
+      this.cancelHold(element, holdState);
+    }
+  }
+  
+  /**
+   * Handle pointer up event
+   */
+  handlePointerUp(e, element) {
+    const holdState = this.activeHolds.get(element);
+    if (!holdState) return;
+    
+    const duration = Date.now() - holdState.startTime;
+    
+    // If hold was completed, mark as activated to prevent click
+    if (duration >= holdState.options.holdDuration) {
+      element.setAttribute('data-hold-activated', 'true');
+    }
+    
+    this.cancelHold(element, holdState);
+  }
+  
+  /**
+   * Handle pointer cancel event
+   */
+  handlePointerCancel(e, element) {
+    const holdState = this.activeHolds.get(element);
+    if (!holdState) return;
+    
+    this.cancelHold(element, holdState);
+  }
+  
+  /**
+   * Complete the hold action
+   */
+  completeHold(element, holdState) {
+    // Haptic feedback
+    if (holdState.options.hapticFeedback && 'vibrate' in navigator) {
+      navigator.vibrate([100, 50, 100]);
+    }
+    
+    // Visual feedback
+    element.classList.remove('holding');
+    element.classList.add('level-up');
+    
+    // Execute callback
+    holdState.onActivate();
+    
+    // Remove level-up class after animation
+    setTimeout(() => {
+      element.classList.remove('level-up');
+    }, 600);
+    
+    // Cleanup
+    this.activeHolds.delete(element);
+  }
+  
+  /**
+   * Cancel the hold action
+   */
+  cancelHold(element, holdState) {
+    clearTimeout(holdState.timer);
+    element.classList.remove('holding');
+    this.removeProgressRing(element);
+    this.activeHolds.delete(element);
+  }
+  
+  /**
+   * Simulate hold for keyboard users
+   */
+  simulateHold(element, onActivate, options) {
+    element.classList.add('holding');
+    
+    if (options.showProgress) {
+      this.createProgressRing(element);
+    }
+    
+    setTimeout(() => {
+      element.classList.remove('holding');
+      element.classList.add('level-up');
       onActivate();
-    }, holdMs);
-  });
-
-  el.addEventListener('pointermove', () => {
-    moved = true;
-    clearTimeout(timer);
-    el.classList.remove('holding');
-  });
-
-  el.addEventListener('pointerup', () => {
-    clearTimeout(timer);
-    el.classList.remove('holding');
-  });
-
-  el.addEventListener('pointercancel', () => {
-    clearTimeout(timer);
-    el.classList.remove('holding');
-  });
-
-  el.addEventListener('pointerleave', () => {
-    clearTimeout(timer);
-    el.classList.remove('holding');
-  });
+      
+      setTimeout(() => {
+        element.classList.remove('level-up');
+      }, 600);
+    }, options.holdDuration);
+  }
+  
+  /**
+   * Create progress ring for visual feedback
+   */
+  createProgressRing(element) {
+    if (element.querySelector('.progress-ring')) return;
+    
+    const progressRing = document.createElement('div');
+    progressRing.className = 'progress-ring';
+    
+    progressRing.innerHTML = `
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle class="progress-bg" cx="50" cy="50" r="45"/>
+        <circle class="progress-bar" cx="50" cy="50" r="45"/>
+      </svg>
+    `;
+    
+    element.appendChild(progressRing);
+  }
+  
+  /**
+   * Remove progress ring
+   */
+  removeProgressRing(element) {
+    const progressRing = element.querySelector('.progress-ring');
+    if (progressRing) {
+      progressRing.remove();
+    }
+  }
 }
 
+/* ========= touchscreen misclick prevention ========= */
+const touchManager = new ProfessionalTouchManager({
+  holdDuration: 2500, // 2.5 seconds as requested
+  showProgress: true,
+  hapticFeedback: true,
+  moveThreshold: 10
+});
 
 /* ========= SVG buttons ========= */
 const minusSVG = `
@@ -1281,8 +1655,6 @@ barsConfig.forEach(cfg => {
 
   const controls = document.createElement('div'); controls.className='bar-controls';
 
-  //const minus = document.createElement('button'); minus.className='btn'; minus.textContent='−';
-  //const plus = document.createElement('button'); plus.className='btn'; plus.textContent='+';
   const valSpan = document.createElement('div'); valSpan.className='bar-value';
   const minus = document.createElement('button');
   minus.className = 'btn btn-icon';
@@ -1293,7 +1665,6 @@ barsConfig.forEach(cfg => {
   plus.className = 'btn btn-icon';
   plus.innerHTML = plusSVG;
   plus.setAttribute('aria-label', 'Increase');
-
 
   function getCurrentMax() {
     if (cfg.dynamic) {
@@ -1406,7 +1777,6 @@ function flashElement(el){
   el.style.boxShadow = '0 14px 36px rgba(0,0,0,0.55)';
   setTimeout(()=>{ el.style.transform=''; el.style.boxShadow=''; }, 160);
 }
-
 
 /* ===== ATTRIBUTE ICON MAP ===== */
 const STAT_ICONS = {
@@ -1561,6 +1931,7 @@ function incrementAttribute() {
     updateBottomStats();
   }
 
+  // Enhanced visual feedback for level up
   card.classList.add('pulse');
   setTimeout(() => card.classList.remove('pulse'), 420);
 
@@ -1568,14 +1939,10 @@ function incrementAttribute() {
   setTimeout(() => { lockout = false; }, 3000);
 }
 
-// Desktop behavior (unchanged)
-if (!isTouchOnly) {
-  card.addEventListener('click', incrementAttribute);
-} else {
-  // Mobile: press-and-hold
-  addHoldToActivate(card, incrementAttribute, 2000);
-}
-
+// Apply professional touch handling to Luck attribute
+touchManager.attach(card, incrementAttribute, {
+  ariaLabel: 'Press and hold to use Luck'
+});
 
     if(cooldownUntil){
       const rem = getRemainingSec();
@@ -1604,8 +1971,8 @@ if (!isTouchOnly) {
     let valNum = stored;
     let lockout = false;
 
-    card.addEventListener('click', ()=>{
-      if(lockout) return;
+    function incrementAttribute() {
+      if (lockout) return;
       valNum = (valNum + 1) % 10;
       val.textContent = String(valNum);
       saveState(name, valNum);
@@ -1615,11 +1982,17 @@ if (!isTouchOnly) {
         updateBottomStats();
       }
 
+      // Enhanced visual feedback for level up
       card.classList.add('pulse');
       setTimeout(()=> card.classList.remove('pulse'), 420);
 
       lockout = true;
       setTimeout(()=> { lockout = false; }, 3000);
+    }
+
+    // Apply professional touch handling to regular attributes
+    touchManager.attach(card, incrementAttribute, {
+      ariaLabel: `Press and hold to increase ${name}`
     });
   }
 });
@@ -1721,7 +2094,7 @@ function getRelationshipStatus(hearts, npcName) {
     if (hearts[i] === 1) {
       filledCount++;
     } else {
-      break;  // Stop at first unfilled heart?
+      break;
     }
   }
 
@@ -1744,7 +2117,6 @@ function getRelationshipStatus(hearts, npcName) {
   return statusMap[filledCount] || 'No Relationship';
 }
 
-
 // Update NPC status when hearts change
 function updateNpcStatus(npcIndex) {
   if (npcs[npcIndex]) {
@@ -1752,7 +2124,6 @@ function updateNpcStatus(npcIndex) {
     npcs[npcIndex].hearts,
     npcs[npcIndex].name
     );
-
   }
 }
 
