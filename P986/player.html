@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Player Tracker — Player</title>
+<title>Player: Enhanced</title>
 
 <style>
   :root{
@@ -19,6 +19,13 @@
     --heart-purple: #9b59b6;
     --heart-red: #ff8fa3;
     --scarlet-pink: #ff8fa3;
+    
+    /* Animation timing variables for consistency */
+    --fade-in-duration: 0.3s;
+    --fade-out-duration: 2s;
+    --icon-linger-duration: 3s;
+    --easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
   html,body{height:100%;margin:0;}
@@ -51,7 +58,7 @@
     padding:8px 4px;
     margin-bottom:14px;
   }
-  #playerName::placeholder{ color: rgba(255,255,255,0.25); }
+  #playerName::placeholder{ color: rgba(255,255,255,0.35); }
 
   /* ---------- Bars layout: grid 2 cols on wide, 1 col + reorder on small ---------- */
   .bars {
@@ -77,7 +84,7 @@
   }
 
   .bar-card{
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    background: linear-gradient(180deg, rgba(100,100,100,0.03), rgba(200,200,200,0.07));
     border-radius:20px;
     padding:10px 12px;
     display:flex;
@@ -86,6 +93,8 @@
     gap:20px;
     box-shadow: 0 6px 18px rgba(0,0,0,0.6);
     transition: transform .14s ease, box-shadow .14s ease;
+    position: relative; /* For icon positioning */
+    overflow: hidden; /* Ensure icons don't overflow */
   }
   .bar-card:hover{ transform: translateY(-2px); box-shadow: 0 20px 30px rgba(0,0,0,0.7); }
 
@@ -94,14 +103,18 @@
     align-items:center;
     gap:14px;
     min-width: 0;
+    position: relative; /* For icon positioning */
   }
 
   .bar-dot{
-    width: clamp(22px, 2.5vw, 34px);
-    height: clamp(22px, 2.5vw, 34px);
+    /*width: clamp(2rem, 2.5vw, 34px);*/
+    /*height: clamp(2rem, 2.5vw, 34px);*/
+    width: 2.2rem;
+    height: 2.2rem;
     border-radius:50%;
     box-shadow: 0 2px 6px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(255,255,255,0.05);
     flex: 0 0 auto;
+    position: relative;
   }
   .dot-life{ background: linear-gradient(180deg,#5fd08f,#2fb96b); }
   .dot-stamina{ background: linear-gradient(180deg,#6fb8ff,#2b74ff); }
@@ -109,6 +122,68 @@
   .dot-energy{ background: linear-gradient(180deg,#6ff0ff,#13b6ff); }
   .dot-empower{ background: linear-gradient(180deg,#ff4d4d,#DC143C); }
   .dot-coalesce{ background: linear-gradient(180deg,#f5f7fa,#d9dde6); border:1px solid rgba(255,255,255,0.06); }
+
+  /* ===== ICON OVERLAY SYSTEM ===== */
+  
+  /* Icon positioning and base styles */
+  .bar-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.85);
+    /*width: clamp(24px, 3vw, 40px);*/
+    /*height: clamp(24px, 3vw, 40px);*/
+    width: 2.3rem;
+    height: 2.3rem;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    
+    /* Hardware acceleration for smooth animations */
+    will-change: opacity, transform;
+    backface-visibility: hidden;
+    
+    /* Initial fade-in transition */
+    transition: 
+      opacity var(--fade-in-duration) var(--easing-smooth),
+      transform var(--fade-in-duration) var(--easing-bounce);
+  }
+
+  /* Icon visibility states */
+  .bar-icon.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .bar-icon.fading {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+    transition: 
+      opacity var(--fade-out-duration) var(--easing-smooth),
+      transform var(--fade-out-duration) var(--easing-smooth);
+  }
+
+  /* Icon image styling */
+  .bar-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    transition: filter var(--fade-in-duration) var(--easing-smooth);
+  }
+
+  /* Enhanced hover states with better visual feedback */
+  .bar-card:hover .bar-icon img {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)) brightness(1.1);
+  }
+
+  /* Enhanced hover states with better visual feedback */
+  .bar-card:hover .bar-icon {
+    /* Will be controlled by JavaScript for timing */
+  }
 
   .bar-label{ font-weight:600; font-size:1.38rem; color:#f1f5fb; white-space:nowrap; }
   .bar-controls{ display:flex; align-items:center; gap:8px; }
@@ -126,7 +201,7 @@
     -webkit-appearance:none;
     appearance:none;
     border:0;
-    background: rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.09);
     color: #fff;
     padding:6px 10px;
     border-radius:8px;
@@ -138,6 +213,32 @@
   .btn:focus{ outline:none; box-shadow:0 0 0 3px rgba(102,204,255,0.12); }
   .btn:disabled{ opacity: 0.3; cursor: not-allowed; }
   .btn:hover { background: #ff00ff; }
+  .btn-icon:hover { background: rgba(255,255,255,0.11); /* same as idle */
+}
+
+  .btn-icon {
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon svg {
+  width: 2rem;
+  height: 2rem;
+  color: white;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.btn-icon:hover svg {
+  transform: scale(1.15);
+  color: #ff00ff;
+}
+
+.btn-icon:disabled svg {
+  opacity: 0.6;
+}
+
 
   /* Attributes grid */
   .attributes{
@@ -529,7 +630,7 @@
     right: 8px;
     width: 24px;
     height: 24px;
-    background: rgba(255, 0, 0, 0.2);
+    background: rgba(255, 0, 0, 0.25);
     border: none;
     border-radius: 50%;
     cursor: pointer;
@@ -681,6 +782,57 @@
 }
 
 
+/* ===== ACCESSIBILITY & PERFORMANCE ===== */
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .bar-icon,
+  .bar-card,
+  .attr,
+  .heart-icon,
+  .btn {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .bar-icon {
+    opacity: 1 !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .bar-icon {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+  }
+}
+
+/* Focus management for accessibility */
+.bar-card:focus-within .bar-icon {
+  /* Optionally show icon on keyboard focus */
+}
+
+
+
+/* ===== ATTRIBUTE ICONS ===== */
+.attr-value-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.attr-icon {
+  width: 2rem;
+  height: 2rem;
+  padding: 1px;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+  flex-shrink: 0;
+}
+
 </style>
 </head>
 <body>
@@ -726,6 +878,49 @@
 
 
 <script>
+/* ========= SVG buttons ========= */
+const minusSVG = `
+<svg viewBox="0 0 24 24" aria-hidden="true">
+  <path opacity="0.5"
+        d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447
+           C4.92893 2 7.28595 2 12 2
+           C16.714 2 19.0711 2 20.5355 3.46447
+           C22 4.92893 22 7.28595 22 12
+           C22 16.714 22 19.0711 20.5355 20.5355
+           C19.0711 22 16.714 22 12 22
+           C7.28595 22 4.92893 22 3.46447 20.5355
+           C2 19.0711 2 16.714 2 12Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"/>
+  <path d="M15 12H9"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"/>
+</svg>
+`;
+
+const plusSVG = `
+<svg viewBox="0 0 24 24" aria-hidden="true">
+  <path opacity="0.5"
+        d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447
+           C4.92893 2 7.28595 2 12 2
+           C16.714 2 19.0711 2 20.5355 3.46447
+           C22 4.92893 22 7.28595 22 12
+           C22 16.714 22 19.0711 20.5355 20.5355
+           C19.0711 22 16.714 22 12 22
+           C7.28595 22 4.92893 22 3.46447 20.5355
+           C2 19.0711 2 16.714 2 12Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"/>
+  <path d="M12 9V15M9 12H15"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"/>
+</svg>
+`;
+
 /* ========= Persistence helpers ========= */
 function saveState(key,value){ try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){} }
 function loadState(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
@@ -891,6 +1086,129 @@ const barsConfig = [
 
 const barsContainer = document.getElementById('bars');
 
+/* ========= ICON MANAGEMENT SYSTEM ========= */
+
+/**
+ * Creates PNG icon elements for each bar type
+ * Uses modern image techniques and accessibility best practices
+ */
+function createBarIcon(barKey, barLabel) {
+  const iconContainer = document.createElement('div');
+  iconContainer.className = `bar-icon bar-icon--${barKey}`;
+  iconContainer.setAttribute('role', 'img');
+  iconContainer.setAttribute('aria-label', `${barLabel} icon`);
+  
+  // Create PNG image element
+  const img = document.createElement('img');
+  img.alt = `${barLabel} icon`;
+  img.decoding = 'async';
+  img.loading = 'lazy';
+  
+  // Define PNG file paths for each bar type
+  const iconPaths = {
+    life: '../icons/life1.png',
+    mana: '../icons/mana1.png',
+    stamina: '../icons/stamina1.png',
+    energy: '../icons/energy1.png',
+    empower: '../icons/empower1.png',
+    coalesce: '../icons/crys.svg'
+  };
+  
+  img.src = iconPaths[barKey] || iconPaths.life;
+  iconContainer.appendChild(img);
+  
+  return iconContainer;
+}
+
+/**
+ * Manages icon visibility and animation timing
+ * Implements the 3-second linger + 2-second fade-out requirement
+ */
+class IconAnimationManager {
+  constructor() {
+    this.activeAnimations = new Map();
+    this.animationConfig = {
+      fadeInDuration: 300,    // 0.3s in ms
+      lingerDuration: 3000,   // 3s in ms  
+      fadeOutDuration: 2000   // 2s in ms
+    };
+  }
+
+  /**
+   * Shows icon with fade-in animation, then handles timing sequence
+   */
+  showIcon(iconElement) {
+    // Clear any existing animation for this icon
+    this.clearAnimation(iconElement);
+    
+    // Add visible class for fade-in
+    iconElement.classList.add('visible');
+    iconElement.classList.remove('fading');
+    
+    // Set timer for fade-out after linger duration
+    const timer = setTimeout(() => {
+      this.fadeOutIcon(iconElement);
+    }, this.animationConfig.lingerDuration);
+    
+    this.activeAnimations.set(iconElement, timer);
+  }
+
+  /**
+   * Fades out icon with smooth transition
+   */
+  fadeOutIcon(iconElement) {
+    // Clear existing timer
+    this.clearAnimation(iconElement);
+    
+    // Add fading class for smooth fade-out
+    iconElement.classList.add('fading');
+    
+    // Remove visible class after fade-out completes
+    setTimeout(() => {
+      iconElement.classList.remove('visible', 'fading');
+      this.activeAnimations.delete(iconElement);
+    }, this.animationConfig.fadeOutDuration);
+  }
+
+  /**
+   * Clears any active animation for an icon
+   */
+  clearAnimation(iconElement) {
+    const timer = this.activeAnimations.get(iconElement);
+    if (timer) {
+      clearTimeout(timer);
+      this.activeAnimations.delete(iconElement);
+    }
+  }
+
+  /**
+   * Handles hover events on bar cards
+   */
+  handleBarHover(barCard, isHovering) {
+    const icon = barCard.querySelector('.bar-icon');
+    if (!icon) return;
+
+    if (isHovering) {
+      this.showIcon(icon);
+    } else {
+      this.clearAnimation(icon);
+      icon.classList.remove('visible', 'fading');
+    }
+  }
+
+  /**
+   * Cleanup method to clear all active animations
+   */
+  cleanup() {
+    this.activeAnimations.forEach((timer) => clearTimeout(timer));
+    this.activeAnimations.clear();
+  }
+}
+
+// Initialize icon animation manager
+const iconManager = new IconAnimationManager();
+
+// Create bars with enhanced icon support
 barsConfig.forEach(cfg => {
   let value = Number(loadState(cfg.key, cfg.default));
   value = Math.max(cfg.min, Math.min(cfg.max, value));
@@ -899,6 +1217,7 @@ barsConfig.forEach(cfg => {
   const card = document.createElement('div');
   card.className = 'bar-card';
   card.dataset.key = cfg.key;
+  card.setAttribute('tabindex', '0'); // Enable keyboard navigation
 
   const left = document.createElement('div'); left.className='bar-left';
   const dot = document.createElement('div'); dot.className = 'bar-dot ' + cfg.dotClass;
@@ -907,11 +1226,25 @@ barsConfig.forEach(cfg => {
   left.appendChild(dot);
   left.appendChild(label);
 
+  // Add icon overlay to the dot
+  const icon = createBarIcon(cfg.key, cfg.label);
+  dot.appendChild(icon);
+
   const controls = document.createElement('div'); controls.className='bar-controls';
 
-  const minus = document.createElement('button'); minus.className='btn'; minus.textContent='−';
+  //const minus = document.createElement('button'); minus.className='btn'; minus.textContent='−';
+  //const plus = document.createElement('button'); plus.className='btn'; plus.textContent='+';
   const valSpan = document.createElement('div'); valSpan.className='bar-value';
-  const plus = document.createElement('button'); plus.className='btn'; plus.textContent='+';
+  const minus = document.createElement('button');
+  minus.className = 'btn btn-icon';
+  minus.innerHTML = minusSVG;
+  minus.setAttribute('aria-label', 'Decrease');
+
+  const plus = document.createElement('button');
+  plus.className = 'btn btn-icon';
+  plus.innerHTML = plusSVG;
+  plus.setAttribute('aria-label', 'Increase');
+
 
   function getCurrentMax() {
     if (cfg.dynamic) {
@@ -1003,6 +1336,14 @@ barsConfig.forEach(cfg => {
   card.appendChild(left);
   card.appendChild(controls);
 
+  // Add hover event listeners for icon animation
+  card.addEventListener('mouseenter', () => iconManager.handleBarHover(card, true));
+  card.addEventListener('mouseleave', () => iconManager.handleBarHover(card, false));
+  
+  // Add keyboard accessibility
+  card.addEventListener('focus', () => iconManager.handleBarHover(card, true));
+  card.addEventListener('blur', () => iconManager.handleBarHover(card, false));
+
   barsContainer.appendChild(card);
 });
 
@@ -1016,6 +1357,16 @@ function flashElement(el){
   el.style.boxShadow = '0 14px 36px rgba(0,0,0,0.55)';
   setTimeout(()=>{ el.style.transform=''; el.style.boxShadow=''; }, 160);
 }
+
+
+/* ===== ATTRIBUTE ICON MAP ===== */
+const STAT_ICONS = {
+  Endurance: '../icons/heart-shield.png',
+  Skill: '../icons/skl.png',
+  Strength: '../icons/str.png',
+  Potency: '../icons/potency8.png',
+  Mastery: '../icons/mastery4.png'
+};
 
 /* ========= Attributes (including Luck) ========= */
 const attrConfig = ["Endurance","Skill","Strength","Potency","Mastery","Luck"];
@@ -1031,11 +1382,32 @@ attrConfig.forEach(name => {
   card.className = 'attr';
   card.dataset.name = name;
 
-  const label = document.createElement('div'); label.className='attr-label'; label.textContent = name;
-  const val = document.createElement('div'); val.className='attr-val'; val.textContent = (name==='Luck' ? '--' : stored);
+  const label = document.createElement('div');
+  label.className = 'attr-label';
+  label.textContent = name;
+
+  const valWrap = document.createElement('div');
+  valWrap.className = 'attr-value-wrap';
+
+  const icon = document.createElement('img');
+  icon.className = 'attr-icon';
+
+  if (STAT_ICONS[name]) {
+    icon.src = STAT_ICONS[name];
+    icon.alt = `${name} icon`;
+  } else {
+    icon.style.display = 'none';
+  }
+
+  const val = document.createElement('span');
+  val.className = 'attr-val';
+  val.textContent = (name === 'Luck' ? '--' : stored);
+
+  valWrap.appendChild(icon);
+  valWrap.appendChild(val);
 
   card.appendChild(label);
-  card.appendChild(val);
+  card.appendChild(valWrap);
   attrsContainer.appendChild(card);
 
   if(name === 'Luck'){
@@ -1091,8 +1463,8 @@ attrConfig.forEach(name => {
 
     function rollLuckWeighted(){
       const options = [
-        {value:-2, weight:10},
         {value:-1, weight:10},
+        {value:0, weight:10},
         {value:1, weight:23},
         {value:2, weight:23},
         {value:3, weight:23},
@@ -1350,7 +1722,7 @@ const officialNpcImages = {
   "Chinara Ekine":    "hearts/013.webp",
   "Ohm":              "hearts/014.webp",
   "Jon Quixote":      "hearts/015.webp",
-  "Naya Rodin":       "hearts/016.webp",
+  "Naya":             "hearts/016.webp",
   "Million Redgate":  "hearts/017.webp",
   "Captain Thiffany": "hearts/018.webp",
   "The Courier":      "hearts/019.webp",
@@ -1678,13 +2050,10 @@ updateAddButtonVisibility();
 // Initialize bottom stats
 updateBottomStats();
 
-/*I need to figure out how to do 'profile pic' style image cropping so users can align their NPCs. 
-Also: maybe players must name their character first, then they can upload an image: if the name Matches one of the in-universe NPCs, it will autofill an image of their card or face art; otherwise the user can use the image-picker.
-Note: NAYA and The Courier only have 6 hearts.
-There are 5 FOEs that are also romance-able but their romance names are different from their FOE name.
-*/
-
-
+/* Cleanup on page unload */
+window.addEventListener('beforeunload', () => {
+  iconManager.cleanup();
+});
 
 </script>
 </body>
