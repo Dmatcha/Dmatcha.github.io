@@ -186,7 +186,7 @@
   }
 
   .bar-label{ font-weight:600; font-size:1.38rem; color:#f1f5fb; white-space:nowrap; }
-  .bar-controls{ display:flex; align-items:center; gap:8px; }
+  .bar-controls{ display:flex; align-items:center; gap:7px; padding-right: 2px; }
 
   .bar-value{
     width:80px;
@@ -232,7 +232,7 @@
 
 .btn-icon:hover svg {
   transform: scale(1.10);
-  color: #ffffff;
+  color: #ff00ff;
 }
 
 .btn-icon:disabled svg {
@@ -249,7 +249,7 @@
   }
 
   .attr{
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
     border-radius:10px;
     padding:14px;
     display:flex;
@@ -263,7 +263,7 @@
   }
   .attr:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0 8px rgba(138, 43, 226, 0.4);
+    box-shadow: 0 0 8px rgba(140, 50, 230, 0.6);
   }
 
   .attr .attr-label{ font-weight:700; color:#f4f6fb; white-space: nowrap;}
@@ -288,6 +288,7 @@
   @media(max-width:430px){
     .bar-card{ padding:6px; }
     /*.btn{ padding: 1px; border-radius:5px; }*/
+    .bar-controls{ padding-right: 5px; }
   }
 
   #resetBtn {
