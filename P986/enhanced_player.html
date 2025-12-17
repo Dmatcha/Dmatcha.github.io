@@ -1,858 +1,1045 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Enhanced player character management interface with modern web standards" />
-  <title>Player: Enhanced</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Player: Enhanced</title>
 
-  <style>
-    :root{
-      /* Base font size for rem calculations */
-      font-size: 16px;
-      
-      /* Modern CSS Custom Properties */
-      --bg:#121212;
-      --card:#1f1f1f;
-      --muted:#9aa3ad;
-      --accent-purple: rgba(106,27,154,0.22);
-      --gold: #D4AF37;
-      --blue-cool:#66ccff;
-      --glass: rgba(255,255,255,0.04);
-      --heart-white: #ffffff;
-      --heart-blue: #4da6ff;
-      --heart-purple: #9b59b6;
-      --heart-red: #ff8fa3;
-      --scarlet-pink: #ff8fa3;
-      
-      /* Animation timing variables for consistency */
-      --fade-in-duration: 0.3s;
-      --fade-out-duration: 2s;
-      --icon-linger-duration: 3s;
-      --easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-      --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-      
-      /* Professional press-and-hold timing */
-      --hold-duration: 2.5s;
-      --hold-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      --progress-color: #ffffff;
-      --progress-bg: rgba(255, 255, 255, 0.2);
-      --flash-color: #ffffff;
-      
-      /* Modern spacing system */
-      --space-xs: 0.25rem;
-      --space-sm: 0.5rem;
-      --space-md: 1rem;
-      --space-lg: 1.5rem;
-      --space-xl: 2rem;
-      
-      /* Modern border radius system */
-      --radius-sm: 0.5rem;
-      --radius-md: 0.75rem;
-      --radius-lg: 1.25rem;
-      --radius-xl: 1.5rem;
-    }
+<style>
+  :root{
+    /* Base font size for rem calculations */
+    font-size: 16px;
+    
+    --bg:#121212;
+    --card:#1f1f1f;
+    --muted:#9aa3ad;
+    --accent-purple: rgba(106,27,154,0.22);
+    --gold: #D4AF37;
+    --blue-cool:#66ccff;
+    --glass: rgba(255,255,255,0.04);
+    --heart-white: #ffffff;
+    --heart-blue: #4da6ff;
+    --heart-purple: #9b59b6;
+    --heart-red: #ff8fa3;
+    --scarlet-pink: #ff8fa3;
+    
+    /* Animation timing variables for consistency */
+    --fade-in-duration: 0.3s;
+    --fade-out-duration: 2s;
+    --icon-linger-duration: 3s;
+    --easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    /* Professional press-and-hold timing */
+    --hold-duration: 2.5s; /* 2.5 seconds as requested */
+    --hold-easing: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    /* Note: Stats only increase when hold completes, not on click */
+    --progress-color: #ffffff; /* White for regular attributes */
+    --progress-bg: rgba(255, 255, 255, 0.2);
+    --flash-color: #ffffff; /* White flash */
+  }
 
-    /* Modern CSS Reset and Base Styles */
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
+  html,body{height:100%;margin:0;}
+  body{
+    margin:0;
+    min-height:100%;
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(180deg,#0f0f12 0%, #141417 60%);
+    color:#e9eef6;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
 
-    html {
-      line-height: 1.5;
-      -webkit-text-size-adjust: 100%;
-      scroll-behavior: smooth;
-    }
+  .wrap{
+    max-width:56.25rem; /* 900px */
+    margin:0.875rem auto;
+    padding:1rem;
+  }
 
-    body{
-      margin:0;
-      min-height:100vh;
-      font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
-      background: linear-gradient(180deg,#0f0f12 0%, #141417 60%);
-      color:#e9eef6;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
+  /* Player name */
+  #playerName{
+    width:100%;
+    display:block;
+    font-size:2.0rem;
+    text-align:center;
+    background:transparent;
+    color: #fff;
+    border: 0;
+    border-bottom: 2px solid rgba(255,255,255,0.2);
+    outline: none;
+    padding:0.5rem 0.25rem;
+    margin-bottom:0.875rem;
+    transition: border-color 0.2s ease;
+  }
+  #playerName:focus {
+    border-bottom-color: #4caf50;
+  }
+  #playerName::placeholder{ color: rgba(255,255,255,0.35); }
 
-    /* Modern Focus Management */
-    :focus-visible {
-      outline: 2px solid #4caf50;
-      outline-offset: 2px;
-      border-radius: 4px;
-    }
+  /* ---------- Bars layout: grid 2 cols on wide, 1 col + reorder on small ---------- */
+  .bars {
+    display:grid;
+    grid-template-columns: repeat(2, minmax(13.75rem, 1fr)); /* 220px */
+    gap:1.2rem; /* 20px */
+    margin-bottom:1rem; /* 16px */
+  }
 
-    /* Container and Layout */
-    .container {
-      max-width: 56.25rem;
-      margin: 0 auto;
-      padding: var(--space-md);
-    }
+  @media (max-width: 45rem) { /* 720px */
+    .bars { grid-template-columns: 1fr; }
 
-    .skip-link {
-      position: absolute;
-      top: -40px;
-      left: 6px;
-      background: #000;
-      color: #fff;
-      padding: 8px;
-      text-decoration: none;
-      z-index: 100;
-    }
+    .bar-card[data-key="life"]     { order: 1; }
+    .bar-card[data-key="stamina"]  { order: 2; }
+    .bar-card[data-key="empower"]  { order: 3; }
+    .bar-card[data-key="mana"]     { order: 4; }
+    .bar-card[data-key="energy"]   { order: 5; }
+    .bar-card[data-key="coalesce"] { order: 6; }
+  }
 
-    .skip-link:focus {
-      top: 6px;
-    }
+  @media (min-width: 45.0625rem) { /* 721px */
+    .bar-card { order: initial; }
+  }
 
-    /* Player name - Modern Input Styling */
-    #playerName{
-      width:100%;
-      display:block;
-      font-size:2.0rem;
-      text-align:center;
-      background:transparent;
-      color: #fff;
-      border: 0;
-      border-bottom: 2px solid rgba(255,255,255,0.1);
-      outline:0;
-      padding: var(--space-sm) var(--space-xs);
-      margin-bottom: var(--space-lg);
-      transition: border-color 0.2s ease;
-    }
-    #playerName:focus {
-      border-bottom-color: #4caf50;
-    }
-    #playerName::placeholder{ 
-      color: rgba(255,255,255,0.35); 
-    }
+  .bar-card{
+    background: linear-gradient(180deg, rgba(100,100,100,0.03), rgba(200,200,200,0.07));
+    border-radius:1.25rem; /* 20px */
+    padding:0.625rem 0.75rem; /* 10px 12px */
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1.25rem; /* 20px */
+    box-shadow: 0 0.375rem 1.125rem rgba(0,0,0,0.6); /* 6px 18px */
+    transition: transform .14s ease, box-shadow .14s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .bar-card:hover{ transform: translateY(-0.125rem); box-shadow: 0 1.25rem 1.875rem rgba(0,0,0,0.7); }
 
-    /* Modern Grid Layout for Bars */
-    .bars {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-      gap: var(--space-lg);
-      margin-bottom: var(--space-xl);
-    }
+  .bar-left{
+    display:flex;
+    align-items:center;
+    gap:0.875rem; /* 14px */
+    min-width: 0;
+    position: relative;
+  }
 
-    @media (max-width: 45rem) {
-      .bars { 
-        grid-template-columns: 1fr; 
-        grid-auto-rows: min-content;
-      }
-      .bar-card[data-key="life"]     { grid-row: 1; }
-      .bar-card[data-key="stamina"]  { grid-row: 2; }
-      .bar-card[data-key="empower"]  { grid-row: 3; }
-      .bar-card[data-key="mana"]     { grid-row: 4; }
-      .bar-card[data-key="energy"]   { grid-row: 5; }
-      .bar-card[data-key="coalesce"] { grid-row: 6; }
-    }
+  .bar-dot{
+    width: 2.2rem; /* 35px */
+    height: 2.2rem; /* 35px */
+    border-radius:50%;
+    box-shadow: 0 0.125rem 0.375rem rgba(0,0,0,0.6), inset 0 -0.0625rem 0 rgba(255,255,255,0.05); /* 2px 6px */
+    flex: 0 0 auto;
+    position: relative;
+  }
+  .dot-life{ background: linear-gradient(180deg,#5fd08f,#2fb96b); }
+  .dot-stamina{ background: linear-gradient(180deg,#6fb8ff,#2b74ff); }
+  .dot-mana{ background: linear-gradient(180deg,#ffc46b,#ff9a2b); }
+  .dot-energy{ background: linear-gradient(180deg,#6ff0ff,#13b6ff); }
+  .dot-empower{ background: linear-gradient(180deg,#ff4d4d,#DC143C); }
+  .dot-coalesce{ background: linear-gradient(180deg,#f5f7fa,#d9dde6); border:0.0625rem solid rgba(255,255,255,0.06); }
 
-    /* Modern Card Design */
-    .bar-card{
-      background: linear-gradient(180deg, rgba(100,100,100,0.03), rgba(200,200,200,0.07));
-      border-radius: var(--radius-lg);
-      padding: var(--space-md) var(--space-lg);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: var(--space-lg);
-      box-shadow: 0 0.375rem 1.125rem rgba(0,0,0,0.6);
-      transition: transform .14s ease, box-shadow .14s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    .bar-card:hover{ 
-      transform: translateY(-0.125rem); 
-      box-shadow: 0 1.25rem 1.875rem rgba(0,0,0,0.7); 
-    }
+  /* ===== ICON OVERLAY SYSTEM ===== */
+  
+  .bar-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.85);
+    width: 2.3rem; /* 37px */
+    height: 2.3rem; /* 37px */
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+    filter: drop-shadow(0 0.25rem 0.5rem rgba(0, 0, 0, 0.3));
+    
+    will-change: opacity, transform;
+    backface-visibility: hidden;
+    
+    transition: 
+      opacity var(--fade-in-duration) var(--easing-smooth),
+      transform var(--fade-in-duration) var(--easing-bounce);
+  }
 
-    .bar-left{
-      display:flex;
-      align-items:center;
-      gap: var(--space-md);
-      min-width: 0;
-      position: relative;
-    }
+  .bar-icon.visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 
-    .bar-dot{
-      width: 2.2rem;
-      height: 2.2rem;
-      border-radius:50%;
-      box-shadow: 0 0.125rem 0.375rem rgba(0,0,0,0.6), inset 0 -0.0625rem 0 rgba(255,255,255,0.05);
-      flex: 0 0 auto;
-      position: relative;
-    }
-    .dot-life{ background: linear-gradient(180deg,#5fd08f,#2fb96b); }
-    .dot-stamina{ background: linear-gradient(180deg,#6fb8ff,#2b74ff); }
-    .dot-mana{ background: linear-gradient(180deg,#ffc46b,#ff9a2b); }
-    .dot-energy{ background: linear-gradient(180deg,#6ff0ff,#13b6ff); }
-    .dot-empower{ background: linear-gradient(180deg,#ff4d4d,#DC143C); }
-    .dot-coalesce{ background: linear-gradient(180deg,#f5f7fa,#d9dde6); border:0.0625rem solid rgba(255,255,255,0.06); }
+  .bar-icon.fading {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+    transition: 
+      opacity var(--fade-out-duration) var(--easing-smooth),
+      transform var(--fade-out-duration) var(--easing-smooth);
+  }
 
-    /* Modern Icon System */
-    .bar-icon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.85);
-      width: 2.3rem;
-      height: 2.3rem;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 10;
-      filter: drop-shadow(0 0.25rem 0.5rem rgba(0, 0, 0, 0.3));
-      
-      will-change: opacity, transform;
-      backface-visibility: hidden;
-      
-      transition: 
-        opacity var(--fade-in-duration) var(--easing-smooth),
-        transform var(--fade-in-duration) var(--easing-bounce);
-    }
+  .bar-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    filter: drop-shadow(0 0.125rem 0.25rem rgba(0, 0, 0, 0.2));
+    transition: filter var(--fade-in-duration) var(--easing-smooth);
+  }
 
-    .bar-icon.visible {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
-    }
+  .bar-card:hover .bar-icon img {
+    filter: drop-shadow(0 0.25rem 0.5rem rgba(0, 0, 0, 0.3)) brightness(1.1);
+  }
 
-    .bar-icon.fading {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0.8);
-      transition: 
-        opacity var(--fade-out-duration) var(--easing-smooth),
-        transform var(--fade-out-duration) var(--easing-smooth);
-    }
+  .bar-label{ font-weight:600; font-size:1.38rem; color:#f1f5fb; white-space:nowrap; }
+  .bar-controls{ display:flex; align-items:center; gap:0.4375rem; padding-right: 0.125rem; }
 
-    .bar-icon img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      image-rendering: -webkit-optimize-contrast;
-      image-rendering: crisp-edges;
-      filter: drop-shadow(0 0.125rem 0.25rem rgba(0, 0, 0, 0.2));
-      transition: filter var(--fade-in-duration) var(--easing-smooth);
-    }
+  .bar-value{
+    width:5rem; /* 80px */
+    text-align:center;
+    font-weight:700;
+    font-size:1.10rem;
+    color:#ffffff;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  }
 
-    .bar-card:hover .bar-icon img {
-      filter: drop-shadow(0 0.25rem 0.5rem rgba(0, 0, 0, 0.3)) brightness(1.1);
-    }
+  .btn {
+    -webkit-appearance:none;
+    appearance:none;
+    border:0;
+    background: rgba(255,255,255,0.09);
+    color: #fff;
+    padding:0.375rem 0.625rem; /* 6px 10px */
+    border-radius:0.5rem; /* 8px */
+    cursor:pointer;
+    font-weight:700;
+    transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
+  }
+  .btn:active{ transform: scale(.97); }
+  .btn:focus{ outline:none; box-shadow:0 0 0 0.1875rem rgba(102,204,255,0.12); }
+  .btn:disabled{ opacity: 0.3; cursor: not-allowed; }
+  .btn:hover { background: #ff00ff; }
+  .btn-icon:hover { background: rgba(255,255,255,0.11); }
 
-    .bar-label{ 
-      font-weight:600; 
-      font-size:1.38rem; 
-      color:#f1f5fb; 
-      white-space:nowrap; 
-    }
-    .bar-controls{ 
-      display:flex; 
-      align-items:center; 
-      gap: var(--space-xs); 
-      padding-right: var(--space-xs); 
-    }
+  .btn-icon {
+    padding: 0.125rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    .bar-value{
-      width:5rem;
-      text-align:center;
-      font-weight:700;
-      font-size:1.10rem;
-      color:#ffffff;
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    }
+  .btn-icon svg {
+    width: 2rem;
+    height: 2rem;
+    color: white;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
 
-    /* Modern Button System */
-    .btn {
-      -webkit-appearance:none;
-      appearance:none;
-      border:0;
-      background: rgba(255,255,255,0.09);
-      color: #fff;
-      padding: var(--space-xs) var(--space-sm);
-      border-radius: var(--radius-sm);
-      cursor:pointer;
-      font-weight:700;
-      transition: transform .12s ease, background .12s ease, box-shadow .12s ease;
-    }
-    .btn:active{ transform: scale(.97); }
-    .btn:disabled{ 
-      opacity: 0.3; 
-      cursor: not-allowed; 
-    }
-    .btn:hover:not(:disabled) { 
-      background: #ff00ff; 
-    }
+  .btn-icon:hover svg {
+    transform: scale(1.10);
+    color: #ff00ff;
+  }
 
-    .btn-icon {
-      padding: var(--space-xs);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
+  .btn-icon:disabled svg {
+    opacity: 0.6;
+  }
 
-    .btn-icon svg {
-      width: 2rem;
-      height: 2rem;
-      color: white;
-      transition: transform 0.2s ease, color 0.2s ease;
-    }
+  /* ========= SIMPLIFIED ATTRIBUTE PRESS-AND-HOLD STYLES ========= */
+  
+  .attributes{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); /* 120px */
+    gap:1rem; /* 15px */
+    margin-top:2rem; /* 20px */
+  }
 
-    .btn-icon:hover:not(:disabled) svg {
-      transform: scale(1.10);
-      color: #ff00ff;
-    }
+  .attr{
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+    border-radius:0.75rem; /* 12px */
+    padding:1rem; /* 16px */
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:0.5rem; /* 8px */
+    cursor:pointer;
+    transition: box-shadow .16s ease, border-color .16s ease;
+    user-select:none;
+    
+    /* Professional touch target sizing */
+    min-height: 3rem; /* 48px */
+    min-width: 3rem;  /* 48px */
+    
+    touch-action: manipulation;
+    
+    position: relative;
+    overflow: visible;
+  }
+  
+  /* Hover state - desktop only (purple shadow) */
+  .attr:hover:not(.mobile-only) {
+    box-shadow: 0 0 0.75rem rgba(106, 27, 154, 0.6);
+  }
+  
+  /* Press-and-hold visual states - progressive shadow animation */
+  .attr.holding {
+    /* Start with white shadow that grows and brightens during hold */
+    box-shadow: 0 0 1rem rgba(255, 255, 255, 0.5);
+    /* Progressive shadow animation during hold */
+    animation: progressiveShadow var(--hold-duration) ease-out forwards;
+  }
+  
+  /* Success flash animation - gold flash at completion */
+  .attr.flash {
+    animation: goldFlash 1.0s ease-out forwards;
+  }
 
-    /* Modern Attributes Grid */
-    .attributes{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
-      gap: var(--space-lg);
-      margin-top: var(--space-xl);
-    }
+  .attr .attr-label{ 
+    font-weight:700; 
+    color:#f4f6fb; 
+    white-space: nowrap;
+    font-size: 0.9rem;
+  }
+  
+  .attr .attr-val{ 
+    font-weight:800; 
+    font-size:1.05rem; 
+    color:#eaeef8; 
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  }
 
-    /* Modern Attribute Cards */
-    .attr{
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-      border-radius: var(--radius-md);
-      padding: var(--space-md);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap: var(--space-sm);
-      cursor:pointer;
-      transition: box-shadow .16s ease, border-color .16s ease;
-      user-select:none;
-      
-      /* Professional touch target sizing */
-      min-height: 3rem;
-      min-width: 3rem;
-      
+  /* ========= CLOCK-STYLE PROGRESS RING ANIMATION ========= */
+  
+  .progress-ring {
+    position: absolute;
+    top: -0.25rem;
+    left: -0.25rem;
+    right: -0.25rem;
+    bottom: -0.25rem;
+    border-radius: 0.75rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  
+  .attr.holding .progress-ring {
+    opacity: 1;
+  }
+  
+  .progress-ring svg {
+    width: 100%;
+    height: 100%;
+    border-radius: 0.75rem;
+  }
+  
+  .progress-ring circle {
+    fill: none;
+    stroke-width: 0.2rem; /* 3px */
+    stroke-linecap: round;
+    transform-origin: center;
+    /* Start at 12 o'clock position */
+    transform: rotate(-90deg);
+  }
+  
+  .progress-ring .progress-bg {
+    stroke: var(--progress-bg);
+  }
+  
+  .progress-ring .progress-bar {
+    stroke: var(--progress-color);
+    /* Will be set dynamically via JavaScript */
+    stroke-dasharray: 251.327; /* Default - will be calculated */
+    stroke-dashoffset: 251.327; /* Default - will be calculated */
+    animation: none;
+  }
+  
+  .attr.holding .progress-bar {
+    animation: fillProgress var(--hold-duration) var(--hold-easing) forwards;
+  }
+  
+  /* Clock-style animation: fills from 0° to 360° clockwise */
+  @keyframes fillProgress {
+    0% {
+      stroke-dashoffset: var(--circumference, 251.327); /* Full circumference - no progress */
+    }
+    100% {
+      stroke-dashoffset: 0; /* No offset - full circle filled */
+    }
+  }
+
+  /* Progressive shadow during hold: white → larger/brighter white */
+  @keyframes progressiveShadow {
+    0% { box-shadow: 0 0 1rem rgba(255, 255, 255, 0.4); /* Starting white */ }
+    50% { box-shadow: 0 0 1.5rem rgba(255, 255, 255, 0.7); /* Growing brighter */  }
+    100% { box-shadow: 0 0 2rem rgba(255, 255, 255, 0.9); /* Largest and brightest */  }
+  }
+  
+  /* Flash animation at completion: gold flash */
+  @keyframes goldFlash {
+    0% { box-shadow: 0 0 2rem rgba(255, 255, 255, 0.9); /* From bright white */ }
+    50% { box-shadow: 0 0 2.5rem rgba(255, 215, 0, 1.0); /* Gold flash */ }
+    100% { box-shadow: 0 0 1.5rem rgba(255, 215, 0, 0.6); /* Gold fade */ }
+  }
+  
+  /* Apply the gold flash animation for completion */
+  .pulse { animation: goldFlash 0.4s ease-out forwards; }
+
+  .attr.luck{
+    border: 0.0625rem solid var(--gold);
+    box-shadow: 0 0.375rem 1.5rem rgba(212,175,55,0.12), inset 0 0.0625rem 0 rgba(255,255,255,0.03);
+    /* Set gold colors for progress ring */
+    --progress-color: var(--gold);
+    --progress-bg: rgba(212, 175, 55, 0.2);
+    --flash-color: var(--gold);
+  }
+  .attr.luck.cooling{ border: 0.0625rem solid transparent; box-shadow:none; }
+  .attr.luck.holding {
+    border-color: var(--gold);
+    /* Gold progress with same progressive animation */
+    box-shadow: 0 0 1rem rgba(255, 255, 255, 0.4);
+    animation: progressiveShadow var(--hold-duration) ease-out forwards;
+  }
+  .attr.luck.flash {
+    border-color: var(--gold);
+    box-shadow: 0 0 1.35rem var(--gold);
+  }
+
+  .muted{ color: rgba(255,255,255,0.54); font-size:0.88rem; }
+  .center{ text-align:center; }
+
+  @media(max-width:28rem){ /* 440px */
+    .bar-card{ padding:0.35rem; }
+    .bar-controls{ padding-right: 0.5rem; }
+    .attributes{ gap:1rem; margin-top:3rem; }
+    
+    .attr {
+      min-height: 2rem;
+      min-width: 2rem;
+    }
+    
+    .attr .attr-label {
+      font-size: 0.85rem;
+    }
+    
+    .attr .attr-val {
+      font-size: 1rem;
+    }
+  }
+
+  /* Mobile-specific touch handling */
+  @media (pointer: coarse) {
+    .attr {
       touch-action: manipulation;
-      
-      position: relative;
-      overflow: visible;
-      
-      /* Modern border */
-      border: 1px solid transparent;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
     
-    /* Hover state */
-    .attr:hover:not(.mobile-only) {
-      box-shadow: 0 0 0.75rem rgba(106, 27, 154, 0.6);
+    .attr.mobile-only:hover {
+      box-shadow: 0 0 0.5rem rgba(140, 50, 230, 0.6);
     }
-    
-    /* Press-and-hold visual states */
-    .attr.holding {
-      box-shadow: 0 0 1rem rgba(255, 255, 255, 0.5);
-      animation: progressiveShadow var(--hold-duration) ease-out forwards;
-    }
-    
-    /* Success flash animation */
-    .attr.flash {
-      animation: goldFlash 1.0s ease-out forwards;
-    }
+  }
 
-    /* Click animation for Luck attribute */
-    .attr.luck-clickable {
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    
-    .attr.luck-clickable:active {
-      transform: scale(0.98);
-    }
-    
-    .attr.luck-clickable.clicked {
-      animation: luckClickAnimation 0.3s ease-out;
-    }
+  #resetBtn {
+    position: fixed;
+    top: 0.625rem;
+    left: 0.625rem;
+    background: #1f1f1f;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1000;
+    transition: background 0.2s;
+  }
+  #resetBtn:hover { background: #ff4d4d; }
 
-    .attr .attr-label{ 
-      font-weight:700; 
-      color:#f4f6fb; 
-      white-space: nowrap;
-      font-size: 0.9rem;
-    }
-    
-    .attr .attr-val{ 
-      font-weight:800; 
-      font-size:1.05rem; 
-      color:#eaeef8; 
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    }
+  /* Heart Button - Top Right */
+  #heartBtn {
+    position: fixed;
+    top: 0.625rem;
+    right: 1.875rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: transparent;
+    border: 0.1875rem solid white;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    z-index: 1001;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  #heartBtn svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: transparent;
+    stroke: white;
+    stroke-width: 2;
+    transition: all 0.3s ease;
+  }
+  #heartBtn.active {
+    background: var(--scarlet-pink);
+    border-color: #333;
+  }
+  #heartBtn.active svg {
+    fill: var(--scarlet-pink);
+    stroke: #333;
+  }
+  #heartBtn:hover:not(.disabled) {
+    transform: scale(1.05);
+  }
+  #heartBtn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
-    /* Modern Progress Ring Animation */
-    .progress-ring {
-      position: absolute;
-      top: -0.25rem;
-      left: -0.25rem;
-      right: -0.25rem;
-      bottom: -0.25rem;
-      border-radius: var(--radius-md);
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-    }
-    
-    .attr.holding .progress-ring {
-      opacity: 1;
-    }
-    
-    .progress-ring svg {
-      width: 100%;
-      height: 100%;
-      border-radius: var(--radius-md);
-    }
-    
-    .progress-ring circle {
-      fill: none;
-      stroke-width: 0.2rem;
-      stroke-linecap: round;
-      transform-origin: center;
-      transform: rotate(-90deg);
-    }
-    
-    .progress-ring .progress-bg {
-      stroke: var(--progress-bg);
-    }
-    
-    .progress-ring .progress-bar {
-      stroke: var(--progress-color);
-      stroke-dasharray: 251.327;
-      stroke-dashoffset: 251.327;
-      animation: none;
-    }
-    
-    .attr.holding .progress-bar {
-      animation: fillProgress var(--hold-duration) var(--hold-easing) forwards;
-    }
-    
-    @keyframes fillProgress {
-      0% {
-        stroke-dashoffset: var(--circumference, 251.327);
-      }
-      100% {
-        stroke-dashoffset: 0;
-      }
-    }
+  /* Relationship Overlay */
+  #relationshipOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 15, 18, 0.85);
+    backdrop-filter: blur(0.5rem);
+    -webkit-backdrop-filter: blur(0.5rem);
+    z-index: 999;
+    display: none;
+    overflow-y: auto;
+    padding: 3.75rem 1rem 1.25rem;
+  }
+  #relationshipOverlay.visible {
+    display: block;
+  }
 
-    @keyframes progressiveShadow {
-      0% { box-shadow: 0 0 1rem rgba(255, 255, 255, 0.4); }
-      50% { box-shadow: 0 0 1.5rem rgba(255, 255, 255, 0.7); }
-      100% { box-shadow: 0 0 2rem rgba(255, 255, 255, 0.9); }
-    }
-    
-    @keyframes goldFlash {
-      0% { box-shadow: 0 0 2rem rgba(255, 255, 255, 0.9); }
-      50% { box-shadow: 0 0 2.5rem rgba(255, 215, 0, 1.0); }
-      100% { box-shadow: 0 0 1.5rem rgba(255, 215, 0, 0.6); }
-    }
-    
-    @keyframes luckClickAnimation {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); box-shadow: 0 0 1rem rgba(212, 175, 55, 0.6); }
-      100% { transform: scale(1); }
-    }
-    
-    .pulse { animation: goldFlash 0.4s ease-out forwards; }
+  .relationship-content {
+    max-width: 41.25rem;
+    margin: 0 auto;
+  }
 
-    /* Special Luck Styling */
-    .attr.luck{
-      border: 0.0625rem solid var(--gold);
-      box-shadow: 0 0.375rem 1.5rem rgba(212,175,55,0.12), inset 0 0.0625rem 0 rgba(255,255,255,0.03);
-      --progress-color: var(--gold);
-      --progress-bg: rgba(212, 175, 55, 0.2);
-      --flash-color: var(--gold);
-    }
-    
-    .attr.luck.cooling{ 
-      border-color: transparent; 
-      box-shadow: none; 
-    }
-    
-    .attr.luck.holding {
-      border-color: var(--gold);
-      box-shadow: 0 0 1rem rgba(255, 255, 255, 0.4);
-      animation: progressiveShadow var(--hold-duration) ease-out forwards;
-    }
-    
-    .attr.luck.flash {
-      border-color: var(--gold);
-      box-shadow: 0 0 1.35rem var(--gold);
-    }
+  .relationship-title {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: #fff;
+  }
 
-    /* Responsive Design */
-    @media(max-width:28rem){
-      .bar-card{ padding: var(--space-sm); }
-      .bar-controls{ padding-right: var(--space-sm); }
-      .attributes{ gap: var(--space-lg); margin-top: var(--space-xl); }
-      
-      .attr {
-        min-height: 2rem;
-        min-width: 2rem;
-      }
-      
-      .attr .attr-label {
-        font-size: 0.85rem;
-      }
-      
-      .attr .attr-val {
-        font-size: 1rem;
-      }
-    }
+  /* NPC Card */
+  .npc-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 1rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: stretch;
+    position: relative;
+  }
 
-    /* Mobile-specific touch handling */
-    @media (pointer: coarse) {
-      .attr {
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
-        user-select: none;
-      }
-      
-      .attr.mobile-only:hover {
-        box-shadow: 0 0 0.5rem rgba(140, 50, 230, 0.6);
-      }
-    }
-
-    /* Modern Fixed Buttons */
-    #resetBtn {
-      position: fixed;
-      top: var(--space-sm);
-      left: var(--space-sm);
-      background: #1f1f1f;
-      color: white;
-      border: none;
-      border-radius: var(--radius-sm);
-      padding: var(--space-xs) var(--space-sm);
-      font-size: 0.9rem;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 1000;
-      transition: background 0.2s;
-    }
-    #resetBtn:hover { background: #ff4d4d; }
-
-    /* Modern Heart Button */
-    #heartBtn {
-      position: fixed;
-      top: var(--space-sm);
-      right: 1.875rem;
-      width: 2.5rem;
-      height: 2.5rem;
-      background: transparent;
-      border: 0.1875rem solid white;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      z-index: 1001;
-      transition: all 0.3s ease;
+  .npc-image {
+      width: 9.375rem;
+      height: 9.375rem;
+      min-width: 9.375rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 0.125rem dashed rgba(255, 255, 255, 0.2);
+      border-radius: 0.75rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0;
-    }
-    #heartBtn svg {
-      width: 1.5rem;
-      height: 1.5rem;
-      fill: transparent;
-      stroke: white;
-      stroke-width: 2;
-      transition: all 0.3s ease;
-    }
-    #heartBtn.active {
-      background: var(--scarlet-pink);
-      border-color: #333;
-    }
-    #heartBtn.active svg {
-      fill: var(--scarlet-pink);
-      stroke: #333;
-    }
-    #heartBtn:hover:not(.disabled) {
-      transform: scale(1.05);
-    }
-    #heartBtn.disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* Modern Overlay System */
-    #relationshipOverlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(15, 15, 18, 0.85);
-      backdrop-filter: blur(0.5rem);
-      -webkit-backdrop-filter: blur(0.5rem);
-      z-index: 999;
-      display: none;
-      overflow-y: auto;
-      padding: 3.75rem var(--space-md) var(--space-lg);
-    }
-    #relationshipOverlay.visible {
-      display: block;
-    }
-
-    .relationship-content {
-      max-width: 41.25rem;
-      margin: 0 auto;
-    }
-
-    .relationship-title {
-      text-align: center;
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-      color: #fff;
-    }
-
-    /* Bottom Stats Bar */
-    #bottomStats {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(18, 18, 18, 0.95);
-      padding: var(--space-sm) var(--space-xs);
-      text-align: center;
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-      border-top: 0.0625rem solid rgba(255, 255, 255, 0.1);
-      z-index: 1;
-    }
-    #bottomStats span {
-      display: inline-block;
-      margin: var(--space-xs) var(--space-xs);
-      font-weight: bold;
-      color: #fff;
-    }
-    #bottomStats .stat-label {
-      color: #FFF;
-      font-weight: 600;
-    }
-    #bottomStats .stat-value {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 5ch;
-      padding: var(--space-xs) var(--space-md);
-      box-sizing: border-box;
-      border-radius: var(--radius-sm);
-      border: 0.125rem solid rgba(230, 227, 200, 0.25);
-      font-variant-numeric: tabular-nums;
-      font-feature-settings: "tnum";
-    }
-
-    /* Modern Accessibility */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-      
-      .bar-icon {
-        opacity: 1 !important;
-        transform: translate(-50%, -50%) scale(1) !important;
-      }
-      
-      .progress-ring .progress-bar {
-        stroke-dashoffset: 0 !important;
-      }
-    }
-
-    @media (prefers-contrast: high) {
-      .bar-icon {
-        filter: drop-shadow(0 0.125rem 0.25rem rgba(0, 0, 0, 0.8));
-      }
-      
-      .progress-ring circle {
-        stroke-width: 0.25rem;
-      }
-    }
-
-    /* Modern Attribute Icons */
-    .attr-value-wrap {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-xs);
-    }
-
-    .attr-icon {
-      width: 2rem;
-      height: 2rem;
-      padding: 0.0625rem;
-      object-fit: contain;
-      image-rendering: -webkit-optimize-contrast;
-      image-rendering: crisp-edges;
-      filter: drop-shadow(0 0.125rem 0.1875rem rgba(0,0,0,0.4));
-      flex-shrink: 0;
-    }
-
-    /* Utility Classes */
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
+      cursor: pointer;
+      transition: all 0.2s ease;
       overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
+  }
+
+  .npc-image:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.08);
+  }
+  
+  .npc-image svg {
+    width: 4rem;
+    height: 4rem;
+    stroke: rgba(255, 255, 255, 0.3);
+    stroke-width: 2;
+    fill: none;
+  }
+  
+  .npc-image.has-image {
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .npc-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 0.625rem;
+      max-width: 20rem;
+      max-height: 12.5rem;
+      min-width: 9.375rem;
+      min-height: 9.375rem;
+  }
+
+  /* NPC Info */
+  .npc-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .npc-name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .npc-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0.25rem 0;
+    padding-left: 0.5rem;
+    flex: 1;
+  }
+  .npc-name::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .name-confirm-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    min-width: 1.5rem;
+    background: rgba(76, 175, 80, 0.2);
+    border: 0.0625rem solid rgba(76, 175, 80, 0.5);
+    border-radius: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .name-confirm-btn.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .name-confirm-btn:hover {
+    background: rgba(76, 175, 80, 0.4);
+    border-color: rgba(76, 175, 80, 0.8);
+  }
+  .name-confirm-btn svg {
+    width: 1rem;
+    height: 1rem;
+    stroke: #4caf50;
+    stroke-width: 3;
+    fill: none;
+  }
+
+  .npc-status {
+    font-size: 1rem;
+    color: var(--muted);
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0.125rem 0;
+    padding-left: 0.5rem;
+    width: 100%;
+  }
+  .npc-status::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Hearts Container */
+  .npc-hearts {
+    display: flex;
+    gap: 0.375rem;
+    margin-top: auto;
+    padding-top: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .heart-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .heart-icon:hover:not(.locked) {
+    transform: scale(1.1);
+  }
+  .heart-icon.locked {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .heart-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: 2;
+    transition: all 0.3s ease;
+  }
+
+  /* Heart states */
+  .heart-icon.empty svg {
+    fill: transparent;
+    stroke: rgba(255, 255, 255, 0.3);
+  }
+  .heart-icon.filled-white svg {
+    fill: var(--heart-white);
+    stroke: var(--heart-white);
+  }
+  .heart-icon.filled-blue svg {
+    fill: var(--heart-blue);
+    stroke: var(--heart-blue);
+  }
+  .heart-icon.filled-purple svg {
+    fill: var(--heart-purple);
+    stroke: var(--heart-purple);
+  }
+  .heart-icon.filled-red svg {
+    fill: var(--heart-red);
+    stroke: var(--heart-red);
+  }
+
+  /* Heart number label inside heart */
+  .heart-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #333;
+    pointer-events: none;
+    user-select: none;
+  }
+  .heart-icon.empty .heart-number {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Pulsing animation for heart 7 */
+  @keyframes heartPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  .heart-icon.pulse-heart {
+    animation: heartPulse 2s ease-in-out infinite;
+  }
+
+  /* Add NPC Button */
+  .add-npc-btn {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 0.125rem dashed rgba(255, 255, 255, 0.15);
+    border-radius: 1rem;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  .add-npc-btn:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .add-npc-btn svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  /* Delete NPC Button */
+  .delete-npc-btn {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    background: rgba(255, 0, 0, 0.25);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.2s ease;
+  }
+
+  .npc-card:hover .delete-npc-btn {
+    opacity: 1;
+  }
+  .delete-npc-btn:hover {
+    background: rgba(255, 0, 0, 0.5);
+  }
+  .delete-npc-btn svg {
+    width: 0.75rem;
+    height: 0.75rem;
+    stroke: white;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  @media (max-width: 31.25rem) { /* 500px */
+    .npc-card {
+      flex-direction: column;
+      align-items: center;
     }
-
-    .muted{ color: rgba(255,255,255,0.54); font-size:0.88rem; }
-    .center{ text-align:center; }
-
-    /* Loading States */
-    .loading {
-      opacity: 0.6;
-      pointer-events: none;
+    .npc-image {
+      width: 9.375rem;
+      height: 9.375rem;
+      min-width: 9.375rem;
     }
-
-    .spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
+    .npc-info {
+      width: 100%;
+      align-items: center;
+      text-align: center;
     }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .npc-name, .npc-status {
+      text-align: center;
     }
+    .npc-hearts {
+      justify-content: center;
+    }
+  }
 
-  </style>
+  @media (max-width: 40rem) { /* 640px */
+    .npc-card {
+      flex-direction: row;
+      align-items: stretch;
+      max-width: 25rem;
+      padding: 0.25rem;
+    }
+    .npc-image {
+      min-width: 9.375rem;
+      width: 9.375rem;
+      height: 9.375rem;
+    }
+    .npc-info {
+      flex: 1;
+      align-items: flex-start;
+      padding-left: 0.5rem;
+    }
+    .npc-name {
+      font-size: 1rem;
+      text-align: left;
+    }
+    .npc-status {
+      font-size: 0.85rem;
+      text-align: left;
+    }
+    .npc-hearts {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.125rem;
+      justify-content: flex-start;
+      margin-top: 0.0625rem;
+      padding-left: 0;
+    }
+    .heart-icon {
+      width: 2.75rem;
+      height: 2rem;
+    }
+    .heart-number {
+      font-size: 0.7rem;
+    }
+    .heart-icon:nth-child(5) {
+      grid-column: 1;
+    }
+    .heart-icon:nth-child(6) {
+      grid-column: 2;
+    }
+    .heart-icon:nth-child(7) {
+      grid-column: 3;
+    }
+    .name-confirm-btn {
+      top: 0.375rem;
+      right: 0.375rem;
+    }
+    .delete-npc-btn {
+      bottom: 0.375rem;
+      right: 0.375rem;
+    }
+  }
+
+  /* Bottom Stats Bar */
+  #bottomStats {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(18, 18, 18, 0.95);
+    padding: 0.5rem 0.25rem;
+    text-align: center;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    border-top: 0.0625rem solid rgba(255, 255, 255, 0.1);
+    z-index: 1;
+  }
+  #bottomStats span {
+    display: inline-block;
+    margin: 0.0625rem 0.125rem;
+    font-weight: bold;
+    color: #fff;
+  }
+  #bottomStats .stat-label {
+    color: #FFF;
+    font-weight: 600;
+  }
+
+  #bottomStats .stat-value {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 5ch;
+    padding: 0.125rem 1rem;
+    box-sizing: border-box;
+    border-radius: 0.25rem;
+    border: 0.125rem solid rgba(230, 227, 200, 0.25);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* ===== ACCESSIBILITY & PERFORMANCE ===== */
+
+  /* Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .bar-icon,
+    .bar-card,
+    .attr,
+    .heart-icon,
+    .btn {
+      transition: none !important;
+      animation: none !important;
+    }
+    
+    .bar-icon {
+      opacity: 1 !important;
+      transform: translate(-50%, -50%) scale(1) !important;
+    }
+    
+    .progress-ring .progress-bar {
+      animation: none !important;
+      stroke-dashoffset: 0 !important;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .bar-icon {
+      filter: drop-shadow(0 0.125rem 0.25rem rgba(0, 0, 0, 0.8));
+    }
+    
+    .progress-ring circle {
+      stroke-width: 0.25rem;
+    }
+  }
+
+  /* Focus management for accessibility */
+  .bar-card:focus-within .bar-icon {
+    /* Optionally show icon on keyboard focus */
+  }
+
+  /* ===== ATTRIBUTE ICONS ===== */
+  .attr-value-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .attr-icon {
+    width: 2rem;
+    height: 2rem;
+    padding: 0.0625rem;
+    object-fit: contain;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    filter: drop-shadow(0 0.125rem 0.1875rem rgba(0,0,0,0.4));
+    flex-shrink: 0;
+  }
+
+  /* Professional focus indicators for accessibility */
+  .attr:focus-visible {
+    outline: 0.125rem solid #4caf50;
+    outline-offset: 0.125rem;
+    /* Show focus ring to indicate keyboard interaction is available */
+    box-shadow: 0 0 0.75rem rgba(76, 175, 80, 0.6);
+  }
+
+  .attr:focus-visible .progress-ring {
+    opacity: 1;
+  }
+
+</style>
 </head>
 <body>
-  <a href="#main-content" class="skip-link">Skip to main content</a>
-  
-  <button id="resetBtn" aria-label="Reset all data">RESET</button>
+  <button id="resetBtn">RESET</button>
   
   <!-- Heart Button -->
-  <button id="heartBtn" aria-label="Toggle Relationships" aria-expanded="false">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+  <button id="heartBtn" aria-label="Toggle Relationships">
+    <svg viewBox="0 0 24 24">
       <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
     </svg>
   </button>
 
   <!-- Relationship Overlay -->
-  <div id="relationshipOverlay" role="dialog" aria-modal="true" aria-labelledby="relationshipTitle">
+  <div id="relationshipOverlay">
     <div class="relationship-content">
-      <h2 class="relationship-title" id="relationshipTitle">Relationships</h2>
-      <div id="npcList" role="list"></div>
+      <div class="relationship-title" id="relationshipTitle">Relationships</div>
+      <div id="npcList"></div>
       <button class="add-npc-btn" id="addNpcBtn">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
           <line x1="12" y1="5" x2="12" y2="19"/>
           <line x1="5" y1="12" x2="19" y2="12"/>
         </svg>
-        <span>Add Character</span>
+        Add Character
       </button>
     </div>
   </div>
 
-  <main class="container" id="main-content">
-    <input 
-      id="playerName" 
-      placeholder="PLAYER" 
-      aria-label="Player name" 
-      autocomplete="name"
-      maxlength="50"
-    />
+  <div class="wrap">
+    <input id="playerName" placeholder="PLAYER" aria-label="Player name" />
 
-    <section class="bars" id="bars" role="region" aria-label="Player stats"></section>
+    <div class="bars" id="bars"></div>
 
-    <section class="attributes" id="attributes" role="region" aria-label="Player attributes"></section>
-  </main>
-
-  <div style="height: 3rem;"></div>
-  
+    <div class="attributes" id="attributes"></div>
+  </div>
+    <!-- Bottom spacer to provide breathing room for the last entry -->
+    <div style="height: 3rem;"></div>
   <!-- Bottom Stats Bar -->
-  <footer id="bottomStats" role="contentinfo">
-    <span class="stat-label">Level:</span><span class="stat-value" id="levelValue">1</span>
-    <span class="stat-label">Tinge:</span><span class="stat-value" id="tingeValue">0</span>
-    <span class="stat-label">Arcane:</span><span class="stat-value" id="arcaneValue">0</span>
-  </footer>
+  <div id="bottomStats">
+    <span class="stat-label">Level:</span><span class="stat-value" id="levelValue" style="background-color: rgba(106, 27, 154, 0.3)">1</span>
+    <span class="stat-label">Tinge:</span><span class="stat-value" id="tingeValue" style="background: linear-gradient(180deg,#F5B727,#F57927)">0</span>
+    <span class="stat-label">Arcane:</span><span class="stat-value" id="arcaneValue" style="background: linear-gradient(45deg,#27F5CC,#133bbb)">0</span>
+  </div>
 
 <script>
-/**
- * Modern Utility Functions
- */
-const Utils = {
-  // Debounce function for performance optimization
-  debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  },
-
-  // Throttle function for scroll events
-  throttle(func, limit) {
-    let inThrottle;
-    return function() {
-      const args = arguments;
-      const context = this;
-      if (!inThrottle) {
-        func.apply(context, args);
-        inThrottle = true;
-        setTimeout(() => inThrottle = false, limit);
-      }
-    };
-  },
-
-  // Safe localStorage operations
-  storage: {
-    set(key, value) {
-      try {
-        localStorage.setItem(key, JSON.stringify(value));
-        return true;
-      } catch (error) {
-        console.warn('Failed to save to localStorage:', error);
-        return false;
-      }
-    },
-    get(key, fallback = null) {
-      try {
-        const value = localStorage.getItem(key);
-        return value ? JSON.parse(value) : fallback;
-      } catch (error) {
-        console.warn('Failed to read from localStorage:', error);
-        return fallback;
-      }
-    },
-    remove(key) {
-      try {
-        localStorage.removeItem(key);
-        return true;
-      } catch (error) {
-        console.warn('Failed to remove from localStorage:', error);
-        return false;
-      }
-    }
-  },
-
-  // Generate unique IDs
-  generateId() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  },
-
-  // Format numbers with proper locale
-  formatNumber(num) {
-    return new Intl.NumberFormat().format(num);
-  }
-};
+/* ========= MODERN TOUCH INTERACTION MANAGER ========= */
 
 /**
- * Modern Touch Interaction Manager with Enhanced Accessibility
+ * Simplified Press-and-Hold Manager
+ * Implements clean 2.5-second hold with progress ring and flash
  */
-class ModernTouchManager {
+class SimpleTouchManager {
   constructor(options = {}) {
     this.config = {
-      holdDuration: options.holdDuration || 2500,
+      holdDuration: options.holdDuration || 2500, // 2.5 seconds
       moveThreshold: options.moveThreshold || 10,
       showProgress: options.showProgress !== false,
       hapticFeedback: options.hapticFeedback !== false,
@@ -879,28 +1066,38 @@ class ModernTouchManager {
   attach(element, onActivate, options = {}) {
     const elementOptions = { ...this.config, ...options };
     
-    // Enhanced accessibility
     element.setAttribute('role', 'button');
     element.setAttribute('aria-label', options.ariaLabel || 'Press and hold to activate');
     element.setAttribute('tabindex', '0');
     
-    // Prevent context menu on long press
+    // Set custom colors if provided
+    if (options.progressColor) {
+      element.style.setProperty('--progress-color', options.progressColor);
+      element.style.setProperty('--progress-bg', options.progressColor + '33'); // Add transparency
+    }
+    if (options.flashColor) {
+      element.style.setProperty('--flash-color', options.flashColor);
+    }
+    
     element.addEventListener('contextmenu', (e) => e.preventDefault());
     
-    // Event listeners with passive option for performance
-    element.addEventListener('pointerdown', (e) => this.handlePointerDown(e, element, onActivate, elementOptions), { passive: false });
-    element.addEventListener('pointermove', (e) => this.handlePointerMove(e, element), { passive: true });
-    element.addEventListener('pointerup', (e) => this.handlePointerUp(e, element), { passive: true });
-    element.addEventListener('pointercancel', (e) => this.handlePointerCancel(e, element), { passive: true });
-    element.addEventListener('pointerleave', (e) => this.handlePointerCancel(e, element), { passive: true });
+    element.addEventListener('pointerdown', (e) => this.handlePointerDown(e, element, onActivate, elementOptions));
+    element.addEventListener('pointermove', (e) => this.handlePointerMove(e, element));
+    element.addEventListener('pointerup', (e) => this.handlePointerUp(e, element));
+    element.addEventListener('pointercancel', (e) => this.handlePointerCancel(e, element));
+    element.addEventListener('pointerleave', (e) => this.handlePointerCancel(e, element));
     
-    // Keyboard support
     element.addEventListener('keydown', (e) => {
       if (e.code === 'Space' || e.code === 'Enter') {
         e.preventDefault();
         this.simulateHold(element, onActivate, elementOptions);
       }
     });
+    
+    // Removed click-based activation - stats only increase when hold completes
+    // This prevents premature stat increases on desktop clicks
+    
+    // Desktop users can use keyboard: Space or Enter keys to activate
     
     if (this.isTouchDevice) {
       element.classList.add('mobile-only');
@@ -987,7 +1184,7 @@ class ModernTouchManager {
     
     setTimeout(() => {
       element.classList.remove('flash');
-    }, 400);
+    }, 400); /* Match the goldFlash animation duration */
     
     this.activeHolds.delete(element);
   }
@@ -1013,7 +1210,7 @@ class ModernTouchManager {
       
       setTimeout(() => {
         element.classList.remove('flash');
-      }, 400);
+      }, 400); /* Match the goldFlash animation duration */
     }, options.holdDuration);
   }
   
@@ -1023,9 +1220,11 @@ class ModernTouchManager {
     const progressRing = document.createElement('div');
     progressRing.className = 'progress-ring';
     
+    // Fixed dimensions for consistent circular progress
     const radius = 42;
     const circumference = 2 * Math.PI * radius;
     
+    // Get colors from CSS variables or use defaults
     const progressColor = getComputedStyle(element).getPropertyValue('--progress-color').trim() || '#ffffff';
     const progressBg = getComputedStyle(element).getPropertyValue('--progress-bg').trim() || 'rgba(255, 255, 255, 0.2)';
     
@@ -1041,6 +1240,7 @@ class ModernTouchManager {
     
     element.appendChild(progressRing);
     
+    // Set CSS custom property for animation
     const progressBar = progressRing.querySelector('.progress-bar');
     progressBar.style.setProperty('--circumference', circumference);
   }
@@ -1053,68 +1253,16 @@ class ModernTouchManager {
   }
 }
 
-/**
- * Modern Click Handler for Luck Attribute
- */
-class ModernClickHandler {
-  constructor() {
-    this.handleClick = this.handleClick.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-  }
-
-  attach(element, onClick, options = {}) {
-    element.classList.add('luck-clickable');
-    element.setAttribute('role', 'button');
-    element.setAttribute('aria-label', options.ariaLabel || 'Click to roll luck');
-    element.setAttribute('tabindex', '0');
-
-    // Click handler
-    element.addEventListener('click', this.handleClick);
-    
-    // Keyboard support
-    element.addEventListener('keydown', this.handleKeyDown);
-
-    // Store callback for access
-    element._clickHandler = onClick;
-  }
-
-  handleClick(event) {
-    event.preventDefault();
-    const element = event.currentTarget;
-    const callback = element._clickHandler;
-    
-    if (callback) {
-      callback();
-    }
-    
-    // Visual feedback
-    element.classList.add('clicked');
-    setTimeout(() => {
-      element.classList.remove('clicked');
-    }, 300);
-  }
-
-  handleKeyDown(event) {
-    if (event.code === 'Space' || event.code === 'Enter') {
-      event.preventDefault();
-      this.handleClick(event);
-    }
-  }
-}
-
-// Initialize managers
-const touchManager = new ModernTouchManager({
+/* ========= touchscreen misclick prevention ========= */
+const touchManager = new SimpleTouchManager({
   holdDuration: 2500,
   showProgress: true,
   hapticFeedback: true,
   moveThreshold: 10
 });
 
-const clickHandler = new ModernClickHandler();
-
-// Modern SVG Components
-const SVG_ICONS = {
-  minus: `
+/* ========= SVG buttons ========= */
+const minusSVG = `
 <svg viewBox="0 0 24 24" aria-hidden="true">
   <path opacity="0.5"
         d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447
@@ -1133,9 +1281,9 @@ const SVG_ICONS = {
         stroke-width="1.5"
         stroke-linecap="round"/>
 </svg>
-`,
+`;
 
-  plus: `
+const plusSVG = `
 <svg viewBox="0 0 24 24" aria-hidden="true">
   <path opacity="0.5"
         d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447
@@ -1154,727 +1302,1063 @@ const SVG_ICONS = {
         stroke-width="1.5"
         stroke-linecap="round"/>
 </svg>
-`
+`;
+
+/* ========= Persistence helpers ========= */
+function saveState(key,value){ try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){} }
+function loadState(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
+
+/* ========= Bottom Stats Calculations ========= */
+function calculateLevel() {
+  const endurance = Number(loadState('Endurance', 0)) || 0;
+  const skill = Number(loadState('Skill', 0)) || 0;
+  const strength = Number(loadState('Strength', 0)) || 0;
+  const mastery = Number(loadState('Mastery', 0)) || 0;
+  const potency = Number(loadState('Potency', 0)) || 0;
+  
+  return 1 + endurance + skill + strength + mastery + potency;
+}
+
+function calculateTinge() {
+  const potency = Number(loadState('Potency', 0)) || 0;
+  const currentMana = Number(loadState('mana', 0)) || 0;
+  
+  console.log('Tinge calc - Potency:', potency, 'Current Mana:', currentMana, 'Total:', potency + currentMana);
+  return potency + currentMana;
+}
+
+function calculateArcane() {
+  const mastery = Number(loadState('Mastery', 0)) || 0;
+  const currentEnergy = Number(loadState('energy', 0)) || 0;
+  
+  console.log('Arcane calc - Mastery:', mastery, 'Current Energy:', currentEnergy, 'Total:', mastery + currentEnergy);
+  return mastery + currentEnergy;
+}
+
+function updateBottomStats() {
+  const level = calculateLevel();
+  const tinge = calculateTinge();
+  const arcane = calculateArcane();
+  
+  console.log('Bottom Stats Update - Level:', level, 'Tinge:', tinge, 'Arcane:', arcane);
+  document.getElementById('levelValue').textContent = level;
+  document.getElementById('tingeValue').textContent = tinge;
+  document.getElementById('arcaneValue').textContent = arcane;
+}
+
+/* ========= Stat Bonus Tables ========= */
+const enduranceBonuses = [
+  null,
+  { life: 2, stamina: 1, mana: 0, energy: 0 },
+  { life: 2, stamina: 1, mana: 0, energy: 0 },
+  { life: 2, stamina: 1, mana: 0, energy: 0 },
+  { life: 2, stamina: 1, mana: 0, energy: 0 },
+  { life: 2, stamina: 1, mana: 0, energy: 0 },
+  { life: 2, stamina: 1, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+];
+
+const skillBonuses = [
+  null,
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 1, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 0, stamina: 0, mana: 0, energy: 0 },
+  { life: 0, stamina: 0, mana: 0, energy: 0 },
+  { life: 0, stamina: 0, mana: 0, energy: 0 },
+];
+
+const strengthBonuses = [
+  null,
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 1, stamina: 1, mana: 0, energy: 0 },
+  { life: 1, stamina: 0, mana: 0, energy: 0 },
+  { life: 0, stamina: 0, mana: 0, energy: 0 },
+  { life: 0, stamina: 0, mana: 0, energy: 0 },
+  { life: 0, stamina: 0, mana: 0, energy: 0 },
+];
+
+const potencyBonuses = [
+  null,
+  { life: 0, stamina: 0, mana: 3, energy: 0 },
+  { life: 0, stamina: 0, mana: 2, energy: 1 },
+  { life: 0, stamina: 0, mana: 3, energy: 0 },
+  { life: 0, stamina: 0, mana: 2, energy: 1 },
+  { life: 0, stamina: 0, mana: 3, energy: 0 },
+  { life: 0, stamina: 0, mana: 3, energy: 0 },
+  { life: 0, stamina: 0, mana: 2, energy: 0 },
+  { life: 0, stamina: 0, mana: 2, energy: 0 },
+  { life: 0, stamina: 0, mana: 3, energy: 0 },
+];
+
+const masteryBonuses = [
+  null,
+  { life: 0, stamina: 0, mana: 1, energy: 2 },
+  { life: 0, stamina: 0, mana: 0, energy: 3 },
+  { life: 0, stamina: 0, mana: 1, energy: 3 },
+  { life: 0, stamina: 0, mana: 0, energy: 3 },
+  { life: 0, stamina: 0, mana: 0, energy: 2 },
+  { life: 0, stamina: 0, mana: 0, energy: 2 },
+  { life: 0, stamina: 0, mana: 0, energy: 2 },
+  { life: 0, stamina: 0, mana: 0, energy: 2 },
+  { life: 0, stamina: 0, mana: 0, energy: 2 },
+];
+
+/* ========= Calculate Maximum Limits ========= */
+function calculateLimits() {
+  const limits = {
+    life: 3,
+    stamina: 1,
+    mana: 3,
+    energy: 2
+  };
+
+  const endurance = Number(loadState('Endurance', 0)) || 0;
+  const skill = Number(loadState('Skill', 0)) || 0;
+  const strength = Number(loadState('Strength', 0)) || 0;
+  const potency = Number(loadState('Potency', 0)) || 0;
+  const mastery = Number(loadState('Mastery', 0)) || 0;
+
+  function sumBonuses(bonusTable, rank) {
+    let total = { life: 0, stamina: 0, mana: 0, energy: 0 };
+    for (let i = 1; i <= rank && i < bonusTable.length; i++) {
+      if (bonusTable[i]) {
+        total.life += bonusTable[i].life;
+        total.stamina += bonusTable[i].stamina;
+        total.mana += bonusTable[i].mana;
+        total.energy += bonusTable[i].energy;
+      }
+    }
+    return total;
+  }
+
+  const endBonus = sumBonuses(enduranceBonuses, endurance);
+  const skillBonus = sumBonuses(skillBonuses, skill);
+  const strBonus = sumBonuses(strengthBonuses, strength);
+  const potBonus = sumBonuses(potencyBonuses, potency);
+  const mastBonus = sumBonuses(masteryBonuses, mastery);
+
+  limits.life += endBonus.life + skillBonus.life + strBonus.life + potBonus.life + mastBonus.life;
+  limits.stamina += endBonus.stamina + skillBonus.stamina + strBonus.stamina + potBonus.stamina + mastBonus.stamina;
+  limits.mana += endBonus.mana + skillBonus.mana + strBonus.mana + potBonus.mana + mastBonus.mana;
+  limits.energy += endBonus.energy + skillBonus.energy + strBonus.energy + potBonus.energy + mastBonus.energy;
+
+  return limits;
+}
+
+/* ========= Bar Update Registry ========= */
+const barUpdateFunctions = {};
+
+/* ========= Bars config with min/max ranges and defaults ========= */
+const barsConfig = [
+  { key:'life', label:'Life', dotClass:'dot-life', min: -10, max: 30, default: 3, dynamic: true },
+  { key:'mana', label:'Mana', dotClass:'dot-mana', min: -1, max: 30, default: 0, dynamic: true },
+  { key:'stamina', label:'Stamina', dotClass:'dot-stamina', min: -3, max: 9, default: 1, dynamic: true },
+  { key:'energy', label:'Energy', dotClass:'dot-energy', min: -1, max: 30, default: 0, dynamic: true },
+  { key:'empower', label:'Empower', dotClass:'dot-empower', min: 0, max: 12, default: 0, dynamic: false },
+  { key:'coalesce', label:'Coalesce', dotClass:'dot-coalesce', min: 0, max: 12, default: 3, dynamic: false }
+];
+
+const barsContainer = document.getElementById('bars');
+
+/* ========= ICON MANAGEMENT SYSTEM ========= */
+
+function createBarIcon(barKey, barLabel) {
+  const iconContainer = document.createElement('div');
+  iconContainer.className = `bar-icon bar-icon--${barKey}`;
+  iconContainer.setAttribute('role', 'img');
+  iconContainer.setAttribute('aria-label', `${barLabel} icon`);
+  
+  const img = document.createElement('img');
+  img.alt = `${barLabel} icon`;
+  img.decoding = 'async';
+  img.loading = 'lazy';
+  
+  const iconPaths = {
+    life: '../icons/life1.png',
+    mana: '../icons/mana1.png',
+    stamina: '../icons/stamina1.png',
+    energy: '../icons/energy1.png',
+    empower: '../icons/empower1.png',
+    coalesce: '../icons/crys.svg'
+  };
+  
+  img.src = iconPaths[barKey] || iconPaths.life;
+  iconContainer.appendChild(img);
+  
+  return iconContainer;
+}
+
+class IconAnimationManager {
+  constructor() {
+    this.activeAnimations = new Map();
+    this.animationConfig = {
+      fadeInDuration: 300,
+      lingerDuration: 3000,
+      fadeOutDuration: 2000
+    };
+  }
+
+  showIcon(iconElement) {
+    this.clearAnimation(iconElement);
+    
+    iconElement.classList.add('visible');
+    iconElement.classList.remove('fading');
+    
+    const timer = setTimeout(() => {
+      this.fadeOutIcon(iconElement);
+    }, this.animationConfig.lingerDuration);
+    
+    this.activeAnimations.set(iconElement, timer);
+  }
+
+  fadeOutIcon(iconElement) {
+    this.clearAnimation(iconElement);
+    
+    iconElement.classList.add('fading');
+    
+    setTimeout(() => {
+      iconElement.classList.remove('visible', 'fading');
+      this.activeAnimations.delete(iconElement);
+    }, this.animationConfig.fadeOutDuration);
+  }
+
+  clearAnimation(iconElement) {
+    const timer = this.activeAnimations.get(iconElement);
+    if (timer) {
+      clearTimeout(timer);
+      this.activeAnimations.delete(iconElement);
+    }
+  }
+
+  handleBarHover(barCard, isHovering) {
+    const icon = barCard.querySelector('.bar-icon');
+    if (!icon) return;
+
+    if (isHovering) {
+      this.showIcon(icon);
+    } else {
+      this.clearAnimation(icon);
+      icon.classList.remove('visible', 'fading');
+    }
+  }
+
+  cleanup() {
+    this.activeAnimations.forEach((timer) => clearTimeout(timer));
+    this.activeAnimations.clear();
+  }
+}
+
+const iconManager = new IconAnimationManager();
+
+barsConfig.forEach(cfg => {
+  let value = Number(loadState(cfg.key, cfg.default));
+  value = Math.max(cfg.min, Math.min(cfg.max, value));
+  console.log('Bar loaded - Key:', cfg.key, 'Value:', value, 'Default:', cfg.default);
+  
+  const card = document.createElement('div');
+  card.className = 'bar-card';
+  card.dataset.key = cfg.key;
+  card.setAttribute('tabindex', '0');
+
+  const left = document.createElement('div'); left.className='bar-left';
+  const dot = document.createElement('div'); dot.className = 'bar-dot ' + cfg.dotClass;
+  const label = document.createElement('div'); label.className='bar-label'; label.textContent = cfg.label;
+
+  left.appendChild(dot);
+  left.appendChild(label);
+
+  const icon = createBarIcon(cfg.key, cfg.label);
+  dot.appendChild(icon);
+
+  const controls = document.createElement('div'); controls.className='bar-controls';
+
+  const valSpan = document.createElement('div'); valSpan.className='bar-value';
+  const minus = document.createElement('button');
+  minus.className = 'btn btn-icon';
+  minus.innerHTML = minusSVG;
+  minus.setAttribute('aria-label', 'Decrease');
+
+  const plus = document.createElement('button');
+  plus.className = 'btn btn-icon';
+  plus.innerHTML = plusSVG;
+  plus.setAttribute('aria-label', 'Increase');
+
+  function getCurrentMax() {
+    if (cfg.dynamic) {
+      const limits = calculateLimits();
+      return limits[cfg.key];
+    }
+    return cfg.max;
+  }
+
+  function updateDisplay() {
+    if (cfg.dynamic) {
+      const currentMax = getCurrentMax();
+      valSpan.textContent = `${value} / ${currentMax}`;
+    } else {
+      valSpan.textContent = String(value);
+    }
+  }
+
+  function updateButtonStates() {
+    const currentMax = getCurrentMax();
+    minus.disabled = (value <= cfg.min);
+    plus.disabled = (value >= currentMax);
+  }
+
+  function updateBar() {
+    const currentMax = getCurrentMax();
+    if (value > currentMax) {
+      value = currentMax;
+      saveState(cfg.key, value);
+    }
+    updateDisplay();
+    updateButtonStates();
+  }
+
+  if (cfg.dynamic) {
+    barUpdateFunctions[cfg.key] = () => {
+      updateBar();
+      if (cfg.key === 'mana' || cfg.key === 'energy') {
+        updateBottomStats();
+      }
+    };
+  }
+
+  minus.addEventListener('click', ()=> {
+    const newValue = value - 1;
+    if (newValue >= cfg.min) {
+      value = newValue;
+      updateDisplay();
+      saveState(cfg.key, value);
+      console.log('Bar decreased - Key:', cfg.key, 'New Value:', value);
+      updateButtonStates();
+      
+      if (cfg.key === 'mana' || cfg.key === 'energy') {
+        updateBottomStats();
+      }
+      
+      flashElement(card);
+    }
+  });
+  
+  plus.addEventListener('click', ()=> {
+    const currentMax = getCurrentMax();
+    const newValue = value + 1;
+    if (newValue <= currentMax) {
+      value = newValue;
+      updateDisplay();
+      saveState(cfg.key, value);
+      console.log('Bar increased - Key:', cfg.key, 'New Value:', value);
+      updateButtonStates();
+      
+      if (cfg.key === 'mana' || cfg.key === 'energy') {
+        updateBottomStats();
+      }
+      
+      flashElement(card);
+    }
+  });
+
+  updateDisplay();
+  updateButtonStates();
+
+  controls.appendChild(minus);
+  controls.appendChild(valSpan);
+  controls.appendChild(plus);
+
+  card.appendChild(left);
+  card.appendChild(controls);
+
+  card.addEventListener('mouseenter', () => iconManager.handleBarHover(card, true));
+  card.addEventListener('mouseleave', () => iconManager.handleBarHover(card, false));
+  
+  card.addEventListener('focus', () => iconManager.handleBarHover(card, true));
+  card.addEventListener('blur', () => iconManager.handleBarHover(card, false));
+
+  barsContainer.appendChild(card);
+});
+
+function updateAllBars() {
+  Object.values(barUpdateFunctions).forEach(updateFn => updateFn());
+}
+
+function flashElement(el){
+  el.style.transition = 'box-shadow .18s ease, transform .12s ease';
+  el.style.transform = 'translateY(-0.125rem)';
+  el.style.boxShadow = '0 0.875rem 2.25rem rgba(0,0,0,0.55)';
+  setTimeout(()=>{ el.style.transform=''; el.style.boxShadow=''; }, 160);
+}
+
+/* ===== ATTRIBUTE ICON MAP ===== */
+const STAT_ICONS = {
+  Endurance: '../icons/heart-shield.png',
+  Skill: '../icons/skl.png',
+  Strength: '../icons/str.png',
+  Potency: '../icons/potency8.png',
+  Mastery: '../icons/mastery4.png'
 };
 
-/**
- * Modern Data Management System
- */
-class DataManager {
-  constructor() {
-    this.save = Utils.debounce(this._save.bind(this), 100);
-    this.listeners = new Map();
+/* ========= Attributes (including Luck) ========= */
+const attrConfig = ["Endurance","Skill","Strength","Potency","Mastery","Luck"];
+const attrsContainer = document.getElementById('attributes');
+
+const limitAffectingAttrs = ["Endurance", "Skill", "Strength", "Potency", "Mastery"];
+
+attrConfig.forEach(name => {
+  let stored = loadState(name, name==='Luck' ? null : 0);
+  if(name!=='Luck') stored = Number(stored) || 0;
+
+  const card = document.createElement('div');
+  card.className = 'attr';
+  card.dataset.name = name;
+
+  const label = document.createElement('div');
+  label.className = 'attr-label';
+  label.textContent = name;
+
+  const valWrap = document.createElement('div');
+  valWrap.className = 'attr-value-wrap';
+
+  const icon = document.createElement('img');
+  icon.className = 'attr-icon';
+
+  if (STAT_ICONS[name]) {
+    icon.src = STAT_ICONS[name];
+    icon.alt = `${name} icon`;
+  } else {
+    icon.style.display = 'none';
   }
 
-  _save(key, value) {
-    return Utils.storage.set(key, value);
-  }
+  const val = document.createElement('span');
+  val.className = 'attr-val';
+  val.textContent = (name === 'Luck' ? '--' : stored);
 
-  save(key, value) {
-    this._save(key, value);
-    this.notifyListeners(key, value);
-  }
+  valWrap.appendChild(icon);
+  valWrap.appendChild(val);
 
-  load(key, fallback) {
-    return Utils.storage.get(key, fallback);
-  }
+  card.appendChild(label);
+  card.appendChild(valWrap);
+  attrsContainer.appendChild(card);
 
-  remove(key) {
-    Utils.storage.remove(key);
-    this.notifyListeners(key, null);
-  }
+    if(name === 'Luck'){
+      card.classList.add('luck');
 
-  subscribe(key, callback) {
-    if (!this.listeners.has(key)) {
-      this.listeners.set(key, new Set());
-    }
-    this.listeners.get(key).add(callback);
-    
-    // Return unsubscribe function
-    return () => {
-      const callbacks = this.listeners.get(key);
-      if (callbacks) {
-        callbacks.delete(callback);
-      }
-    };
-  }
+      let luckValue = loadState('Luck', null);
+      let showing = Boolean(loadState('luckShowing', false));
+      let lastLuck = loadState('luckLast', null);
+      let cooldownUntil = loadState('luckCooldownUntil', null);
+      let timerId = null;
+      let expired = false; // ✅ FIX #1
 
-  notifyListeners(key, value) {
-    const callbacks = this.listeners.get(key);
-    if (callbacks) {
-      callbacks.forEach(callback => {
-        try {
-          callback(value, key);
-        } catch (error) {
-          console.error('Error in data listener:', error);
+      function activateLuck() {
+        const rem = getRemainingSec();
+
+        // STATE 2: cooling
+        if (rem > 0) return;
+
+        // STATE 3: expired → reset
+        if (showing && expired) {
+          showing = false;
+          expired = false;
+          luckValue = null;
+
+          saveState('luckShowing', false);
+          saveState('Luck', null);
+
+          updateLuckDisplay();
+          return;
         }
-      });
-    }
-  }
 
-  clear() {
-    try {
-      localStorage.clear();
-      // Notify all listeners
-      this.listeners.forEach((callbacks, key) => {
-        callbacks.forEach(callback => {
-          try {
-            callback(null, key);
-          } catch (error) {
-            console.error('Error in clear listener:', error);
+        // STATE 1: ready → roll
+        luckValue = pickNewLuck();
+        saveState('Luck', luckValue);
+
+        showing = true;
+        expired = false;
+        saveState('luckShowing', true);
+
+        updateLuckDisplay();
+
+        card.classList.add('flash');
+        setTimeout(() => card.classList.remove('flash'), 400);
+
+        startCooldown(30);
+      }
+
+      function getRemainingSec(){
+        if(!cooldownUntil) return 0;
+        const rem = Math.ceil((cooldownUntil - Date.now())/1000);
+        return rem > 0 ? rem : 0;
+      }
+
+      function updateLuckDisplay(){
+        const rem = getRemainingSec();
+
+        if (showing && rem > 0) {
+          label.textContent = `Luck (${rem}s)`;
+          val.textContent = formatLuck(luckValue);
+          card.classList.add('cooling');
+          expired = false;
+        } 
+        else if (showing && expired) {
+          label.textContent = 'Luck';
+          val.textContent = formatLuck(luckValue);
+          card.classList.remove('cooling');
+        } 
+        else {
+          label.textContent = 'Luck';
+          val.textContent = '--';
+          card.classList.remove('cooling');
+        }
+      }
+
+      function startCooldown(seconds){
+        cooldownUntil = Date.now() + seconds*1000;
+        saveState('luckCooldownUntil', cooldownUntil);
+
+        if(timerId) clearInterval(timerId);
+        timerId = setInterval(() => {
+          if(getRemainingSec() <= 0){
+            clearInterval(timerId);
+            timerId = null;
+            cooldownUntil = null;
+            saveState('luckCooldownUntil', null);
+            expired = true; // ✅ state transition
+            updateLuckDisplay();
+          } else {
+            updateLuckDisplay();
           }
-        });
+        }, 1000);
+      }
+
+      function formatLuck(n){ return (n>=0? '+'+n : String(n)); }
+
+      function rollLuckWeighted(){
+        const options = [
+          {value:-1, weight:10},
+          {value:0, weight:10},
+          {value:1, weight:23},
+          {value:2, weight:23},
+          {value:3, weight:23},
+          {value:4, weight:10},
+          {value:10, weight:1}
+        ];
+        const total = options.reduce((s,o)=>s+o.weight,0);
+        let r = Math.random()*total;
+        for(let i=0;i<options.length;i++){
+          if(r < options[i].weight) return options[i].value;
+          r -= options[i].weight;
+        }
+        return options[options.length-1].value;
+      }
+
+      function pickNewLuck(){
+        let newVal;
+        let attempts = 0;
+        do {
+          newVal = rollLuckWeighted();
+          attempts++;
+          if(attempts>10) break;
+        } while(newVal === lastLuck);
+        lastLuck = newVal;
+        saveState('luckLast', lastLuck);
+        return newVal;
+      }
+
+      // Initialize luck value
+      if(showing){
+        luckValue = loadState('Luck', luckValue);
+      } else {
+        luckValue = loadState('Luck', null);
+      }
+
+      // Store references for global access
+      const luckCard = card;
+      const luckLabel = label;
+      const luckVal = val;
+
+      // Make activateLuck globally accessible for touch manager
+      window.activateLuck = activateLuck;
+      
+      // Verify the function is properly assigned
+      console.log('Luck function assigned:', typeof window.activateLuck);
+
+      // Use the same press-and-hold mechanism as other attributes
+      // but trigger the luck dice roll when the hold completes
+      touchManager.attach(card, activateLuck, {
+        ariaLabel: 'Press and hold to use Luck',
+        progressColor: '#D4AF37', // Gold color for Luck
+        flashColor: '#D4AF37'
       });
-      return true;
-    } catch (error) {
-      console.error('Failed to clear storage:', error);
-      return false;
+
+      updateLuckDisplay();
+    } else {
+    let valNum = stored;
+    let lockout = false;
+
+    function incrementAttribute() {
+      if (lockout) return;
+      valNum = (valNum + 1) % 10;
+      val.textContent = String(valNum);
+      saveState(name, valNum);
+
+      if (limitAffectingAttrs.includes(name)) {
+        updateAllBars();
+        updateBottomStats();
+      }
+
+      card.classList.add('pulse');
+      setTimeout(()=> card.classList.remove('pulse'), 420);
+
+      lockout = true;
+      setTimeout(()=> { lockout = false; }, 3000);
     }
+
+    // Apply touch handling to regular attributes
+    touchManager.attach(card, incrementAttribute, {
+      ariaLabel: `Press and hold to increase ${name}`
+    });
+  }
+});
+
+/* ========= Player name persistence and Enter handling ========= */
+const playerNameInput = document.getElementById('playerName');
+const existingName = loadState('playerName', '');
+if(existingName) playerNameInput.value = existingName;
+playerNameInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter'){
+    const nm = playerNameInput.value.trim();
+    saveState('playerName', nm);
+    playerNameInput.blur();
+  }
+});
+playerNameInput.addEventListener('blur', ()=>{
+  const nm = playerNameInput.value.trim();
+  saveState('playerName', nm);
+});
+
+/* Reset button */
+document.getElementById("resetBtn").onclick = () => {
+  if (confirm("Are you sure you want to RESET ALL DATA?")) {
+    localStorage.clear();
+    location.reload();
+  }
+};
+
+/* ========= Relationship System ========= */
+const heartBtn = document.getElementById('heartBtn');
+const relationshipOverlay = document.getElementById('relationshipOverlay');
+const npcList = document.getElementById('npcList');
+const addNpcBtn = document.getElementById('addNpcBtn');
+const relationshipTitle = document.getElementById('relationshipTitle');
+
+function updateRelationshipTitle() {
+  const name = playerNameInput.value.trim() || 'Player';
+  relationshipTitle.textContent = `${name}'s Relationships`;
+}
+
+updateRelationshipTitle();
+
+let isRelationshipOpen = false;
+
+function hasPlayerName() {
+  return playerNameInput.value.trim().length > 0;
+}
+
+function updateHeartButtonState() {
+  if (hasPlayerName()) {
+    heartBtn.classList.remove('disabled');
+  } else {
+    heartBtn.classList.add('disabled');
   }
 }
 
-const dataManager = new DataManager();
+heartBtn.addEventListener('click', () => {
+  if (!hasPlayerName()) {
+    alert('Please enter a player name first!');
+    return;
+  }
+  
+  isRelationshipOpen = !isRelationshipOpen;
+  if (isRelationshipOpen) {
+    relationshipOverlay.classList.add('visible');
+    heartBtn.classList.add('active');
+    updateRelationshipTitle();
+  } else {
+    relationshipOverlay.classList.remove('visible');
+    heartBtn.classList.remove('active');
+  }
+});
 
-/**
- * Modern Stats Calculation System
- */
-class StatsCalculator {
-  static calculateLevel() {
-    const endurance = Number(dataManager.load('Endurance', 0)) || 0;
-    const skill = Number(dataManager.load('Skill', 0)) || 0;
-    const strength = Number(dataManager.load('Strength', 0)) || 0;
-    const mastery = Number(dataManager.load('Mastery', 0)) || 0;
-    const potency = Number(dataManager.load('Potency', 0)) || 0;
-    
-    return 1 + endurance + skill + strength + mastery + potency;
+playerNameInput.addEventListener('input', () => {
+  updateHeartButtonState();
+  updateRelationshipTitle();
+});
+updateHeartButtonState();
+
+const heartPath = 'M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z';
+
+let npcs = loadState('npcs', []);
+
+function saveNpcs() {
+  saveState('npcs', npcs);
+}
+
+function getRelationshipStatus(hearts, npcName) {
+  let filledCount = 0;
+  for (let i = 0; i < hearts.length; i++) {
+    if (hearts[i] === 1) {
+      filledCount++;
+    } else {
+      break;
+    }
   }
 
-  static calculateTinge() {
-    const potency = Number(dataManager.load('Potency', 0)) || 0;
-    const currentMana = Number(dataManager.load('mana', 0)) || 0;
-    return potency + currentMana;
+  if (npcName === "Naya" && filledCount === 7) {
+    return "Best Friend";
   }
 
-  static calculateArcane() {
-    const mastery = Number(dataManager.load('Mastery', 0)) || 0;
-    const currentEnergy = Number(dataManager.load('energy', 0)) || 0;
-    return mastery + currentEnergy;
-  }
+  const statusMap = {
+    0: 'No Relationship',
+    1: 'Familiar',
+    2: 'Friendly',
+    3: 'Friends',
+    4: 'Accomplice',
+    5: 'Companion',
+    6: 'Partner',
+    7: 'Lover'
+  };
+  
+  return statusMap[filledCount] || 'No Relationship';
+}
 
-  static updateBottomStats() {
-    const level = this.calculateLevel();
-    const tinge = this.calculateTinge();
-    const arcane = this.calculateArcane();
-    
-    const levelEl = document.getElementById('levelValue');
-    const tingeEl = document.getElementById('tingeValue');
-    const arcaneEl = document.getElementById('arcaneValue');
-    
-    if (levelEl) levelEl.textContent = level;
-    if (tingeEl) tingeEl.textContent = tinge;
-    if (arcaneEl) arcaneEl.textContent = arcane;
+function updateNpcStatus(npcIndex) {
+  if (npcs[npcIndex]) {
+    npcs[npcIndex].status = getRelationshipStatus(
+    npcs[npcIndex].hearts,
+    npcs[npcIndex].name
+    );
   }
 }
 
-/**
- * Modern Dice Roll System for Luck
- */
-class DiceRollSystem {
-  constructor() {
-    this.cooldownTimer = null;
-    this.isRolling = false;
-  }
+const officialNpcImages = {
+  "Hitomi":           "hearts/000.webp",
+  "Tsubasa":          "hearts/001.webp",
+  "Tress Bien":       "hearts/002.webp",
+  "Dante Alimor":     "hearts/003.webp",
+  "Evelynn":          "hearts/004.webp",
+  "Flare vey Byornn": "hearts/005.webp",
+  "Guy":              "hearts/006.webp",
+  "Hector Havel":     "hearts/007.webp",
+  "Jiu-lin Fan":      "hearts/008.webp",
+  "Shang Tian":       "hearts/009.webp",
+  "Marco":            "hearts/010.webp",
+  "Lumiere":          "hearts/011.webp",
+  "Anjali":           "hearts/012.webp",
+  "Chinara Ekine":    "hearts/013.webp",
+  "Ohm":              "hearts/014.webp",
+  "Jon Quixote":      "hearts/015.webp",
+  "Naya":             "hearts/016.webp",
+  "Million Redgate":  "hearts/017.webp",
+  "Captain Thiffany": "hearts/018.webp",
+  "The Courier":      "hearts/019.webp",
+  "Paarthi Lomedi":   "hearts/035.webp",
+  "Qing Xi":          "hearts/036.webp",
+  "Reeve S Basilisk": "hearts/037.webp",
+  "Vincent Pererez":  "hearts/038.webp",
+  "Taeonora 9C":      "hearts/039.webp"
+}
 
-  rollLuck() {
-    // Weighted random dice roll for Luck
-    const options = [
-      { value: -2, weight: 10 },
-      { value: -1, weight: 10 },
-      { value: 1, weight: 23 },
-      { value: 2, weight: 23 },
-      { value: 3, weight: 23 },
-      { value: 4, weight: 10 },
-      { value: 10, weight: 1 }
-    ];
+function createNpcCard(npc, index) {
+  const card = document.createElement('div');
+  card.className = 'npc-card';
+  card.dataset.index = index;
 
-    const total = options.reduce((sum, option) => sum + option.weight, 0);
-    let random = Math.random() * total;
-
-    for (let option of options) {
-      if (random < option.weight) {
-        return option.value;
+  const deleteBtn = document.createElement('button');
+  deleteBtn.className = 'delete-npc-btn';
+  deleteBtn.innerHTML = '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  deleteBtn.addEventListener('click', () => {
+    if (confirm('Delete this character?')) {
+      if (npcs[index]) {
+        npcs[index].official = false;
       }
-      random -= option.weight;
+      npcs.splice(index, 1);
+
+      saveNpcs();
+      renderNpcs();
+      updateAddButtonVisibility();
     }
+  });
 
-    return options[options.length - 1].value;
+  const imageDiv = document.createElement('div');
+  imageDiv.className = 'npc-image' + (npc.image ? ' has-image' : '');
+  
+  if (npc.image) {
+    const img = document.createElement('img');
+    img.src = npc.image;
+    imageDiv.appendChild(img);
+  } else {
+    imageDiv.innerHTML = '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
   }
 
-  async rollAndDisplay(luckElement, labelElement, valueElement) {
-    if (this.isRolling) return;
-    this.isRolling = true;
-
-    // Add visual feedback
-    luckElement.classList.add('loading');
-    valueElement.textContent = '...';
-
-    // Simulate dice roll delay for better UX
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    const luckValue = this.rollLuck();
-    
-    // Save the luck value
-    dataManager.save('Luck', luckValue);
-    dataManager.save('luckShowing', true);
-
-    // Update display
-    const formattedValue = luckValue >= 0 ? `+${luckValue}` : `${luckValue}`;
-    valueElement.textContent = formattedValue;
-    labelElement.textContent = 'Luck';
-    luckElement.classList.remove('cooling');
-    luckElement.classList.remove('loading');
-
-    // Start cooldown
-    this.startCooldown(luckElement, labelElement, 60); // 60 second cooldown
-
-    this.isRolling = false;
-  }
-
-  startCooldown(luckElement, labelElement, seconds) {
-    const cooldownEnd = Date.now() + (seconds * 1000);
-    dataManager.save('luckCooldownUntil', cooldownEnd);
-
-    this.updateCooldownDisplay(luckElement, labelElement, cooldownEnd);
-
-    if (this.cooldownTimer) {
-      clearInterval(this.cooldownTimer);
-    }
-
-    this.cooldownTimer = setInterval(() => {
-      this.updateCooldownDisplay(luckElement, labelElement, cooldownEnd);
-    }, 1000);
-  }
-
-  updateCooldownDisplay(luckElement, labelElement, cooldownEnd) {
-    const now = Date.now();
-    const remaining = Math.ceil((cooldownEnd - now) / 1000);
-
-    if (remaining <= 0) {
-      // Cooldown finished
-      if (this.cooldownTimer) {
-        clearInterval(this.cooldownTimer);
-        this.cooldownTimer = null;
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*';
+  fileInput.style.display = 'none';
+  
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file.');
+        return;
       }
-      dataManager.remove('luckCooldownUntil');
-      luckElement.classList.remove('cooling');
+      
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image file size must be less than 5MB.');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        npcs[index].image = event.target.result;
+        saveNpcs();
+        renderNpcs();
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  imageDiv.addEventListener('click', () => {
+    if (npcs[index].official) {
+      alert("This is an official character. Their portrait cannot be changed.");
       return;
     }
-
-    // Update display
-    luckElement.classList.add('cooling');
-    labelElement.textContent = `Luck (${remaining}s)`;
-  }
-
-  restoreCooldown(luckElement, labelElement) {
-    const cooldownEnd = dataManager.load('luckCooldownUntil', null);
-    if (cooldownEnd && cooldownEnd > Date.now()) {
-      this.startCooldown(luckElement, labelElement, Math.ceil((cooldownEnd - Date.now()) / 1000));
+    if (!npcs[index].name || npcs[index].name.trim().length === 0) {
+      alert("Please enter a name before selecting an image.");
+      return;
     }
-  }
-}
-
-const diceRollSystem = new DiceRollSystem();
-
-/**
- * Modern UI Components
- */
-class ModernUI {
-  static createBarIcon(barKey, barLabel) {
-    const iconContainer = document.createElement('div');
-    iconContainer.className = `bar-icon bar-icon--${barKey}`;
-    iconContainer.setAttribute('role', 'img');
-    iconContainer.setAttribute('aria-label', `${barLabel} icon`);
-    
-    const img = document.createElement('img');
-    img.alt = `${barLabel} icon`;
-    img.decoding = 'async';
-    img.loading = 'lazy';
-    
-    const iconPaths = {
-      life: '../icons/life1.png',
-      mana: '../icons/mana1.png',
-      stamina: '../icons/stamina1.png',
-      energy: '../icons/energy1.png',
-      empower: '../icons/empower1.png',
-      coalesce: '../icons/crys.svg'
-    };
-    
-    img.src = iconPaths[barKey] || iconPaths.life;
-    iconContainer.appendChild(img);
-    
-    return iconContainer;
-  }
-
-  static flashElement(element) {
-    element.style.transition = 'box-shadow .18s ease, transform .12s ease';
-    element.style.transform = 'translateY(-0.125rem)';
-    element.style.boxShadow = '0 0.875rem 2.25rem rgba(0,0,0,0.55)';
-    setTimeout(() => {
-      element.style.transform = '';
-      element.style.boxShadow = '';
-    }, 160);
-  }
-
-  static updateButtonStates(button, isDisabled) {
-    button.disabled = isDisabled;
-    button.setAttribute('aria-disabled', isDisabled.toString());
-  }
-}
-
-/**
- * Modern Application Controller
- */
-class PlayerApp {
-  constructor() {
-    this.barUpdateFunctions = {};
-    this.init();
-  }
-
-  init() {
-    this.setupBars();
-    this.setupAttributes();
-    this.setupPlayerName();
-    this.setupResetButton();
-    this.setupRelationshipSystem();
-    this.updateBottomStats();
-  }
-
-  setupBars() {
-    const barsConfig = [
-      { key: 'life', label: 'Life', dotClass: 'dot-life', min: -10, max: 30, default: 3, dynamic: true },
-      { key: 'mana', label: 'Mana', dotClass: 'dot-mana', min: -1, max: 30, default: 0, dynamic: true },
-      { key: 'stamina', label: 'Stamina', dotClass: 'dot-stamina', min: -3, max: 9, default: 1, dynamic: true },
-      { key: 'energy', label: 'Energy', dotClass: 'dot-energy', min: -1, max: 30, default: 0, dynamic: true },
-      { key: 'empower', label: 'Empower', dotClass: 'dot-empower', min: 0, max: 12, default: 0, dynamic: false },
-      { key: 'coalesce', label: 'Coalesce', dotClass: 'dot-coalesce', min: 0, max: 12, default: 3, dynamic: false }
-    ];
-
-    const barsContainer = document.getElementById('bars');
-
-    barsConfig.forEach(cfg => {
-      let value = dataManager.load(cfg.key, cfg.default);
-      value = Math.max(cfg.min, Math.min(cfg.max, value));
-      
-      const card = document.createElement('div');
-      card.className = 'bar-card';
-      card.dataset.key = cfg.key;
-      card.setAttribute('tabindex', '0');
-      card.setAttribute('role', 'group');
-      card.setAttribute('aria-label', `${cfg.label} control`);
-
-      const left = document.createElement('div');
-      left.className = 'bar-left';
-      
-      const dot = document.createElement('div');
-      dot.className = `bar-dot ${cfg.dotClass}`;
-      
-      const label = document.createElement('div');
-      label.className = 'bar-label';
-      label.textContent = cfg.label;
-
-      left.appendChild(dot);
-      left.appendChild(label);
-
-      const icon = ModernUI.createBarIcon(cfg.key, cfg.label);
-      dot.appendChild(icon);
-
-      const controls = document.createElement('div');
-      controls.className = 'bar-controls';
-
-      const valSpan = document.createElement('div');
-      valSpan.className = 'bar-value';
-      
-      const minus = document.createElement('button');
-      minus.className = 'btn btn-icon';
-      minus.innerHTML = SVG_ICONS.minus;
-      minus.setAttribute('aria-label', `Decrease ${cfg.label}`);
-
-      const plus = document.createElement('button');
-      plus.className = 'btn btn-icon';
-      plus.innerHTML = SVG_ICONS.plus;
-      plus.setAttribute('aria-label', `Increase ${cfg.label}`);
-
-      const getCurrentMax = () => {
-        if (cfg.dynamic) {
-          return this.calculateLimits()[cfg.key];
-        }
-        return cfg.max;
-      };
-
-      const updateDisplay = () => {
-        if (cfg.dynamic) {
-          const currentMax = getCurrentMax();
-          valSpan.textContent = `${value} / ${currentMax}`;
-        } else {
-          valSpan.textContent = String(value);
-        }
-      };
-
-      const updateButtonStates = () => {
-        const currentMax = getCurrentMax();
-        ModernUI.updateButtonStates(minus, value <= cfg.min);
-        ModernUI.updateButtonStates(plus, value >= currentMax);
-      };
-
-      const updateBar = () => {
-        const currentMax = getCurrentMax();
-        if (value > currentMax) {
-          value = currentMax;
-          dataManager.save(cfg.key, value);
-        }
-        updateDisplay();
-        updateButtonStates();
-      };
-
-      minus.addEventListener('click', () => {
-        const newValue = value - 1;
-        if (newValue >= cfg.min) {
-          value = newValue;
-          updateDisplay();
-          dataManager.save(cfg.key, value);
-          updateButtonStates();
-          
-          if (cfg.key === 'mana' || cfg.key === 'energy') {
-            this.updateBottomStats();
-          }
-          
-          ModernUI.flashElement(card);
-        }
-      });
-
-      plus.addEventListener('click', () => {
-        const currentMax = getCurrentMax();
-        const newValue = value + 1;
-        if (newValue <= currentMax) {
-          value = newValue;
-          updateDisplay();
-          dataManager.save(cfg.key, value);
-          updateButtonStates();
-          
-          if (cfg.key === 'mana' || cfg.key === 'energy') {
-            this.updateBottomStats();
-          }
-          
-          ModernUI.flashElement(card);
-        }
-      });
-
-      updateDisplay();
-      updateButtonStates();
-
-      controls.appendChild(minus);
-      controls.appendChild(valSpan);
-      controls.appendChild(plus);
-
-      card.appendChild(left);
-      card.appendChild(controls);
-      barsContainer.appendChild(card);
-
-      // Store update function for dynamic bars
-      if (cfg.dynamic) {
-        this.barUpdateFunctions[cfg.key] = () => {
-          updateBar();
-          if (cfg.key === 'mana' || cfg.key === 'energy') {
-            this.updateBottomStats();
-          }
-        };
-      }
-    });
-  }
-
-  calculateLimits() {
-    const limits = {
-      life: 3,
-      stamina: 1,
-      mana: 3,
-      energy: 2
-    };
-
-    const endurance = Number(dataManager.load('Endurance', 0)) || 0;
-    const skill = Number(dataManager.load('Skill', 0)) || 0;
-    const strength = Number(dataManager.load('Strength', 0)) || 0;
-    const potency = Number(dataManager.load('Potency', 0)) || 0;
-    const mastery = Number(dataManager.load('Mastery', 0)) || 0;
-
-    const enduranceBonuses = [
-      null,
-      { life: 2, stamina: 1, mana: 0, energy: 0 },
-      { life: 2, stamina: 1, mana: 0, energy: 0 },
-      { life: 2, stamina: 1, mana: 0, energy: 0 },
-      { life: 2, stamina: 1, mana: 0, energy: 0 },
-      { life: 2, stamina: 1, mana: 0, energy: 0 },
-      { life: 2, stamina: 1, mana: 0, energy: 0 },
-      { life: 1, stamina: 0, mana: 0, energy: 0 },
-      { life: 1, stamina: 0, mana: 0, energy: 0 },
-      { life: 1, stamina: 0, mana: 0, energy: 0 },
-    ];
-
-    const skillBonuses = [
-      null,
-      { life: 1, stamina: 0, mana: 0, energy: 0 },
-      { life: 1, stamina: 1, mana: 0, energy: 0 },
-      { life: 1, stamina: 0, mana: 0, energy: 0 },
-      { life: 1, stamina: 0, mana: 0, energy: 0 },
-      { life: 1, stamina: 0, mana: 0, energy: 0 },
-      { life: 1, stamina: 0, mana: 0, energy: 0 },
-      { life: 0, stamina: 0, mana: 0, energy: 0 },
-      { life: 0, stamina: 0, mana: 0, energy: 0 },
-      { life: 0, stamina: 0, mana: 0, energy: 0 },
-    ];
-
-    const strengthBonuses = [
-      null,
-      { life: 1, stamina: 0, mana: 0, energy: 0 },
-      { life: 1, stamina: 0, mana: 0, energy: 0 },
-      { life: 1, stamina: 0, mana: 0, energy: 0 },
-      { life: 1, stamina: 0, mana: 0, energy: 0 },
-      { life: 1, stamina: 1, mana: 0, energy: 0 },
-      { life: 1, stamina: 0, mana: 0, energy: 0 },
-      { life: 0, stamina: 0, mana: 0, energy: 0 },
-      { life: 0, stamina: 0, mana: 0, energy: 0 },
-      { life: 0, stamina: 0, mana: 0, energy: 0 },
-    ];
-
-    const potencyBonuses = [
-      null,
-      { life: 0, stamina: 0, mana: 3, energy: 0 },
-      { life: 0, stamina: 0, mana: 2, energy: 1 },
-      { life: 0, stamina: 0, mana: 3, energy: 0 },
-      { life: 0, stamina: 0, mana: 2, energy: 1 },
-      { life: 0, stamina: 0, mana: 3, energy: 0 },
-      { life: 0, stamina: 0, mana: 3, energy: 0 },
-      { life: 0, stamina: 0, mana: 2, energy: 0 },
-      { life: 0, stamina: 0, mana: 2, energy: 0 },
-      { life: 0, stamina: 0, mana: 3, energy: 0 },
-    ];
-
-    const masteryBonuses = [
-      null,
-      { life: 0, stamina: 0, mana: 1, energy: 2 },
-      { life: 0, stamina: 0, mana: 0, energy: 3 },
-      { life: 0, stamina: 0, mana: 1, energy: 3 },
-      { life: 0, stamina: 0, mana: 0, energy: 3 },
-      { life: 0, stamina: 0, mana: 0, energy: 2 },
-      { life: 0, stamina: 0, mana: 0, energy: 2 },
-      { life: 0, stamina: 0, mana: 0, energy: 2 },
-      { life: 0, stamina: 0, mana: 0, energy: 2 },
-      { life: 0, stamina: 0, mana: 0, energy: 2 },
-    ];
-
-    const sumBonuses = (bonusTable, rank) => {
-      let total = { life: 0, stamina: 0, mana: 0, energy: 0 };
-      for (let i = 1; i <= rank && i < bonusTable.length; i++) {
-        if (bonusTable[i]) {
-          total.life += bonusTable[i].life;
-          total.stamina += bonusTable[i].stamina;
-          total.mana += bonusTable[i].mana;
-          total.energy += bonusTable[i].energy;
-        }
-      }
-      return total;
-    };
-
-    const endBonus = sumBonuses(enduranceBonuses, endurance);
-    const skillBonus = sumBonuses(skillBonuses, skill);
-    const strBonus = sumBonuses(strengthBonuses, strength);
-    const potBonus = sumBonuses(potencyBonuses, potency);
-    const mastBonus = sumBonuses(masteryBonuses, mastery);
-
-    limits.life += endBonus.life + skillBonus.life + strBonus.life + potBonus.life + mastBonus.life;
-    limits.stamina += endBonus.stamina + skillBonus.stamina + strBonus.stamina + potBonus.stamina + mastBonus.stamina;
-    limits.mana += endBonus.mana + skillBonus.mana + strBonus.mana + potBonus.mana + mastBonus.mana;
-    limits.energy += endBonus.energy + skillBonus.energy + strBonus.energy + potBonus.energy + mastBonus.energy;
-
-    return limits;
-  }
-
-  updateAllBars() {
-    Object.values(this.barUpdateFunctions).forEach(updateFn => updateFn());
-  }
-
-  updateBottomStats() {
-    StatsCalculator.updateBottomStats();
-  }
-
-  setupAttributes() {
-    const attrConfig = ["Endurance", "Skill", "Strength", "Potency", "Mastery", "Luck"];
-    const attrsContainer = document.getElementById('attributes');
-
-    const limitAffectingAttrs = ["Endurance", "Skill", "Strength", "Potency", "Mastery"];
-
-    attrConfig.forEach(name => {
-      const stored = dataManager.load(name, name === 'Luck' ? null : 0);
-      const finalStored = name !== 'Luck' ? Number(stored) || 0 : stored;
-
-      const card = document.createElement('div');
-      card.className = 'attr';
-      card.dataset.name = name;
-
-      const label = document.createElement('div');
-      label.className = 'attr-label';
-      label.textContent = name;
-
-      const valWrap = document.createElement('div');
-      valWrap.className = 'attr-value-wrap';
-
-      const icon = document.createElement('img');
-      icon.className = 'attr-icon';
-
-      const STAT_ICONS = {
-        Endurance: '../icons/heart-shield.png',
-        Skill: '../icons/skl.png',
-        Strength: '../icons/str.png',
-        Potency: '../icons/potency8.png',
-        Mastery: '../icons/mastery4.png'
-      };
-
-      if (STAT_ICONS[name]) {
-        icon.src = STAT_ICONS[name];
-        icon.alt = `${name} icon`;
-      } else {
-        icon.style.display = 'none';
-      }
-
-      const val = document.createElement('span');
-      val.className = 'attr-val';
-      val.textContent = name === 'Luck' ? '--' : finalStored;
-
-      valWrap.appendChild(icon);
-      valWrap.appendChild(val);
-
-      card.appendChild(label);
-      card.appendChild(valWrap);
-      attrsContainer.appendChild(card);
-
-      if (name === 'Luck') {
-        // Special Luck attribute handling
-        card.classList.add('luck');
-        
-        const rollLuck = () => {
-          const cooldownUntil = dataManager.load('luckCooldownUntil', null);
-          if (cooldownUntil && cooldownUntil > Date.now()) {
-            const remaining = Math.ceil((cooldownUntil - Date.now()) / 1000);
-            label.textContent = `Luck (${remaining}s)`;
-            return;
-          }
-          
-          diceRollSystem.rollAndDisplay(card, label, val);
-        };
-
-        // Use click handler instead of touch manager for Luck
-        clickHandler.attach(card, rollLuck, {
-          ariaLabel: 'Click to roll luck dice'
-        });
-
-        // Restore cooldown if exists
-        diceRollSystem.restoreCooldown(card, label);
-
-      } else {
-        // Regular attributes with press-and-hold
-        let valNum = finalStored;
-        let lockout = false;
-
-        const incrementAttribute = () => {
-          if (lockout) return;
-
-          valNum = (valNum + 1) % 10;
-          val.textContent = String(valNum);
-          dataManager.save(name, valNum);
-
-          if (limitAffectingAttrs.includes(name)) {
-            this.updateAllBars();
-            this.updateBottomStats();
-          }
-
-          card.classList.add('pulse');
-          setTimeout(() => card.classList.remove('pulse'), 420);
-
-          lockout = true;
-          setTimeout(() => { lockout = false; }, 3000);
-        };
-
-        touchManager.attach(card, incrementAttribute, {
-          ariaLabel: `Press and hold to increase ${name}`,
-          progressColor: '#D4AF37',
-          flashColor: '#D4AF37'
-        });
-      }
-    });
-  }
-
-  setupPlayerName() {
-    const playerNameInput = document.getElementById('playerName');
-    const existingName = dataManager.load('playerName', '');
-    
-    if (existingName) {
-      playerNameInput.value = existingName;
-    }
-
-    const savePlayerName = Utils.debounce(() => {
-      const nm = playerNameInput.value.trim();
-      dataManager.save('playerName', nm);
-    }, 300);
-
-    playerNameInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        savePlayerName();
-        playerNameInput.blur();
-      }
-    });
-
-    playerNameInput.addEventListener('input', savePlayerName);
-    playerNameInput.addEventListener('blur', savePlayerName);
-  }
-
-  setupResetButton() {
-    const resetBtn = document.getElementById('resetBtn');
-    resetBtn.addEventListener('click', () => {
-      if (confirm('Are you sure you want to RESET ALL DATA?')) {
-        dataManager.clear();
-        location.reload();
-      }
-    });
-  }
-
-  setupRelationshipSystem() {
-    // Placeholder for relationship system
-    // This would be implemented similarly with modern standards
-  }
-}
-
-// Initialize the application
-document.addEventListener('DOMContentLoaded', () => {
-  new PlayerApp();
-});
-
-// Handle page visibility changes for better performance
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    // Pause any animations or timers when page is hidden
-  } else {
-    // Resume animations when page becomes visible
-  }
-});
-
-// Handle service worker registration for PWA capabilities
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    // navigator.serviceWorker.register('/sw.js')
-    //   .then(registration => console.log('SW registered'))
-    //   .catch(error => console.log('SW registration failed'));
+    fileInput.click();
   });
+
+  const infoDiv = document.createElement('div');
+  infoDiv.className = 'npc-info';
+
+  const nameInput = document.createElement('input');
+  nameInput.className = 'npc-name';
+  nameInput.placeholder = 'Character Name';
+  nameInput.value = npc.name || '';
+  const nameRow = document.createElement('div');
+  nameRow.className = 'npc-name-row';
+
+  const confirmBtn = document.createElement('button');
+  confirmBtn.className = 'name-confirm-btn';
+  confirmBtn.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+  confirmBtn.title = 'Save name';
+
+  function saveName() {
+    const oldName = npcs[index].name || '';
+    const newName = nameInput.value.trim();
+
+    npcs[index].name = newName;
+
+    if (oldName.length === 0 && newName.length > 0) {
+      npcs[index].hearts[0] = 1;
+    } else if (newName.length === 0) {
+      npcs[index].hearts = [0,0,0,0,0,0,0];
+      npcs[index].image = null;
+    }
+
+    if (officialNpcImages[newName]) {
+      npcs[index].image = officialNpcImages[newName];
+      npcs[index].official = true;
+    } else {
+      if (!npcs[index].official) {
+        // Leave existing custom image unchanged
+      }
+      npcs[index].official = false;
+    }
+
+    updateNpcStatus(index);
+    saveNpcs();
+    renderNpcs();
+  }
+
+  nameInput.addEventListener('input', () => {
+    const currentValue = nameInput.value.trim();
+    const savedName = npcs[index].name || '';
+    
+    if (currentValue !== savedName && currentValue.length > 0) {
+      confirmBtn.classList.add('visible');
+    } else {
+      confirmBtn.classList.remove('visible');
+    }
+  });
+
+  nameInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      saveName();
+      nameInput.blur();
+    }
+  });
+
+  confirmBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    saveName();
+  });
+
+  nameRow.appendChild(nameInput);
+  nameRow.appendChild(confirmBtn);
+
+  const statusInput = document.createElement('div');
+  statusInput.className = 'npc-status';
+  statusInput.textContent = npc.status || 'No Relationship';
+
+  const heartsDiv = document.createElement('div');
+  heartsDiv.className = 'npc-hearts';
+
+  if (!npc.hearts || npc.hearts.length !== 7) {
+    npc.hearts = [0, 0, 0, 0, 0, 0, 0];
+  }
+
+  const hasName = npc.name && npc.name.trim().length > 0;
+  if (hasName && npc.hearts[0] === 0) {
+    npc.hearts[0] = 1;
+    updateNpcStatus(index);
+    saveNpcs();
+  }
+
+  if (!npc.status) {
+    updateNpcStatus(index);
+    saveNpcs();
+  }
+
+  for (let i = 0; i < 7; i++) {
+    const heartIcon = document.createElement('div');
+    heartIcon.className = 'heart-icon';
+    heartIcon.dataset.heartIndex = i;
+    
+    const heartLevel = npc.hearts[i];
+    
+    if (heartLevel === 0) {
+      heartIcon.classList.add('empty');
+    } else {
+      if (i === 0) {
+        heartIcon.classList.add('filled-white');
+      } else if (i >= 1 && i <= 2) {
+        heartIcon.classList.add('filled-blue');
+      } else if (i >= 3 && i <= 4) {
+        heartIcon.classList.add('filled-purple');
+      } else if (i >= 5 && i <= 6) {
+        heartIcon.classList.add('filled-red');
+      }
+    }
+
+    if (i === 6 && heartLevel === 1) {
+      heartIcon.classList.add('pulse-heart');
+    }
+
+    const isLocked = !hasName || (i > 0 && npc.hearts[i - 1] === 0);
+    if (isLocked) {
+      heartIcon.classList.add('locked');
+    }
+
+    heartIcon.innerHTML = `<svg viewBox="0 0 24 24"><path d="${heartPath}"/></svg><div class="heart-number">${i + 1}</div>`;
+
+    heartIcon.addEventListener('click', () => {
+      if (!hasName) {
+        alert('Please enter a character name first!');
+        return;
+      }
+
+      if (i === 0) {
+        return;
+      }
+
+      if (i > 0 && npc.hearts[i - 1] === 0) {
+        return;
+      }
+
+      npcs[index].hearts[i] = npcs[index].hearts[i] === 0 ? 1 : 0;
+      
+      if (npcs[index].hearts[i] === 0) {
+        for (let j = i + 1; j < 7; j++) {
+          npcs[index].hearts[j] = 0;
+        }
+      }
+      
+      updateNpcStatus(index);
+      
+      saveNpcs();
+      renderNpcs();
+    });
+
+    heartsDiv.appendChild(heartIcon);
+  }
+
+  infoDiv.appendChild(nameRow);
+  infoDiv.appendChild(statusInput);
+  infoDiv.appendChild(heartsDiv);
+
+  card.appendChild(deleteBtn);
+  card.appendChild(imageDiv);
+  card.appendChild(fileInput);
+  card.appendChild(infoDiv);
+
+  return card;
 }
+
+function renderNpcs() {
+  npcList.innerHTML = '';
+  npcs.forEach((npc, index) => {
+    npcList.appendChild(createNpcCard(npc, index));
+  });
+  updateAddButtonVisibility();
+}
+
+addNpcBtn.addEventListener('click', () => {
+  if (npcs.length >= 3) {
+    alert('Maximum of 3 characters allowed');
+    return;
+  }
+  npcs.push({
+    name: '',
+    status: 'No Relationship',
+    image: null,
+    hearts: [0, 0, 0, 0, 0, 0, 0]
+  });
+  saveNpcs();
+  renderNpcs();
+  updateAddButtonVisibility();
+});
+
+function updateAddButtonVisibility() {
+  if (npcs.length >= 3) {
+    addNpcBtn.style.display = 'none';
+  } else {
+    addNpcBtn.style.display = 'flex';
+  }
+}
+
+renderNpcs();
+updateAddButtonVisibility();
+
+updateBottomStats();
+
+window.addEventListener('beforeunload', () => {
+  iconManager.cleanup();
+});
 
 </script>
 </body>

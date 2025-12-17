@@ -1254,7 +1254,7 @@ class SimpleTouchManager {
 
 /* ========= touchscreen misclick prevention ========= */
 const touchManager = new SimpleTouchManager({
-  holdDuration: 2500,
+  holdDuration: 2600,
   showProgress: true,
   hapticFeedback: true,
   moveThreshold: 10
@@ -2108,7 +2108,7 @@ function createNpcCard(npc, index) {
         return;
       }
       
-      if (file.size > 5 * 1024 * 1024) {
+      if (file.size > 6 * 2160 * 2160) {
         alert('Image file size must be less than 5MB.');
         return;
       }
