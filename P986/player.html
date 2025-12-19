@@ -1018,8 +1018,16 @@
 }
 
 .inventory-item[data-slot="item"] img {
-  width: 4rem;
-  height: 4rem;
+  width: 7.6rem;
+  height: 10.6rem;
+  /* 2025 Enhancement: Maintain aspect ratio for item images (1218x1698) */
+  object-fit: cover;
+}
+
+/* Ensure item inv-image container matches the new size */
+.inventory-item[data-slot="item"] .inv-image {
+  width: 7.6rem;
+  height: 10.6rem;
 }
 
 /* Inventory cards - match NPC card layout */
@@ -2606,8 +2614,20 @@ function createNpcCard(npc, index) {
       npcs[index].image = null;
     }
 
-    if (officialNpcImages[newName]) {
-      npcs[index].image = officialNpcImages[newName];
+    // 2025 Enhancement: Case-insensitive NPC name matching
+    const findOfficialNpc = (searchName) => {
+      const searchLower = searchName.toLowerCase();
+      for (const [npcName, imagePath] of Object.entries(officialNpcImages)) {
+        if (npcName.toLowerCase() === searchLower) {
+          return { name: npcName, image: imagePath };
+        }
+      }
+      return null;
+    };
+    
+    const foundNpc = findOfficialNpc(newName);
+    if (foundNpc) {
+      npcs[index].image = foundNpc.image;
       npcs[index].official = true;
     } else {
       if (!npcs[index].official) {
@@ -3515,25 +3535,55 @@ function itemAlreadyExists(name, excludeIndex = -1) {
   return inventory.some((item, i) => i !== excludeIndex && item?.name === name);
 }
 
+// 2025 Enhancement: Case-insensitive duplicate checking
+function itemAlreadyExistsCaseInsensitive(name, excludeIndex = -1) {
+  const searchLower = name.toLowerCase();
+  return inventory.some((item, i) => i !== excludeIndex && item?.name?.toLowerCase() === searchLower);
+}
+
 function validateInventoryName(name, slot, excludeIndex = -1) {
   if (!name || name.trim().length === 0) return null;
   const trimmed = name.trim();
   
-  // Get item data
+  // 2025 Enhancement: Case-insensitive matching for user convenience
+  const findCaseInsensitive = (obj, searchName) => {
+    const searchLower = searchName.toLowerCase();
+    for (const [key, value] of Object.entries(obj)) {
+      if (key.toLowerCase() === searchLower) {
+        return { key, data: value };
+      }
+    }
+    return null;
+  };
+  
+  // Get item data with case-insensitive matching
   let itemData = null;
-  if (slot === 'artefact' && inventoryDB.artefacts[trimmed]) {
-    itemData = { name: trimmed, ...inventoryDB.artefacts[trimmed], locked: true };
-  } else if (slot === 'iris' && inventoryDB.irises[trimmed]) {
-    itemData = { name: trimmed, ...inventoryDB.irises[trimmed], locked: true };
-  } else if (inventoryDB.items[trimmed]) {
-    itemData = { name: trimmed, ...inventoryDB.items[trimmed], locked: true };
-  } else {
+  let foundItem = null;
+  
+  if (slot === 'artefact') {
+    foundItem = findCaseInsensitive(inventoryDB.artefacts, trimmed);
+    if (foundItem) {
+      itemData = { name: foundItem.key, ...foundItem.data, locked: true };
+    }
+  } else if (slot === 'iris') {
+    foundItem = findCaseInsensitive(inventoryDB.irises, trimmed);
+    if (foundItem) {
+      itemData = { name: foundItem.key, ...foundItem.data, locked: true };
+    }
+  } else if (slot === 'item') {
+    foundItem = findCaseInsensitive(inventoryDB.items, trimmed);
+    if (foundItem) {
+      itemData = { name: foundItem.key, ...foundItem.data, locked: true };
+    }
+  }
+  
+  if (!itemData) {
     // Custom item
     itemData = { name: trimmed, type: slotTypeLabel(slot), description: '—', locked: false };
   }
   
-  // Check uniqueness (allow duplicates only for consumables)
-  if (itemData && itemAlreadyExists(trimmed, excludeIndex) && !isConsumable(itemData.type)) {
+  // Check uniqueness (allow duplicates only for consumables) - case insensitive
+  if (itemData && itemAlreadyExistsCaseInsensitive(trimmed, excludeIndex) && !isConsumable(itemData.type)) {
     alert(`You already have "${trimmed}" in your inventory. Non-consumable items must be unique.`);
     return null;
   }
@@ -3575,16 +3625,21 @@ function bindInventoryEvents() {
       saveInventoryItem(index, slot, nameInput.value.trim());
     };
     
-    // Delete button
+    // Delete button with confirmation dialog
     deleteBtn.onclick = () => {
-      // Don't delete artefact/iris slots, just clear them
-      if (index < 2) {
-        inventory[index] = {};
-      } else {
-        inventory.splice(index, 1);
+      const item = inventory[index];
+      const itemName = item?.name || 'this item';
+      
+      if (confirm(`Discard "${itemName}"? This action cannot be undone.`)) {
+        // Don't delete artefact/iris slots, just clear them
+        if (index < 2) {
+          inventory[index] = {};
+        } else {
+          inventory.splice(index, 1);
+        }
+        saveState('inventory', inventory);
+        renderInventory();
       }
-      saveState('inventory', inventory);
-      renderInventory();
     };
     
     // Image click: Consume prompt for potions/elixirs/drinks
