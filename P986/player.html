@@ -404,17 +404,46 @@
   .attr.luck{
     border: 0.0625rem solid var(--gold);
     box-shadow: 0 0.375rem 1.5rem rgba(212,175,55,0.12), inset 0 0.0625rem 0 rgba(255,255,255,0.03);
-    /* Set gold colors for progress ring */
+    /* 2025 Enhancement: Set gold colors for progress ring */
     --progress-color: var(--gold);
     --progress-bg: rgba(212, 175, 55, 0.2);
     --flash-color: var(--gold);
+    /* 2025 Enhancement: Subtle gold shimmer effect */
+    background: linear-gradient(135deg, rgba(212,175,55,0.05), rgba(212,175,55,0.02));
   }
-  .attr.luck.cooling{ border: 0.0625rem solid transparent; box-shadow:none; }
+  
+  /* 2025 Enhancement: Special hover effect for luck */
+  .attr.luck:hover:not(.cooling) {
+    box-shadow: 0 0.5rem 2rem rgba(212,175,55,0.25), inset 0 0.0625rem 0 rgba(255,255,255,0.05);
+    border-color: rgba(212,175,55,0.8);
+  }
+  .attr.luck.cooling{ 
+    border: none; /* 2025 Fix: No border during cooldown */
+    box-shadow: 0 0.375rem 1rem rgba(255, 255, 255, 0.15), inset 0 0.0625rem 0 rgba(255,255,255,0.02);
+    /* 2025 Enhancement: Subtle white shadow during cooldown */
+    background: linear-gradient(135deg, rgba(212,175,55,0.02), rgba(212,175,55,0.01));
+  }
   .attr.luck.holding {
     border-color: var(--gold);
-    /* Gold progress with same progressive animation */
-    box-shadow: 0 0 1rem rgba(255, 255, 255, 0.4);
-    animation: progressiveShadow var(--hold-duration) ease-out forwards;
+    /* 2025 Enhancement: Gold-themed progress with luxurious glow */
+    box-shadow: 0 0 1.5rem rgba(212, 175, 55, 0.6);
+    animation: progressiveShadowLuck var(--hold-duration) ease-out forwards;
+  }
+  
+  /* 2025 Enhancement: Gold-themed progressive shadow animation for luck */
+  @keyframes progressiveShadowLuck {
+    0% { 
+      box-shadow: 0 0 1.5rem rgba(212, 175, 55, 0.6);
+      transform: scale(1.02);
+    }
+    50% { 
+      box-shadow: 0 0 2rem rgba(212, 175, 55, 0.8);
+      transform: scale(1.04);
+    }
+    100% { 
+      box-shadow: 0 0 2.5rem rgba(212, 175, 55, 1.0);
+      transform: scale(1.06);
+    }
   }
   .attr.luck.flash {
     border-color: var(--gold);
@@ -1304,6 +1333,14 @@
     /* Enhanced focus state with scale transform */
     transform: translateY(-0.125rem);
   }
+  
+  /* 2025 Enhancement: Special gold focus for luck attribute */
+  .attr.luck:focus-visible {
+    outline: 0.125rem solid var(--gold);
+    outline-offset: 0.125rem;
+    box-shadow: 0 0 0.75rem rgba(212, 175, 55, 0.6);
+    transform: translateY(-0.125rem);
+  }
 
   .attr:focus-visible .progress-ring {
     opacity: 1;
@@ -1313,6 +1350,12 @@
   .attr:is(:hover, :focus-visible) {
     transform: translateY(-0.125rem);
     box-shadow: 0 0.75rem 1.5rem rgba(106, 27, 154, 0.4);
+  }
+  
+  /* 2025 Enhancement: Special gold hover for luck */
+  .attr.luck:is(:hover, :focus-visible) {
+    transform: translateY(-0.125rem);
+    box-shadow: 0 0.75rem 1.5rem rgba(212, 175, 55, 0.5);
   }
   
   /* 2025 Enhanced Press-and-Hold Animation */
@@ -2167,7 +2210,7 @@ attrConfig.forEach(name => {
   
   /* 2025 Accessibility Enhancement: ARIA Labels */
   card.setAttribute('role', 'button');
-  card.setAttribute('aria-label', `${name} attribute - Press and hold to level up`);
+  card.setAttribute('aria-label', `${name === 'Luck' ? 'Press and hold to activate luck' : 'Press and hold to level up'}`);
   card.setAttribute('tabindex', '0');
 
   const label = document.createElement('div');
@@ -2318,19 +2361,17 @@ function activateLuck(){
   startCooldown(99);
 }
 
-card.setAttribute('role','button');
 card.setAttribute('tabindex','0');
 
-card.addEventListener('pointerdown', e=>{
-  e.preventDefault();
+// 2025 Enhancement: Use same press-and-hold mechanism as other attributes
+const activateLuckWithHold = () => {
   activateLuck();
-});
+};
 
-card.addEventListener('keydown', e=>{
-  if(e.code==='Enter' || e.code==='Space'){
-    e.preventDefault();
-    activateLuck();
-  }
+// Apply touch handling to luck with press-and-hold animation
+touchManager.attach(card, activateLuckWithHold, {
+  ariaLabel: 'Luck attribute - Press and hold to activate',
+  role: 'button'
 });
 
 updateLuckDisplay();
@@ -2867,31 +2908,72 @@ inventoryBtn.onclick = () => {
 
 const addInventoryBtn = document.getElementById('addInventoryItem');
 
+// 2025 Fix: Only enable "Add Item" when ALL existing slots are populated
 function updateAddItemButtonState() {
+  const maxSlots = Math.min(getMaxItemSlots(), 20);
   const currentCount = getCurrentItemCount();
-  const maxSlots = Math.min(getMaxItemSlots(), 20); // Hard cap at 20
+  const totalSlots = getTotalItemSlots();
+  const allSlotsPopulated = areAllSlotsPopulated();
   
-  if (currentCount >= 20) {
-    addInventoryBtn.disabled = true;
-    addInventoryBtn.classList.add('disabled');
+  const canAddSlot = allSlotsPopulated && totalSlots < maxSlots && totalSlots < 20;
+  
+  // Update button state
+  addInventoryBtn.disabled = !canAddSlot;
+  addInventoryBtn.classList.toggle('disabled', !canAddSlot);
+  
+  // Update button text and tooltip
+  if (!allSlotsPopulated) {
+    addInventoryBtn.textContent = 'Complete Slots First';
+    addInventoryBtn.title = `Fill all ${totalSlots} slot${totalSlots !== 1 ? 's' : ''} before adding more`;
+  } else if (totalSlots >= maxSlots) {
+    addInventoryBtn.textContent = 'Capacity Full';
+    addInventoryBtn.title = `Maximum capacity reached (${maxSlots} slots). Level up Endurance to carry more.`;
+  } else if (totalSlots >= 20) {
+    addInventoryBtn.textContent = 'Hard Limit';
+    addInventoryBtn.title = `Hard limit of 20 slots reached`;
   } else {
-    addInventoryBtn.disabled = false;
-    addInventoryBtn.classList.remove('disabled');
+    addInventoryBtn.textContent = '+ Add Item';
+    addInventoryBtn.title = `Add new item slot (${currentCount}/${maxSlots} items, ${totalSlots} slots)`;
+  }
+  
+  // Visual indicators
+  if (!allSlotsPopulated) {
+    addInventoryBtn.style.backgroundColor = 'rgba(255, 165, 0, 0.3)';
+  } else if (totalSlots >= maxSlots || totalSlots >= 20) {
+    addInventoryBtn.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+  } else {
+    addInventoryBtn.style.backgroundColor = '';
   }
 }
 
 addInventoryBtn.onclick = () => {
-  const maxSlots = Math.min(getMaxItemSlots(), 20); // Hard cap at 20
+  const maxSlots = Math.min(getMaxItemSlots(), 20);
   const currentCount = getCurrentItemCount();
+  const totalSlots = getTotalItemSlots();
+  const allSlotsPopulated = areAllSlotsPopulated();
   
-  if (currentCount >= maxSlots) {
-    alert('You cannot carry any more! Level-up Endurance to increase your carry capacity!');
+  // Check if all slots are populated
+  if (!allSlotsPopulated) {
+    alert(`Please complete all ${totalSlots} existing slot${totalSlots !== 1 ? 's' : ''} before adding more items!`);
     return;
   }
   
+  // Check capacity limits
+  if (totalSlots >= maxSlots) {
+    alert(`Inventory capacity reached! You can carry a maximum of ${maxSlots} items. Level up Endurance to increase capacity.`);
+    return;
+  }
+  
+  if (totalSlots >= 20) {
+    alert('Hard limit of 20 inventory slots reached!');
+    return;
+  }
+  
+  // Add new slot
   inventory.push({});
   saveState('inventory', inventory);
   renderInventory();
+  updateAddItemButtonState(); // Refresh button state
 };
 
 if (inventory.length === 0) {
@@ -3528,6 +3610,17 @@ function getMaxItemSlots() {
 // Count current items (excluding artefact/iris slots)
 function getCurrentItemCount() {
   return inventory.slice(2).filter(item => item?.name).length;
+}
+
+// 2025 Enhancement: Check if ALL item slots are populated
+function areAllSlotsPopulated() {
+  const itemSlots = inventory.slice(2); // Get all item slots
+  return itemSlots.length === 0 || itemSlots.every(slot => slot?.name && slot.name.trim() !== '');
+}
+
+// Get total number of item slots (including empty ones)
+function getTotalItemSlots() {
+  return inventory.slice(2).length;
 }
 
 // Check if item already exists (for uniqueness), excluding a specific index
