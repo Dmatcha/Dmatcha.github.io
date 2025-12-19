@@ -1035,9 +1035,13 @@
 }
 
 .inventory-item .inv-image {
-  width: 5rem;
-  height: 5rem;
-  min-width: 5rem;
+  width: 7.6rem;
+  height: 10.6rem;
+/*  aspect-ratio: 1218 / 1698;
+  -webkit-aspect-ratio: 1218 / 1698;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;*/
+  min-width: 3.8rem;
   background: rgba(255, 255, 255, 0.05);
   border: 0.125rem dashed rgba(255, 255, 255, 0.2);
   border-radius: 0.75rem;
@@ -1078,7 +1082,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.3rem;
   min-width: 0;
 }
 
@@ -2881,26 +2885,30 @@ const inventoryDB = {
       description: `Scales with arcane or tinge.
 Immune to high temperatures, burns, inflammation, and fever.
 Grants fire and smoke magic & skills.
-Sacrifice things to flame to gain essence.`
+Sacrifice things to flame to gain essence.`,
+      image: "cards/fronts/110.webp"
     },
     "The Wintergrace": {
       type: "Legendary Hero Artefact — Treasure",
       description: `Scales with arcane or tinge.
 Immune to cold temperatures, frostbite, and hypothermia.
 Grants ice and frost magic & skills.
-Recharges essence in moonlight.`
+Recharges essence in moonlight.`,
+      image: "cards/fronts/111.webp"
     },
     "The Bronze Ring of Smiles": {
       type: "Legendary Hero Artefact — Treasure",
       description: `Grants charisma, illusion,
 deception, intimidation.
 Grants gaze magic & skills.
-Regain essence from relationships.`
+Regain essence from relationships.`,
+      image: "cards/fronts/112.webp"
     },
     "The Wand": {
       type: "Legendary Hero Artefact — Treasure",
       description: `When resolving tinge, add arcane.
-Essence: Choose one spell: It can only be used by the wand, all costs are 1.`
+Essence: Choose one spell: It can only be used by the wand, all costs are 1.`,
+      image: "cards/fronts/113.webp"
     },
     "The Pair and a Half": {
       type: "Legendary Hero Artefact — Treasure",
@@ -2908,33 +2916,38 @@ Essence: Choose one spell: It can only be used by the wand, all costs are 1.`
 Add one to skill when resolving.
 The cloth is immune and impervious.
 Mutes sounds made by the bearer.
-Grants bizarre skills.`
+Grants bizarre skills.`,
+      image: "cards/fronts/114.webp"
     },
     "The Trickblade": {
       type: "Legendary Hero Artefact — Treasure",
       description: `Scales with strength.
 Add one strength when resolving.
 Truestrike when thrust or thrown.
-Grants bizarre skills.`
+Grants bizarre skills.`,
+      image: "cards/fronts/115.webp"
     },
     "The Fisherman's Flask": {
       type: "Legendary Hero Artefact — Treasure",
       description: `When resolving: add two arcane.
 Produces any substance as poured into the maw.
 Grants bizarre magic.
-When consuming potions, elixirs, and drinks, regain essence.`
+When consuming potions, elixirs, and drinks, regain essence.`,
+      image: "cards/fronts/116.webp"
     },
     "Scathe's Memo Book": {
       type: "Legendary Hero Artefact — Treasure",
       description: `Questions, predictions, and histories can be written on the page;
 spells cast this way ignore requirements.
-Once locked, pages appear anew.`
+Once locked, pages appear anew.`,
+      image: "cards/fronts/117.webp"
     },
     "The Prismatic Glasses": {
       type: "Legendary Hero Artefact — Treasure",
       description: `When resolving: add two tinge.
 Can detect attunement and prowess, and sense the unreadable.
-Grants futuresight and scan.`
+Grants futuresight and scan.`,
+      image: "cards/fronts/118.webp"
     },
     "The Coin": {
       type: "Legendary Hero Artefact — Treasure",
@@ -2942,61 +2955,72 @@ Grants futuresight and scan.`
 When resolving situations, add luck.
 Anyone else holding the coin is also lucky.
 When given as tender; a new coin may be found somewhere...
-Grants mundane magic & skills.`
+Grants mundane magic & skills.`,
+      image: "cards/fronts/119.webp"
     }
   },
 
   irises: {
     "Steady Sky Blue": {
       type: "Eyes — Iris",
-      description: "When affected by any real or artificial light, regain one mana and gain favour after casting."
+      description: `When affected by any real or artificial light, regain one mana and gain favour after casting.`,
+      image: "cards/fronts/040.webp"
     },
     "Bravely Bold Gold": {
       type: "Eyes — Iris",
       description: `Resist dread, panic, terror.
-In a pinch, cast spells or act until a resource pool is completely empty.`
+In a pinch, cast spells or act until a resource pool is completely empty.`,
+      image: "cards/fronts/043.webp"
     },
     "Radiant Emerald Green": {
       type: "Eyes — Iris",
       description: `Occasionally, do not trigger tap.
-You may pay energy instead of life.`
+You may pay energy instead of life.`,
+      image: "cards/fronts/046.webp"
     },
     "Softly Strange Violet": {
       type: "Eyes — Iris",
       description: `Double your spell limit.
-If blessed, +1 to spell resolves.`
+If blessed, +1 to spell resolves.`,
+      image: "cards/fronts/049.webp"
     },
     "Feverspin Crimson": {
       type: "Eyes — Iris",
       description: `After casting or combining three or more spells, gain empower.
-Gain quick after using empower.`
+Gain quick after using empower.`,
+      image: "cards/fronts/052.webp"
     },
     "Amberbright Hazel": {
       type: "Eyes — Iris",
       description: `Resist moonworm effects.
 Tap: Act as if touched by dawn.
-Untap: Trigger a madness effect.`
+Untap: Trigger a madness effect.`,
+      image: "cards/fronts/055.webp"
     },
     "Honeydark Smoulder": {
       type: "Eyes — Iris",
       description: `After performing a physical action, the next spell gains favour.
-After performing any spell, the next physical action gains favour.`
+After performing any spell, the next physical action gains favour.`,
+      image: "cards/fronts/058.webp"
     },
     "Silver Slivers": {
       type: "Eyes — Iris",
       description: `Stop time:
 Gain quick, and act, then tap.
-At dawn, forfeit mana or power and then untap.`
+At dawn, forfeit mana or power and then untap.`,
+      image: "cards/fronts/061.webp"
     },
     "Otherworldly Odd": {
       type: "Eyes — Iris",
       description: `At the start of your turn, you must forget one spell, then gain another.
-You can only possess five spells of any kind.`
+You can only possess five spells of any kind.`,
+      image: "cards/fronts/064.webp"
     },
     "Absolute Cloying Dark": {
       type: "Eyes — Iris",
       description: `If you have any madness spell, succeed madness resolves.
-If you have the highest madness, ignore night effects.`
+If you have the highest madness, ignore night effects.`,
+      image: "cards/fronts/067.webp"
     }
   },
 
@@ -3005,348 +3029,415 @@ If you have the highest madness, ignore night effects.`
       type: "Basic Artefact — Equipment",
       description: `Equip: Strength 2.
 Gain armour 1.
-(reduce incoming damage by one)`
+(reduce incoming damage by one)`,
+      image: "cards/fronts/120.webp"
     },
     "Basic Shortsword": {
       type: "Basic Artefact — Equipment",
       description: `Equip: Strength 1.
 When melee attacking using,
-add 1 to resolves or damage.`
+add 1 to resolves or damage.`,
+      image: "cards/fronts/121.webp"
     },
     "Crested Shield": {
       type: "Basic Artefact — Equipment",
       description: `Equip: Strength 3.
 Pay stamina: Gain shield 2.
 (absorb two damage)
-Skill 3: Pay stamina: Parry incoming strike.`
+Skill 3: Pay stamina: Parry incoming strike.`,
+      image: "cards/fronts/122.webp"
     },
     "Simple Shortbow": {
       type: "Basic Artefact — Equipment",
       description: `Equip: Skill 1.
 Pay stamina: Deal 2 pierce damage.
-Skill 3: Double damage and range.`
+Skill 3: Double damage and range.`,
+      image: "cards/fronts/123.webp"
     },
     "Legionnaire Crossbow": {
       type: "Artefact — Equipment",
       description: `Equip: Skill 2.
 Pay stamina then channel to charge your shot: Deal 3 pierce damage.
-Strength 5: You can now shoot twice.`
+Strength 5: You can now shoot twice.`,
+      image: "cards/fronts/124.webp"
     },
     "Crysk Knife": {
       type: "Artefact — Equipment",
       description: `Equip: Skill 1.
 Pay stamina: After successful attack, prevent target from casting a spell.
-Skill 3: Also add 3 pierce damage.`
+Skill 3: Also add 3 pierce damage.`,
+      image: "cards/fronts/125.webp"
     },
     "Whispering Shield": {
       type: "Artefact — Equipment",
       description: `Equip: Strength 3.
 Pay stamina: Gain shield 3.
 (absorb three damage)
-Skill 3: Pay stamina: Parry incoming magic.`
+Skill 3: Pay stamina: Parry incoming magic.`,
+      image: "cards/fronts/126.webp"
     },
     "Twisted Metal Arm": {
       type: "Artefact — Equipment",
       description: `Equip: Skill 3.
 When resolving strength, add 1.
-Pay stamina: Griplock an object.`
+Pay stamina: Griplock an object.`,
+      image: "cards/fronts/127.webp"
     },
     "Intricate Metal Arm": {
       type: "Artefact — Equipment",
       description: `Equip: Skill 3.
 Pay empower: Electrify and magnetize arm.
 Pay stamina: Shock and paralyze attacker.
-Resist burn and freeze.`
+Resist burn and freeze.`,
+      image: "cards/fronts/128.webp"
     },
     "Arcanite Mining Gauntlet": {
       type: "Artefact — Equipment",
       description: `Equip: Strength 4.
 Pay stamina: Deal damage and stun, striking with devastating force.
-Mastery 3: Socket a soulgem.`
+Mastery 3: Socket a soulgem.`,
+      image: "cards/fronts/129.webp"
     },
     "Arcanite Slingshot": {
       type: "Artefact — Arcane Equipment",
       description: `Pay energy: Shoot a pebble of arcane energy. Activate arcane objects.
-Mastery 3: Deal 1 electric damage.`
+Mastery 3: Deal 1 electric damage.`,
+      image: "cards/fronts/130.webp"
     },
     "Arcane Gemsetting Tool": {
       type: "Artefact — Arcane Equipment",
       description: `Pay two stamina, two energy, and 1 of any resource:
 Mastery 2: Install a soulgem.
 Mastery 5: Remove a soulgem.
-Arcane 13: Carve a soulgem socket.`
+Arcane 13: Carve a soulgem socket.`,
+      image: "cards/fronts/131.webp"
     },
     "Arcanite Battery Pack": {
       type: "Artefact — Arcane Equipment",
       description: `When socketed with a soulgem:
-Provide required electric electricity to power devices, tools, and other equipment.`
+Provide required electric electricity to power devices, tools, and other equipment.`,
+      image: "cards/fronts/132.webp"
     },
     "Arcanite Firearm": {
       type: "Artefact — Arcane Equipment",
       description: `Pay three energy: Shoot a bolt of arcane energy. Activate arcane objects, or deal damage equal to your arcane.
-Requires Skill to aim accurately...`
+Requires Skill to aim accurately...`,
+      image: "cards/fronts/133.webp"
     },
     "Arcanite Revolver": {
       type: "Artefact — Arcane Equipment",
       description: `Pay one energy: Deal damage equal to your mastery; then resolve (dice) d6:
 Shoot again for each unique result, otherwise tap. Pay 6 of any resource to reload and untap.
-Requires Strength for the recoil.`
+Requires Strength for the recoil.`,
+      image: "cards/fronts/134.webp"
     },
     "Moontooth": {
       type: "Artefact — Arcane Equipment",
       description: `Mastery 4: Swings blast seawater.
-Strength 6: All strikes push targets away.`
+Strength 6: All strikes push targets away.`,
+      image: "cards/fronts/135.webp"
     },
     "Saphir": {
       type: "Artefact — Arcane Equipment",
       description: `Mastery 2: Strikes gain quick.
-Skill 3: Strikes gain triplestrike.`
+Skill 3: Strikes gain triplestrike.`,
+      image: "cards/fronts/136.webp"
     },
     "Caladlo": {
       type: "Artefact — Equipment",
       description: `If target has armour, gain swift and doublestrike.
-Strength & Skill 3: Remove and prevent target's shields.`
+Strength & Skill 3: Remove and prevent target's shields.`,
+      image: "cards/fronts/137.webp"
     },
     "Matsubazue": {
       type: "Artefact — Equipment",
       description: `Channel to focus your mind and build strength:
 Inflict concussive force or break bones instead of inflicting damage.
-Skill 6: You may counter-attack any weapon-based attack.`
+Skill 6: You may counter-attack any weapon-based attack.`,
+      image: "cards/fronts/138.webp"
     },
     "Woven Wreath": {
       type: "Artefact — Equipment",
       description: `You feel confident, pretty.
-Anyone nearby winces with pain or starts crying when thinking of you negatively.`
+Anyone nearby winces with pain or starts crying when thinking of you negatively.`,
+      image: "cards/fronts/139.webp"
     },
     "Cozy Scarf": {
       type: "Artefact — Equipment",
       description: `Seems to fold infinitely.
-Stretches unnaturally long. Can conceal items within, but the weight cannot be ignored.`
+Stretches unnaturally long. Can conceal items within, but the weight cannot be ignored.`,
+      image: "cards/fronts/140.webp"
     },
     "Clamping Ankle Bracers": {
       type: "Artefact — Equipment",
       description: `Allows movement, unimpeded.
 Easily jump higher and farther.
-Contains one empty soulgem socket.`
+Contains one empty soulgem socket.`,
+      image: "cards/fronts/141.webp"
     },
     "Strand-Type Carry Device": {
       type: "Artefact — Arcane Equipment",
       description: `Pay stamina: Allocate items to the device.
 Do not lose stamina when moving, carrying, or running.
-Items gain indestructible.`
+Items gain indestructible.`,
+      image: "cards/fronts/142.webp"
     },
     "Strand-Type Cuff Device": {
       type: "Artefact — Arcane Equipment",
       description: `Pay three energy: Switch places with another bearer, you both gain 1 shield. (Absorb 1 damage)
-Mastery 2: Awaken soulgem.`
+Mastery 2: Awaken soulgem.`,
+      image: "cards/fronts/143.webp"
     },
     "Strand-Type Choker Device": {
       type: "Artefact — Arcane Equipment",
       description: `Pay energy: Gain favour momentarily.
-Mastery 3: Awaken soulgem.`
+Mastery 3: Awaken soulgem.`,
+      image: "cards/fronts/145.webp"
     },
     "Catscratch Medallion": {
       type: "Artefact — Equipment",
       description: `You are more susceptible to dread, panic, horrify, and the ethereal.
-Detect bone charms, traps, and understand hexes and curses.`
+Detect bone charms, traps, and understand hexes and curses.`,
+      image: "cards/fronts/146.webp"
     },
     "Pegasus Soulgem Medallion": {
       type: "Legendary Artefact — Soulgem",
-      description: `When held, provides boosts to any movement action. Holding your breath while falling slows descent.`
+      description: `When held, provides boosts to any movement action. Holding your breath while falling slows descent.`,
+      image: "cards/fronts/147.webp"
     },
     "Mercurial Opal": {
       type: "Legendary Artefact — Soulgem",
-      description: `For each resource pool at maximum, gain +1. When socketed into a tool, gear, device, or machine, energizes indefinitely.`
+      description: `For each resource pool at maximum, gain +1. When socketed into a tool, gear, device, or machine, energizes indefinitely.`,
+      image: "cards/fronts/148.webp"
     },
     "Cascading Crystal": {
       type: "Soulgem — Powerstone",
-      description: `After receiving any force of physical impact, user can unleash equal force from the gem. When socketed into a weapon or tool, object becomes extremely bouncy.`
+      description: `After receiving any force of physical impact, user can unleash equal force from the gem. When socketed into a weapon or tool, object becomes extremely bouncy.`,
+      image: "cards/fronts/149.webp"
     },
     "Spiderflame Diamond": {
       type: "Soulgem — Powerstone",
-      description: `Remaining still, eyes closed, the user can detect movement further and further away. When socketed, object becomes magnetic at-will.`
+      description: `Remaining still, eyes closed, the user can detect movement further and further away. When socketed, object becomes magnetic at-will.`,
+      image: "cards/fronts/150.webp"
     },
     "Abyssal Onyx": {
       type: "Soulgem — Powerstone",
-      description: `Emits a light visible only to its user. Can devour artificial light. When socketed, repels liquids, dust, and other small particles.`
+      description: `Emits a light visible only to its user. Can devour artificial light. When socketed, repels liquids, dust, and other small particles.`,
+      image: "cards/fronts/151.webp"
     },
     "Sharp Garnet": {
       type: "Soulgem — Powerstone",
-      description: `All types of force exerted gain sharp and pierce. When socketed into a tool, gear, or wearable equipment, contacting a critical weakpoint causes target to shatter into dust.`
+      description: `All types of force exerted gain sharp and pierce. When socketed into a tool, gear, or wearable equipment, contacting a critical weakpoint causes target to shatter into dust.`,
+      image: "cards/fronts/152.webp"
     },
     "Sakura Ruby": {
       type: "Soulgem — Powerstone",
       description: `Repeated actions gain +1.
-When socketed, energizes tools and weapons to resonate at extreme speeds.`
+When socketed, energizes tools and weapons to resonate at extreme speeds.`,
+      image: "cards/fronts/153.webp"
     },
     "Cosmic Pearl": {
       type: "Soulgem — Powerstone",
-      description: `If a spell or action would cost more than you have, use it then empty that resource pool. When socketed, energizes other nearby things.`
+      description: `If a spell or action would cost more than you have, use it then empty that resource pool. When socketed, energizes other nearby things.`,
+      image: "cards/fronts/154.webp"
     },
     "Redsky Pearl": {
       type: "Soulgem — Powerstone",
-      description: `When in darkness, untouched by any light, gain one empower if you have none. When socketed, object cannot freeze nor become wet; object maintains temperature.`
+      description: `When in darkness, untouched by any light, gain one empower if you have none. When socketed, object cannot freeze nor become wet; object maintains temperature.`,
+      image: "cards/fronts/155.webp"
     },
     "Coiling Amethyst": {
       type: "Soulgem — Powerstone",
-      description: `Onlookers may become anxious. Gain favour when near a deep body of water or when resting. When socketed, object cannot fall apart.`
+      description: `Onlookers may become anxious. Gain favour when near a deep body of water or when resting. When socketed, object cannot fall apart.`,
+      image: "cards/fronts/156.webp"
     },
     "Folded Moss": {
       type: "Soulgem — Powerstone",
-      description: `Eating spiced food can bestow or remove curses and blessings. When socketed, object becomes squishy.`
+      description: `Eating spiced food can bestow or remove curses and blessings. When socketed, object becomes squishy.`,
+      image: "cards/fronts/157.webp"
     },
     "Sharp Sapphire": {
       type: "Soulgem — Powerstone",
-      description: `When physically attacking, you may resolve again. When socketed, if object is a weapon, inflict terror on targets if you miss.`
+      description: `When physically attacking, you may resolve again. When socketed, if object is a weapon, inflict terror on targets if you miss.`,
+      image: "cards/fronts/158.webp"
     },
     "Emanating Garnet": {
       type: "Soulgem — Powerstone",
-      description: `When physically attacking, add endurance or potency. When socketed, if object is a weapon, deal crush and strike damage instead.`
+      description: `When physically attacking, add endurance or potency. When socketed, if object is a weapon, deal crush and strike damage instead.`,
+      image: "cards/fronts/159.webp"
     },
     "Sunsmoke Jade": {
       type: "Soulgem — Powerstone",
-      description: `Unlock true power when socketed.`
+      description: `Unlock true power when socketed.`,
+      image: "cards/fronts/160.webp"
     },
     "Ball Ruby": {
       type: "Soulgem — Powerstone",
-      description: `When resting, you may reduce madness instead of recovering life and stamina. When socketed, object feels almost weightless.`
+      description: `When resting, you may reduce madness instead of recovering life and stamina. When socketed, object feels almost weightless.`,
+      image: "cards/fronts/161.webp"
     },
     "Mesmer Diamond": {
       type: "Soulgem — Powerstone",
       description: `Wonderous tendrils of ivory are hewn beneath the skin.
 If you would lose madness, you may instead gain 1 of any resource.
-When socketed, puppet object freely.`
+When socketed, puppet object freely.`,
+      image: "cards/fronts/162.webp"
     },
     "Hollow Prism": {
       type: "Soulgem — Powerstone",
       description: `Tap: Store an amount of mana or energy.
 Untap: Release mana or energy, then gain madness.
-When socketed, you may command object to return to you.`
+When socketed, you may command object to return to you.`,
+      image: "cards/fronts/163.webp"
     },
     "Blooming Seaglass": {
       type: "Soulgem — Powerstone",
       description: `During any encounter, opponent gains slow and cannot gain favour. Attracts beasts, mellowing their demeanor.
-When socketed into a non-weapon, fascinates beasts.`
+When socketed into a non-weapon, fascinates beasts.`,
+      image: "cards/fronts/164.webp"
     },
     "Starstone": {
       type: "Soulgem — Powerstone",
       description: `Resist dread, panic, terror. Repels wormridden things. Kills nearby airborne infectious materials.
-Socketed objects become suspended mid-air when released.`
+Socketed objects become suspended mid-air when released.`,
+      image: "cards/fronts/165.webp"
     },
     "Starglass": {
       type: "Soulgem — Powerstone",
       description: `Repeat any spell cast by another if the cost is less than your Mastery.
-When socketed, object whispers warnings and rumours.`
+When socketed, object whispers warnings and rumours.`,
+      image: "cards/fronts/166.webp"
     },
     "Bicoded Twist": {
       type: "Soulgem — Powerstone",
       description: `Tap: Whenever you pay exactly two different costs, add 2 to values.
-Whenever you gain or lose madness, you may untap. Cannot be socketed.`
+Whenever you gain or lose madness, you may untap. Cannot be socketed.`,
+      image: "cards/fronts/167.webp"
     },
     "Wet Deeprock": {
       type: "Soulgem — Powerstone",
-      description: `After taking any action, you may channel and gain phantom momentum: A lifelike image will repeat that action. Continue channelling to manipulate the image. Socketed object becomes heavy and salty.`
+      description: `After taking any action, you may channel and gain phantom momentum: A lifelike image will repeat that action. Continue channelling to manipulate the image. Socketed object becomes heavy and salty.`,
+      image: "cards/fronts/168.webp"
     },
     "Polar Crystal": {
       type: "Soulgem — Powerstone",
       description: `Can store and release electricity.
-When socketed, remove requirements, costs, tap effects and untap effects from object.`
+When socketed, remove requirements, costs, tap effects and untap effects from object.`,
+      image: "cards/fronts/169.webp"
     },
     "Potion of Healing": {
       type: "Item — Potion",
       description: `Regain 3 life.
-You cannot gain beyond maximum.`
+You cannot gain beyond maximum.`,
+      image: "cards/fronts/170.webp"
     },
     "Potion of Refreshment": {
       type: "Item — Potion",
       description: `Regain 2 stamina.
-You cannot gain beyond maximum.`
+You cannot gain beyond maximum.`,
+      image: "cards/fronts/174.webp"
     },
     "Potion of Potency": {
       type: "Item — Potion",
       description: `Regain empower.
 Fragile.
-Flammable.`
+Flammable.`,
+      image: "cards/fronts/178.webp"
     },
     "Potion of Sunshine": {
       type: "Item — Potion",
       description: `Regain mana. Fragile.
 Tinge 8: Regain one more mana.
-Tinge 12: Tastes pleasant, abating any madness effect.`
+Tinge 12: Tastes pleasant, abating any madness effect.`,
+      image: "cards/fronts/182.webp"
     },
     "Potion of Sparkling Water": {
       type: "Item — Potion",
       description: `Fragile.
 Gain Arcane Touch, duration is equal to your Endurance.
-Arcane 7: Regain 2 energy.`
+Arcane 7: Regain 2 energy.`,
+      image: "cards/fronts/186.webp"
     },
     "Potion of Dreaming": {
       type: "Item — Potion",
       description: `Fragile. Choose one:
 Sleep briefly, then awaken;
 or
-Calm your nerves, remove 3 madness.`
+Calm your nerves, remove 3 madness.`,
+      image: "cards/fronts/190.webp"
     },
     "Murky Elixir": {
       type: "Item — Elixir",
       description: `Double any healing effect.
 If you become poisoned or a similar status effect, reduce that duration to 1.
-You are more easily surprised, startled, or intimidated.`
+You are more easily surprised, startled, or intimidated.`,
+      image: "cards/fronts/193.webp"
     },
     "Beastblood Elixir": {
       type: "Item — Elixir",
       description: `Improves chances of befriending or intimidating some beasts.
 Avid drinkers claim further effects.
-You smell like wet dog, or vanilla?`
+You smell like wet dog, or vanilla?`,
+      image: "cards/fronts/196.webp"
     },
     "Humeblood Elixir": {
       type: "Item — Elixir",
-      description: `An inky, fizzy cola. Smells of copper with a hint of bacon. Caffeinates when hot; inebriates when cold.`
+      description: `An inky, fizzy cola. Smells of copper with a hint of bacon. Caffeinates when hot; inebriates when cold.`,
+      image: "cards/fronts/199.webp"
     },
     "Vial of Lunacy": {
       type: "Item — Elixir",
       description: `Duration is equal to your madness.
 Combine and. Cruel energies empower your demeanor.
-Activate one madness effect.`
+Activate one madness effect.`,
+      image: "cards/fronts/201.webp"
     },
     "Vial of Volpe": {
       type: "Item — Elixir",
-      description: `A wonderful flavour tickles your tongue. Resolve (dice) d20: From 1~10, you may regain that much life or stamina or one empower; if you roll 11~20, gain madness.`
+      description: `A wonderful flavour tickles your tongue. Resolve (dice) d20: From 1~10, you may regain that much life or stamina or one empower; if you roll 11~20, gain madness.`,
+      image: "cards/fronts/204.webp"
     },
     "Heady Elixir": {
       type: "Item — Elixir",
       description: `Bestows a heady feeling for a time.
-The imbiber experiences a sense of euphoria, becoming immune to negative moods and intimidation, but susceptible to seduction.`
+The imbiber experiences a sense of euphoria, becoming immune to negative moods and intimidation, but susceptible to seduction.`,
+      image: "cards/fronts/207.webp"
     },
     "Sparkwine": {
       type: "Item — Elixir",
       description: `Applying to the skin, protects and remedies sunburns. When imbibed, causes a heady excitatory buzzing.
-Consecutive drinks increase the effect but reduce duration...`
+Consecutive drinks increase the effect but reduce duration...`,
+      image: "cards/fronts/210.webp"
     },
     "Woebane Elixir": {
       type: "Item — Elixir",
       description: `Cherry smoke replaces your breath: React calmly to the world around you, act as if your soul has just awoken from a catnap.
-Duration is equal to your current madness.`
+Duration is equal to your current madness.`,
+      image: "cards/fronts/213.webp"
     },
     "Swirling Cream": {
       type: "Item — Drink",
       description: `Minty sweetness coats your mouth, lips, and tongue: Soothe your nerves.
-Abate an allergic reaction or become ridiculously intoxicated.`
+Abate an allergic reaction or become ridiculously intoxicated.`,
+      image: "cards/fronts/216.webp"
     },
     "Sunset Sap": {
       type: "Item — Drink",
       description: `Chewey, jellylike substance popular among children and their parents.
-Innocuous. Pernicious. Wonderful.`
+Innocuous. Pernicious. Wonderful.`,
+      image: "cards/fronts/219.webp"
     },
     "Lilypad Rime": {
       type: "Item — Drink",
       description: `Prized by brewers and mixers.
 Some report a chilling effect.
-Inebriates for a prolonged time, usually as a matter of one's madness.`
+Inebriates for a prolonged time, usually as a matter of one's madness.`,
+      image: "cards/fronts/222.webp"
     },
     "Honeyseed Soma": {
       type: "Item — Drink",
-      description: `Often taken as a remedy for nausea, headaches, stomach aches, pain, and dizziness. Results in a bouncy and delightfully comfortable mood.`
+      description: `Often taken as a remedy for nausea, headaches, stomach aches, pain, and dizziness. Results in a bouncy and delightfully comfortable mood.`,
+      image: "cards/fronts/225.webp"
     }
   }
 };
