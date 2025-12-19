@@ -1,29 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gameplay Guide - Linear Chance System</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gameplay Guide - Linear Chance System with Modern Web Standards">
+  <meta name="theme-color" content="#1C1C30">
+  <title>Gameplay Guide - Linear Chance System</title>
+  
+  <!-- Modern Font Loading with fallbacks -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* CSS Custom Properties for modern theming */
+    :root {
+      --bg-primary: #1C1C30;
+      --text-primary: #ffffff;
+      --container-width: 60vw;
+      --container-max-width: 520px;
+      --container-height: 80vh;
+      --border-radius: 16px;
+      --transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-fast: all 0.2s ease-out;
+      
+      /* Theme colors */
+      --theme-day-primary: #943a09;
+      --theme-day-secondary: #f29422;
+      --theme-day-shadow: rgba(240,200,30,0.5);
+      
+      --theme-night-primary: #202050;
+      --theme-night-secondary: #0E0E20;
+      --theme-night-shadow: rgba(100,100,255,0.5);
+      
+      /* Button colors */
+      --btn-act-bg: #ffb347;
+      --btn-act-text: #1e1e2f;
+      --btn-map-bg: #ffd700;
+      --btn-map-text: #1e1e2f;
+      --btn-next-bg: #ff7f50;
+      --btn-next-text: #fff;
+      --btn-dawn-bg: #87ceeb;
+      --btn-dawn-text: #1e1e2f;
+      --btn-night-bg: #6a5acd;
+      --btn-night-text: #fff;
+      --btn-interstitial-bg: #ff6347;
+      --btn-interstitial-text: #fff;
+      
+      /* Pool colors */
+      --pool-0-color: #87ceeb;
+      --pool-1-color: #ffd700;
+      --pool-2-color: #98fb98;
+      --pool-3-color: #dda0dd;
+      --pool-4-color: #ff69b4;
+    }
 
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+    /* Modern CSS Reset with box-sizing */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-body {
-  background: #1C1C30;
-  color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
-}
+    /* Modern font stack with fallbacks */
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      line-height: 1.6;
+      font-optical-sizing: auto;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
-    /* VIDEO BACKGROUND */
+    /* Video Background - Modern approach */
     .video-wrapper {
       position: fixed;
-      top: 0;
-      left: 0;
+      inset: 0;
       width: 100vw;
       height: 100vh;
       overflow: hidden;
@@ -44,9 +101,10 @@ body {
       filter: blur(2px) brightness(0.95) contrast(1.1);
       opacity: 0.99;
       pointer-events: none;
-      transition: transform 0.3s ease;
+      transition: var(--transition-smooth);
     }
 
+    /* Modern responsive video handling */
     @media (orientation: portrait) {
       .video-bg {
         transform: translate(-50%, -50%) rotate(90deg);
@@ -55,764 +113,1035 @@ body {
       }
     }
 
-/* Main card container */
-.container {
-  width: 60vw;
-  max-width: 520px;
-  height: 80vh;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 0 25px rgba(0,0,0,0.6);
-  text-align: center;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: background 0.8s ease;
-}
+    /* Modern container with CSS Grid */
+    .game-container {
+      width: var(--container-width);
+      max-width: var(--container-max-width);
+      height: var(--container-height);
+      border-radius: var(--border-radius);
+      padding: 24px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.6);
+      text-align: center;
+      position: relative;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 16px;
+      transition: var(--transition-smooth);
+      z-index: 1;
+    }
 
-/* Day and night background themes */
-.container.day-theme {
-  background: linear-gradient(145deg, #943a09, #f29422);
-  box-shadow: 0 0 40px rgba(240,200,30,0.5);
-}
+    /* Modern theme system with CSS Grid areas */
+    .game-container.day-theme {
+      background: linear-gradient(145deg, var(--theme-day-primary), var(--theme-day-secondary));
+      box-shadow: 0 0 40px var(--theme-day-shadow);
+    }
 
-.container.night-theme {
-  background: linear-gradient(135deg, #202050, #0E0E20);
-  box-shadow: 0 0 40px rgba(100,100,255,0.5);
-}
+    .game-container.night-theme {
+      background: linear-gradient(135deg, var(--theme-night-primary), var(--theme-night-secondary));
+      box-shadow: 0 0 40px var(--theme-night-shadow);
+    }
 
-/* Header */
-.header { display: flex; justify-content: space-between; margin-bottom: 12px; }
-.day-label, .slot-label { font-size: 1.45rem; font-weight: bold; }
+    /* Modern header with Flexbox */
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
 
-/* Central text area */
-.text-area {
-  flex: 1;
-  margin: 16px 0;
-  background: rgba(255,255,255,0.05);
-  border-radius: 8px;
-  padding: 16px;
-  overflow-y: auto;
-  text-align: left;
-  line-height: 1.5;
-  font-size: 1.33rem;
-}
+    .day-label, .slot-label {
+      font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
 
-/* Buttons */
-.button {
-  width: 100%;
-  padding: 14px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 12px;
-  font-size: 1.50rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.35s ease;
-}
-.button:disabled { opacity: 0.4; cursor: default; }
+    /* Modern text area with improved scrolling */
+    .text-area {
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 16px;
+      overflow-y: auto;
+      text-align: left;
+      line-height: 1.6;
+      font-size: clamp(1.1rem, 2.5vw, 1.33rem);
+      scroll-behavior: smooth;
+    }
 
-.act-btn { background: #ffb347; color: #1e1e2f; }
-.map-btn { background: #ffd700; color: #1e1e2f; }
-.next-btn { background: #ff7f50; color: #fff; }
-.dawn-btn { background: #87ceeb; color: #1e1e2f; }
-.night-btn { background: #6a5acd; color: #fff; }
-.interstitial-btn { background: #ff6347; color: #fff; }
+    /* Modern scrollbar styling */
+    .text-area::-webkit-scrollbar {
+      width: 8px;
+    }
 
-/* Checkbox styling */
-.checkbox {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 12px;
-  border: 2px solid #fff;
-  cursor: pointer;
-  transition: all 0.5s;
-  user-select: none;
-  font-size: 1.25rem;
-}
-.checkbox.checked {
-  background: #32cd32;
-  color: #1e1e2f;
-}
+    .text-area::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      transition: var(--transition-fast);
+    }
 
-/* Reset button */
-.reset-btn {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  padding: 8px 12px;
-  background: #ff4d4d;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  color: #fff;
-  font-weight: bold;
-  z-index: 5;
-}
+    .text-area::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.4);
+    }
 
-/* Scrollbar styling */
-.text-area::-webkit-scrollbar { width: 8px; }
-.text-area::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.2);
-  border-radius: 4px;
-}
-.text-area::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.4);
-}
-.button.interstitial-btn {
-  opacity: 0.4;
-  transition: all 0.5s ease;
-}
-.button.interstitial-btn.active {
-  opacity: 1;
-}
+    /* Modern button system */
+    .btn {
+      width: 100%;
+      padding: 14px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 12px;
+      font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
 
-/* Mobile: use wider relative width */
-@media (max-width: 600px) {
-  .container {
-    width: 92vw;
-    max-width: none;
-    min-width: 300px;
-  }
-}
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none !important;
+    }
 
-/* Flavor text styling by pool */
-.pool-0 { color: #87ceeb; font-style: italic; }
-.pool-1 { color: #ffd700; font-style: italic; }
-.pool-2 { color: #98fb98; font-style: italic; }
-.pool-3 { color: #dda0dd; font-style: italic; }
-.pool-4 { color: #ff69b4; font-style: italic; }
-</style>
+    .btn:not(:disabled):hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
 
+    .btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    /* Modern button variants */
+    .btn--act { 
+      background: var(--btn-act-bg); 
+      color: var(--btn-act-text); 
+    }
+    
+    .btn--map { 
+      background: var(--btn-map-bg); 
+      color: var(--btn-map-text); 
+    }
+    
+    .btn--next { 
+      background: var(--btn-next-bg); 
+      color: var(--btn-next-text); 
+    }
+    
+    .btn--dawn { 
+      background: var(--btn-dawn-bg); 
+      color: var(--btn-dawn-text); 
+    }
+    
+    .btn--night { 
+      background: var(--btn-night-bg); 
+      color: var(--btn-night-text); 
+    }
+    
+    .btn--interstitial { 
+      background: var(--btn-interstitial-bg); 
+      color: var(--btn-interstitial-text);
+      opacity: 0.4;
+      transition: var(--transition-smooth);
+    }
+    
+    .btn--interstitial.active {
+      opacity: 1;
+    }
+
+    /* Modern checkbox system */
+    .checkbox {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 12px;
+      border: 2px solid var(--text-primary);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      user-select: none;
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      font-weight: 500;
+      background: transparent;
+    }
+
+    .checkbox.checked {
+      background: #32cd32;
+      color: #1e1e2f;
+      border-color: #32cd32;
+    }
+
+    /* Reset button with modern positioning */
+    .reset-btn {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      padding: 8px 12px;
+      background: #ff4d4d;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      color: var(--text-primary);
+      font-weight: 600;
+      z-index: 5;
+      transition: var(--transition-smooth);
+    }
+
+    .reset-btn:hover {
+      background: #ff3333;
+      transform: scale(1.05);
+    }
+
+    /* Modern responsive design with container queries */
+    @container (max-width: 600px) {
+      .game-container {
+        width: 92vw;
+        max-width: none;
+        min-width: 300px;
+      }
+    }
+
+    /* Fallback for browsers without container queries */
+    @media (max-width: 600px) {
+      .game-container {
+        width: 92vw;
+        max-width: none;
+        min-width: 300px;
+      }
+    }
+
+    /* Modern pool styling with CSS Grid and black outlines for readability */
+    .pool-0 { 
+      color: var(--pool-0-color); 
+      font-style: italic; 
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 
+                   -1px 0 0 #000, 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000;
+    }
+    
+    .pool-1 { 
+      color: var(--pool-1-color); 
+      font-style: italic; 
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 
+                   -1px 0 0 #000, 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000;
+    }
+    
+    .pool-2 { 
+      color: var(--pool-2-color); 
+      font-style: italic; 
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 
+                   -1px 0 0 #000, 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000;
+    }
+    
+    .pool-3 { 
+      color: var(--pool-3-color); 
+      font-style: italic; 
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 
+                   -1px 0 0 #000, 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000;
+    }
+    
+    .pool-4 { 
+      color: var(--pool-4-color); 
+      font-style: italic; 
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 
+                   -1px 0 0 #000, 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000;
+    }
+
+    /* Modern accessibility improvements */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      .game-container {
+        border: 2px solid var(--text-primary);
+      }
+      
+      .btn, .checkbox {
+        border: 2px solid currentColor;
+      }
+    }
+  </style>
 </head>
 <body>
-<body>
-  <!-- 🔁 VIDEO BACKGROUND -->
-  <div class="video-wrapper">
+  <!-- Video Background -->
+  <div class="video-wrapper" aria-hidden="true">
     <video class="video-bg" autoplay muted loop playsinline>
       <source src="../media/12530-239934669_medium.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
   </div>
-<button class="reset-btn" onclick="resetGame()">RESET</button>
 
-<div class="container">
-  <div class="header">
-    <div class="day-label" id="dayLabel">DAWN of Cycle 1</div>
-    <div class="slot-label" id="slotLabel">[0]</div>
-  </div>
+  <button class="reset-btn" onclick="resetGame()" aria-label="Reset game">RESET</button>
 
-  <div class="text-area" id="textArea">ZERODAWN <br>YOU SHOULD NOT SEE THIS!
-  </div>
+  <!-- Main Game Container with Semantic HTML5 -->
+  <main class="game-container day-theme" role="main" aria-labelledby="game-title">
+    <header class="game-header">
+      <h1 class="day-label" id="dayLabel" aria-live="polite">DAWN of Cycle 1</h1>
+      <span class="slot-label" id="slotLabel" aria-live="polite">[0]</span>
+    </header>
+
+    <section class="text-area" id="textArea" aria-live="polite" aria-atomic="true">
+      ZERODAWN <br>YOU SHOULD NOT SEE THIS!
+    </section>
   
-  <div id="checkboxes" style="display:none;">
-    <div class="checkbox" id="actCheckbox">ACT</div>
-    <div class="checkbox" id="mapCheckbox">REVEAL</div>
-  </div>
+    <div id="checkboxes" style="display:none;" role="group" aria-label="Game actions">
+      <div class="checkbox" id="actCheckbox" role="checkbox" aria-checked="false">ACT</div>
+      <div class="checkbox" id="mapCheckbox" role="checkbox" aria-checked="false">REVEAL</div>
+    </div>
   
-  <button class="button" id="mainButton">CONTINUE</button>
-</div>
+    <button class="btn btn--next" id="mainButton" aria-label="Continue game">CONTINUE</button>
+  </main>
 
-<script>
-/* State */
-let cycle = 1;
-let slot = 0;
-let isNight = false;
-let nightStep = 0;
-let phaseMode = null;
+  <script>
+    // Modern JavaScript with ES2025+ features
+    'use strict';
 
-/* Theme container ref */
-const container = document.querySelector('.container');
-
-/* Helper: set container color theme */
-function setContainerTheme(theme) {
-  container.classList.remove('day-theme', 'night-theme');
-  if (theme === 'day') container.classList.add('day-theme');
-  else if (theme === 'night') container.classList.add('night-theme');
-}
-
-/* --- Linear Chance System --- */
-
-// Calculate linear chance using formula: base + (rate * cycle)
-// Returns percentage as decimal (0.0 to 1.0)
-function calculateLinearChance(base, rate, cycle) {
-  return Math.max(0, Math.min(1, base + (rate * cycle)));
-}
-
-// Calculate step chance using formula with step intervals
-function calculateStepChance(startCycle, rate, cycle) {
-  if (cycle < startCycle) return 0;
-  const steps = Math.floor((cycle - startCycle) / 2); // Steps every 2 cycles
-  return steps * rate;
-}
-
-// Main text options for each slot (3 exclusive options per slot)
-const mainTextOptions = {
-  1: [
-    { text: `You may play any card.`, base: 100, rate: -2 },
-    { text: `You must play an Adventure card.`, base: 0, rate: 1 },
-    { text: `If you play an Adventure card, lose 1 stamina.`, base: 0, rate: 1 }
-  ],
-  2: [
-    { text: `You may play any card.`, base: 100, rate: -2 },
-    { text: `You may play any card. If you play an event, regain 1 life immediately.`, base: 0, rate: 1 },
-    { text: `You may play any card. If you play a discovery, gain 1 coin.`, base: 0, rate: 1 }
-  ],
-  3: [
-    { text: `You may play any card.`, base: 100, rate: -2 },
-    { text: `Gain 1 empower if you play a B or C card.`, base: 0, rate: 1 },
-    { text: `You may play any card. If all cards played so far are the same type, everyone regains 3 life.`, base: 0, rate: 1 }
-  ],
-  4: [
-    { text: `You may play any card.`, base: 100, rate: -2 },
-    { text: `You may play any card. If you begin a combat encounter gain 1 empower.`, base: 0, rate: 1 },
-    { text: `You may play any card. If you have no empower, lose 1 life.`, base: 0, rate: 1 }
-  ],
-  5: [
-    { text: `You may play any card.`, base: 100, rate: -2 },
-    { text: `You must play a B or C card.`, base: 0, rate: 1 },
-    { text: `You may play any card. Flip a coin: if heads gain 1 coin, if tails lose 1 coin.`, base: 0, rate: 1 }
-  ],
-  6: [
-    { text: `You may play any card.`, base: 100, rate: -2 },
-    { text: `You must play a B or C card. Add 1 to the loot pile.`, base: 0, rate: 1 },
-    { text: `You may play any card. If you play a B card, remove all your empower and add that many coins to the loot pile.`, base: 0, rate: 1 }
-  ],
-  7: [
-    { text: `You may play any card.`, base: 100, rate: -2 },
-    { text: `You must play a B card.`, base: 0, rate: 1 },
-    { text: `You must play a A card.`, base: 0, rate: 1 }
-  ],
-  8: [
-    { text: `You may play any card.`, base: 100, rate: -2 },
-    { text: `You may play any card. If you have no coins, lose 1 madness.`, base: 0, rate: 1 },
-    { text: `You may play any card. If you have more madness than coins, lose 1 life.`, base: 0, rate: 1 }
-  ],
-  9: [
-    { text: `You may play any card.`, base: 100, rate: -2 },
-    { text: `You may play any card. If you have a buddy, regain 1 life.`, base: 0, rate: 1 },
-    { text: `You may play any card. If you have a blessing, regain 1 stamina.`, base: 0, rate: 1 }
-  ],
-  10: [
-    { text: `You may play any card.`, base: 100, rate: -2 },
-    { text: `You may play any card. Regain 1 life per relationship rank 6 or higher.`, base: 0, rate: 1 },
-    { text: `You may play any card. Add 1 coin to the loot pile per relationship rank 5 or lower.`, base: 0, rate: 1 }
-  ],
-  11: [
-    { text: `You must play a B or C card.`, base: 100, rate: -2 },
-    { text: `You must play a B card.`, base: 0, rate: 1 },
-    { text: `You must play a C card.`, base: 0, rate: 1 }
-  ]
-};
-
-// Night main text options (different from day)
-const nightMainTextOptions = {
-  12: [
-    { text: `You must play a B card. <br><i>Add +1 coin to reward pile.</i>`, base: 100, rate: -2 },
-    { text: `You must play a B card. <br><i>Add +2 coins to reward pile.</i>`, base: 0, rate: 1 },
-    { text: `You must play a B card. <br><i>Add no coins to reward pile.</i>`, base: 0, rate: 1 }
-  ],
-  13: [
-    { text: `You must play a C card. <br><i>Double reward pile.</i>`, base: 100, rate: -2 },
-    { text: `You must play a C card. <br><i>Add +1 coin to reward pile.</i>`, base: 0, rate: 1 },
-    { text: `You must play a C card. <br><i>An eerie howl creeps across the horizon...</i>`, base: 0, rate: 1 }
-  ],
-  14: [
-    { text: `You must play a B card. <br><i>Double reward pile.</i>`, base: 100, rate: -2 },
-    { text: `You must play a B card. <br><i>Add +1 coin to reward pile.</i>`, base: 0, rate: 1 },
-    { text: `You must play a B card. <br><i>A foul stench creeps through the air...</i>`, base: 0, rate: 1 }
-  ],
-  15: [
-    { text: `You must play a C card. <br><i>Double reward pile.</i>`, base: 100, rate: -2 },
-    { text: `You must play a C card. <br><i>Add +1 coin to reward pile.</i>`, base: 0, rate: 1 },
-    { text: `You must play a C card. <br><i>Chills bite at the hairs on your flesh...</i>`, base: 0, rate: 1 }
-  ],
-  16: [
-    { text: `You must play a B card. <br><i>Double reward pile.</i>`, base: 100, rate: -2 },
-    { text: `You must play a B card. <br><i>Add +1 coin to reward pile.</i>`, base: 0, rate: 1 },
-    { text: `You must play a B card. <br><i>Shadows beckon at the edge of your vision...</i>`, base: 0, rate: 1 }
-  ],
-  17: [
-    { text: `You must play a C card. <br><i>The night coils and twists, the end is near...</i>`, base: 100, rate: -2 },
-    { text: `You must play a C card. <br><i>The night air sneers, knowing you intend to return...</i>`, base: 0, rate: 1 },
-    { text: `You must play a C card. <br><i>The night coils and twists, the end is near...</i>`, base: 0, rate: 1 }
-  ]
-};
-
-// Flavor text pools (Day vs Night) - 5 Pools × 5 Texts each
-const flavorPools = {
-  day: {
-    0: [ // basic mechanics - High frequency, early game focus
-      { text: `💡 <span class='pool-0'>Camp cards provide essential resources.
-      </span>`, base: 1, rate: 1.8 },    // 1+(1.8*Cycle) - High growth
-      { text: `💡 <span class='pool-0'>Camp cards require additional resources.
-      </span>`, base: 1, rate: 1.5 },      // 1+(1.5*Cycle) - Medium-high
-      { text: `💡 <span class='pool-0'>Camp cards recover 1 physicks.
-      </span>`, base: 1, rate: 1.2 },  // 1+(1.2*Cycle) - Steady growth
-      { text: `💡 <span class='pool-0'>Camp cards recover 1 magicks.
-      </span>`, base: 1, rate: 1.0 },               // 1+(1.0*Cycle) - Moderate
-      { text: `💡 <span class='pool-0'>Camp cards recover 1 of all stats.
-      </span>`, base: 1, rate: 0.8 }    // 0+(0.8*Cycle) - Slower, later
-    ],
-    1: [ // Strategic - Medium frequency, mid game focus
-      { text: `🎯 <span class='pool-1'>Merchants offer discounted items.
-      </span>`, base: 0, rate: 1.2 }, // 0+(1.2*Cycle)
-      { text: `🎯 <span class='pool-1'>If you have any equipment, regain 1 stamina.
-      </span>`, base: 0, rate: 1.0 },  // 0+(1.0*Cycle)
-      { text: `🎯 <span class='pool-1'>If you have any items, gain 1 energy.
-      </span>`, base: 0, rate: 0.8 }, // 0+(0.8*Cycle)
-      { text: `🎯 <span class='pool-1'>If you have any arcane items, regain 1 energy.
-      </span>`, base: 2, rate: 0.6 },                   // 2+(0.6*Cycle)
-      { text: `🎯 <span class='pool-1'>Regain 1 energy per soulgem and arcane item in your possession.
-      </span>`, base: 0, rate: 0.9 }                // 0+(0.9*Cycle)
-    ],
-    2: [ // elements - Low frequency, builds gradually
-      { text: `📖 <span class='pool-2'>If you are enchanted, become blessed.
-      </span>`, base: 0, rate: 0.8 },          // 0+(0.8*Cycle)
-      { text: `📖 <span class='pool-2'>If you have any quick cards: after revealing you, may discard a map card once this turn.
-      </span>`, base: 0, rate: 0.6 },                   // 0+(0.6*Cycle)
-      { text: `📖 <span class='pool-2'>If you have more spells than madness, ignore madness resolves.
-      </span>`, base: 0, rate: 0.9 },             // 0+(0.9*Cycle)
-      { text: `📖 <span class='pool-2'>If you have any quick cards, gain 1 empower.
-      </span>`, base: 0, rate: 0.5 },           // 0+(0.5*Cycle)
-      { text: `📖 <span class='pool-2'>History repeats, but wisdom evolves. If you have the highest mastery, you may recycle a spell.
-      </span>`, base: 0, rate: 0.7 }                    // 0+(0.7*Cycle)
-    ],
-    3: [ // Atmospheric/mysterious - Very low frequency, late game emphasis
-      { text: `✨ <span class='pool-3'>The air tingles with anticipation... All players with less coalesce than you regain 1 coalesce.
-      </span>`, base: 0, rate: 0.5 },     // 0+(0.5*Cycle)
-      { text: `✨ <span class='pool-3'>Something stirs beyond the horizon. If you do not have a weapon, regain 1 coalesce.
-      </span>`, base: 0, rate: 0.4 },      // 0+(0.4*Cycle)
-      { text: `✨ <span class='pool-3'>Fate weaves its tapestry unseen. Regain 1 coalesce if you have more mastery than potency.
-      </span>`, base: 0, rate: 0.6 },         // 0+(0.6*Cycle)
-      { text: `✨ <span class='pool-3'>The boundary between dreams and reality blurs. Regain 3 coalesce if you have none. 
-      </span>`, base: 0, rate: 0.3 }, // 0+(0.3*Cycle)
-      { text: `✨ <span class='pool-3'>Destiny whispers to those who listen. You may regain 1 coalesce during your ACT.
-      </span>`, base: 0, rate: 0.7 }     // 0+(0.7*Cycle)
-    ],
-    4: [ // Advanced mechanics - Medium frequency, builds with experience
-      { text: `⚙️ <span class='pool-4'>Your vision dims. You cannot activate your iris power.
-      </span>`, base: 0, rate: 1.1 },           // 0+(1.1*Cycle)
-      { text: `⚙️ <span class='pool-4'>Discovery cards hold secrets yet uncovered: regain 1 more energy.
-      </span>`, base: 0, rate: 0.9 },          // 0+(0.9*Cycle)
-      { text: `⚙️ <span class='pool-4'>Insight reveals hidden patterns in chaos: you may ignore an event's negative consequences.
-      </span>`, base: 0, rate: 0.7 },            // 0+(0.7*Cycle)
-      { text: `⚙️ <span class='pool-4'>Advanced strategies emerge from mastering the basics: basic and simple actions are free during combat.
-      </span>`, base: 0, rate: 0.8 }, // 0+(0.8*Cycle)
-      { text: `⚙️ <span class='pool-4'>Reward both boldness and haste: players with quick succeed instantly.
-      </span>`, base: 0, rate: 1.0 }       // 0+(1.0*Cycle)
-    ]
-  },
-  night: {
-    0: [ // Night - Higher frequency, starts earlier
-      { text: `🌙 <span class='pool-0'>A chill up youre spine. Cards without empower injure the user if used.
-      </span>`, base: 3, rate: 2.0 },      // 3+(2.0*Cycle) - High base + growth
-      { text: `🌙 <span class='pool-0'>Bony fingers around your neck. Cards with mana injure the user if used.
-      </span>`, base: 2, rate: 1.8 }, // 2+(1.8*Cycle) - High
-      { text: `🌙 <span class='pool-0'>The caw of far off crows. Cards with energy injure the user if used. 
-      </span>`, base: 1, rate: 1.5 },     // 1+(1.5*Cycle) - Medium-high
-      { text: `🌙 <span class='pool-0'>Lay down and never rise again. Cards with stamina injure the user if used. 
-      </span>`, base: 0, rate: 1.2 },    // 0+(1.2*Cycle) - Steady
-      { text: `🌙 <span class='pool-0'>Suffocate in the night air. Physical actions cripple the user until dawn.
-      </span>`, base: 2, rate: 1.4 }     // 2+(1.4*Cycle) - Good base
-    ],
-    1: [ // Night - High frequency, intensifies rapidly
-      { text: `⚠️ <span class='pool-1'>The darkness judges you, all players with a curse take 1 damage.
-      </span>`, base: 0, rate: 2.0 },       // 0+(2.0*Cycle)
-      { text: `⚠️ <span class='pool-1'>Fear can be as dangerous as any enemy. Players wil the highest madness take 1 damage.
-      </span>`, base: 0, rate: 1.8 },       // 0+(1.8*Cycle)
-      { text: `⚠️ <span class='pool-1'>What you cannot see may yet harm you. Gain dread until dawn.
-      </span>`, base: 0, rate: 1.6 },        // 0+(1.6*Cycle)
-      { text: `⚠️ <span class='pool-1'>The night remembers every mistake. Fail any resolve.
-      </span>`, base: 1, rate: 1.9 },           // 1+(1.9*Cycle)
-      { text: `⚠️ <span class='pool-1'>Courage must overcome doubt in darkness. Lose 1 madness.
-      </span>`, base: 0, rate: 1.7 }     // 0+(1.7*Cycle)
-    ],
-    2: [ // Night lore - Medium frequency, story elements
-      { text: `📚 <span class='pool-2'>Old tales speak of those who conquered the night. Lose 1 madness if you have more potency than madness.
-      </span>`, base: 0, rate: 1.2 },   // 0+(1.2*Cycle)
-      { text: `📚 <span class='pool-2'>The night has memory and seeks revenge. Panic if you have more madness than potency.
-      </span>`, base: 0, rate: 1.0 },             // 0+(1.0*Cycle)
-      { text: `📚 <span class='pool-2'>Some say the night is eternal, others disagree. Lose 1 madness if you have more mastery than madness.
-      </span>`, base: 0, rate: 0.8 },      // 0+(0.8*Cycle)
-      { text: `📚 <span class='pool-2'>The darkest hour comes just before dawn. Untap one card.
-      </span>`, base: 0, rate: 1.1 },            // 0+(1.1*Cycle)
-      { text: `📚 <span class='pool-2'>Legends are born from those who survive the night. Gain quick until dawn.
-      </span>`, base: 0, rate: 0.9 }    // 0+(0.9*Cycle)
-    ],
-    3: [ // Night atmosphere - Lower frequency, atmospheric focus
-      { text: `🌌 <span class='pool-3'>Stars peek behind clouds. Everyone regains 1 life per camp revealed so far this night.
-      </span>`, base: 0, rate: 0.9 },        // 0+(0.9*Cycle)
-      { text: `🌌 <span class='pool-3'>The void between worlds grows thinner. The player with the lowest mastery must resolve madness.
-      </span>`, base: 0, rate: 0.7 },    // 0+(0.7*Cycle)
-      { text: `🌌 <span class='pool-3'>The night sky offers no comfort to the lost. Lose mana equal to your current madness.
-      </span>`, base: 0, rate: 0.6 }, // 0+(0.6*Cycle)
-      { text: `🌌 <span class='pool-3'>Silence carries a boiling terror. The player with the lowest strength must resolve madness.
-      </span>`, base: 0, rate: 0.8 },    // 0+(0.8*Cycle)
-      { text: `🌌 <span class='pool-3'>A sense of doom befalls you. If you are cursed, lose all mana.
-      </span>`, base: 0, rate: 0.5 } // 0+(0.5*Cycle)
-    ],
-    4: [ // Night mechanics - Specialized advice
-      { text: `🌟 <span class='pool-4'>Night battles favor the prepared and decisive. If you have a weapon regain mana equal to your strength.
-      </span>`, base: 0, rate: 1.3 },          // 0+(1.3*Cycle)
-      { text: `🌟 <span class='pool-4'>Quick actions carry greater weight in darkness. If you have a weapon regain mana equal to your skill.
-      </span>`, base: 0, rate: 1.1 },          // 0+(1.1*Cycle)
-      { text: `🌟 <span class='pool-4'>The night rewards those who adapt quickly. If you have an arcane item regain mana and energy equal to your mastery.
-      </span>`, base: 0, rate: 0.9 },               // 0+(0.9*Cycle)
-      { text: `🌟 <span class='pool-4'>Strategic retreat often leads to victory. Gain 1 empower. Gain 1 more if your highest trait is skill.
-      </span>`, base: 0, rate: 0.8 },               // 0+(0.8*Cycle)
-      { text: `🌟 <span class='pool-4'>The night teaches lessons that daylight cannot. Resolve: if you fail, gaze up at the moon; mouth agape.
-      </span>`, base: 1, rate: 1.0 }          // 0+(1.0*Cycle)
-    ]
-  }
-};
-
-// Get main text for specific slot using independent chance calculation
-function getMainText(slotNum, isNight = false) {
-  const textOptions = isNight ? nightMainTextOptions[slotNum] : mainTextOptions[slotNum];
-  if (!textOptions) return "No text available for this slot.";
-  
-  // Calculate individual chances for each text
-  const chances = textOptions.map(option => {
-    const chancePercent = Math.max(0, option.base + (option.rate * cycle));
-    return {
-      text: option.text,
-      chance: Math.min(100, chancePercent) / 100 // Convert to decimal 0-1
-    };
-  });
-  
-  // Convert percentages to weighted selection
-  const totalChance = chances.reduce((sum, c) => sum + c.chance, 0);
-  
-  if (totalChance === 0) return textOptions[0].text; // Fallback
-  
-  const random = Math.random() * totalChance;
-  let cumulative = 0;
-  
-  for (const chance of chances) {
-    cumulative += chance.chance;
-    if (random <= cumulative) {
-      return chance.text;
-    }
-  }
-  
-  // Fallback to first option
-  return chances[0].text;
-}
-
-// Get flavor text from pools using independent dice rolls
-function getFlavorText(slotNum, isNight = false) {
-  const pools = isNight ? flavorPools.night : flavorPools.day;
-  let result = "";
-  
-  // Each pool rolls independently - multiple texts can appear or none
-  for (let poolIndex = 0; poolIndex < 5; poolIndex++) {
-    const poolTexts = pools[poolIndex];
-    if (!poolTexts) continue;
-    
-    // Roll for each text in the pool independently
-    for (const textObj of poolTexts) {
-      const chancePercent = Math.max(0, textObj.base + (textObj.rate * cycle));
-      const probability = Math.min(100, chancePercent) / 100;
+    // Game State with modern destructuring
+    const gameState = {
+      cycle: 1,
+      slot: 0,
+      isNight: false,
+      nightStep: 0,
+      phaseMode: null,
       
-      if (Math.random() < probability) {
-        result += "<br><br>" + textObj.text;
+      // Constants
+      DAY_SLOTS: 11,
+      NIGHT_SLOTS: 6
+    };
+
+    // Modern DOM element references
+    const elements = {
+      container: document.querySelector('.game-container'),
+      dayLabel: document.getElementById('dayLabel'),
+      slotLabel: document.getElementById('slotLabel'),
+      textArea: document.getElementById('textArea'),
+      mainButton: document.getElementById('mainButton'),
+      checkboxesDiv: document.getElementById('checkboxes'),
+      actCheckbox: document.getElementById('actCheckbox'),
+      mapCheckbox: document.getElementById('mapCheckbox')
+    };
+
+    // NEW: State Manager for automatic state persistence
+    class StateManager {
+      static STORAGE_KEY = 'walkerGameState';
+      
+      static saveState() {
+        try {
+          const stateToSave = {
+            cycle: gameState.cycle,
+            slot: gameState.slot,
+            isNight: gameState.isNight,
+            nightStep: gameState.nightStep,
+            phaseMode: gameState.phaseMode,
+            timestamp: Date.now()
+          };
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stateToSave));
+        } catch (error) {
+          console.warn('Failed to save game state:', error);
+        }
+      }
+      
+      static loadState() {
+        try {
+          const savedState = localStorage.getItem(this.STORAGE_KEY);
+          if (!savedState) return false;
+          
+          const parsedState = JSON.parse(savedState);
+          
+          // Validate state data
+          if (typeof parsedState.cycle === 'number' && 
+              typeof parsedState.slot === 'number' && 
+              typeof parsedState.isNight === 'boolean') {
+            
+            gameState.cycle = parsedState.cycle;
+            gameState.slot = parsedState.slot;
+            gameState.isNight = parsedState.isNight;
+            gameState.nightStep = parsedState.nightStep || 0;
+            gameState.phaseMode = parsedState.phaseMode || null;
+            
+            return true;
+          }
+        } catch (error) {
+          console.warn('Failed to load game state:', error);
+        }
+        return false;
+      }
+      
+      static clearState() {
+        try {
+          localStorage.removeItem(this.STORAGE_KEY);
+        } catch (error) {
+          console.warn('Failed to clear game state:', error);
+        }
+      }
+      
+      static hasSavedState() {
+        return localStorage.getItem(this.STORAGE_KEY) !== null;
       }
     }
-  }
-  
-  return result;
-}
 
-/* Text composition functions */
-function getDayText(slot) {
-  let baseText = getMainText(slot, false);
-  baseText += getFlavorText(slot, false);
-  return baseText;
-}
-
-function getNightText(nightStep) {
-  const slotNum = 12 + nightStep;
-  let baseText = getMainText(slotNum, true);
-  baseText += getFlavorText(slotNum, true);
-  return baseText;
-}
-
-/* --- UI Update --- */
-function updateUI() {
-  cleanupTransientButtons();
-
-  if (slot === 0) {
-    setContainerTheme('day');
-    dayLabel.innerText = `DAWN of Cycle ${cycle}`;
-    slotLabel.innerText = '[0]';
-    textArea.innerHTML = "All players gain <strong>one level!</strong> <br>All players regain all <strong>light mana!</strong>";
-    checkboxesDiv.style.display = 'none';
-    mainButton.style.display = 'block';
-    mainButton.innerText = 'CONTINUE';
-    mainButton.disabled = false;
-    phaseMode = null;
-    return;
-  }
-
-  if (!isNight && slot > 0 && slot <= daySlots) {
-    setContainerTheme('day');
-    dayLabel.innerText = `The ${ordinal(cycle)} Day`;
-    slotLabel.innerText = `[${slot}]`;
-    textArea.innerHTML = getDayText(slot);
-    checkboxesDiv.style.display = 'flex';
-    restoreStableCheckboxes();
-    actCheckbox.classList.remove('checked');
-    mapCheckbox.classList.remove('checked');
-    mainButton.innerText = 'NEXT PLAYER';
-    mainButton.disabled = true;
-    mainButton.style.display = 'block';
-    phaseMode = null;
-    return;
-  }
-
-  if (isNight) {
-    setContainerTheme('night');
-    dayLabel.innerText = `The ${ordinal(cycle)} Night`;
-    slotLabel.innerText = `[${12 + nightStep}]`;
-    textArea.innerHTML = getNightText(nightStep);
-    checkboxesDiv.style.display = 'flex';
-    restoreStableCheckboxes();
-    actCheckbox.classList.remove('checked');
-    mapCheckbox.classList.remove('checked');
-    mainButton.innerText = (nightStep === nightSlots - 1) ? 'END THE NIGHT' : 'NEXT PLAYER';
-    mainButton.disabled = true;
-    mainButton.style.display = 'block';
-    phaseMode = null;
-    return;
-  }
-}
-
-const daySlots = 11;
-const nightSlots = 6;
-
-/* Elements */
-const dayLabel = document.getElementById('dayLabel');
-const slotLabel = document.getElementById('slotLabel');
-const textArea = document.getElementById('textArea');
-const mainButton = document.getElementById('mainButton');
-const checkboxesDiv = document.getElementById('checkboxes');
-let actCheckbox = document.getElementById('actCheckbox');
-let mapCheckbox = document.getElementById('mapCheckbox');
-
-/* Helpers */
-function ordinal(n) {
-  return ["First","Second","Third","Fourth","Fifth","Sixth","Seventh","Eighth","Ninth","Tenth","Eleventh","Twelfth","Thirteenth"][n - 1] || n + "th";
-}
-
-function enableMainIfBothChecked() {
-  if (!actCheckbox || !mapCheckbox) { mainButton.disabled = true; return; }
-  mainButton.disabled = !(actCheckbox.classList.contains('checked') && mapCheckbox.classList.contains('checked'));
-}
-
-/* Core transitions */
-function goToDawn(increment = true) {
-  if (increment) cycle++;
-  isNight = false;
-  nightStep = 0;
-  slot = 0;
-  phaseMode = null;
-  cleanupTransientButtons();
-  restoreStableCheckboxes();
-  updateUI();
-}
-
-function restoreStableCheckboxes() {
-  if (!document.getElementById('actCheckbox') || !document.getElementById('mapCheckbox')) {
-    checkboxesDiv.innerHTML = '<div class="checkbox" id="actCheckbox">ACT</div><div class="checkbox" id="mapCheckbox">REVEAL</div>';
-    actCheckbox = document.getElementById('actCheckbox');
-    mapCheckbox = document.getElementById('mapCheckbox');
-    actCheckbox.addEventListener('click', toggleCheckbox);
-    mapCheckbox.addEventListener('click', toggleCheckbox);
-  }
-  actCheckbox.classList.remove('checked');
-  mapCheckbox.classList.remove('checked');
-}
-
-function cleanupTransientButtons() {
-  document.querySelectorAll('.container button.dawn-btn, .container button.night-btn, .container button.interstitial-btn').forEach(b => b.remove());
-}
-
-function toggleCheckbox() {
-  this.classList.toggle('checked');
-  enableMainIfBothChecked();
-}
-
-/* DUSK */
-function showDuskChoice() {
-  checkboxesDiv.style.display = 'none';
-  mainButton.style.display = 'none';
-  textArea.innerHTML = "<strong>DUSK: </strong><br>Choose to proceed to DAWN... <br>...or enter the NIGHT.";
-
-  const dawnBtn = document.createElement('button');
-  dawnBtn.className = 'button dawn-btn';
-  dawnBtn.innerText = 'Proceed to DAWN';
-  dawnBtn.disabled = true;
-
-  const nightBtn = document.createElement('button');
-  nightBtn.className = 'button night-btn';
-  nightBtn.innerText = 'Enter the NIGHT';
-  nightBtn.disabled = true;
-
-  container.appendChild(dawnBtn);
-  container.appendChild(nightBtn);
-
-  setContainerTheme('night'); // transition during dusk
-
-  let cooldown = 3;
-  const interval = setInterval(() => {
-    cooldown--;
-    if (cooldown <= 0) {
-      dawnBtn.disabled = false;
-      nightBtn.disabled = false;
-      clearInterval(interval);
+    // Modern theme management with CSS custom properties
+    class ThemeManager {
+      static setTheme(theme) {
+        const container = elements.container;
+        container.classList.remove('day-theme', 'night-theme');
+        
+        if (theme === 'day') {
+          container.classList.add('day-theme');
+          document.documentElement.style.setProperty('--bg-primary', '#1C1C30');
+        } else if (theme === 'night') {
+          container.classList.add('night-theme');
+          document.documentElement.style.setProperty('--bg-primary', '#0a0a1a');
+        }
+      }
     }
-  }, 1000);
 
-  dawnBtn.addEventListener('click', () => {
-    dawnBtn.remove(); nightBtn.remove();
-    goToDawn(true);
-  });
+    // Modern chance calculation system
+    class ChanceCalculator {
+      static linear(base, rate, cycle) {
+        return Math.max(0, Math.min(1, base + (rate * cycle)));
+      }
 
-  nightBtn.addEventListener('click', () => {
-    dawnBtn.remove(); nightBtn.remove();
-    isNight = true;
-    nightStep = 0;
-    slot = 12;
-    updateUI();
-  });
-}
+      static stepChance(startCycle, rate, cycle) {
+        if (cycle < startCycle) return 0;
+        const steps = Math.floor((cycle - startCycle) / 2);
+        return steps * rate;
+      }
 
-/* Night interstitial */
-function showContinueNightInterstitial() {
-  checkboxesDiv.style.display = 'none';
-  mainButton.style.display = 'none';
-  textArea.innerHTML = "Choose your next action wisely...";
-
-  const endBtn = document.createElement('button');
-  endBtn.className = 'button interstitial-btn';
-  endBtn.innerText = 'Loot rewards, proceed to the DAWN!';
-  endBtn.disabled = true;
-
-  const contBtn = document.createElement('button');
-  contBtn.className = 'button interstitial-btn';
-  contBtn.innerText = 'Continue deeper into the NIGHT...';
-  contBtn.disabled = true;
-
-  container.appendChild(endBtn);
-  container.appendChild(contBtn);
-
-  let cooldown = 1;
-  const interval = setInterval(() => {
-    cooldown--;
-    if (cooldown <= 0) {
-      endBtn.disabled = false;
-      contBtn.disabled = false;
-      endBtn.classList.add('active');
-      contBtn.classList.add('active');
-      clearInterval(interval);
+      // Modern weighted random selection
+      static weightedRandom(items, weightProp = 'chance') {
+        const totalWeight = items.reduce((sum, item) => sum + item[weightProp], 0);
+        
+        if (totalWeight === 0) return items[0]; // Fallback
+        
+        const random = Math.random() * totalWeight;
+        let cumulative = 0;
+        
+        for (const item of items) {
+          cumulative += item[weightProp];
+          if (random <= cumulative) {
+            return item;
+          }
+        }
+        
+        return items[items.length - 1]; // Fallback
+      }
     }
-  }, 1000);
 
-  endBtn.addEventListener('click', () => {
-    endBtn.remove(); contBtn.remove();
-    goToDawn(true);
-  });
+    // Modern text management system
+    class TextManager {
+      constructor() {
+        this.mainTextOptions = {
+          1: [
+            { text: `You may play any card.`, base: 100, rate: -2 },
+            { text: `You must play an Adventure card.`, base: 0, rate: 1 },
+            { text: `If you play an Adventure card, lose 1 stamina.`, base: 0, rate: 1 }
+          ],
+          2: [
+            { text: `You may play any card.`, base: 100, rate: -2 },
+            { text: `You may play any card. If you play an event, regain 1 life immediately.`, base: 0, rate: 1 },
+            { text: `You may play any card. If you play a discovery, gain 1 coin.`, base: 0, rate: 1 }
+          ],
+          3: [
+            { text: `You may play any card.`, base: 100, rate: -2 },
+            { text: `Gain 1 empower if you play a B or C card.`, base: 0, rate: 1 },
+            { text: `You may play any card. If all cards played so far are the same type, everyone regains 3 life.`, base: 0, rate: 1 }
+          ],
+          4: [
+            { text: `You may play any card.`, base: 100, rate: -2 },
+            { text: `You may play any card. If you begin a combat encounter gain 1 empower.`, base: 0, rate: 1 },
+            { text: `You may play any card. If you have no empower, lose 1 life.`, base: 0, rate: 1 }
+          ],
+          5: [
+            { text: `You may play any card.`, base: 100, rate: -2 },
+            { text: `You must play a B or C card.`, base: 0, rate: 1 },
+            { text: `You may play any card. Flip a coin: if heads gain 1 coin, if tails lose 1 coin.`, base: 0, rate: 1 }
+          ],
+          6: [
+            { text: `You may play any card.`, base: 100, rate: -2 },
+            { text: `You must play a B or C card. Add 1 to the loot pile.`, base: 0, rate: 1 },
+            { text: `You may play any card. If you play a B card, remove all your empower and add that many coins to the loot pile.`, base: 0, rate: 1 }
+          ],
+          7: [
+            { text: `You may play any card.`, base: 100, rate: -2 },
+            { text: `You must play a B card.`, base: 0, rate: 1 },
+            { text: `You must play a A card.`, base: 0, rate: 1 }
+          ],
+          8: [
+            { text: `You may play any card.`, base: 100, rate: -2 },
+            { text: `You may play any card. If you have no coins, lose 1 madness.`, base: 0, rate: 1 },
+            { text: `You may play any card. If you have more madness than coins, lose 1 life.`, base: 0, rate: 1 }
+          ],
+          9: [
+            { text: `You may play any card.`, base: 100, rate: -2 },
+            { text: `You may play any card. If you have a buddy, regain 1 life.`, base: 0, rate: 1 },
+            { text: `You may play any card. If you have a blessing, regain 1 stamina.`, base: 0, rate: 1 }
+          ],
+          10: [
+            { text: `You may play any card.`, base: 100, rate: -2 },
+            { text: `You may play any card. Regain 1 life per relationship rank 6 or higher.`, base: 0, rate: 1 },
+            { text: `You may play any card. Add 1 coin to the loot pile per relationship rank 5 or lower.`, base: 0, rate: 1 }
+          ],
+          11: [
+            { text: `You must play a B or C card.`, base: 100, rate: -2 },
+            { text: `You must play a B card.`, base: 0, rate: 1 },
+            { text: `You must play a C card.`, base: 0, rate: 1 }
+          ]
+        };
 
-  contBtn.addEventListener('click', () => {
-    endBtn.remove(); contBtn.remove();
-    nightStep++;
-    slot++;
-    updateUI();
-  });
-}
+        this.nightMainTextOptions = {
+          12: [
+            { text: `You must play a B card. <br><i>Add +1 coin to reward pile.</i>`, base: 100, rate: -2 },
+            { text: `You must play a B card. <br><i>Add +2 coins to reward pile.</i>`, base: 0, rate: 1 },
+            { text: `You must play a B card. <br><i>Add no coins to reward pile.</i>`, base: 0, rate: 1 }
+          ],
+          13: [
+            { text: `You must play a C card. <br><i>Double reward pile.</i>`, base: 100, rate: -2 },
+            { text: `You must play a C card. <br><i>Add +1 coin to reward pile.</i>`, base: 0, rate: 1 },
+            { text: `You must play a C card. <br><i>An eerie howl creeps across the horizon...</i>`, base: 0, rate: 1 }
+          ],
+          14: [
+            { text: `You must play a B card. <br><i>Double reward pile.</i>`, base: 100, rate: -2 },
+            { text: `You must play a B card. <br><i>Add +1 coin to reward pile.</i>`, base: 0, rate: 1 },
+            { text: `You must play a B card. <br><i>A foul stench creeps through the air...</i>`, base: 0, rate: 1 }
+          ],
+          15: [
+            { text: `You must play a C card. <br><i>Double reward pile.</i>`, base: 100, rate: -2 },
+            { text: `You must play a C card. <br><i>Add +1 coin to reward pile.</i>`, base: 0, rate: 1 },
+            { text: `You must play a C card. <br><i>Chills bite at the hairs on your flesh...</i>`, base: 0, rate: 1 }
+          ],
+          16: [
+            { text: `You must play a B card. <br><i>Double reward pile.</i>`, base: 100, rate: -2 },
+            { text: `You must play a B card. <br><i>Add +1 coin to reward pile.</i>`, base: 0, rate: 1 },
+            { text: `You must play a B card. <br><i>Shadows beckon at the edge of your vision...</i>`, base: 0, rate: 1 }
+          ],
+          17: [
+            { text: `You must play a C card. <br><i>The night coils and twists, the end is near...</i>`, base: 100, rate: -2 },
+            { text: `You must play a C card. <br><i>The night air sneers, knowing you intend to return...</i>`, base: 0, rate: 1 },
+            { text: `You must play a C card. <br><i>The night coils and twists, the end is near...</i>`, base: 0, rate: 1 }
+          ]
+        };
 
-/* Deep of Night */
-function showDeepOfNight() {
-  phaseMode = 'deep';
-  setContainerTheme('night');
-  dayLabel.innerText = `The Deep Of The ${ordinal(cycle)} Night`;
-  slotLabel.innerText = "[17]";
-  textArea.innerHTML = "Congratulations, you have survived the night...";
+        this.flavorPools = {
+          day: {
+            0: [
+              { text: `💡 <span class='pool-0'>Camp cards provide essential resources.</span>`, base: 1, rate: 1.8 },
+              { text: `💡 <span class='pool-0'>Camp cards require additional resources.</span>`, base: 1, rate: 1.5 },
+              { text: `💡 <span class='pool-0'>Camp cards recover 1 physicks.</span>`, base: 1, rate: 1.2 },
+              { text: `💡 <span class='pool-0'>Camp cards recover 1 magicks.</span>`, base: 1, rate: 1.0 },
+              { text: `💡 <span class='pool-0'>Camp cards recover 1 of all stats.</span>`, base: 1, rate: 0.8 }
+            ],
+            1: [
+              { text: `🎯 <span class='pool-1'>Merchants offer discounted items.</span>`, base: 0, rate: 1.2 },
+              { text: `🎯 <span class='pool-1'>If you have any equipment, regain 1 stamina.</span>`, base: 0, rate: 1.0 },
+              { text: `🎯 <span class='pool-1'>If you have any items, gain 1 energy.</span>`, base: 0, rate: 0.8 },
+              { text: `🎯 <span class='pool-1'>If you have any arcane items, regain 1 energy.</span>`, base: 2, rate: 0.6 },
+              { text: `🎯 <span class='pool-1'>Regain 1 energy per soulgem and arcane item in your possession.</span>`, base: 0, rate: 0.9 }
+            ],
+            2: [
+              { text: `📖 <span class='pool-2'>If you are enchanted, become blessed.</span>`, base: 0, rate: 0.8 },
+              { text: `📖 <span class='pool-2'>If you have any quick cards: after revealing you, may discard a map card once this turn.</span>`, base: 0, rate: 0.6 },
+              { text: `📖 <span class='pool-2'>If you have more spells than madness, ignore madness resolves.</span>`, base: 0, rate: 0.9 },
+              { text: `📖 <span class='pool-2'>If you have any quick cards, gain 1 empower.</span>`, base: 0, rate: 0.5 },
+              { text: `📖 <span class='pool-2'>History repeats, but wisdom evolves. If you have the highest mastery, you may recycle a spell.</span>`, base: 0, rate: 0.7 }
+            ],
+            3: [
+              { text: `✨ <span class='pool-3'>The air tingles with anticipation... All players with less coalesce than you regain 1 coalesce.</span>`, base: 0, rate: 0.5 },
+              { text: `✨ <span class='pool-3'>Something stirs beyond the horizon. If you do not have a weapon, regain 1 coalesce.</span>`, base: 0, rate: 0.4 },
+              { text: `✨ <span class='pool-3'>Fate weaves its tapestry unseen. Regain 1 coalesce if you have more mastery than potency.</span>`, base: 0, rate: 0.6 },
+              { text: `✨ <span class='pool-3'>The boundary between dreams and reality blurs. Regain 3 coalesce if you have none.</span>`, base: 0, rate: 0.3 },
+              { text: `✨ <span class='pool-3'>Destiny whispers to those who listen. You may regain 1 coalesce during your ACT.</span>`, base: 0, rate: 0.7 }
+            ],
+            4: [
+              { text: `⚙️ <span class='pool-4'>Your vision dims. You cannot activate your iris power.</span>`, base: 0, rate: 1.1 },
+              { text: `⚙️ <span class='pool-4'>Discovery cards hold secrets yet uncovered: regain 1 more energy.</span>`, base: 0, rate: 0.9 },
+              { text: `⚙️ <span class='pool-4'>Insight reveals hidden patterns in chaos: you may ignore an event's negative consequences.</span>`, base: 0, rate: 0.7 },
+              { text: `⚙️ <span class='pool-4'>Advanced strategies emerge from mastering the basics: basic and simple actions are free during combat.</span>`, base: 0, rate: 0.8 },
+              { text: `⚙️ <span class='pool-4'>Reward both boldness and haste: players with quick succeed instantly.</span>`, base: 0, rate: 1.0 }
+            ]
+          },
+          night: {
+            0: [
+              { text: `🌙 <span class='pool-0'>A chill up youre spine. Cards without empower injure the user if used.</span>`, base: 3, rate: 2.0 },
+              { text: `🌙 <span class='pool-0'>Bony fingers around your neck. Cards with mana injure the user if used.</span>`, base: 2, rate: 1.8 },
+              { text: `🌙 <span class='pool-0'>The caw of far off crows. Cards with energy injure the user if used.</span>`, base: 1, rate: 1.5 },
+              { text: `🌙 <span class='pool-0'>Lay down and never rise again. Cards with stamina injure the user if used.</span>`, base: 0, rate: 1.2 },
+              { text: `🌙 <span class='pool-0'>Suffocate in the night air. Physical actions cripple the user until dawn.</span>`, base: 2, rate: 1.4 }
+            ],
+            1: [
+              { text: `⚠️ <span class='pool-1'>The darkness judges you, all players with a curse take 1 damage.</span>`, base: 0, rate: 2.0 },
+              { text: `⚠️ <span class='pool-1'>Fear can be as dangerous as any enemy. Players wil the highest madness take 1 damage.</span>`, base: 0, rate: 1.8 },
+              { text: `⚠️ <span class='pool-1'>What you cannot see may yet harm you. Gain dread until dawn.</span>`, base: 0, rate: 1.6 },
+              { text: `⚠️ <span class='pool-1'>The night remembers every mistake. Fail any resolve.</span>`, base: 1, rate: 1.9 },
+              { text: `⚠️ <span class='pool-1'>Courage must overcome doubt in darkness. Lose 1 madness.</span>`, base: 0, rate: 1.7 }
+            ],
+            2: [
+              { text: `📚 <span class='pool-2'>Old tales speak of those who conquered the night. Lose 1 madness if you have more potency than madness.</span>`, base: 0, rate: 1.2 },
+              { text: `📚 <span class='pool-2'>The night has memory and seeks revenge. Panic if you have more madness than potency.</span>`, base: 0, rate: 1.0 },
+              { text: `📚 <span class='pool-2'>Some say the night is eternal, others disagree. Lose 1 madness if you have more mastery than madness.</span>`, base: 0, rate: 0.8 },
+              { text: `📚 <span class='pool-2'>The darkest hour comes just before dawn. Untap one card.</span>`, base: 0, rate: 1.1 },
+              { text: `📚 <span class='pool-2'>Legends are born from those who survive the night. Gain quick until dawn.</span>`, base: 0, rate: 0.9 }
+            ],
+            3: [
+              { text: `🌌 <span class='pool-3'>Stars peek behind clouds. Everyone regains 1 life per camp revealed so far this night.</span>`, base: 0, rate: 0.9 },
+              { text: `🌌 <span class='pool-3'>The void between worlds grows thinner. The player with the lowest mastery must resolve madness.</span>`, base: 0, rate: 0.7 },
+              { text: `🌌 <span class='pool-3'>The night sky offers no comfort to the lost. Lose mana equal to your current madness.</span>`, base: 0, rate: 0.6 },
+              { text: `🌌 <span class='pool-3'>Silence carries a boiling terror. The player with the lowest strength must resolve madness.</span>`, base: 0, rate: 0.8 },
+              { text: `🌌 <span class='pool-3'>A sense of doom befalls you. If you are cursed, lose all mana.</span>`, base: 0, rate: 0.5 }
+            ],
+            4: [
+              { text: `🌟 <span class='pool-4'>Night battles favor the prepared and decisive. If you have a weapon regain mana equal to your strength.</span>`, base: 0, rate: 1.3 },
+              { text: `🌟 <span class='pool-4'>Quick actions carry greater weight in darkness. If you have a weapon regain mana equal to your skill.</span>`, base: 0, rate: 1.1 },
+              { text: `🌟 <span class='pool-4'>The night rewards those who adapt quickly. If you have an arcane item regain mana and energy equal to your mastery.</span>`, base: 0, rate: 0.9 },
+              { text: `🌟 <span class='pool-4'>Strategic retreat often leads to victory. Gain 1 empower. Gain 1 more if your highest trait is skill.</span>`, base: 0, rate: 0.8 },
+              { text: `🌟 <span class='pool-4'>The night teaches lessons that daylight cannot. Resolve: if you fail, gaze up at the moon; mouth agape.</span>`, base: 1, rate: 1.0 }
+            ]
+          }
+        };
+      }
 
-  checkboxesDiv.innerHTML = '';
-  const lootBtn = document.createElement('div');
-  lootBtn.className = 'checkbox';
-  lootBtn.innerText = 'Loot the rewards!!';
+      getMainText(slotNum, isNight = false) {
+        const textOptions = isNight ? this.nightMainTextOptions[slotNum] : this.mainTextOptions[slotNum];
+        if (!textOptions) return "No text available for this slot.";
+        
+        // Calculate individual chances for each text
+        const chances = textOptions.map(option => ({
+          text: option.text,
+          chance: Math.max(0, option.base + (option.rate * gameState.cycle)) / 100
+        }));
+        
+        return ChanceCalculator.weightedRandom(chances).text;
+      }
 
-  const levelBtn = document.createElement('div');
-  levelBtn.className = 'checkbox';
-  levelBtn.innerText = 'Everyone gain 1 level!';
+      // FIXED: Get flavor text from pools - each pool selects AT MOST ONE text
+      getFlavorText(slotNum, isNight = false) {
+        const pools = isNight ? this.flavorPools.night : this.flavorPools.day;
+        let result = "";
+        
+        // Each pool rolls independently - but selects AT MOST ONE text when successful
+        for (let poolIndex = 0; poolIndex < 5; poolIndex++) {
+          const poolTexts = pools[poolIndex];
+          if (!poolTexts) continue;
+          
+          // Calculate if this pool is successful (roll once per pool)
+          const poolSuccessChance = poolTexts.reduce((sum, textObj) => {
+            const chancePercent = Math.max(0, textObj.base + (textObj.rate * gameState.cycle));
+            return sum + (Math.min(100, chancePercent) / 100);
+          }, 0) / poolTexts.length; // Average chance across all texts in pool
+          
+          if (Math.random() < poolSuccessChance) {
+            // Pool is successful - select ONE text from this pool using weighted random
+            const weightedTexts = poolTexts.map(textObj => ({
+              text: textObj.text,
+              chance: Math.max(0, textObj.base + (textObj.rate * gameState.cycle)) / 100
+            }));
+            
+            const selectedText = ChanceCalculator.weightedRandom(weightedTexts);
+            result += " " + selectedText.text;
+          }
+        }
+        
+        return result;
+      }
 
-  checkboxesDiv.appendChild(lootBtn);
-  checkboxesDiv.appendChild(levelBtn);
-  checkboxesDiv.style.display = 'flex';
+      getDayText(slot) {
+        let baseText = this.getMainText(slot, false);
+        baseText += this.getFlavorText(slot, false);
+        return baseText;
+      }
 
-  mainButton.innerText = 'NEXT PLAYER';
-  mainButton.disabled = true;
-  mainButton.style.display = 'block';
+      getNightText(nightStep) {
+        const slotNum = 12 + nightStep;
+        let baseText = this.getMainText(slotNum, true);
+        baseText += this.getFlavorText(slotNum, true);
+        return baseText;
+      }
+    }
 
-  function checkDeep() {
-    mainButton.disabled = !(lootBtn.classList.contains('checked') && levelBtn.classList.contains('checked'));
-  }
+    // Modern UI Manager with better state management
+    class UIManager {
+      static update() {
+        this.cleanupTransientButtons();
 
-  lootBtn.addEventListener('click', () => { lootBtn.classList.toggle('checked'); checkDeep(); });
-  levelBtn.addEventListener('click', () => { levelBtn.classList.toggle('checked'); checkDeep(); });
-}
+        if (gameState.slot === 0) {
+          ThemeManager.setTheme('day');
+          elements.dayLabel.textContent = `DAWN of Cycle ${gameState.cycle}`;
+          elements.slotLabel.textContent = '[0]';
+          elements.textArea.innerHTML = "All players gain <strong>one level!</strong> <br>All players regain all <strong>light mana!</strong>";
+          elements.checkboxesDiv.style.display = 'none';
+          elements.mainButton.style.display = 'block';
+          elements.mainButton.textContent = 'CONTINUE';
+          elements.mainButton.disabled = false;
+          gameState.phaseMode = null;
+          return;
+        }
 
-/* Main button */
-function handleMainButton() {
-  if (phaseMode === 'deep') { goToDawn(true); return; }
+        if (!gameState.isNight && gameState.slot > 0 && gameState.slot <= gameState.DAY_SLOTS) {
+          ThemeManager.setTheme('day');
+          elements.dayLabel.textContent = `The ${this.ordinal(gameState.cycle)} Day`;
+          elements.slotLabel.textContent = `[${gameState.slot}]`;
+          elements.textArea.innerHTML = textManager.getDayText(gameState.slot);
+          elements.checkboxesDiv.style.display = 'flex';
+          this.restoreStableCheckboxes();
+          elements.actCheckbox.classList.remove('checked');
+          elements.actCheckbox.setAttribute('aria-checked', 'false');
+          elements.mapCheckbox.classList.remove('checked');
+          elements.mapCheckbox.setAttribute('aria-checked', 'false');
+          elements.mainButton.textContent = 'NEXT PLAYER';
+          elements.mainButton.disabled = true;
+          elements.mainButton.style.display = 'block';
+          gameState.phaseMode = null;
+          return;
+        }
 
-  if (!isNight) {
-    if (slot === 0) { slot = 1; updateUI(); return; }
-    if (slot < daySlots) { slot++; updateUI(); return; }
-    showDuskChoice();
-    return;
-  } else {
-    if (nightStep < nightSlots - 1) { showContinueNightInterstitial(); return; }
-    else { showDeepOfNight(); return; }
-  }
-}
+        if (gameState.isNight) {
+          ThemeManager.setTheme('night');
+          elements.dayLabel.textContent = `The ${this.ordinal(gameState.cycle)} Night`;
+          elements.slotLabel.textContent = `[${12 + gameState.nightStep}]`;
+          elements.textArea.innerHTML = textManager.getNightText(gameState.nightStep);
+          elements.checkboxesDiv.style.display = 'flex';
+          this.restoreStableCheckboxes();
+          elements.actCheckbox.classList.remove('checked');
+          elements.actCheckbox.setAttribute('aria-checked', 'false');
+          elements.mapCheckbox.classList.remove('checked');
+          elements.mapCheckbox.setAttribute('aria-checked', 'false');
+          elements.mainButton.textContent = (gameState.nightStep === gameState.NIGHT_SLOTS - 1) ? 'END THE NIGHT' : 'NEXT PLAYER';
+          elements.mainButton.disabled = true;
+          elements.mainButton.style.display = 'block';
+          gameState.phaseMode = null;
+          return;
+        }
+      }
 
-/* Reset */
-function resetGame() {
-  if (!confirm("Are you sure you want to reset all game data?")) return;
-  cycle = 1; slot = 0; isNight = false; nightStep = 0; phaseMode = null;
-  cleanupTransientButtons();
-  checkboxesDiv.innerHTML = '<div class="checkbox" id="actCheckbox">ACT</div><div class="checkbox" id="mapCheckbox">REVEAL</div>';
-  actCheckbox = document.getElementById('actCheckbox');
-  mapCheckbox = document.getElementById('mapCheckbox');
-  actCheckbox.addEventListener('click', toggleCheckbox);
-  mapCheckbox.addEventListener('click', toggleCheckbox);
-  actCheckbox.classList.remove('checked');
-  mapCheckbox.classList.remove('checked');
-  checkboxesDiv.style.display = 'none';
-  dayLabel.innerText = "DAWN of Cycle 1";
-  slotLabel.innerText = "[0]";
-  textArea.innerHTML = "All players gain <strong>one level!</strong> <br>All players regain all <strong>light mana!</strong>";
-  mainButton.innerText = "CONTINUE";
-  mainButton.disabled = false;
-  mainButton.style.display = 'block';
-  setContainerTheme('day');
-}
+      static ordinal(n) {
+        return ["First","Second","Third","Fourth","Fifth","Sixth","Seventh","Eighth","Ninth","Tenth","Eleventh","Twelfth","Thirteenth","Fourteenth","Fifteenth","Sixteenth","Seventeenth","Eighteenth","Nineteenth","Twentieth","Twenty-first","Twenty-second","Twenty-third","Twenty-fourth","Twenty-fifth","Twenty-sixth","Twenty-seventh","Twenty-eighth","Twenty-ninth","Thirtieth","Thirty-first","Thirty-second","Thirty-third","Thirty-fourth","Thirty-fifth","Thirty-sixth","Thirty-seventh","Thirty-eighth","Thirty-ninth","Fortieth","Forty-first","Forty-second","Forty-third","Forty-fourth","Forty-fifth","Forty-sixth","Forty-seventh","Forty-eighth","Forty-ninth","Fiftieth","Fifty-first","Fifty-second","Fifty-third","Fifty-fourth","Fifty-fifth","Fifty-sixth","Fifty-seventh","Fifty-eighth","Fifty-ninth","Sixtieth","Sixty-first","Sixty-second","Sixty-third","Sixty-fourth","Sixty-fifth","Sixty-sixth","Sixty-seventh","Sixty-eighth","Sixty-ninth","Seventieth","Seventy-first","Seventy-second","Seventy-third","Seventy-fourth","Seventy-fifth","Seventy-sixth","Seventy-seventh","Seventy-eighth","Seventy-ninth","Eightieth","Eighty-first","Eighty-second","Eighty-third","Eighty-fourth","Eighty-fifth","Eighty-sixth","Eighty-seventh","Eighty-eighth","Eighty-ninth","Ninetieth","Ninety-first","Ninety-second","Ninety-third","Ninety-fourth","Ninety-fifth","Ninety-sixth","Ninety-seventh","Ninety-eighth","Ninety-ninth","Hundredth"][n - 1] || n + "th";
+      }
 
-/* Attach listeners + init */
-mainButton.addEventListener('click', handleMainButton);
-actCheckbox.addEventListener('click', toggleCheckbox);
-mapCheckbox.addEventListener('click', toggleCheckbox);
-updateUI();
-</script>
+      static enableMainIfBothChecked() {
+        if (!elements.actCheckbox || !elements.mapCheckbox) { 
+          elements.mainButton.disabled = true; 
+          return; 
+        }
+        const bothChecked = elements.actCheckbox.classList.contains('checked') && 
+                           elements.mapCheckbox.classList.contains('checked');
+        elements.mainButton.disabled = !bothChecked;
+      }
 
+      static restoreStableCheckboxes() {
+        if (!document.getElementById('actCheckbox') || !document.getElementById('mapCheckbox')) {
+          elements.checkboxesDiv.innerHTML = `
+            <div class="checkbox" id="actCheckbox" role="checkbox" aria-checked="false">ACT</div>
+            <div class="checkbox" id="mapCheckbox" role="checkbox" aria-checked="false">REVEAL</div>
+          `;
+          elements.actCheckbox = document.getElementById('actCheckbox');
+          elements.mapCheckbox = document.getElementById('mapCheckbox');
+          this.attachCheckboxListeners();
+        }
+        elements.actCheckbox.classList.remove('checked');
+        elements.actCheckbox.setAttribute('aria-checked', 'false');
+        elements.mapCheckbox.classList.remove('checked');
+        elements.mapCheckbox.setAttribute('aria-checked', 'false');
+      }
+
+      static cleanupTransientButtons() {
+        document.querySelectorAll('.game-container .btn--dawn, .game-container .btn--night, .game-container .btn--interstitial')
+          .forEach(button => button.remove());
+      }
+
+      static attachCheckboxListeners() {
+        if (elements.actCheckbox) {
+          elements.actCheckbox.addEventListener('click', this.toggleCheckbox);
+        }
+        if (elements.mapCheckbox) {
+          elements.mapCheckbox.addEventListener('click', this.toggleCheckbox);
+        }
+      }
+
+      static toggleCheckbox(event) {
+        const checkbox = event.currentTarget;
+        checkbox.classList.toggle('checked');
+        const isChecked = checkbox.classList.contains('checked');
+        checkbox.setAttribute('aria-checked', isChecked.toString());
+        UIManager.enableMainIfBothChecked();
+        
+        // NEW: Save state whenever checkbox state changes
+        StateManager.saveState();
+      }
+    }
+
+    // Modern game flow manager
+    class GameFlow {
+      static goToDawn(increment = true) {
+        if (increment) gameState.cycle++;
+        gameState.isNight = false;
+        gameState.nightStep = 0;
+        gameState.slot = 0;
+        gameState.phaseMode = null;
+        UIManager.cleanupTransientButtons();
+        UIManager.restoreStableCheckboxes();
+        UIManager.update();
+        
+        // NEW: Save state after state change
+        StateManager.saveState();
+      }
+
+      static showDuskChoice() {
+        elements.checkboxesDiv.style.display = 'none';
+        elements.mainButton.style.display = 'none';
+        elements.textArea.innerHTML = "<strong>DUSK: </strong><br>Choose to proceed to DAWN... <br>...or enter the NIGHT.";
+
+        const dawnBtn = document.createElement('button');
+        dawnBtn.className = 'btn btn--dawn';
+        dawnBtn.textContent = 'Proceed to DAWN';
+        dawnBtn.disabled = true;
+
+        const nightBtn = document.createElement('button');
+        nightBtn.className = 'btn btn--night';
+        nightBtn.textContent = 'Enter the NIGHT';
+        nightBtn.disabled = true;
+
+        elements.container.appendChild(dawnBtn);
+        elements.container.appendChild(nightBtn);
+
+        ThemeManager.setTheme('night');
+
+        let cooldown = 3;
+        const interval = setInterval(() => {
+          cooldown--;
+          if (cooldown <= 0) {
+            dawnBtn.disabled = false;
+            nightBtn.disabled = false;
+            clearInterval(interval);
+          }
+        }, 1000);
+
+        dawnBtn.addEventListener('click', () => {
+          dawnBtn.remove(); nightBtn.remove();
+          this.goToDawn(true);
+        });
+
+        nightBtn.addEventListener('click', () => {
+          dawnBtn.remove(); nightBtn.remove();
+          gameState.isNight = true;
+          gameState.nightStep = 0;
+          gameState.slot = 12;
+          UIManager.update();
+          
+          // NEW: Save state after state change
+          StateManager.saveState();
+        });
+      }
+
+      static showContinueNightInterstitial() {
+        elements.checkboxesDiv.style.display = 'none';
+        elements.mainButton.style.display = 'none';
+        elements.textArea.innerHTML = "Choose your next action wisely...";
+
+        const endBtn = document.createElement('button');
+        endBtn.className = 'btn btn--interstitial';
+        endBtn.textContent = 'Loot rewards, proceed to the DAWN!';
+        endBtn.disabled = true;
+
+        const contBtn = document.createElement('button');
+        contBtn.className = 'btn btn--interstitial';
+        contBtn.textContent = 'Continue deeper into the NIGHT...';
+        contBtn.disabled = true;
+
+        elements.container.appendChild(endBtn);
+        elements.container.appendChild(contBtn);
+
+        let cooldown = 1;
+        const interval = setInterval(() => {
+          cooldown--;
+          if (cooldown <= 0) {
+            endBtn.disabled = false;
+            contBtn.disabled = false;
+            endBtn.classList.add('active');
+            contBtn.classList.add('active');
+            clearInterval(interval);
+          }
+        }, 1000);
+
+        endBtn.addEventListener('click', () => {
+          endBtn.remove(); contBtn.remove();
+          this.goToDawn(true);
+        });
+
+        contBtn.addEventListener('click', () => {
+          endBtn.remove(); contBtn.remove();
+          gameState.nightStep++;
+          gameState.slot++;
+          UIManager.update();
+          
+          // NEW: Save state after state change
+          StateManager.saveState();
+        });
+      }
+
+      static showDeepOfNight() {
+        gameState.phaseMode = 'deep';
+        ThemeManager.setTheme('night');
+        elements.dayLabel.textContent = `The Deep Of The ${UIManager.ordinal(gameState.cycle)} Night`;
+        elements.slotLabel.textContent = "[17]";
+        elements.textArea.innerHTML = "Congratulations, you have survived the night...";
+
+        elements.checkboxesDiv.innerHTML = '';
+        const lootBtn = document.createElement('div');
+        lootBtn.className = 'checkbox';
+        lootBtn.textContent = 'Loot the rewards!!';
+
+        const levelBtn = document.createElement('div');
+        levelBtn.className = 'checkbox';
+        levelBtn.textContent = 'Everyone gain 1 level!';
+
+        elements.checkboxesDiv.appendChild(lootBtn);
+        elements.checkboxesDiv.appendChild(levelBtn);
+        elements.checkboxesDiv.style.display = 'flex';
+
+        elements.mainButton.textContent = 'NEXT PLAYER';
+        elements.mainButton.disabled = true;
+        elements.mainButton.style.display = 'block';
+
+        const checkDeep = () => {
+          const bothChecked = lootBtn.classList.contains('checked') && levelBtn.classList.contains('checked');
+          elements.mainButton.disabled = !bothChecked;
+          
+          // NEW: Save state when checkbox state changes in deep night mode
+          StateManager.saveState();
+        };
+
+        lootBtn.addEventListener('click', () => { 
+          lootBtn.classList.toggle('checked'); 
+          checkDeep(); 
+        });
+        
+        levelBtn.addEventListener('click', () => { 
+          levelBtn.classList.toggle('checked'); 
+          checkDeep(); 
+        });
+      }
+
+      static handleMainButton() {
+        if (gameState.phaseMode === 'deep') { 
+          this.goToDawn(true); 
+          return; 
+        }
+
+        if (!gameState.isNight) {
+          if (gameState.slot === 0) { 
+            gameState.slot = 1; 
+            UIManager.update(); 
+            
+            // NEW: Save state after state change
+            StateManager.saveState();
+            return; 
+          }
+          if (gameState.slot < gameState.DAY_SLOTS) { 
+            gameState.slot++; 
+            UIManager.update(); 
+            
+            // NEW: Save state after state change
+            StateManager.saveState();
+            return; 
+          }
+          this.showDuskChoice();
+          return;
+        } else {
+          if (gameState.nightStep < gameState.NIGHT_SLOTS - 1) { 
+            this.showContinueNightInterstitial(); 
+            return; 
+          }
+          else { 
+            this.showDeepOfNight(); 
+            return; 
+          }
+        }
+      }
+
+      static resetGame() {
+        if (!confirm("Are you sure you want to reset all game data?")) return;
+        
+        // NEW: Clear saved state first
+        StateManager.clearState();
+        
+        Object.assign(gameState, {
+          cycle: 1, 
+          slot: 0, 
+          isNight: false, 
+          nightStep: 0, 
+          phaseMode: null
+        });
+        
+        UIManager.cleanupTransientButtons();
+        elements.checkboxesDiv.innerHTML = `
+          <div class="checkbox" id="actCheckbox" role="checkbox" aria-checked="false">ACT</div>
+          <div class="checkbox" id="mapCheckbox" role="checkbox" aria-checked="false">REVEAL</div>
+        `;
+        elements.actCheckbox = document.getElementById('actCheckbox');
+        elements.mapCheckbox = document.getElementById('mapCheckbox');
+        UIManager.attachCheckboxListeners();
+        elements.actCheckbox.classList.remove('checked');
+        elements.actCheckbox.setAttribute('aria-checked', 'false');
+        elements.mapCheckbox.classList.remove('checked');
+        elements.mapCheckbox.setAttribute('aria-checked', 'false');
+        elements.checkboxesDiv.style.display = 'none';
+        elements.dayLabel.textContent = "DAWN of Cycle 1";
+        elements.slotLabel.textContent = "[0]";
+        elements.textArea.innerHTML = "All players gain <strong>one level!</strong> <br>All players regain all <strong>light mana!</strong>";
+        elements.mainButton.textContent = "CONTINUE";
+        elements.mainButton.disabled = false;
+        elements.mainButton.style.display = 'block';
+        ThemeManager.setTheme('day');
+      }
+    }
+
+    // Initialize managers
+    const textManager = new TextManager();
+
+    // FIXED: Clean event listeners - removed conflicting event delegation
+    function initializeEventListeners() {
+      elements.mainButton.addEventListener('click', () => GameFlow.handleMainButton());
+      // Only use individual event listeners for checkboxes - no event delegation
+      UIManager.attachCheckboxListeners();
+    }
+
+    // Modern initialization with state loading
+    function initializeGame() {
+      // NEW: Try to load saved state first
+      const hasSavedState = StateManager.hasSavedState();
+      if (hasSavedState) {
+        StateManager.loadState();
+        console.log('Loaded saved game state');
+      }
+      
+      initializeEventListeners();
+      UIManager.update();
+      
+      // Add modern performance optimizations
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => {
+          // Preload next game state or other heavy operations
+        });
+      }
+    }
+
+    // Start the game when DOM is loaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeGame);
+    } else {
+      initializeGame();
+    }
+
+    // Global functions for backward compatibility
+    window.resetGame = () => GameFlow.resetGame();
+  </script>
 </body>
 </html>
