@@ -386,7 +386,7 @@ Unlocks unique “strategic” dialogue options in conflicts.
             },
     "002": { 
     name: "Tress Bien, The Hotheaded Mage", 
-    description: `Freedom fighter. Expert in keys and traps. Collector of trinkets and jewellery. Sacrifice 'quick' or 'favour' for expert, stealthy thievery. <em>...And what does she do? Her best. </em><br><em><strong>Boastful; egotistical; vain.</strong></em>
+    description: `Freedom fighter. Expert in keys and traps. Collector of trinkets and jewellery. Can be sent out for expert, stealthy thievery. <em>...And what does she do? Her best. </em><br><em><strong>Boastful; egotistical; vain.</strong></em>
     <br><strong>Domains:</strong> Keys, traps, rebellion, chaos
 <br><strong>Backstory:</strong>
 Tress grew up in the sewers beneath Top. Surviving through theft and trickery, her Sapphirean father figure spoke openly of the south sea and the old Sapphire cities. Her talent for explosive magic was discovered by accident when she blew open a magistrate’s vault. She was briefly captured, before being broken free and escaping to the south coast. There, she built a name for herself, although she never truly overcame her fear of the sea, ever since her first encounter with a vostrodile. 
@@ -624,7 +624,7 @@ Hunted by remnants of the Queen of Many Faces’ cult for her “living infectio
             },
     "017": { 
     name: "Million Redgate, The Revolutionary", 
-    description: `Suffers from madness. Heroic aura, strong conviction. <em>"If you know what I know, you will do what I do."</em> <br><em><strong>Seeks truth, charismatic.</strong></em>
+    description: `Suffers from madness. Heroic aura, strong conviction. Aura effect: players with a relationship of companion or higher transfer any madness gained to Million instead. Occasionally, Million will trigger madness effects instead of the player. Effects that remove madness can target either the player or Million. <em>"If you know what I know, you will do what I do."</em> <br><em><strong>Seeks truth, charismatic.</strong></em>
     <br><strong>Backstory:</strong> A mysterious noble turned insurgent, Million lost everything after being sentenced to execution for treason. Whatever the endeavour, the methods often blur the line between freedom and vengeance.
 <br><strong>Motivations:</strong> Hard to discern as Million waxes and wanes between salience and silence.
 <br><strong>Fears:</strong> Becoming a tyrant, realizing that power always corrupts.
@@ -656,7 +656,7 @@ Big fan of Jon Quixote, often fainting in his presence.
     name: "The Courier, The Porter", 
     description: `Neutral entity, delivers anything and everything, anywhere and everywhere. No matter what. Must be paid for all services. <em>"Sign here please."</em> <br><em><strong>Nonchalant. Ambivalent. Aloof.</strong></em>
     <br><strong>Backstory:</strong> A mysterious messenger seen traveling under moonlight, delivering letters, contracts, and omens. The Courier never speaks except to repeat what others have written, as though cursed to carry only the words of others. Their origin is unknown — some say they are an artificial being made of starlight and paper.
-<br><strong>Motivations:</strong> Bound to, no matter the danger. Wishes to deliver messages of their own.
+<br><strong>Motivations:</strong> Pride in delivery of anything and everything, no matter the danger. Wishes to deliver messages of their own.
 <br><strong>Fears:</strong> Forgetting who they are or failing a delivery.
 <br><strong>Talents:</strong> Unmatched endurance, stealth, and spatial memory. Can traverse areas others cannot, seemingly vanishing between folds of moonlight.
 <br><strong>Relationships:</strong>
@@ -669,7 +669,7 @@ Haunted by Hyunjin Halvela, who once spared them — or perhaps failed to kill t
   };
   
   // --- TYPEWRITER EFFECT THAT PRESERVES HTML TAGS ---
-  function typeWriterHTML(element, html, speed = 20) {
+  function typeWriterHTML(element, html, speed = 30) {
     element.innerHTML = "";         // clear first
     let i = 0;
     let isTag = false;
