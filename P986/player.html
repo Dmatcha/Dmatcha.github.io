@@ -1347,6 +1347,49 @@
   fill: none;
 }
 
+/* Image Zoom Overlay */
+#imageZoomOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 2rem;
+}
+
+#imageZoomOverlay.visible {
+  display: flex;
+}
+
+#imageZoomOverlay img {
+  max-height: calc(100vh - 4rem);
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 2rem rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
+}
+
+#imageZoomOverlay:hover img {
+  transform: scale(1.02);
+}
+
+#imageZoomOverlay .zoom-hint {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
 .inventory-item .inv-info {
   flex: 1;
   display: flex;
@@ -1796,6 +1839,12 @@
       </svg>
       Add Item
     </button>
+  </div>
+  
+  <!-- Image Zoom Overlay -->
+  <div id="imageZoomOverlay">
+    <img id="zoomedImage" src="" alt="Zoomed view" />
+    <div class="zoom-hint">Click anywhere to close</div>
   </div>
 </div>
 
@@ -4319,10 +4368,19 @@ function bindInventoryEvents() {
       }
     };
     
-    // Image click: Consume prompt for potions/elixirs/drinks
+    // Image click: Consume prompt for potions/elixirs/drinks, or zoom for artefact/iris
     imageDiv.onclick = () => {
       const item = inventory[index];
       if (!item?.name) return;
+      
+      // Check if this is artefact or iris slot with an image
+      if ((slot === 'artefact' || slot === 'iris') && item.image) {
+        // Zoom the image
+        const zoomedImage = document.getElementById('zoomedImage');
+        zoomedImage.src = item.image;
+        document.getElementById('imageZoomOverlay').classList.add('visible');
+        return;
+      }
       
       if (isConsumable(item.type)) {
         if (confirm(`Consume "${item.name}"?`)) {
@@ -4340,6 +4398,12 @@ function bindInventoryEvents() {
     };
   });
 }
+
+// Image zoom overlay close handler
+document.getElementById('imageZoomOverlay').addEventListener('click', function() {
+  this.classList.remove('visible');
+  document.getElementById('zoomedImage').src = '';
+});
 
 function saveInventoryItem(index, slot, name) {
   const result = validateInventoryName(name, slot, index);
