@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Gameplay Guide - Linear Chance System with Modern Web Standards">
+  <meta name="description" content="Gameplay - Linear">
   <meta name="theme-color" content="#1C1C30">
   <title>Gameplay Guide - Linear Chance System</title>
   
@@ -539,6 +539,19 @@
     // Modern text management system
     class TextManager {
       constructor() {
+        this.dawnTextOptions = [
+            {
+              text: "All players gain <strong>one level!</strong><br>All players regain all <strong>light mana!</strong>",
+              base: 150,
+              rate: -3
+            },
+            { text: "Despite the strange weather, you can still feel the radiant warmth of sunlight. All players gain <strong>one level...</strong>", base: 0, rate: 1 },
+            { text: "The light is strangled by some ethereal force. Through the struggle, a single emerald flash restores <strong>half of everyone's maximum mana.</strong>", base: 0, rate: 1 },
+            { text: "The light is shifted invisibly, the colours all around feel unnatural. All players regain all <strong>energy...</strong>", base: 0, rate: 1 },
+            { text: "The light barely abates the shadows dancing at the edge of your eyes. Any players with madness <strong>lose half</strong> their current mana, energy, and empower.", base: 0, rate: 1 },
+            { text: "Despite the strange dreams, you feel rested. All players <strong>gain one madness.</strong> Then, each player gains mana or energy or life equal to their current madness.", base: 0, rate: 1 }
+          ];
+
         this.mainTextOptions = {
           1: [
             { text: `You may play any card.`, base: 100, rate: -2 },
@@ -707,6 +720,14 @@
           }
         };
       }
+      getDawnText() {
+        const weighted = this.dawnTextOptions.map(option => ({
+          text: option.text,
+          chance: Math.max(0, option.base + (option.rate * gameState.cycle)) / 100
+        }));
+
+        return ChanceCalculator.weightedRandom(weighted).text;
+      }
 
       getMainText(slotNum, isNight = false) {
         const textOptions = isNight ? this.nightMainTextOptions[slotNum] : this.mainTextOptions[slotNum];
@@ -775,7 +796,7 @@
           ThemeManager.setTheme('day');
           elements.dayLabel.textContent = `DAWN of Cycle ${gameState.cycle}`;
           elements.slotLabel.textContent = '[0]';
-          elements.textArea.innerHTML = "All players gain <strong>one level!</strong> <br>All players regain all <strong>light mana!</strong>";
+          elements.textArea.innerHTML = textManager.getDawnText();
           elements.checkboxesDiv.style.display = 'none';
           elements.mainButton.style.display = 'block';
           elements.mainButton.textContent = 'CONTINUE';
