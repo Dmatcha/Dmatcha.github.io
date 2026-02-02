@@ -2913,7 +2913,7 @@ const traitsDescriptions = {
   },
   chemist: {
     name: 'Chemist',
-    desc: (name) => `A self-proclaimed chemist, ${name} occasionally avoid negative effects from imbibing. As negotiator, ${name} can offer drinks to increase interest or patience.`
+    desc: (name) => `A self-proclaimed chemist, ${name} occasionally avoids negative effects from imbibing. As negotiator, ${name} can offer drinks to increase interest or patience.`
   },
   avarist: {
     name: 'Avarist',
@@ -2939,19 +2939,19 @@ const traitsDescriptions = {
   // Hate
   authority: {
     name: 'Authority',
-    desc: (name) => `${name} despises authority, and feels compelled to resist any form of structured power. (Resolve to prevent self from outbursts or madness.)`
+    desc: (name) => `${name} despises authority, and feels compelled to resist any form of structured power. (During relevent situations, resolve to prevent self from outbursts or madness.)`
   },
   aggression: {
     name: 'Aggression',
-    desc: (name) => `${name} cannot cope with any form of aggression, becoming enraged or shutting down completely. (Resolve to prevent self from outbursts or madness.)`
+    desc: (name) => `${name} cannot cope with any form of aggression, becoming enraged or shutting down completely. (During relevent situations, resolve to prevent self from outbursts or madness.)`
   },
   sickness: {
     name: 'Sickness',
-    desc: (name) => `${name} has an intense aversion to sickness and disease, always maintaining meticulous hygiene no matter the situation. (Lose stamina at the start of your turn.)`
+    desc: (name) => `${name} has an intense aversion to sickness and disease, always maintaining meticulous hygiene no matter the situation. (During relevent situations, lose stamina at the start of your turn.)`
   },
   religion: {
     name: 'Religion',
-    desc: (name) => `${name} despises religion, and feels compelled to act out when encountering religious things. (Resolve to prevent self from outbursts or madness.)`
+    desc: (name) => `${name} despises religion, and feels compelled to act out when encountering religious things. (During relevent situations, gain madness or lose stamina to prevent self from outbursts.)`
   }
 };
 
@@ -3641,8 +3641,7 @@ Regain essence from relationships.`,
     },
     "The Wand": {
       type: "Legendary Hero Artefact — Treasure",
-      description: `When resolving tinge, add arcane.
-Essence: Choose one spell: It can only be used by the wand, all costs are 1.`,
+      description: `When resolving arcane, add tinge. Essence: Choose one spell: It can only be used by the wand, it only costs one essence to use that spell. This spell is ready at all times. Whenever you forget a spell, regain one essence.`,
       image: "cards/fronts/113.webp"
     },
     "The Pair and a Half": {
@@ -3651,7 +3650,7 @@ Essence: Choose one spell: It can only be used by the wand, all costs are 1.`,
 Add one to skill when resolving.
 The cloth is immune and impervious.
 Mutes sounds made by the bearer.
-Grants bizarre skills.`,
+Grants bizarre skills. Whenever you begin a cycle with no madness, regain one essence.`,
       image: "cards/fronts/114.webp"
     },
     "The Trickblade": {
@@ -3659,7 +3658,7 @@ Grants bizarre skills.`,
       description: `Scales with strength.
 Add one strength when resolving.
 Truestrike when thrust or thrown.
-Grants bizarre skills.`,
+Grants bizarre skills. At night, regain one essence when any quest is revealed.`,
       image: "cards/fronts/115.webp"
     },
     "The Fisherman's Flask": {
@@ -3667,30 +3666,27 @@ Grants bizarre skills.`,
       description: `When resolving: add two arcane.
 Produces any substance as poured into the maw.
 Grants bizarre magic.
-When consuming potions, elixirs, and drinks, regain essence.`,
+When consuming potions, elixirs, and drinks, regain one essence.`,
       image: "cards/fronts/116.webp"
     },
     "Scathe's Memo Book": {
       type: "Legendary Hero Artefact — Treasure",
       description: `Questions, predictions, and histories can be written on the page;
-spells cast this way ignore requirements.
-Once locked, pages appear anew.`,
+spells cast this way ignore requirements. Once locked, pages appear anew. At night, regain one essence whenever any story is revealed.`,
       image: "cards/fronts/117.webp"
     },
     "The Prismatic Glasses": {
       type: "Legendary Hero Artefact — Treasure",
       description: `When resolving: add two tinge.
 Can detect attunement and prowess, and sense the unreadable.
-Grants futuresight and scan.`,
+Grants futuresight and scan. At night, regain one essence whenever any library is revealed.`,
       image: "cards/fronts/118.webp"
     },
     "The Coin": {
       type: "Legendary Hero Artefact — Treasure",
       description: `Gain luck.
-When resolving situations, add luck.
-Anyone else holding the coin is also lucky.
-When given as tender; a new coin may be found somewhere...
-Grants mundane magic & skills.`,
+When resolving situations, add luck. Anyone else holding the coin is also lucky. When used to pay or trade; a new coin may be found somewhere...
+Grants mundane magic & skills. At the end of the cycle, if you have the highest madness and coins, regain one essence.`,
       image: "cards/fronts/119.webp"
     }
   },
@@ -3716,7 +3712,7 @@ You may pay energy instead of life.`,
     "Softly Strange Violet": {
       type: "Eyes — Iris",
       description: `Double your spell limit.
-If blessed, +1 to spell resolves.`,
+If blessed, +1 to interest when acting as negotiator. If cursed, +1 to patience when acting as negotiator.`,
       image: "cards/fronts/049.webp"
     },
     "Feverspin Crimson": {
@@ -3748,7 +3744,7 @@ At dawn, forfeit mana or power and then untap.`,
     "Otherworldly Odd": {
       type: "Eyes — Iris",
       description: `At the start of your turn, you must forget one spell, then gain another.
-You can only possess five spells of any kind.`,
+You can only possess five total spells of any kind.`,
       image: "cards/fronts/064.webp"
     },
     "Absolute Cloying Dark": {
@@ -3762,81 +3758,80 @@ If you have the highest madness, ignore night effects.`,
   items: {
     "Basic Buckler": {
       type: "Basic Artefact — Equipment",
-      description: `Equip: Strength 2.
-Gain armour 1.
-(reduce incoming damage by one)`,
+      description: `Equip: Requires strength 2 or higher.
+Gain armour 1. (reduce incoming damage by one)`,
       image: "cards/fronts/120.webp"
     },
     "Basic Shortsword": {
       type: "Basic Artefact — Equipment",
-      description: `Equip: Strength 1.
+      description: `Equip: Requires strength 1 or higher.
 When melee attacking using,
 add 1 to resolves or damage.`,
       image: "cards/fronts/121.webp"
     },
     "Crested Shield": {
       type: "Basic Artefact — Equipment",
-      description: `Equip: Strength 3.
-Pay stamina: Gain shield 2.
+      description: `Equip: Requires strength 3 or higher.
+Pay one stamina: Gain shield 2 during this combat.
 (absorb two damage)
-Skill 3: Pay stamina: Parry incoming strike.`,
+Skill 3 or higher: Pay one stamina: Parry incoming strike or slash attack.`,
       image: "cards/fronts/122.webp"
     },
     "Simple Shortbow": {
       type: "Basic Artefact — Equipment",
-      description: `Equip: Skill 1.
-Pay stamina: Deal 2 pierce damage.
-Skill 3: Double damage and range.`,
+      description: `Equip: Requires skill 1 or higher.
+Pay one stamina: Deal 1 pierce damage.
+Skill 3 or higher: You can shoot three times.`,
       image: "cards/fronts/123.webp"
     },
     "Legionnaire Crossbow": {
       type: "Artefact — Equipment",
-      description: `Equip: Skill 2.
-Pay stamina then channel to charge your shot: Deal 3 pierce damage.
-Strength 5: You can now shoot twice.`,
+      description: `Equip: Requires skill 2 or higher.
+Pay one stamina then channel to charge your shot: Deal 2 pierce damage.
+Strength 5: Double the damage and the range.`,
       image: "cards/fronts/124.webp"
     },
     "Crysk Knife": {
       type: "Artefact — Equipment",
-      description: `Equip: Skill 1.
-Pay stamina: After successful attack, prevent target from casting a spell.
+      description: `Equip: Requires skill 1 or higher.
+Pay one stamina: After successful attack, prevent target from casting a spell or activating an ability.
 Skill 3: Also add 3 pierce damage.`,
       image: "cards/fronts/125.webp"
     },
     "Whispering Shield": {
       type: "Artefact — Equipment",
-      description: `Equip: Strength 3.
-Pay stamina: Gain shield 3.
-(absorb three damage)
-Skill 3: Pay stamina: Parry incoming magic.`,
+      description: `Equip: Requires strength 3 or higher.
+Pay one stamina: Gain shield 3.
+(absorb three damage this combat)
+Skill 3: Pay one stamina: Parry incoming magic.`,
       image: "cards/fronts/126.webp"
     },
     "Twisted Metal Arm": {
       type: "Artefact — Equipment",
-      description: `Equip: Skill 3.
+      description: `Equip: Requires skill 3 or higher.
 When resolving strength, add 1.
-Pay stamina: Griplock an object.`,
+Pay stamina: Griplock an object, you cannot let go or drop this object until you choose to release it.`,
       image: "cards/fronts/127.webp"
     },
     "Intricate Metal Arm": {
       type: "Artefact — Equipment",
-      description: `Equip: Skill 3.
-Pay empower: Electrify and magnetize arm.
-Pay stamina: Shock and paralyze attacker.
+      description: `Equip: Requires skill 3 or higher.
+Pay one empower: Electrify and magnetize arm.
+Pay one stamina: Shock and paralyze attacker, can be used as a reaction.
 Resist burn and freeze.`,
       image: "cards/fronts/128.webp"
     },
     "Arcanite Mining Gauntlet": {
       type: "Artefact — Equipment",
-      description: `Equip: Strength 4.
-Pay stamina: Deal damage and stun, striking with devastating force.
+      description: `Equip: Requires strength 4 or higher.
+Pay one stamina: Deal damage based on strength and stun a target, striking with devastating force. You may freely target walls, floors, etcetera.
 Mastery 3: Socket a soulgem.`,
       image: "cards/fronts/129.webp"
     },
     "Arcanite Slingshot": {
       type: "Artefact — Arcane Equipment",
-      description: `Pay energy: Shoot a pebble of arcane energy. Activate arcane objects.
-Mastery 3: Deal 1 electric damage.`,
+      description: `Pay one energy: Shoot a pebble of arcane energy. Activate arcane objects.
+Mastery 3: Deal 1 true damage.`,
       image: "cards/fronts/130.webp"
     },
     "Arcane Gemsetting Tool": {
@@ -3844,13 +3839,13 @@ Mastery 3: Deal 1 electric damage.`,
       description: `Pay two stamina, two energy, and 1 of any resource:
 Mastery 2: Install a soulgem.
 Mastery 5: Remove a soulgem.
-Arcane 13: Carve a soulgem socket.`,
+Arcane 20: Carve a soulgem socket.`,
       image: "cards/fronts/131.webp"
     },
     "Arcanite Battery Pack": {
       type: "Artefact — Arcane Equipment",
       description: `When socketed with a soulgem:
-Provide required electric electricity to power devices, tools, and other equipment.`,
+Provide required electricity to power devices, tools, and other equipment. You may pay one energy to activate this soulgem's socketed or unsocketed effects.`,
       image: "cards/fronts/132.webp"
     },
     "Arcanite Firearm": {
@@ -3861,34 +3856,34 @@ Requires Skill to aim accurately...`,
     },
     "Arcanite Revolver": {
       type: "Artefact — Arcane Equipment",
-      description: `Pay one energy: Deal damage equal to your mastery; then resolve (dice) d6:
-Shoot again for each unique result, otherwise tap. Pay 6 of any resource to reload and untap.
-Requires Strength for the recoil.`,
+      description: `Pay one energy: Deal damage equal to your mastery; then resolve one d6:
+Shoot again for each unique result, otherwise tap this card. (e.g. roll a 1, fire again; roll a 5, fire again; roll a 3, fire again; roll a 1, gun jams, tap this card.) Pay 6 of any resource to reload and untap this card.
+Requires Strength for the recoil. Physically striking with this weapon can activate arcane objects.`,
       image: "cards/fronts/134.webp"
     },
     "Moontooth": {
       type: "Artefact — Arcane Equipment",
-      description: `Mastery 4: Swings blast seawater.
-Strength 6: All strikes push targets away.`,
+      description: `Mastery 4: Swings blast seawater. The amount is equal to the user's mastery and strength combined (in litres).
+Strength 6: All strikes push targets away. Force is incredible, forcing foes back a minimum of three meters. Maximum pushback is porportional to strength.`,
       image: "cards/fronts/135.webp"
     },
     "Saphir": {
       type: "Artefact — Arcane Equipment",
-      description: `Mastery 2: Strikes gain quick.
-Skill 3: Strikes gain triplestrike.`,
+      description: `Mastery 2: Strikes gain quick and pierce. 
+Skill 3: Strikes gain triplestrike. Each single attack hits three times.`,
       image: "cards/fronts/136.webp"
     },
     "Caladlo": {
       type: "Artefact — Equipment",
-      description: `If target has armour, gain swift and doublestrike.
-Strength & Skill 3: Remove and prevent target's shields.`,
+      description: `If target has armour, gain swift and doublestrike (each attack hits twice).
+Strength & Skill 3 or higher: Remove and prevent target's shields. Target cannot gain shields for the rest of combat.`,
       image: "cards/fronts/137.webp"
     },
     "Matsubazue": {
       type: "Artefact — Equipment",
       description: `Channel to focus your mind and build strength:
 Inflict concussive force or break bones instead of inflicting damage.
-Skill 6: You may counter-attack any weapon-based attack.`,
+Skill 6: You may counter-attack any weapon-based attack. Can be used as areaction.`,
       image: "cards/fronts/138.webp"
     },
     "Woven Wreath": {
@@ -3912,52 +3907,52 @@ Contains one empty soulgem socket.`,
     },
     "Strand-Type Carry Device": {
       type: "Artefact — Arcane Equipment",
-      description: `Pay stamina: Allocate items to the device.
+      description: `Pay one stamina: Allocate items to the device.
 Do not lose stamina when moving, carrying, or running.
 Items gain indestructible.`,
       image: "cards/fronts/142.webp"
     },
     "Strand-Type Cuff Device": {
       type: "Artefact — Arcane Equipment",
-      description: `Pay three energy: Switch places with another bearer, you both gain 1 shield. (Absorb 1 damage)
+      description: `Pay three energy: Switch places with another bearer, you both gain 1 shield. (Absorb 1 damage; occasionally, nullify mundane damage instead)
 Mastery 2: Awaken soulgem.`,
       image: "cards/fronts/143.webp"
     },
     "Strand-Type Choker Device": {
       type: "Artefact — Arcane Equipment",
-      description: `Pay energy: Gain favour momentarily.
-Mastery 3: Awaken soulgem.`,
+      description: `Pay one energy: Gain favour momentarily.
+Mastery 3: Socket a soulgem.`,
       image: "cards/fronts/145.webp"
     },
     "Catscratch Medallion": {
       type: "Artefact — Equipment",
       description: `You are more susceptible to dread, panic, horrify, and the ethereal.
-Detect bone charms, traps, and understand hexes and curses.`,
+Detect charms, traps, and understand hexes and curses.`,
       image: "cards/fronts/146.webp"
     },
     "Pegasus Soulgem Medallion": {
       type: "Legendary Artefact — Soulgem",
-      description: `When held, provides boosts to any movement action. Holding your breath while falling slows descent.`,
+      description: `When held, amplifies any movement action. Holding your breath while falling slows descent. (Effectively float-fall slowly as if gravity was reduced to its square root.)`,
       image: "cards/fronts/147.webp"
     },
     "Mercurial Opal": {
       type: "Legendary Artefact — Soulgem",
-      description: `For each resource pool at maximum, gain +1. When socketed into a tool, gear, device, or machine, energizes indefinitely.`,
+      description: `For each resource pool at maximum, gain +1 to resolves or calculations. When socketed into a tool, gear, device, or machine, energizes indefinitely.`,
       image: "cards/fronts/148.webp"
     },
     "Cascading Crystal": {
       type: "Soulgem — Powerstone",
-      description: `After receiving any force of physical impact, user can unleash equal force from the gem. When socketed into a weapon or tool, object becomes extremely bouncy.`,
+      description: `After receiving any force of physical impact, user can unleash equal force from the gem, effectively reflecting impacts. When socketed into a weapon or tool, object becomes extremely bouncy.`,
       image: "cards/fronts/149.webp"
     },
     "Spiderflame Diamond": {
       type: "Soulgem — Powerstone",
-      description: `Remaining still, eyes closed, the user can detect movement further and further away. When socketed, object becomes magnetic at-will.`,
+      description: `Remaining still, eyes closed, the user can detect movement further and further away. Can be used to vaguely sense things at a distance. When socketed, object becomes magnetic at-will. The user can simply declare the magnetism.`,
       image: "cards/fronts/150.webp"
     },
     "Abyssal Onyx": {
       type: "Soulgem — Powerstone",
-      description: `Emits a light visible only to its user. Can devour artificial light. When socketed, repels liquids, dust, and other small particles.`,
+      description: `Emits a light visible only to its user. Can devour artificial light in the surrounding area. When socketed, repels liquids, dust, and other small particles from the object.`,
       image: "cards/fronts/151.webp"
     },
     "Sharp Garnet": {
@@ -3967,8 +3962,8 @@ Detect bone charms, traps, and understand hexes and curses.`,
     },
     "Sakura Ruby": {
       type: "Soulgem — Powerstone",
-      description: `Repeated actions gain +1.
-When socketed, energizes tools and weapons to resonate at extreme speeds.`,
+      description: `Repeated actions gain +1. (Jumping, running, casting etcetera gain a gradual amplification)
+When socketed, energizes tools and weapons to resonate at extreme speeds. (A blade would appear to vibrate imperceptibly fast, causing it to slice through almost anything.)`,
       image: "cards/fronts/153.webp"
     },
     "Cosmic Pearl": {
@@ -3978,7 +3973,7 @@ When socketed, energizes tools and weapons to resonate at extreme speeds.`,
     },
     "Redsky Pearl": {
       type: "Soulgem — Powerstone",
-      description: `When in darkness, untouched by any light, gain one empower if you have none. When socketed, object cannot freeze nor become wet; object maintains temperature.`,
+      description: `When in darkness, untouched by any light, gain one empower if you have none. When socketed, object cannot freeze nor become wet; object maintains temperature as when it was socketed.`,
       image: "cards/fronts/155.webp"
     },
     "Coiling Amethyst": {
@@ -3988,12 +3983,12 @@ When socketed, energizes tools and weapons to resonate at extreme speeds.`,
     },
     "Folded Moss": {
       type: "Soulgem — Powerstone",
-      description: `Eating spiced food can bestow or remove curses and blessings. When socketed, object becomes squishy.`,
+      description: `Eating spiced food can bestow or remove curses and blessings. When socketed, object becomes squishy, rubbery, and impervious.`,
       image: "cards/fronts/157.webp"
     },
     "Sharp Sapphire": {
       type: "Soulgem — Powerstone",
-      description: `When physically attacking, you may resolve again. When socketed, if object is a weapon, inflict terror on targets if you miss.`,
+      description: `When physically attacking, you may resolve again (but you must take the new result). When socketed, if object is a weapon, inflict terror on targets if you miss. (They are afflicted with dread and panic.)`,
       image: "cards/fronts/158.webp"
     },
     "Emanating Garnet": {
@@ -4020,20 +4015,20 @@ When socketed, puppet object freely.`,
     },
     "Hollow Prism": {
       type: "Soulgem — Powerstone",
-      description: `Tap: Store an amount of mana or energy.
-Untap: Release mana or energy, then gain madness.
-When socketed, you may command object to return to you.`,
+      description: `Store an amount of mana or energy inside this soulgem, then tap it off to the side.
+Return this soulgem from a tapped position: release mana or energy, then gain one madness.
+When socketed, you may command object to return to your hand or person.`,
       image: "cards/fronts/163.webp"
     },
     "Blooming Seaglass": {
       type: "Soulgem — Powerstone",
-      description: `During any encounter, opponent gains slow and cannot gain favour. Attracts beasts, mellowing their demeanor.
-When socketed into a non-weapon, fascinates beasts.`,
+      description: `During any encounter, opponent gains slow and cannot gain favour. Mellowing the demeanor of any beast.
+When socketed into a non-weapon, fascinates beasts, plants, and insects.`,
       image: "cards/fronts/164.webp"
     },
     "Starstone": {
       type: "Soulgem — Powerstone",
-      description: `Resist dread, panic, terror. Repels wormridden things. Kills nearby airborne infectious materials.
+      description: `Resist dread, panic, and terror. Repels wormridden things. Kills nearby airborne infectious materials. Likewise sterilizes small amounts of water when submerged.
 Socketed objects become suspended mid-air when released.`,
       image: "cards/fronts/165.webp"
     },
@@ -4045,13 +4040,13 @@ When socketed, object whispers warnings and rumours.`,
     },
     "Bicoded Twist": {
       type: "Soulgem — Powerstone",
-      description: `Tap: Whenever you pay exactly two different costs, add 2 to values.
-Whenever you gain or lose madness, you may untap. Cannot be socketed.`,
+      description: `Whenever you pay exactly two different costs, add 2 to values on that card then tap this soulgem off to the side.
+Whenever you gain or lose madness, you may untap and return this card. Cannot be socketed.`,
       image: "cards/fronts/167.webp"
     },
     "Wet Deeprock": {
       type: "Soulgem — Powerstone",
-      description: `After taking any action, you may channel and gain phantom momentum: A lifelike image will repeat that action. Continue channelling to manipulate the image. Socketed object becomes heavy and salty.`,
+      description: `Adheres to surfaces effortlessly. When imbued with mana or energy, becomes proportionally heavy. Effect dissipates over time, proportional to the mana or energy spent. Socketed object becomes cold and salty.`,
       image: "cards/fronts/168.webp"
     },
     "Polar Crystal": {
@@ -4063,90 +4058,88 @@ When socketed, remove requirements, costs, tap effects and untap effects from ob
     "Potion of Healing": {
       type: "Item — Potion",
       description: `Regain 3 life.
-You cannot gain beyond maximum.`,
+You cannot gain beyond maximum life.`,
       image: "cards/fronts/170.webp"
     },
     "Potion of Refreshment": {
       type: "Item — Potion",
       description: `Regain 2 stamina.
-You cannot gain beyond maximum.`,
+You cannot gain beyond maximum stamina.`,
       image: "cards/fronts/174.webp"
     },
     "Potion of Potency": {
       type: "Item — Potion",
-      description: `Regain empower.
+      description: `Regain one empower.
 Fragile.
 Flammable.`,
       image: "cards/fronts/178.webp"
     },
     "Potion of Sunshine": {
       type: "Item — Potion",
-      description: `Regain mana. Fragile.
-Tinge 8: Regain one more mana.
-Tinge 12: Tastes pleasant, abating any madness effect.`,
+      description: `Regain one mana. Fragile.
+Tinge 11: Regain one additional mana when consuming this potion.
+Tinge 22: Tastes pleasant, abating any current madness effect.`,
       image: "cards/fronts/182.webp"
     },
     "Potion of Sparkling Water": {
       type: "Item — Potion",
       description: `Fragile.
-Gain Arcane Touch, duration is equal to your Endurance.
-Arcane 7: Regain 2 energy.`,
+Gain Arcane Touch, duration is equal to your tinge or endurance, whichever is higher.
+Arcane 6: Regain 2 energy.`,
       image: "cards/fronts/186.webp"
     },
     "Potion of Dreaming": {
       type: "Item — Potion",
       description: `Fragile. Choose one:
-Sleep briefly, then awaken;
-or
+Sleep briefly, then awaken; or
 Calm your nerves, remove 3 madness.`,
       image: "cards/fronts/190.webp"
     },
     "Murky Elixir": {
       type: "Item — Elixir",
       description: `Double any healing effect.
-If you become poisoned or a similar status effect, reduce that duration to 1.
-You are more easily surprised, startled, or intimidated.`,
+If you become poisoned, venomed, toxic etcetera, or any related status effect, reduce the duration of that effect to 1.
+You are more easily surprised, startled, or intimidated after imbibing this elixir.`,
       image: "cards/fronts/193.webp"
     },
     "Beastblood Elixir": {
       type: "Item — Elixir",
       description: `Improves chances of befriending or intimidating some beasts.
-Avid drinkers claim further effects.
-You smell like wet dog, or vanilla?`,
+Avid drinkers claim further effects. Your breath and body smell like wet dog, or vanilla?`,
       image: "cards/fronts/196.webp"
     },
     "Humeblood Elixir": {
       type: "Item — Elixir",
-      description: `An inky, fizzy cola. Smells of copper with a hint of bacon. Caffeinates when hot; inebriates when cold.`,
+      description: `An inky, fizzy cola. Smells of copper with a hint of bacon. Caffeinates when hot; inebriates when cold. Helps to smooth over interactions or social situations.`,
       image: "cards/fronts/199.webp"
     },
     "Vial of Lunacy": {
       type: "Item — Elixir",
       description: `Duration is equal to your madness.
-Combine and. Cruel energies empower your demeanor.
+Combine strength and skill while affected by this elixir. Cruel energies empower your demeanor, you are more prone to outbursts and acting out intrusive thoughts.
 Activate one madness effect.`,
       image: "cards/fronts/201.webp"
     },
     "Vial of Volpe": {
       type: "Item — Elixir",
-      description: `A wonderful flavour tickles your tongue. Resolve (dice) d20: From 1~10, you may regain that much life or stamina or one empower; if you roll 11~20, gain madness.`,
+      description: `A wonderful flavour tickles your tongue. Resolve one d20: If the result is 1~10, you may regain that much life or stamina, or one empower; if you roll 11~20, gain one madness. (e.g. if you roll a 10, you may choose to gain 10 life; if you roll an 11, you  must gain one madness.)`,
       image: "cards/fronts/204.webp"
     },
     "Heady Elixir": {
       type: "Item — Elixir",
       description: `Bestows a heady feeling for a time.
-The imbiber experiences a sense of euphoria, becoming immune to negative moods and intimidation, but susceptible to seduction.`,
+The imbiber experiences a sense of euphoria, becoming immune to negative moods and intimidation, but susceptible to seduction. Nullify reactions toward situations that would normally trigger an outburst.`,
       image: "cards/fronts/207.webp"
     },
     "Sparkwine": {
       type: "Item — Elixir",
-      description: `Applying to the skin, protects and remedies sunburns. When imbibed, causes a heady excitatory buzzing.
-Consecutive drinks increase the effect but reduce duration...`,
+      description: `Applying to the skin, protects and remedies sunburns. Useful during summer heat or the after effects of some light spells. When imbibed, causes a heady excitatory buzzing. Can be used to negate effects of certain sleep-inducing poisons or witchcraft.
+Consecutive drinks increase the effect but reduce duration: double the effective potency but reduce remaining duration by 1.`,
       image: "cards/fronts/210.webp"
     },
     "Woebane Elixir": {
       type: "Item — Elixir",
-      description: `Cherry smoke replaces your breath: React calmly to the world around you, act as if your soul has just awoken from a catnap.
+      description: `Cherry smoke replaces your breath: React calmly to the world around you, act as if your soul has just awoken from a catnap. Useful in many situations. Can improve patience during negotiations.
 Duration is equal to your current madness.`,
       image: "cards/fronts/213.webp"
     },
