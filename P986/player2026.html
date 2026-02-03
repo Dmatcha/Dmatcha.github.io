@@ -23,6 +23,11 @@
     --heart-red: #ff8fa3;
     --scarlet-pink: #ff8fa3;
     
+    /* Mind button purple colors */
+    --mind-bright-purple: #d4a5ff;
+    --mind-dark-purple: #5e2a8c;
+    --mind-border-active: #3d1a5c;
+    
     /* Animation timing variables for consistency */
     --fade-in-duration: 0.3s;
     --fade-out-duration: 2s;
@@ -587,52 +592,51 @@
     cursor: not-allowed;
   }
 
-  /* Mind Button - Left of Star */
+  /* Mind Button - Purple themed */
   #mindBtn {
     position: fixed;
     top: 0.6rem;
-    right: 13.6rem; /* sits LEFT of star button */
+    right: 13.6rem;
     width: 3rem;
     height: 3rem;
     background: transparent;
-    border: 0.1875rem solid white;
+    border: 0.1875rem solid var(--mind-bright-purple);
     border-radius: 0.5rem;
     cursor: pointer;
     z-index: 1001;
-    transition: all 0.4s ease;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
   }
-  #mindBtn svg {
+  #mindBtn img {
     width: 2rem;
     height: 2rem;
-    fill: transparent;
-    stroke: white;
-    stroke-width: 2;
     transition: all 0.5s ease;
+    filter: brightness(1) saturate(0.8);
   }
   #mindBtn.active {
-    background: rgba(106, 27, 154, 0.4);
-    border-color: #9b59b6;
+    background: var(--mind-dark-purple);
+    border-color: var(--mind-border-active);
   }
-  #mindBtn.active svg {
-    fill: rgba(155, 89, 182, 0.3);
-    stroke: #d4a5ff;
+  #mindBtn.active img {
+    filter: brightness(1.4) saturate(1.2);
+  }
+  #mindBtn:hover:not(.active):not(.disabled) {
+    border-color: #e0b8ff;
+    box-shadow: 0 0 0.5rem rgba(212, 165, 255, 0.4);
   }
   #mindBtn.disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
+    pointer-events: none;
   }
 
-  /* Spell Overlay */
-  #spellOverlay {
+  /* Mind Overlay */
+  #mindOverlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     background: rgba(15, 15, 18, 0.85);
     backdrop-filter: blur(0.5rem);
     -webkit-backdrop-filter: blur(0.5rem);
@@ -641,44 +645,42 @@
     overflow-y: auto;
     padding: 3.75rem 1rem 1.25rem;
   }
-  #spellOverlay.visible {
-    display: block;
-  }
-
-  .spell-content {
-    max-width: 50rem;
-    margin: 0 auto;
-  }
-
-  .spell-title {
+  #mindOverlay.visible { display: block; }
+  .mind-content { max-width: 50rem; margin: 0 auto; }
+  .mind-title {
     text-align: center;
     font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    color: #d4a5ff;
+    color: var(--mind-bright-purple);
   }
-
+  .mind-capacity {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .mind-capacity .capacity-full { color: #ff6b6b; }
   .spell-slot {
     background: rgba(255, 255, 255, 0.03);
     border-radius: 1rem;
-    padding: 1rem;
-    margin-bottom: 1rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
     align-items: stretch;
     position: relative;
   }
-
   .spell-slot.legendary {
     border: 0.125rem solid rgba(212, 175, 55, 0.3);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(255, 255, 255, 0.02));
   }
-
   .spell-image {
     width: 7.6rem;
     height: 10.6rem;
     min-width: 7.6rem;
     background: rgba(255, 255, 255, 0.05);
-    border: 0.125rem dashed rgba(255, 255, 255, 0.2);
+    border: 0.125rem dashed rgba(155, 89, 182, 0.3);
     border-radius: 0.75rem;
     display: flex;
     align-items: center;
@@ -687,236 +689,32 @@
     transition: all 0.2s ease;
     overflow: hidden;
   }
-
   .spell-image:hover {
-    border-color: rgba(255, 255, 255, 0.4);
-    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(155, 89, 182, 0.6);
+    background: rgba(155, 89, 182, 0.08);
   }
-
-  .spell-image.has-image {
-    border-style: solid;
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  .spell-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 0.625rem;
-  }
-
-  .spell-image svg {
-    width: 2rem;
-    height: 2rem;
-    stroke: rgba(255, 255, 255, 0.3);
-    stroke-width: 2;
-    fill: none;
-  }
-
-  .spell-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    min-width: 0;
-  }
-
-  .spell-name-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .spell-name {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #fff;
-    background: transparent;
-    border: none;
-    outline: none;
-    padding: 0.25rem 0;
-    padding-left: 0.5rem;
-    flex: 1;
-  }
-  .spell-name::placeholder {
-    color: rgba(255, 255, 255, 0.4);
-  }
-
-  .spell-confirm-btn {
-    width: 1.5rem;
-    height: 1.5rem;
-    min-width: 1.5rem;
-    background: rgba(76, 175, 80, 0.2);
-    border: 0.0625rem solid rgba(76, 175, 80, 0.5);
-    border-radius: 0.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    opacity: 0;
-    pointer-events: none;
-  }
-  .spell-confirm-btn.visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .spell-confirm-btn:hover {
-    background: rgba(76, 175, 80, 0.4);
-    border-color: rgba(76, 175, 80, 0.8);
-  }
-  .spell-confirm-btn svg {
-    width: 1rem;
-    height: 1rem;
-    stroke: #4caf50;
-    stroke-width: 3;
-    fill: none;
-  }
-
-  .spell-subtitle {
-    font-size: 1rem;
-    color: var(--muted);
-    background: transparent;
-    border: none;
-    outline: none;
-    padding: 0.125rem 0;
-    padding-left: 0.5rem;
-    width: 100%;
-  }
-
-  .spell-types {
-    display: flex;
-    gap: 0.5rem;
-    padding-left: 0.5rem;
-  }
-
-  .spell-type {
-    font-size: 0.85rem;
-    padding: 0.125rem 0.5rem;
-    background: rgba(155, 89, 182, 0.2);
-    border: 0.0625rem solid rgba(155, 89, 182, 0.4);
-    border-radius: 0.25rem;
-    color: #d4a5ff;
-  }
-
-  .spell-description {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.8);
-    white-space: pre-line;
-    line-height: 1.5;
-    padding: 0.5rem;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 0.5rem;
-    flex: 1;
-  }
-
-  .spell-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-top: auto;
-  }
-
-  .spell-cast-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: rgba(155, 89, 182, 0.2);
-    border: 0.125rem solid #9b59b6;
-    border-radius: 0.5rem;
-    color: #d4a5ff;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .spell-cast-btn:hover:not(:disabled) {
-    background: rgba(155, 89, 182, 0.4);
-    transform: scale(1.02);
-  }
-
-  .spell-cast-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    border-color: rgba(155, 89, 182, 0.3);
-    color: rgba(212, 165, 255, 0.3);
-  }
-
-  .spell-cost {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.375rem 0.75rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 0.5rem;
-    font-size: 0.9rem;
-    color: #e9eef6;
-  }
-
-  .spell-cost-item {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
-
-  .spell-cost-item.insufficient {
-    color: #ff6b6b;
-  }
-
-  .spell-delete-btn {
-    width: 1.5rem;
-    height: 1.5rem;
-    background: rgba(255, 0, 0, 0.25);
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-  }
-
-  .spell-delete-btn:hover {
-    background: rgba(255, 0, 0, 0.5);
-  }
-
-  .spell-delete-btn svg {
-    width: 0.75rem;
-    height: 0.75rem;
-    stroke: white;
-    stroke-width: 2;
-    fill: none;
-  }
-
-  .spell-slot-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 0.9rem;
-  }
-
-  .spell-slot-empty svg {
-    width: 2rem;
-    height: 2rem;
-    stroke: rgba(255, 255, 255, 0.2);
-    stroke-width: 2;
-    fill: none;
-    margin-bottom: 0.5rem;
-  }
-
-  .spell-section-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #d4a5ff;
-    margin: 1.5rem 0 0.75rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 0.0625rem solid rgba(212, 165, 255, 0.2);
-  }
+  .spell-image.has-image { border-style: solid; border-color: rgba(155, 89, 182, 0.2); }
+  .spell-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 0.625rem; }
+  .spell-image svg { width: 2rem; height: 2rem; stroke: rgba(155, 89, 182, 0.4); stroke-width: 2; fill: none; }
+  .spell-info { flex: 1; display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+  .spell-name { font-size: 1.1rem; font-weight: 700; color: #fff; background: transparent; border: none; outline: none; padding: 0.25rem 0; width: 100%; }
+  .spell-name::placeholder { color: rgba(155, 89, 182, 0.5); }
+  .spell-name.locked { color: var(--mind-bright-purple); pointer-events: none; }
+  .spell-type { font-size: 1rem; color: var(--muted); padding-left: 0.25rem; }
+  .spell-description { font-size: 1rem; color: rgba(255, 255, 255, 0.7); white-space: pre-line; line-height: 1.4; margin-top: 0.25rem; padding-left: 0.25rem; flex: 1; }
+  .spell-confirm-btn { position: absolute; top: 0.5rem; right: 0.5rem; width: 1.5rem; height: 1.5rem; background: rgba(76, 175, 80, 0.2); border: 0.0625rem solid rgba(76, 175, 80, 0.5); border-radius: 0.25rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; opacity: 0; pointer-events: none; }
+  .spell-confirm-btn.visible { opacity: 1; pointer-events: auto; }
+  .spell-confirm-btn:hover { background: rgba(76, 175, 80, 0.4); border-color: rgba(76, 175, 80, 0.8); }
+  .spell-confirm-btn svg { width: 1rem; height: 1rem; stroke: #4caf50; stroke-width: 3; fill: none; }
+  .spell-delete-btn { position: absolute; bottom: 0.5rem; right: 0.5rem; width: 1.5rem; height: 1.5rem; background: rgba(255, 0, 0, 0.25); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: all 0.2s ease; }
+  .spell-slot:hover .spell-delete-btn { opacity: 1; }
+  .spell-delete-btn:hover { background: rgba(255, 0, 0, 0.5); }
+  .spell-delete-btn svg { width: 0.75rem; height: 0.75rem; stroke: white; stroke-width: 2; fill: none; }
+  .spell-section-title { font-size: 1.1rem; font-weight: 600; color: var(--mind-bright-purple); margin: 1.5rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 0.0625rem solid rgba(212, 165, 255, 0.2); }
+  #addSpellBtn { width: 100%; padding: 1rem; background: rgba(155, 89, 182, 0.05); border: 0.125rem dashed rgba(155, 89, 182, 0.3); border-radius: 1rem; color: rgba(155, 89, 182, 0.6); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1rem; }
+  #addSpellBtn:hover:not(.disabled) { background: rgba(155, 89, 182, 0.1); border-color: rgba(155, 89, 182, 0.5); color: rgba(155, 89, 182, 0.8); }
+  #addSpellBtn.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+  #addSpellBtn svg { width: 1.5rem; height: 1.5rem; stroke: currentColor; stroke-width: 2; fill: none; }
 
   /* Character Options Overlay */
   #characterOverlay {
@@ -1986,154 +1784,36 @@
       transform: scale(1.06);
     }
   }
-.spell-card img {
-  cursor: zoom-in;
-  transition: transform 0.3s ease, position 0.3s ease;
-}
-
-.spell-card img.zoomed {
-  position: fixed;
-  inset: 0;
-  margin: auto;
-  max-height: 95vh;
-  max-width: 95vw;
-  z-index: 9999;
-  cursor: zoom-out;
-  background: rgba(0,0,0,0.85);
-  padding: 1rem;
-}
-.learn-btn {
-  width: 100%;
-  margin-top: 1rem;
-  padding: 0.75rem;
-  border-radius: 0.75rem;
-  background: #6a1b9a;
-  color: #fff;
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.learn-btn.dimmed {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-#mindBtn {
-  border: 2px solid white;
-  background: transparent;
-  transition: all 0.2s ease;
-}
-
-#mindBtn.active {
-  background: #6a1b9a;
-  box-shadow: inset 0 0 0 2px #b266ff;
-}
-/* === PATCH: Mind button visuals === */
-#mindBtn {
-border: 2px solid white !important;
-background: transparent;
-}
-#mindBtn.active {
-background: #6a1b9a;
-box-shadow: inset 0 0 0 3px #b26cff;
-border-color: #b26cff;
-}
-
-
-/* === PATCH: Learn Spell button === */
-.learn-btn {
-width: 100%;
-margin-top: 1rem;
-padding: 0.75rem;
-border-radius: 0.75rem;
-background: #6a1b9a;
-color: #fff;
-border: none;
-font-size: 1rem;
-cursor: pointer;
-}
-.learn-btn.dimmed {
-opacity: 0.4;
-cursor: not-allowed;
-}
-
-
-/* === PATCH: Spell image zoom === */
-.spell-card img { cursor: zoom-in; }
-.spell-card img.zoomed {
-position: fixed;
-inset: 0;
-margin: auto;
-max-height: 95vh;
-max-width: 95vw;
-z-index: 9999;
-cursor: zoom-out;
-background: rgba(0,0,0,0.85);
-padding: 1rem;
-}
-
-.overlay-tab-btn {
-  width: 3.5rem;
-  height: 3.5rem;
-  display: grid;
-  place-items: center;
-  border-radius: 0.75rem;
-}
-
-.overlay-tab-btn:disabled {
-  opacity: 0.35;
-  filter: grayscale(1);
-  cursor: not-allowed;
-  pointer-events: none; /* critical */
-}
-
-.overlay-tab-btn:not(:disabled) {
-  opacity: 1;
-  filter: none;
-  cursor: pointer;
-}
-
 
 </style>
 </head>
 <body>
   <button id="resetBtn">RESET</button>
   
-  <!-- Mind Button - Spells -->
-  <button
-  id="mindBtn"
-  class="overlay-tab-btn"
-  aria-label="Mind and Spells"
-  aria-disabled="true"
-  disabled
->
-  <img src="icons/mind.webp" alt="" />
-</button>
-
-
-<!-- Spell Overlay -->
-<div id="spellOverlay">
-  <div class="spell-content">
-    <div class="spell-title" id="spellTitle">Deep in the mind...</div>
-
-    <div id="spellList"></div>
-
-    <!-- Learn Spell Button -->
-    <button id="learnSpellBtn" class="learn-btn">
-      Learn Spell
-    </button>
-  </div>
-</div>
-
-
-
   <!-- Star Button - Character Options -->
   <button id="starBtn" class="disabled" aria-label="Toggle Character Options">
     <svg viewBox="0 0 24 24">
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
     </svg>
   </button>
+
+  <!-- Mind Button - Spells -->
+  <button id="mindBtn" class="disabled" aria-label="Toggle Mind/Spells">
+    <img src="../icons/mind.svg" alt="Mind" />
+  </button>
+
+  <!-- Mind Overlay -->
+  <div id="mindOverlay">
+    <div class="mind-content">
+      <div class="mind-title">Mind & Spells</div>
+      <div id="mindCapacity" class="mind-capacity"></div>
+      <div id="spellList"></div>
+      <button id="addSpellBtn">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Learn New Spell
+      </button>
+    </div>
+  </div>
 
   <!-- Character Overlay -->
   <div id="characterOverlay">
@@ -4906,552 +4586,176 @@ renderInventory = function() {
   bindInventoryEvents();
   updateAddItemButtonState();
 };
-function hasSoulboundAndIris() {
-  const soulbound = inventory[0];
-  const iris = inventory[1];
 
-  return (
-    soulbound &&
-    iris &&
-    typeof soulbound === 'object' &&
-    typeof iris === 'object' &&
-    soulbound.name &&
-    iris.name
-  );
-}
-
-// ============================================
-// SPELL / MIND SYSTEM
-// ============================================
-
-function spellSlotsFull() {
-  const max = calculateMaxSpellSlots();
-  return spells.filter(s => s?.name).length >= max;
-}
-
-
-// Mind button and overlay elements
+/* ========= MIND/SPELL SYSTEM ========= */
 const mindBtn = document.getElementById('mindBtn');
-const spellOverlay = document.getElementById('spellOverlay');
+const mindOverlay = document.getElementById('mindOverlay');
 const spellList = document.getElementById('spellList');
-const learnSpellBtn = document.getElementById('learnSpellBtn');
+const addSpellBtn = document.getElementById('addSpellBtn');
+
+let spells = loadState('spells', []);
+let mindOpen = false;
+
+// Check if player has soulbound artefact and iris
+function hasSoulboundAndIris() {
+  return inventory[0]?.name && inventory[1]?.name;
+}
+
+// Update mind button state
+function updateMindButtonState() {
+  const allowed = hasSoulboundAndIris();
+  mindBtn.classList.toggle('disabled', !allowed);
+}
+
+// Calculate max spell slots
+function getMaxSpellSlots() {
+  const mastery = Number(loadState('Mastery', 0)) || 0;
+  const potency = Number(loadState('Potency', 0)) || 0;
+  return 2 + Math.max(mastery, potency);
+}
+
+function getCurrentSpellCount() {
+  return spells.filter(s => s?.name).length;
+}
+
+function updateAddSpellButtonState() {
+  const maxSlots = getMaxSpellSlots();
+  const full = getCurrentSpellCount() >= maxSlots;
+  addSpellBtn.classList.toggle('disabled', full);
+  addSpellBtn.innerHTML = full 
+    ? 'Mind Full - Improve Mastery/Potency' 
+    : '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Learn New Spell';
+}
 
 mindBtn.onclick = () => {
   if (!hasSoulboundAndIris()) {
-    alert("Your mind cannot open without a Soulbound Artefact and Iris.");
+    alert('Your mind cannot open without a Soulbound Artefact and Iris. Add them in your Inventory first.');
     return;
   }
-
   mindOpen = !mindOpen;
-  spellOverlay.classList.toggle('visible', mindOpen);
+  mindOverlay.classList.toggle('visible', mindOpen);
   mindBtn.classList.toggle('active', mindOpen);
-
   if (mindOpen) renderSpells();
 };
-learnSpellBtn.onclick = () => {
-  if (spellSlotsFull()) {
-    const ok = confirm("Improve potency or mastery to learn more spells!");
-    if (ok) {
-      // future hook (open mastery UI, etc.)
-    }
-    return;
+
+mindOverlay.addEventListener('click', (e) => {
+  if (e.target === mindOverlay) {
+    mindOpen = false;
+    mindOverlay.classList.remove('visible');
+    mindBtn.classList.remove('active');
   }
+});
 
-  learnNewSpell(); // whatever function you already use
-};
-
-function updateMindButtonState() {
-  const allowed = hasSoulboundAndIris();
-  mindBtn.style.opacity = allowed ? "1" : "0.4";
-  mindBtn.style.pointerEvents = allowed ? "auto" : "none";
-}
-
-function updateLearnSpellButton() {
-  if (!learnSpellBtn) return;
-
-  const full = spellSlotsFull();
-  learnSpellBtn.classList.toggle('dimmed', full);
-}
-function updateLearnSpellButton() {
-  if (!learnSpellBtn) return;
-  learnSpellBtn.classList.toggle('dimmed', spellSlotsFull());
-}
-
-// Spell state - array of spell objects
-let spells = loadState('spells', []);
-
-// Track if mind overlay is open
-let mindOpen = false;
-
-// Initialize spells with minimum required slots
-function initializeSpells() {
-  const maxSlots = calculateMaxSpellSlots();
-
-  // Ensure we have at least the minimum required slots
-  while (spells.length < maxSlots) {
-    spells.push({});
+function renderSpells() {
+  const maxSlots = getMaxSpellSlots();
+  while (spells.length < 2) spells.push({});
+  
+  const currentCount = getCurrentSpellCount();
+  const capacityEl = document.getElementById('mindCapacity');
+  if (capacityEl) {
+    const isFull = currentCount >= maxSlots;
+    capacityEl.innerHTML = `Spells: <span class="${isFull ? 'capacity-full' : ''}">${currentCount} / ${maxSlots}</span>`;
   }
-
-  // Trim if we have too many
-  if (spells.length > maxSlots) {
-    spells = spells.slice(0, maxSlots);
+  
+  spellList.innerHTML = '';
+  spellList.innerHTML += '<div class="spell-section-title">Legendary Spell</div>';
+  spellList.innerHTML += createSpellCard(0, spells[0] || {}, true);
+  spellList.innerHTML += '<div class="spell-section-title">Regular Spells</div>';
+  for (let i = 1; i < spells.length && i < maxSlots; i++) {
+    spellList.innerHTML += createSpellCard(i, spells[i] || {}, false);
   }
-
-  saveState('spells', spells);
+  bindSpellEvents();
+  updateAddSpellButtonState();
 }
 
-// Calculate max spell slots based on stats and inventory
-function calculateMaxSpellSlots() {
-  const mastery = Number(loadState('Mastery', 0)) || 0;
-  const potency = Number(loadState('Potency', 0)) || 0;
-  const statBonus = Math.max(mastery, potency);
-
-  // Check for Iris effects
-  const hasSoftlyStrangeViolet = inventory.some(item => item?.name === 'Softly Strange Violet');
-  const hasOtherworldlyOdd = inventory.some(item => item?.name === 'Otherworldly Odd');
-
-  if (hasOtherworldlyOdd) {
-    // 1 legendary + 5 regular slots
-    return 6;
-  } else if (hasSoftlyStrangeViolet) {
-    // 2 legendary + (2 + statBonus) regular slots
-    return 2 + 2 + statBonus;
-  } else {
-    // 1 legendary + (1 + statBonus) regular slots
-    return 1 + 1 + statBonus;
-  }
-}
-
-// Check if spell slot is legendary (first slot, or first 2 if hasSoftlyStrangeViolet)
-function isLegendarySlot(index) {
-  const hasSoftlyStrangeViolet = inventory.some(item => item?.name === 'Softly Strange Violet');
-  const hasOtherworldlyOdd = inventory.some(item => item?.name === 'Otherworldly Odd');
-
-  if (hasOtherworldlyOdd) {
-    // First slot is legendary
-    return index === 0;
-  } else if (hasSoftlyStrangeViolet) {
-    // First 2 slots are legendary
-    return index < 2;
-  } else {
-    // First slot is legendary
-    return index === 0;
-  }
-}
-
-// Get starting spell for regular slots based on Iris
-function getStartingSpellForSlot(slotIndex) {
-  const hasSoftlyStrangeViolet = inventory.some(item => item?.name === 'Softly Strange Violet');
-  const hasOtherworldlyOdd = inventory.some(item => item?.name === 'Otherworldly Odd');
-
-  if (hasOtherworldlyOdd) {
-    // Slots 0-4 are regular (slot 0 is legendary actually, but let's check)
-    // Slot 0 = legendary
-    // Slot 1 = 390.webp (Arclight)
-    // Slot 2 = 385.webp
-    // Slot 3 = 395.webp
-    // Slots 4+ = empty
-    if (slotIndex === 1) return { name: 'Arclight', image: 'cards/fronts/390.webp' };
-    if (slotIndex === 2) return { name: 'Thunder', image: 'cards/fronts/385.webp' };
-    if (slotIndex === 3) return { name: 'Spark', image: 'cards/fronts/395.webp' };
-  } else if (hasSoftlyStrangeViolet) {
-    // Slot 0-1 = legendary
-    // Slot 2 = 390.webp (Arclight)
-    // Slot 3 = 385.webp
-    // Slots 4+ = based on stat bonus
-    if (slotIndex === 2) return { name: 'Arclight', image: 'cards/fronts/390.webp' };
-    if (slotIndex === 3) return { name: 'Thunder', image: 'cards/fronts/385.webp' };
-  } else {
-    // Default: Slot 0 = legendary, Slot 1 = 390.webp (Arclight)
-    if (slotIndex === 1) return { name: 'Arclight', image: 'cards/fronts/390.webp' };
-  }
-
-  return null;
-}
-
-// Create HTML for a single spell slot
-function createSpellSlotHTML(index, spell = {}) {
-  const isLegendary = isLegendarySlot(index);
-  const slotClass = isLegendary ? 'spell-slot legendary' : 'spell-slot';
-  const hasImage = spell.image ? 'has-image' : '';
-  const startingSpell = !spell.name ? getStartingSpellForSlot(index) : null;
-  const displaySpell = spell.name ? spell : startingSpell;
-
-  const imgSrc = displaySpell?.image || '';
-  const spellName = displaySpell?.name || '';
-  const subtitle = displaySpell?.subtitle || (isLegendary ? 'Legendary Spell' : 'Regular Spell');
-  const primaryType = displaySpell?.primaryType || '';
-  const secondaryType = displaySpell?.secondaryType || '';
-  const description = displaySpell?.description || '';
-  const cost = displaySpell?.cost || {};
-  const costJSON = JSON.stringify(cost);
-
-  const imgContent = imgSrc
-    ? `<img src="${imgSrc}" alt="${spellName}" />`
+function createSpellCard(index, data = {}, isLegendary = false) {
+  const hasImage = data.image ? 'has-image' : '';
+  const isLocked = data.locked ? 'locked' : '';
+  const imgContent = data.image 
+    ? `<img src="${data.image}" alt="${data.name || 'Spell'}" />`
     : `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`;
-
-  // Build cost display
-  let costDisplay = '';
-  const costLabels = { life: 'Life', stamina: 'Stamina', empower: 'Empower', mana: 'Mana', energy: 'Energy', essence: 'Essence' };
-
-  if (Object.keys(cost).length > 0) {
-    costDisplay = '<div class="spell-cost">';
-    for (const [resource, amount] of Object.entries(cost)) {
-      if (amount > 0) {
-        costDisplay += `<span class="spell-cost-item" data-resource="${resource}">${amount} ${costLabels[resource] || resource}</span>`;
-      }
-    }
-    costDisplay += '</div>';
-  }
-
-  // Build types display
-  let typesDisplay = '';
-  if (primaryType || secondaryType) {
-    typesDisplay = '<div class="spell-types">';
-    if (primaryType) typesDisplay += `<span class="spell-type">${primaryType}</span>`;
-    if (secondaryType) typesDisplay += `<span class="spell-type">${secondaryType}</span>`;
-    typesDisplay += '</div>';
-  }
-
-  // Generate description or placeholder
-  const descDisplay = description || 'Enter spell details or leave blank for empty slot';
-
+  const placeholder = isLegendary ? 'Legendary Spell' : 'Spell Name';
+  const typeLabel = isLegendary ? 'Legendary Spell' : 'Regular Spell';
+  
   return `
-  <div class="${slotClass}" data-index="${index}">
-    <div class="spell-image ${hasImage}" data-index="${index}">${imgContent}</div>
-
+  <div class="spell-slot${isLegendary ? ' legendary' : ''}" data-index="${index}">
+    <div class="spell-image ${hasImage}">${imgContent}</div>
     <div class="spell-info">
-      <div class="spell-name-row">
-        <input class="spell-name"
-               placeholder="${isLegendary ? 'Legendary Spell' : 'Spell Name'}"
-               value="${spellName}"
-               data-index="${index}" />
-        <button class="spell-confirm-btn" data-index="${index}">
-          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-        </button>
-      </div>
-
-      <input class="spell-subtitle"
-             placeholder="Subtitle / School"
-             value="${subtitle !== (isLegendary ? 'Legendary Spell' : 'Regular Spell') ? subtitle : ''}"
-             data-index="${index}" />
-
-      ${typesDisplay}
-
-      <div class="spell-description" data-index="${index}" contenteditable="true">${descDisplay}</div>
-
-      <div class="spell-footer">
-        <div class="spell-cost-container" data-cost='${costJSON}'>
-          ${costDisplay || '<span class="spell-cost" style="color: rgba(255,255,255,0.3);">No cost</span>'}
-        </div>
-
-        <div style="display: flex; gap: 0.5rem; align-items: center;">
-          <button class="spell-cast-btn" data-index="${index}" title="Cast this spell">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="5 3 19 12 5 21 5 3"/>
-            </svg>
-            Cast
-          </button>
-
-          <button class="spell-delete-btn" data-index="${index}" title="Forget this spell">
-            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-        </div>
-      </div>
+      <input class="spell-name ${isLocked}" placeholder="${placeholder}" value="${data.name || ''}" ${isLocked ? 'readonly' : ''} />
+      <div class="spell-type">${data.type || typeLabel}</div>
+      <div class="spell-description">${data.description || '—'}</div>
     </div>
+    <button class="spell-confirm-btn"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
+    <button class="spell-delete-btn"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>`;
 }
 
-// Render all spell slots
-function renderSpells() {
-  initializeSpells();
-  const maxSlots = calculateMaxSpellSlots();
-
-  // Update spells array to match max slots
-  while (spells.length < maxSlots) {
-    spells.push({});
-  }
-  if (spells.length > maxSlots) {
-    spells = spells.slice(0, maxSlots);
-  }
-
-  spellList.innerHTML = '';
-
-  // Add legendary section if there are legendary slots
-  const legendaryCount = isLegendarySlot(1) ? 2 : 1;
-  if (legendaryCount > 0) {
-    spellList.innerHTML += '<div class="spell-section-title">Legendary Spells</div>';
-    for (let i = 0; i < legendaryCount && i < spells.length; i++) {
-      spellList.innerHTML += createSpellSlotHTML(i, spells[i]);
-    }
-  }
-
-  // Add regular spells section
-  const regularStartIndex = legendaryCount;
-  if (regularStartIndex < maxSlots) {
-    spellList.innerHTML += '<div class="spell-section-title">Regular Spells</div>';
-    for (let i = regularStartIndex; i < maxSlots; i++) {
-      spellList.innerHTML += createSpellSlotHTML(i, spells[i]);
-    }
-  }
-
-  bindSpellEvents();
-  updateCastButtons();
-  updateLearnSpellButton();
-}
-
-// Bind events to spell slot elements
 function bindSpellEvents() {
-  // Name input events
-  document.querySelectorAll('.spell-name').forEach(input => {
-    input.addEventListener('input', function() {
-      const index = +this.dataset.index;
-      const confirmBtn = document.querySelector(`.spell-confirm-btn[data-index="${index}"]`);
-      const currentValue = this.value.trim();
-      const savedValue = spells[index]?.name || '';
-      if (currentValue !== savedValue && currentValue.length > 0) {
-        confirmBtn.classList.add('visible');
-      } else {
-        confirmBtn.classList.remove('visible');
-      }
+  document.querySelectorAll('.spell-slot').forEach(card => {
+    const index = +card.dataset.index;
+    const nameInput = card.querySelector('.spell-name');
+    const confirmBtn = card.querySelector('.spell-confirm-btn');
+    const deleteBtn = card.querySelector('.spell-delete-btn');
+    
+    nameInput.addEventListener('input', () => {
+      const hasChange = nameInput.value.trim() !== (spells[index]?.name || '');
+      confirmBtn.classList.toggle('visible', hasChange && nameInput.value.trim().length > 0);
     });
-
-    input.addEventListener('keydown', function(e) {
+    
+    nameInput.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        const index = +this.dataset.index;
-        saveSpell(index, this.value.trim(), 'name');
-        this.blur();
+        saveSpell(index, nameInput.value.trim());
+        nameInput.blur();
       }
     });
-  });
-
-  // Subtitle input events
-  document.querySelectorAll('.spell-subtitle').forEach(input => {
-    input.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const index = +this.dataset.index;
-        saveSpell(index, this.value.trim(), 'subtitle');
-        this.blur();
-      }
-    });
-  });
-
-  // Description contenteditable events
-  document.querySelectorAll('.spell-description').forEach(el => {
-    el.addEventListener('blur', function() {
-      const index = +this.dataset.index;
-      saveSpell(index, this.innerText.trim(), 'description');
-    });
-  });
-
-  // Confirm button events
-  document.querySelectorAll('.spell-confirm-btn').forEach(btn => {
-    btn.onclick = function() {
-      const index = +this.dataset.index;
-      const nameInput = document.querySelector(`.spell-name[data-index="${index}"]`);
-      saveSpell(index, nameInput.value.trim(), 'name');
-      this.classList.remove('visible');
-    };
-  });
-
-  // Delete button events
-  document.querySelectorAll('.spell-delete-btn').forEach(btn => {
-    btn.onclick = function() {
-      const index = +this.dataset.index;
+    
+    confirmBtn.onclick = () => saveSpell(index, nameInput.value.trim());
+    
+    deleteBtn.onclick = () => {
       const spell = spells[index];
-      const spellName = spell?.name || 'this spell';
-
-      if (confirm(`Forget "${spellName}"? This will clear the spell slot.`)) {
+      if (confirm(`Forget "${spell?.name || 'this spell'}"?`)) {
         spells[index] = {};
         saveState('spells', spells);
         renderSpells();
       }
     };
   });
-
-  // Cast button events
-  document.querySelectorAll('.spell-cast-btn').forEach(btn => {
-    btn.onclick = function() {
-      const index = +this.dataset.index;
-      const spell = spells[index];
-      if (!spell?.name) return;
-
-      castSpell(index);
-    };
-  });
-
-  // Image click for zoom
-  document.querySelectorAll('.spell-image').forEach(imgDiv => {
-    imgDiv.onclick = function() {
-      const img = this.querySelector('img');
-      if (img && img.src) {
-        const zoomedImage = document.getElementById('zoomedImage');
-        zoomedImage.src = img.src;
-        document.getElementById('imageZoomOverlay').classList.add('visible');
-      }
-    };
-  });
 }
 
-// Save spell data
-function saveSpell(index, value, field) {
-  if (!spells[index]) spells[index] = {};
-  spells[index][field] = value;
+function saveSpell(index, name) {
+  if (!name) {
+    spells[index] = {};
+  } else {
+    const isLegendary = index === 0;
+    spells[index] = { name, type: isLegendary ? 'Legendary Spell' : 'Regular Spell' };
+  }
   saveState('spells', spells);
   renderSpells();
 }
 
-// Check if player has enough resources to cast
-function canCastSpell(spell) {
-  if (!spell?.cost) return true;
-
-  const currentValues = {
-    life: Number(loadState('Life', 10)) || 10,
-    stamina: Number(loadState('Stamina', 10)) || 10,
-    empower: Number(loadState('Empower', 0)) || 0,
-    mana: Number(loadState('Mana', 10)) || 10,
-    energy: Number(loadState('Energy', 10)) || 10,
-    essence: Number(loadState('Essence', 0)) || 0
-  };
-
-  for (const [resource, cost] of Object.entries(spell.cost)) {
-    if (cost > 0 && (currentValues[resource] || 0) < cost) {
-      return false;
-    }
-  }
-  return true;
-}
-
-// Update cast button states based on available resources
-function updateCastButtons() {
-  document.querySelectorAll('.spell-slot').forEach(slot => {
-    const index = +slot.dataset.index;
-    const spell = spells[index];
-    const castBtn = slot.querySelector('.spell-cast-btn');
-    const costContainer = slot.querySelector('.spell-cost-container');
-
-    if (!spell?.name || !castBtn) return;
-
-    // Update cost display with insufficient indicators
-    if (costContainer) {
-      const currentValues = {
-        life: Number(loadState('Life', 10)) || 10,
-        stamina: Number(loadState('Stamina', 10)) || 10,
-        empower: Number(loadState('Empower', 0)) || 0,
-        mana: Number(loadState('Mana', 10)) || 10,
-        energy: Number(loadState('Energy', 10)) || 10,
-        essence: Number(loadState('Essence', 0)) || 0
-      };
-
-      costContainer.querySelectorAll('.spell-cost-item').forEach(item => {
-        const resource = item.dataset.resource;
-        const costText = item.textContent;
-        const costMatch = costText.match(/(\d+)/);
-        if (costMatch) {
-          const cost = parseInt(costMatch[1]);
-          if ((currentValues[resource] || 0) < cost) {
-            item.classList.add('insufficient');
-          } else {
-            item.classList.remove('insufficient');
-          }
-        }
-      });
-    }
-
-    // Enable/disable cast button
-    const canCast = canCastSpell(spell);
-    castBtn.disabled = !canCast;
-  });
-}
-
-// Cast a spell (deduct resources)
-function castSpell(index) {
-  const spell = spells[index];
-  if (!spell?.name) return;
-
-  const spellName = spell.name;
-  const cost = spell.cost || {};
-
-  // Build confirmation message
-  let confirmMsg = `Do you want to cast "${spellName}"?\n\nCosts:`;
-  const costLabels = { life: 'Life', stamina: 'Stamina', empower: 'Empower', mana: 'Mana', energy: 'Energy', essence: 'Essence' };
-
-  for (const [resource, amount] of Object.entries(cost)) {
-    if (amount > 0) {
-      confirmMsg += `\n- ${amount} ${costLabels[resource] || resource}`;
-    }
-  }
-
-  if (Object.keys(cost).length === 0) {
-    confirmMsg += '\n- No cost';
-  }
-
-  if (confirm(confirmMsg)) {
-    // Deduct resources
-    const newValues = {
-      life: (Number(loadState('Life', 10)) || 10) - (cost.life || 0),
-      stamina: (Number(loadState('Stamina', 10)) || 10) - (cost.stamina || 0),
-      empower: (Number(loadState('Empower', 0)) || 0) - (cost.empower || 0),
-      mana: (Number(loadState('Mana', 10)) || 10) - (cost.mana || 0),
-      energy: (Number(loadState('Energy', 10)) || 10) - (cost.energy || 0),
-      essence: (Number(loadState('Essence', 0)) || 0) - (cost.essence || 0)
-    };
-
-    // Save new values
-    for (const [key, value] of Object.entries(newValues)) {
-      saveState(key, Math.max(0, value));
-    }
-
-    // Update UI
-    refreshUI();
-    updateCastButtons();
-
-    alert(`"${spellName}" has been cast!`);
-  }
-}
-
-// Toggle mind / spells overlay
-mindBtn.onclick = () => {
-  if (!hasSoulboundAndIris()) {
-    alert("Your mind cannot open without a Soulbound Artefact and Iris.");
+addSpellBtn.onclick = () => {
+  const maxSlots = getMaxSpellSlots();
+  if (spells.length >= maxSlots) {
+    alert('Mind is full! Improve Mastery or Potency to learn more spells.');
     return;
   }
-
-  mindOpen = !mindOpen;
-
-  spellOverlay.classList.toggle('visible', mindOpen);
-  mindBtn.classList.toggle('active', mindOpen);
-
-  if (mindOpen) {
-    renderSpells();
-  }
+  spells.push({});
+  saveState('spells', spells);
+  renderSpells();
 };
 
-
-// Close overlay when clicking outside
-spellOverlay.onclick = function(e) {
-  if (e.target === this) {
-    mindOpen = false;
-    this.classList.remove('visible');
-    mindBtn.classList.remove('active');
-  }
+// Update mind button state when inventory changes
+const originalRenderInventoryForMind = renderInventory;
+renderInventory = function() {
+  originalRenderInventoryForMind();
+  updateMindButtonState();
 };
 
-
-
-
-document.addEventListener('click', (e) => {
-  const img = e.target.closest('.spell-card img');
-  if (!img) return;
-
-  img.classList.toggle('zoomed');
-});
-
-// Initialize spells on load
-initializeSpells();
-refreshUI();
+// Initialize mind button state on page load
+setTimeout(() => {
+  updateMindButtonState();
+}, 100);
 
 </script>
 </body>
