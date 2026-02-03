@@ -2733,14 +2733,14 @@ barsConfig.forEach(cfg => {
     updateButtonStates();
   }
 
-  if (cfg.dynamic) {
+  // NEW CODE - Register update function for ALL bars
     barUpdateFunctions[cfg.key] = () => {
       updateBar();
+      // Update bottom stats if relevant bars change
       if (cfg.key === 'mana' || cfg.key === 'energy') {
         updateBottomStats();
       }
     };
-  }
 
   minus.addEventListener('click', ()=> {
     const newValue = value - 1;
@@ -2797,6 +2797,7 @@ barsConfig.forEach(cfg => {
 });
 
 function updateAllBars() {
+  // This iterates over every registered update function and runs it
   Object.values(barUpdateFunctions).forEach(updateFn => updateFn());
 }
 
@@ -5821,79 +5822,8 @@ function renderCostIcons(cost) {
 }
 
 // Check if player can afford spell cost
-function canAffordSpell(cost, xValue = 0, genericChoice = null) {
-  if (!cost || !Array.isArray(cost)) return true;
-  
-  for (const c of cost) {
-    let resourceKey = c.type.charAt(0).toUpperCase() + c.type.slice(1);
-    let amount = c.amount || 1;
-    
-    if (c.type === 'x') {
-      amount = xValue;
-      resourceKey = genericChoice || 'Mana'; // X defaults to chosen resource
-    } else if (c.type === 'generic') {
-      resourceKey = genericChoice || 'Mana';
-    }
-    
-    // Map to actual state keys (lowercase)
-    const stateKeyMap = {
-      'Life': 'life',
-      'Stamina': 'stamina',
-      'Empower': 'empower',
-      'Mana': 'mana',
-      'Energy': 'energy',
-      'Essence': 'coalesce' // Essence maps to Coalesce in state
-    };
-    
-    const stateKey = stateKeyMap[resourceKey] || resourceKey.toLowerCase();
-    const current = Number(loadState(stateKey, 0)) || 0;
-    
-    if (current < amount) return false;
-  }
-  return true;
-}
 
 // Deduct spell cost from resources
-function deductSpellCost(cost, xValue = 0, genericChoice = null) {
-  if (!cost || !Array.isArray(cost)) return;
-  
-  for (const c of cost) {
-    let resourceKey = c.type.charAt(0).toUpperCase() + c.type.slice(1);
-    let amount = c.amount || 1;
-    
-    if (c.type === 'x') {
-      amount = xValue;
-      resourceKey = genericChoice || 'Mana';
-    } else if (c.type === 'generic') {
-      resourceKey = genericChoice || 'Mana';
-    }
-    
-    const stateKeyMap = {
-      'Life': 'life',
-      'Stamina': 'stamina',
-      'Empower': 'empower',
-      'Mana': 'mana',
-      'Energy': 'energy',
-      'Essence': 'coalesce'
-    };
-    
-    const stateKey = stateKeyMap[resourceKey] || resourceKey.toLowerCase();
-    const current = Number(loadState(stateKey, 0)) || 0;
-    const newValue = Math.max(0, current - amount);
-    saveState(stateKey, newValue);
-    console.log(`Spell cost deducted - ${stateKey}: ${current} -> ${newValue} (deducted ${amount})`);
-  }
-  
-  // Update all bars to reflect new values
-  if (typeof updateAllBars === 'function') {
-    updateAllBars();
-  }
-  
-  // Also update bottom stats if mana or energy changed
-  if (typeof updateBottomStats === 'function') {
-    updateBottomStats();
-  }
-}
 
 // Check if cost has variable components (X or generic)
 function hasVariableCost(cost) {
@@ -5997,7 +5927,7 @@ function renderSpells() {
     const isFull = currentCount >= maxSlots;
     capacityEl.innerHTML = `Spells: <span class="${isFull ? 'capacity-full' : ''}">${currentCount} / ${maxSlots}</span>`;
   }
-  
+
   spellList.innerHTML = '';
   
   // Render legendary slots
@@ -6023,14 +5953,14 @@ function createSpellCard(index, data = {}, isLegendary = false) {
   const imgContent = data.image 
     ? `<img src="${data.image}" alt="${data.name || 'Spell'}" />`
     : `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`;
-  const placeholder = isLegendary ? 'Legendary Spell' : 'Spell Name';
+  const placeholder = isLegendary ? 'NEW LEGENDARY SPELL' : 'NEW SPELL';
   const typeLabel = data.primaryType && data.secondaryType 
     ? `${data.primaryType} — ${data.secondaryType}` 
     : (data.type || (isLegendary ? 'Legendary Spell' : 'Regular Spell'));
   
   const costHtml = data.cost ? renderCostIcons(data.cost) : '';
   const canCast = data.name && canAffordSpell(data.cost);
-  const showDelete = data.name && !data.locked && !data.prefilled;
+  const showDelete = !data.locked && !data.prefilled;
   
   return `
   <div class="spell-slot${isLegendary ? ' legendary' : ''}" data-index="${index}" data-spell-name="${data.name || ''}">
@@ -6082,7 +6012,8 @@ function bindSpellEvents() {
       deleteBtn.onclick = () => {
         const spell = spells[index];
         if (spell?.locked || spell?.prefilled) return;
-        if (confirm(`Forget "${spell?.name || 'this spell'}"? This will remove it from your mind.`)) {
+        const spellName = spell?.name || 'this spell';
+        if (confirm(`Forget ${spellName}?`)) {
           spells[index] = {};
           saveState('spells', spells);
           renderSpells();
@@ -6110,6 +6041,98 @@ function bindSpellEvents() {
   });
 }
 
+/* ========= CASTING LOGIC ========= */
+
+// Check if player has enough resources
+function canAffordSpell(cost, xValue = 0, genericChoice = null) {
+  if (!cost || !Array.isArray(cost)) return true;
+  
+  // Mapping spell cost types (DB) to localStorage keys (System)
+  const resourceMap = {
+    'life': 'life',
+    'stamina': 'stamina',
+    'empower': 'empower',
+    'mana': 'mana',
+    'energy': 'energy',
+    'essence': 'coalesce', // Important: Essence in cards = Coalesce in code
+    'coalesce': 'coalesce'
+  };
+
+  for (const c of cost) {
+    // Skip costs that aren't resources (like 'tap', 'action', 'turn')
+    if (['tap', 'untap', 'channel', 'ready', 'swap', 'arrow', 'action'].includes(c.type.toLowerCase())) {
+      continue;
+    }
+
+    let typeToCheck = c.type.toLowerCase();
+    let amount = c.amount || 1;
+    
+    // Handle X costs
+    if (typeToCheck === 'x') {
+      amount = xValue;
+      typeToCheck = (genericChoice || 'mana').toLowerCase();
+    } 
+    // Handle Generic costs
+    else if (typeToCheck === 'generic') {
+      typeToCheck = (genericChoice || 'mana').toLowerCase();
+    }
+
+    const storageKey = resourceMap[typeToCheck];
+    
+    // If it's a valid resource, check amount
+    if (storageKey) {
+      const current = Number(loadState(storageKey, 0)) || 0;
+      if (current < amount) return false;
+    }
+  }
+  return true;
+}
+
+// Deduct resources and update UI
+function deductSpellCost(cost, xValue = 0, genericChoice = null) {
+  if (!cost || !Array.isArray(cost)) return;
+
+  const resourceMap = {
+    'life': 'life',
+    'stamina': 'stamina',
+    'empower': 'empower',
+    'mana': 'mana',
+    'energy': 'energy',
+    'essence': 'coalesce',
+    'coalesce': 'coalesce'
+  };
+  
+  for (const c of cost) {
+    if (['tap', 'untap', 'channel', 'ready', 'swap', 'arrow', 'action'].includes(c.type.toLowerCase())) {
+      continue;
+    }
+
+    let typeToCheck = c.type.toLowerCase();
+    let amount = c.amount || 1;
+    
+    if (typeToCheck === 'x') {
+      amount = xValue;
+      typeToCheck = (genericChoice || 'mana').toLowerCase();
+    } else if (typeToCheck === 'generic') {
+      typeToCheck = (genericChoice || 'mana').toLowerCase();
+    }
+
+    const storageKey = resourceMap[typeToCheck];
+    
+    if (storageKey) {
+      const current = Number(loadState(storageKey, 0)) || 0;
+      const newValue = Math.max(0, current - amount);
+      saveState(storageKey, newValue);
+      console.log(`Paid ${amount} ${storageKey}. New value: ${newValue}`);
+    }
+  }
+  
+  // Force UI update for all bars
+  updateAllBars();
+  updateBottomStats();
+}
+
+// Handle the button click
 function handleCastSpell(index) {
   const spell = spells[index];
   if (!spell?.name) return;
@@ -6118,10 +6141,10 @@ function handleCastSpell(index) {
   let xValue = 0;
   let genericChoice = 'Mana';
   
-  // Handle X cost
+  // 1. Handle "X" Variable Costs
   if (hasX) {
-    const input = prompt(`Enter X value for ${spell.name}:`, '1');
-    if (input === null) return;
+    const input = prompt(`Enter value for X (Cost for ${spell.name}):`, '1');
+    if (input === null) return; // User cancelled
     xValue = parseInt(input) || 0;
     if (xValue <= 0) {
       alert('X must be at least 1');
@@ -6129,37 +6152,51 @@ function handleCastSpell(index) {
     }
   }
   
-  // Handle generic cost
+  // 2. Handle "Generic" (Grey Crystal) Costs
   if (hasGeneric) {
-    const choice = prompt(`Choose resource for generic cost (Life, Stamina, Empower, Mana, Energy, Essence):`, 'Mana');
-    if (choice === null) return;
-    genericChoice = choice.charAt(0).toUpperCase() + choice.slice(1).toLowerCase();
-    const validChoices = ['Life', 'Stamina', 'Empower', 'Mana', 'Energy', 'Essence'];
-    if (!validChoices.includes(genericChoice)) {
-      alert('Invalid resource choice');
+    // Simple prompt for resource selection
+    const rawChoice = prompt(
+      `Pay Generic Cost with which resource?\n(Type: Life, Stamina, Mana, Energy, Empower, or Essence)`, 
+      'Mana'
+    );
+    if (rawChoice === null) return; // User cancelled
+    
+    genericChoice = rawChoice.trim();
+    const validChoices = ['life', 'stamina', 'mana', 'energy', 'empower', 'essence', 'coalesce'];
+    
+    if (!validChoices.includes(genericChoice.toLowerCase())) {
+      alert('Invalid resource. Please type: Life, Stamina, Mana, Energy, Empower, or Essence.');
       return;
     }
   }
   
-  // Check affordability
+  // 3. Check Affordability
   if (!canAffordSpell(spell.cost, xValue, genericChoice)) {
     alert('Not enough resources to cast this spell!');
     return;
   }
   
-  // Confirmation (unless disabled)
+  // 4. Confirmation (Optional)
   if (!castWarningDisabled) {
-    const confirmCast = confirm(`Do you want to cast "${spell.name}"?\n\n(Check "Never show again" in settings to disable this warning)`);
-    if (!confirmCast) return;
+    if (!confirm(`Cast "${spell.name}"?`)) return;
   }
   
-  // Deduct cost and cast
+  // 5. Deduct and Finish
   deductSpellCost(spell.cost, xValue, genericChoice);
   
-  // Visual feedback
-  alert(`${spell.name} cast successfully!`);
-  renderSpells(); // Re-render to update cast button states
+  // Visual Feedback
+  const btn = document.querySelector(`.spell-slot[data-index="${index}"] .spell-cast-btn`);
+  if(btn) {
+    const originalText = btn.textContent;
+    btn.textContent = "Cast!";
+    btn.style.background = "rgba(76, 175, 80, 0.6)";
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.background = "";
+    }, 1000);
+  }
 }
+
 
 function saveSpell(index, name) {
   const legendaryCount = getLegendarySlotCount();
@@ -6214,155 +6251,6 @@ renderInventory = function() {
 setTimeout(() => {
   updateMindButtonState();
 }, 100);
-/* ========= SIMPLE SPELL IMAGE ZOOM FUNCTION ========= */
-
-// Create zoom overlay element once
-function createZoomOverlay() {
-  const overlay = document.createElement('div');
-  overlay.className = 'image-zoom-overlay';
-  overlay.innerHTML = `
-    <div class="image-zoom-content">
-      <button class="zoom-close-btn" aria-label="Close zoom">×</button>
-      <img id="zoomedSpellImage" src="" alt="Zoomed spell image" />
-      <div class="zoom-hint">Click image or anywhere to close</div>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-  return overlay;
-}
-
-// Initialize zoom system
-let zoomOverlay = null;
-
-function initSpellImageZoom() {
-  // Create overlay if it doesn't exist
-  if (!zoomOverlay) {
-    zoomOverlay = createZoomOverlay();
-  }
-  
-  // Bind click events to all spell images
-  document.querySelectorAll('.spell-image').forEach(imageContainer => {
-    // Remove any existing listeners to prevent duplicates
-    const newContainer = imageContainer.cloneNode(true);
-    imageContainer.parentNode.replaceChild(newContainer, imageContainer);
-    
-    // Add click listener
-    newContainer.addEventListener('click', function(e) {
-      e.stopPropagation();
-      
-      // Get the image inside the container
-      const img = this.querySelector('img');
-      if (!img || !img.src) return;
-      
-      // Set zoomed image source
-      const zoomedImg = document.getElementById('zoomedSpellImage');
-      if (zoomedImg) {
-        zoomedImg.src = img.src;
-        zoomedImg.alt = img.alt || 'Zoomed spell image';
-      }
-      
-      // Show overlay
-      if (zoomOverlay) {
-        zoomOverlay.classList.add('visible');
-        
-        // Prevent body scroll
-        document.body.style.overflow = 'hidden';
-      }
-    });
-  });
-  
-  // Bind close events
-  if (zoomOverlay) {
-    // Close on overlay click
-    zoomOverlay.addEventListener('click', function(e) {
-      // Close if clicking on overlay, close button, OR the zoomed image itself
-      if (e.target === this || e.target.closest('.zoom-close-btn') || e.target.id === 'zoomedSpellImage') {
-        this.classList.remove('visible');
-        document.body.style.overflow = '';
-      }
-    });
-    
-    // Close on Escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && zoomOverlay.classList.contains('visible')) {
-        zoomOverlay.classList.remove('visible');
-        document.body.style.overflow = '';
-      }
-    });
-  }
-}
-
-// Update the renderSpellList function to include zoom initialization
-function renderSpellList() {
-  const spellList = document.getElementById('spellList');
-  const spells = loadState('spells', []);
-  
-  spellList.innerHTML = spells.map((spell, index) => {
-    const hasImage = spell.image ? 'has-image' : '';
-    const isLegendary = spell.primaryType && spell.primaryType.includes("Legendary");
-    
-    return `
-    <div class="spell-slot ${isLegendary ? 'legendary' : ''}" data-index="${index}">
-      <div class="spell-left-column">
-        <div class="spell-image ${hasImage}" data-spell-index="${index}">
-          ${spell.image ? `<img src="${spell.image}" alt="${spell.name || 'Spell image'}" />` : 
-            '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'}
-        </div>
-        <button class="spell-cast-btn">Cast</button>
-      </div>
-      
-      <div class="spell-info">
-        <input class="spell-name ${spell.locked ? 'locked' : ''}" 
-               value="${spell.name || ''}" 
-               ${spell.locked ? 'readonly' : ''} />
-        <div class="spell-type">${spell.primaryType || ''} ${spell.secondaryType ? '• ' + spell.secondaryType : ''}</div>
-        <div class="spell-description">${spell.description || '—'}</div>
-        
-        <div class="spell-footer">
-          <div class="spell-cost">
-            ${renderSpellCost(spell.cost)}
-          </div>
-        </div>
-      </div>
-      
-      <button class="spell-confirm-btn">
-        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-      </button>
-      <button class="spell-delete-btn">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>`;
-  }).join('');
-  
-  // Initialize zoom after rendering
-  setTimeout(initSpellImageZoom, 100);
-}
-
-// Update the mindBtn click handler to ensure zoom is initialized
-document.getElementById('mindBtn').addEventListener('click', function() {
-  if (mindOverlay.classList.contains('visible')) {
-    mindOverlay.classList.remove('visible');
-    this.classList.remove('active');
-  } else {
-    mindOverlay.classList.add('visible');
-    this.classList.add('active');
-    
-    // Render spells and initialize zoom
-    setTimeout(() => {
-      renderSpellList();
-      initSpellImageZoom();
-    }, 100);
-  }
-});
-
-// Also initialize zoom when adding new spells
-document.getElementById('addSpellBtn').addEventListener('click', function() {
-  // ... your existing add spell logic ...
-  
-  // After adding spell, reinitialize zoom
-  setTimeout(initSpellImageZoom, 100);
-});
-
 // Helper function to render spell cost (keep your existing version)
 function renderSpellCost(costs) {
   if (!costs || !Array.isArray(costs)) return '';
