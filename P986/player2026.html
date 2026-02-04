@@ -1944,7 +1944,46 @@
 
   <!-- Mind Button - Spells -->
   <button id="mindBtn" class="disabled" aria-label="Toggle Mind/Spells">
-    <img src="../icons/card-pickup.svg" alt="Mind" />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height: 48px; width: 48px;">
+      <defs>
+        <filter id="shadow-mind-2" height="300%" width="300%" x="-100%" y="-100%">
+          <feFlood flood-color="rgba(144, 19, 254, 1)" result="flood"></feFlood>
+          <feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"></feComposite>
+          <feGaussianBlur in="composite" stdDeviation="15" result="blur"></feGaussianBlur>
+          <feOffset dx="0" dy="0" result="offset"></feOffset>
+          <feComposite in2="offset" in="SourceGraphic" operator="over"></feComposite>
+        </filter>
+        <filter id="shadow-mind-4" height="300%" width="300%" x="-100%" y="-100%">
+          <feFlood flood-color="rgba(155, 155, 155, 1)" result="flood"></feFlood>
+          <feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"></feComposite>
+          <feGaussianBlur in="composite" stdDeviation="20" result="blur"></feGaussianBlur>
+          <feOffset dx="0" dy="0" result="offset"></feOffset>
+          <feComposite in2="offset" in="SourceGraphic" operator="over"></feComposite>
+        </filter>
+        <filter id="shadow-mind-5" height="300%" width="300%" x="-100%" y="-100%">
+          <feFlood flood-color="rgba(144, 19, 254, 1)" result="flood"></feFlood>
+          <feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"></feComposite>
+          <feGaussianBlur in="composite" stdDeviation="15" result="blur"></feGaussianBlur>
+          <feOffset dx="0" dy="0" result="offset"></feOffset>
+          <feComposite in2="offset" in="SourceGraphic" operator="over"></feComposite>
+        </filter>
+        <filter id="shadow-mind-6" height="300%" width="300%" x="-100%" y="-100%">
+          <feFlood flood-color="rgba(144, 19, 254, 1)" result="flood"></feFlood>
+          <feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"></feComposite>
+          <feGaussianBlur in="composite" stdDeviation="15" result="blur"></feGaussianBlur>
+          <feOffset dx="0" dy="0" result="offset"></feOffset>
+          <feComposite in2="offset" in="SourceGraphic" operator="over"></feComposite>
+        </filter>
+      </defs>
+      <g transform="translate(-20,0)">
+        <g transform="translate(0, 0) scale(1, 1) rotate(15, 256, 256)">
+          <path d="M272.824 24.318C257.895 24.63 247.164 27.564 240.057 32.764L142.899 84.91L88.793 158.424C77.42 175.98 85.518 210 121.112 188.197L160.012 136.846C209.488 94.135 310.496 113.814 262.598 199.437C239.068 249.019 250.141 273.227 280.358 283.387L294.17 237.006C318.12 183.181 362.672 173.496 360.854 130.101L468.157 137.826L467.291 25.781Z" fill="#ffffff" fill-opacity="1" stroke="#000000" stroke-opacity="1" stroke-width="8" filter="url(#shadow-mind-2)"></path>
+          <path d="M186.117 215.98C184.308 216.036 182.528 216.456 180.885 217.215L51.721 276.725C44.937 279.855 41.958 287.927 45.088 294.717L130.358 479.797C133.49 486.58 141.563 489.576 148.358 486.432L277.508 426.928C284.304 423.791 287.285 415.73 284.155 408.928L198.87 223.86C196.527 218.763 191.397 215.817 186.116 215.98Z" fill="#fff" fill-opacity="1" stroke="#000000" stroke-opacity="1" stroke-width="8" filter="url(#shadow-mind-4)"></path>
+          <path d="M156.35 266.04C164.144 266.153 171.263 268.093 177.442 271.887C188.2 278.491 196.072 292.817 197.086 307.641C197.784 317.825 195.374 325.478 184.533 347.514C180.654 355.399 178.899 362.784 179.461 368.869C179.921 373.842 180.247 374.724 183.1 378.713L186.235 383.093L184.481 384.073C183.516 384.611 177.384 387.173 170.854 389.766C163.936 392.512 158.538 394.262 157.92 393.959C157.337 393.673 155.568 391.339 153.989 388.771C146.464 376.544 146.764 361.241 154.867 344.144C161.522 330.104 163.337 324.178 162.819 318.17C162.004 308.73 156.076 301.692 147.985 300.553C141.964 299.705 137.317 301.106 129.073 306.256C120.775 311.439 115.132 316.964 110.018 324.912C108.218 327.709 106.611 329.965 106.448 329.926C106.284 329.886 103.242 322.67 99.69 313.889L93.23 297.922L96.46 294.256C102.269 287.658 108.218 283.09 118.686 277.191C132.126 269.618 144.959 265.877 156.35 266.041Z" fill="#000000" fill-opacity="1" filter="url(#shadow-mind-5)"></path>
+          <path d="M189.658 399.088C196.121 399.213 201.838 402.303 205.358 408.051C209.654 415.066 209.543 421.889 205.024 428.803C202.134 433.223 196.071 437.116 189.984 438.457C174.852 441.792 161.946 429.114 166.258 415.15C168.075 409.265 171.583 405.213 177.531 402.13C181.635 400.005 185.781 399.013 189.658 399.088Z" fill="#000000" fill-opacity="1" filter="url(#shadow-mind-6)"></path>
+        </g>
+      </g>
+    </svg>
   </button>
 
   <!-- Mind Overlay -->
@@ -2588,10 +2627,10 @@ const barUpdateFunctions = {};
 const barsConfig = [
   { key:'life', label:'Life', dotClass:'dot-life', min: -10, max: 30, default: 1, dynamic: true },
   { key:'mana', label:'Mana', dotClass:'dot-mana', min: -1, max: 30, default: 0, dynamic: true },
-  { key:'stamina', label:'Stamina', dotClass:'dot-stamina', min: -3, max: 9, default: 0, dynamic: true },
+  { key:'stamina', label:'Stamina', dotClass:'dot-stamina', min: -3, max: 12, default: 0, dynamic: true },
   { key:'energy', label:'Energy', dotClass:'dot-energy', min: -1, max: 30, default: 0, dynamic: true },
   { key:'empower', label:'Empower', dotClass:'dot-empower', min: 0, max: 12, default: 0, dynamic: false },
-  { key:'coalesce', label:'Coalesce', dotClass:'dot-coalesce', min: 0, max: 12, default: 3, dynamic: false }
+  { key:'coalesce', label:'Coalesce', dotClass:'dot-coalesce', min: 0, max: 12, default: 0, dynamic: false }
 ];
 
 const barsContainer = document.getElementById('bars');
@@ -3913,6 +3952,14 @@ if (inventory.length === 0) {
   inventory = ['', '']; // artefact + iris
   saveState('inventory', inventory);
 }
+
+// Helper function to get the max value for a resource from barsConfig
+function getResourceMax(resourceKey) {
+  const barConfig = barsConfig.find(bar => bar.key === resourceKey);
+  if (!barConfig) return 10; // fallback default
+  return barConfig.max;
+}
+
 const inventoryDB = {
   artefacts: {
     "The Darkflame": {
@@ -4362,11 +4409,12 @@ You cannot gain beyond maximum life.`,
       image: "cards/fronts/170.webp",
       consumable: true,
       effect: function() {
-        const maxLife = Number(loadState('maxLife', 10)) || 10;
+        const maxLife = getResourceMax('life');
         const currentLife = Number(loadState('life', 0)) || 0;
         const newLife = Math.min(maxLife, currentLife + 3);
         saveState('life', newLife);
         updateAllBars();
+        updateBottomStats();
       }
     },
     "Potion of Refreshment": {
@@ -4376,11 +4424,12 @@ You cannot gain beyond maximum stamina.`,
       image: "cards/fronts/174.webp",
       consumable: true,
       effect: function() {
-        const maxStamina = Number(loadState('maxStamina', 10)) || 10;
+        const maxStamina = getResourceMax('stamina');
         const currentStamina = Number(loadState('stamina', 0)) || 0;
         const newStamina = Math.min(maxStamina, currentStamina + 2);
         saveState('stamina', newStamina);
         updateAllBars();
+        updateBottomStats();
       }
     },
     "Potion of Potency": {
@@ -4395,6 +4444,7 @@ Flammable.`,
         const newEmpower = currentEmpower + 1;
         saveState('empower', newEmpower);
         updateAllBars();
+        updateBottomStats();
       }
     },
     "Potion of Sunshine": {
@@ -4405,9 +4455,9 @@ Tinge 22: Tastes pleasant, abating any current madness effect.`,
       image: "cards/fronts/182.webp",
       consumable: true,
       effect: function() {
-        const maxMana = Number(loadState('maxMana', 10)) || 10;
+        const maxMana = getResourceMax('mana');
         const currentMana = Number(loadState('mana', 0)) || 0;
-        const tinge = Number(loadState('Tinge', 0)) || 0;
+        const tinge = calculateTinge();
         
         // Base: regain 1 mana
         let manaToGain = 1;
@@ -4420,6 +4470,7 @@ Tinge 22: Tastes pleasant, abating any current madness effect.`,
         const newMana = Math.min(maxMana, currentMana + manaToGain);
         saveState('mana', newMana);
         updateAllBars();
+        updateBottomStats(); // Update tinge display since mana changed
       }
     },
     "Potion of Sparkling Water": {
@@ -4430,15 +4481,16 @@ Arcane 6: Regain 2 energy.`,
       image: "cards/fronts/186.webp",
       consumable: true,
       effect: function() {
-        const arcane = Number(loadState('Arcane', 0)) || 0;
+        const arcane = calculateArcane();
         
         // Only regain energy if Arcane is 6 or higher
         if (arcane >= 6) {
-          const maxEnergy = Number(loadState('maxEnergy', 10)) || 10;
+          const maxEnergy = getResourceMax('energy');
           const currentEnergy = Number(loadState('energy', 0)) || 0;
           const newEnergy = Math.min(maxEnergy, currentEnergy + 2);
           saveState('energy', newEnergy);
           updateAllBars();
+          updateBottomStats(); // Update arcane display since energy changed
         }
       }
     },
