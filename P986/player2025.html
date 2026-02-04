@@ -23,11 +23,6 @@
     --heart-red: #ff8fa3;
     --scarlet-pink: #ff8fa3;
     
-    /* Mind button purple colors */
-    --mind-bright-purple: #d4a5ff;
-    --mind-dark-purple: #5e2a8c;
-    --mind-border-active: #3d1a5c;
-    
     /* Animation timing variables for consistency */
     --fade-in-duration: 0.3s;
     --fade-out-duration: 2s;
@@ -591,161 +586,6 @@
     opacity: 0.5;
     cursor: not-allowed;
   }
-
-  /* Mind Button - Purple themed */
-  #mindBtn {
-    position: fixed;
-    top: 0.6rem;
-    right: 13.6rem;
-    width: 3rem;
-    height: 3rem;
-    background: transparent;
-    border: 0.1875rem solid var(--mind-bright-purple);
-    border-radius: 0.5rem;
-    cursor: pointer;
-    z-index: 1001;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-  }
-  #mindBtn img {
-    width: 2rem;
-    height: 2rem;
-    transition: all 0.5s ease;
-    filter: brightness(1) saturate(0.8);
-  }
-  #mindBtn.active {
-    background: var(--mind-dark-purple);
-    border-color: var(--mind-border-active);
-  }
-  #mindBtn.active img {
-    filter: brightness(1.4) saturate(1.2);
-  }
-  #mindBtn:hover:not(.active):not(.disabled) {
-    border-color: #e0b8ff;
-    box-shadow: 0 0 0.5rem rgba(212, 165, 255, 0.4);
-  }
-  #mindBtn.disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-
-  /* Mind Overlay */
-  #mindOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(15, 15, 18, 0.85);
-    backdrop-filter: blur(0.5rem);
-    -webkit-backdrop-filter: blur(0.5rem);
-    z-index: 999;
-    display: none;
-    overflow-y: auto;
-    padding: 3.75rem 1rem 1.25rem;
-  }
-  #mindOverlay.visible { display: block; }
-  .mind-content { max-width: 50rem; margin: 0 auto; }
-  .mind-title {
-    text-align: center;
-    font-size: 1.8rem;
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    color: var(--mind-bright-purple);
-  }
-  .mind-capacity {
-    text-align: center;
-    font-size: 0.9rem;
-    color: var(--muted);
-    margin-bottom: 1rem;
-  }
-  .mind-capacity .capacity-full { color: #ff6b6b; }
-  .spell-slot {
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 1rem;
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
-    display: flex;
-    gap: 0.5rem;
-    align-items: stretch;
-    position: relative;
-  }
-  .spell-slot.legendary {
-    border: 0.125rem solid rgba(212, 175, 55, 0.3);
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(255, 255, 255, 0.02));
-  }
-  .spell-left-column {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: stretch;
-  }
-  .spell-image {
-    width: 7.6rem;
-    height: 10.6rem;
-    min-width: 7.6rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 0.125rem dashed rgba(155, 89, 182, 0.3);
-    border-radius: 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    overflow: hidden;
-  }
-  .spell-image:hover {
-    border-color: rgba(155, 89, 182, 0.6);
-    background: rgba(155, 89, 182, 0.08);
-  }
-  .spell-image.has-image { border-style: solid; border-color: rgba(155, 89, 182, 0.2); }
-  .spell-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 0.625rem; }
-  .spell-image svg { width: 2rem; height: 2rem; stroke: rgba(155, 89, 182, 0.4); stroke-width: 2; fill: none; }
-  .spell-info { flex: 1; display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
-  .spell-name { font-size: 1.1rem; font-weight: 700; color: #fff; background: transparent; border: none; outline: none; padding: 0.25rem 0; width: 100%; word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
-  .spell-name::placeholder { color: rgba(155, 89, 182, 0.5); }
-  .spell-name.locked { color: var(--mind-bright-purple); pointer-events: none; }
-  .spell-type { font-size: 1rem; color: var(--muted); padding-left: 0.25rem; }
-  .spell-description { font-size: 1rem; color: rgba(255, 255, 255, 0.7); white-space: pre-line; line-height: 1.4; margin-top: 0.25rem; padding-left: 0.25rem; flex: 1; }
-  .spell-confirm-btn { position: absolute; top: 0.5rem; right: 0.5rem; width: 1.5rem; height: 1.5rem; background: rgba(76, 175, 80, 0.2); border: 0.0625rem solid rgba(76, 175, 80, 0.5); border-radius: 0.25rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; opacity: 0; pointer-events: none; }
-  .spell-confirm-btn.visible { opacity: 1; pointer-events: auto; }
-  .spell-confirm-btn:hover { background: rgba(76, 175, 80, 0.4); border-color: rgba(76, 175, 80, 0.8); }
-  .spell-confirm-btn svg { width: 1rem; height: 1rem; stroke: #4caf50; stroke-width: 3; fill: none; }
-  .spell-delete-btn { position: absolute; bottom: 0.5rem; right: 0.5rem; width: 1.5rem; height: 1.5rem; background: rgba(255, 0, 0, 0.25); border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: all 0.2s ease; }
-  .spell-slot:hover .spell-delete-btn { opacity: 1; }
-  .spell-delete-btn:hover { background: rgba(255, 0, 0, 0.5); }
-  .spell-delete-btn svg { width: 0.75rem; height: 0.75rem; stroke: white; stroke-width: 2; fill: none; }
-  .spell-section-title { font-size: 1.1rem; font-weight: 600; color: var(--mind-bright-purple); margin: 1.5rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 0.0625rem solid rgba(212, 165, 255, 0.2); }
-  .spell-subtitle { font-size: 0.85rem; color: rgba(155, 89, 182, 0.7); font-style: italic; padding-left: 0.25rem; }
-  .spell-footer { display: flex; align-items: center; margin-top: auto; padding-top: 0.5rem; gap: 0.5rem; }
-  .spell-cost { display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap; }
-  .cost-item { display: inline-flex; align-items: center; gap: 0.125rem; }
-  .cost-icon { width: 1.25rem; height: 1.25rem; object-fit: contain; vertical-align: middle; }
-  .desc-icon { width: 1rem; height: 1rem; object-fit: contain; vertical-align: middle; margin: 0 0.125rem; cursor: pointer; transition: transform 0.15s ease; }
-  .desc-icon:hover { transform: scale(1.2); }
-  .cost-amount { font-size: 0.9rem; font-weight: 600; color: var(--mind-bright-purple); margin-left: 0.125rem; }
-  .cost-x, .cost-generic { background: rgba(155, 89, 182, 0.15); padding: 0.125rem 0.375rem; border-radius: 0.25rem; cursor: pointer; }
-  .cost-x:hover, .cost-generic:hover { background: rgba(155, 89, 182, 0.3); }
-  .spell-cast-btn { 
-    width: 100%;
-    padding: 0.5rem 1rem; 
-    background: rgba(155, 89, 182, 0.3); 
-    border: 0.0625rem solid var(--mind-bright-purple); 
-    border-radius: 0.5rem; 
-    color: #fff; 
-    font-weight: 600; 
-    font-size: 0.9rem; 
-    cursor: pointer; 
-    transition: all 0.2s ease; 
-    white-space: nowrap; 
-  }
-  .spell-cast-btn:hover:not(.disabled) { background: rgba(155, 89, 182, 0.5); transform: scale(1.05); }
-  .spell-cast-btn.disabled { opacity: 0.4; cursor: not-allowed; background: rgba(100, 100, 100, 0.3); border-color: rgba(150, 150, 150, 0.3); }
-  #addSpellBtn { width: 100%; padding: 1rem; background: rgba(155, 89, 182, 0.1); border: 0.125rem dashed rgba(155, 89, 182, 0.5); border-radius: 1rem; color: rgba(155, 89, 182, 0.9); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 1rem; }
-  #addSpellBtn:hover { background: rgba(155, 89, 182, 0.15); border-color: rgba(155, 89, 182, 0.7); color: rgba(155, 89, 182, 1); transform: translateY(-1px); }
-  #addSpellBtn:active { transform: translateY(0); }
-  #addSpellBtn svg { width: 1.5rem; height: 1.5rem; stroke: currentColor; stroke-width: 2; fill: none; }
 
   /* Character Options Overlay */
   #characterOverlay {
@@ -1815,121 +1655,7 @@
       transform: scale(1.06);
     }
   }
-<!-- Add this CSS to your existing styles -->
-<style>
-  /* Image Zoom System - Simplified */
-  .spell-image {
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    position: relative;
-    z-index: 1;
-  }
-  
-  .spell-image:hover {
-    transform: scale(1.03);
-  }
-  
-  /* Zoom overlay */
-  .image-zoom-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.95);
-    z-index: 2000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-  
-  .image-zoom-overlay.visible {
-    display: flex;
-    animation: fadeIn 0.2s ease;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  .image-zoom-content {
-    position: relative;
-    max-height: 90vh;
-    max-width: 90vw;
-    animation: zoomIn 0.3s ease;
-  }
-  
-  @keyframes zoomIn {
-    from { transform: scale(0.9); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-  
-  .image-zoom-content img {
-    max-height: 90vh;
-    max-width: 90vw;
-    object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-  }
-  
-  .zoom-close-btn {
-    position: absolute;
-    top: -40px;
-    right: 0;
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s ease;
-  }
-  
-  .zoom-close-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-  
-  .zoom-hint {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 14px;
-    pointer-events: none;
-  }
 
-  /* Choice cost styling */
-  .cost-choice-group {
-    display: inline-flex;
-    align-items: center;
-    background: rgba(255,255,255,0.08);
-    padding: 2px 4px;
-    border-radius: 4px;
-    margin: 0 2px;
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-  .cost-icon.mini {
-    width: 14px;
-    height: 14px;
-    background-size: contain;
-    background-repeat: no-repeat;
-  }
-  .choice-slash {
-    font-size: 0.7rem;
-    color: var(--muted);
-    margin: 0 1px;
-    opacity: 0.6;
-  }
-</style>
 </style>
 </head>
 <body>
@@ -1941,24 +1667,6 @@
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
     </svg>
   </button>
-
-  <!-- Mind Button - Spells -->
-  <button id="mindBtn" class="disabled" aria-label="Toggle Mind/Spells">
-    <img src="../icons/card-pickup.svg" alt="Mind" />
-  </button>
-
-  <!-- Mind Overlay -->
-  <div id="mindOverlay">
-    <div class="mind-content">
-      <div class="mind-title">Mind & Spells</div>
-      <div id="mindCapacity" class="mind-capacity"></div>
-      <div id="spellList"></div>
-      <button id="addSpellBtn">
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Learn New Spell
-      </button>
-    </div>
-  </div>
 
   <!-- Character Overlay -->
   <div id="characterOverlay">
@@ -2136,7 +1844,7 @@
   <!-- Image Zoom Overlay -->
   <div id="imageZoomOverlay">
     <img id="zoomedImage" src="" alt="Zoomed view" />
-    <div class="zoom-hint">_</div>
+    <div class="zoom-hint">Click anywhere to close</div>
   </div>
 </div>
 
@@ -2586,9 +2294,9 @@ const barUpdateFunctions = {};
 
 /* ========= Bars config with min/max ranges and defaults ========= */
 const barsConfig = [
-  { key:'life', label:'Life', dotClass:'dot-life', min: -10, max: 30, default: 1, dynamic: true },
+  { key:'life', label:'Life', dotClass:'dot-life', min: -10, max: 30, default: 3, dynamic: true },
   { key:'mana', label:'Mana', dotClass:'dot-mana', min: -1, max: 30, default: 0, dynamic: true },
-  { key:'stamina', label:'Stamina', dotClass:'dot-stamina', min: -3, max: 9, default: 0, dynamic: true },
+  { key:'stamina', label:'Stamina', dotClass:'dot-stamina', min: -3, max: 9, default: 1, dynamic: true },
   { key:'energy', label:'Energy', dotClass:'dot-energy', min: -1, max: 30, default: 0, dynamic: true },
   { key:'empower', label:'Empower', dotClass:'dot-empower', min: 0, max: 12, default: 0, dynamic: false },
   { key:'coalesce', label:'Coalesce', dotClass:'dot-coalesce', min: 0, max: 12, default: 3, dynamic: false }
@@ -2743,10 +2451,6 @@ barsConfig.forEach(cfg => {
   }
 
   function updateBar() {
-    // Reload value from state in case it was changed externally (e.g., by spell casting)
-    value = Number(loadState(cfg.key, cfg.default));
-    value = Math.max(cfg.min, Math.min(getCurrentMax(), value));
-    
     const currentMax = getCurrentMax();
     if (value > currentMax) {
       value = currentMax;
@@ -2756,14 +2460,14 @@ barsConfig.forEach(cfg => {
     updateButtonStates();
   }
 
-  // NEW CODE - Register update function for ALL bars
+  if (cfg.dynamic) {
     barUpdateFunctions[cfg.key] = () => {
       updateBar();
-      // Update bottom stats if relevant bars change
       if (cfg.key === 'mana' || cfg.key === 'energy') {
         updateBottomStats();
       }
     };
+  }
 
   minus.addEventListener('click', ()=> {
     const newValue = value - 1;
@@ -2820,7 +2524,6 @@ barsConfig.forEach(cfg => {
 });
 
 function updateAllBars() {
-  // This iterates over every registered update function and runs it
   Object.values(barUpdateFunctions).forEach(updateFn => updateFn());
 }
 
@@ -3516,8 +3219,6 @@ function createNpcCard(npc, index) {
   } else {
     imageDiv.innerHTML = '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>';
   }
-  
-  imageDiv.style.cursor = 'pointer'; // Indicate it's clickable for upload
 
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
@@ -3547,8 +3248,7 @@ function createNpcCard(npc, index) {
     }
   });
 
-  imageDiv.addEventListener('click', (e) => {
-    // Allow upload only
+  imageDiv.addEventListener('click', () => {
     if (npcs[index].official) {
       alert("This is an official character. Their portrait cannot be changed.");
       return;
@@ -3920,7 +3620,7 @@ const inventoryDB = {
       description: `Scales with arcane or tinge.
 Immune to high temperatures, burns, inflammation, and fever.
 Grants fire and smoke magic & skills.
-Sacrifice things to flame to gain coalesce.`,
+Sacrifice things to flame to gain essence.`,
       image: "cards/fronts/110.webp"
     },
     "The Wintergrace": {
@@ -3928,7 +3628,7 @@ Sacrifice things to flame to gain coalesce.`,
       description: `Scales with arcane or tinge.
 Immune to cold temperatures, frostbite, and hypothermia.
 Grants ice and frost magic & skills.
-Recharges coalesce in moonlight.`,
+Recharges essence in moonlight.`,
       image: "cards/fronts/111.webp"
     },
     "The Bronze Ring of Smiles": {
@@ -3936,12 +3636,12 @@ Recharges coalesce in moonlight.`,
       description: `Grants charisma, illusion,
 deception, intimidation.
 Grants gaze magic & skills.
-Regain coalesce from relationships.`,
+Regain essence from relationships.`,
       image: "cards/fronts/112.webp"
     },
     "The Wand": {
       type: "Legendary Hero Artefact — Treasure",
-      description: `When resolving arcane, add tinge. coalesce: Choose one spell: It can only be used by the wand, it only costs one coalesce to use that spell. This spell is ready at all times. Whenever you forget a spell, regain one coalesce.`,
+      description: `When resolving arcane, add tinge. Essence: Choose one spell: It can only be used by the wand, it only costs one essence to use that spell. This spell is ready at all times. Whenever you forget a spell, regain one essence.`,
       image: "cards/fronts/113.webp"
     },
     "The Pair and a Half": {
@@ -3950,7 +3650,7 @@ Regain coalesce from relationships.`,
 Add one to skill when resolving.
 The cloth is immune and impervious.
 Mutes sounds made by the bearer.
-Grants bizarre skills. Whenever you begin a cycle with no madness, regain one coalesce.`,
+Grants bizarre skills. Whenever you begin a cycle with no madness, regain one essence.`,
       image: "cards/fronts/114.webp"
     },
     "The Trickblade": {
@@ -3958,7 +3658,7 @@ Grants bizarre skills. Whenever you begin a cycle with no madness, regain one co
       description: `Scales with strength.
 Add one strength when resolving.
 Truestrike when thrust or thrown.
-Grants bizarre skills. At night, regain one coalesce when any quest is revealed.`,
+Grants bizarre skills. At night, regain one essence when any quest is revealed.`,
       image: "cards/fronts/115.webp"
     },
     "The Fisherman's Flask": {
@@ -3966,27 +3666,27 @@ Grants bizarre skills. At night, regain one coalesce when any quest is revealed.
       description: `When resolving: add two arcane.
 Produces any substance as poured into the maw.
 Grants bizarre magic.
-When consuming potions, elixirs, and drinks, regain one coalesce.`,
+When consuming potions, elixirs, and drinks, regain one essence.`,
       image: "cards/fronts/116.webp"
     },
     "Scathe's Memo Book": {
       type: "Legendary Hero Artefact — Treasure",
       description: `Questions, predictions, and histories can be written on the page;
-spells cast this way ignore requirements. Once locked, pages appear anew. At night, regain one coalesce whenever any story is revealed.`,
+spells cast this way ignore requirements. Once locked, pages appear anew. At night, regain one essence whenever any story is revealed.`,
       image: "cards/fronts/117.webp"
     },
     "The Prismatic Glasses": {
       type: "Legendary Hero Artefact — Treasure",
       description: `When resolving: add two tinge.
 Can detect attunement and prowess, and sense the unreadable.
-Grants futuresight and scan. At night, regain one coalesce whenever any library is revealed.`,
+Grants futuresight and scan. At night, regain one essence whenever any library is revealed.`,
       image: "cards/fronts/118.webp"
     },
     "The Coin": {
       type: "Legendary Hero Artefact — Treasure",
       description: `Gain luck.
 When resolving situations, add luck. Anyone else holding the coin is also lucky. When used to pay or trade; a new coin may be found somewhere...
-Grants mundane magic & skills. At the end of the cycle, if you have the highest madness and coins, regain one coalesce.`,
+Grants mundane magic & skills. At the end of the cycle, if you have the highest madness and coins, regain one essence.`,
       image: "cards/fronts/119.webp"
     }
   },
@@ -4359,88 +4059,34 @@ When socketed, remove requirements, costs, tap effects and untap effects from ob
       type: "Item — Potion",
       description: `Regain 3 life.
 You cannot gain beyond maximum life.`,
-      image: "cards/fronts/170.webp",
-      consumable: true,
-      effect: function() {
-        const maxLife = Number(loadState('maxLife', 10)) || 10;
-        const currentLife = Number(loadState('life', 0)) || 0;
-        const newLife = Math.min(maxLife, currentLife + 3);
-        saveState('life', newLife);
-        updateAllBars();
-      }
+      image: "cards/fronts/170.webp"
     },
     "Potion of Refreshment": {
       type: "Item — Potion",
       description: `Regain 2 stamina.
 You cannot gain beyond maximum stamina.`,
-      image: "cards/fronts/174.webp",
-      consumable: true,
-      effect: function() {
-        const maxStamina = Number(loadState('maxStamina', 10)) || 10;
-        const currentStamina = Number(loadState('stamina', 0)) || 0;
-        const newStamina = Math.min(maxStamina, currentStamina + 2);
-        saveState('stamina', newStamina);
-        updateAllBars();
-      }
+      image: "cards/fronts/174.webp"
     },
     "Potion of Potency": {
       type: "Item — Potion",
       description: `Regain one empower.
 Fragile.
 Flammable.`,
-      image: "cards/fronts/178.webp",
-      consumable: true,
-      effect: function() {
-        const currentEmpower = Number(loadState('empower', 0)) || 0;
-        const newEmpower = currentEmpower + 1;
-        saveState('empower', newEmpower);
-        updateAllBars();
-      }
+      image: "cards/fronts/178.webp"
     },
     "Potion of Sunshine": {
       type: "Item — Potion",
       description: `Regain one mana. Fragile.
 Tinge 11: Regain one additional mana when consuming this potion.
 Tinge 22: Tastes pleasant, abating any current madness effect.`,
-      image: "cards/fronts/182.webp",
-      consumable: true,
-      effect: function() {
-        const maxMana = Number(loadState('maxMana', 10)) || 10;
-        const currentMana = Number(loadState('mana', 0)) || 0;
-        const tinge = Number(loadState('Tinge', 0)) || 0;
-        
-        // Base: regain 1 mana
-        let manaToGain = 1;
-        
-        // Tinge 11+: regain 1 additional mana
-        if (tinge >= 11) {
-          manaToGain = 2;
-        }
-        
-        const newMana = Math.min(maxMana, currentMana + manaToGain);
-        saveState('mana', newMana);
-        updateAllBars();
-      }
+      image: "cards/fronts/182.webp"
     },
     "Potion of Sparkling Water": {
       type: "Item — Potion",
       description: `Fragile.
 Gain Arcane Touch, duration is equal to your tinge or endurance, whichever is higher.
 Arcane 6: Regain 2 energy.`,
-      image: "cards/fronts/186.webp",
-      consumable: true,
-      effect: function() {
-        const arcane = Number(loadState('Arcane', 0)) || 0;
-        
-        // Only regain energy if Arcane is 6 or higher
-        if (arcane >= 6) {
-          const maxEnergy = Number(loadState('maxEnergy', 10)) || 10;
-          const currentEnergy = Number(loadState('energy', 0)) || 0;
-          const newEnergy = Math.min(maxEnergy, currentEnergy + 2);
-          saveState('energy', newEnergy);
-          updateAllBars();
-        }
-      }
+      image: "cards/fronts/186.webp"
     },
     "Potion of Dreaming": {
       type: "Item — Potion",
@@ -4618,22 +4264,33 @@ function validateInventoryName(name, slot, excludeIndex = -1) {
   if (!name || name.trim().length === 0) return null;
   const trimmed = name.trim();
   
-  // Get item data with improved fuzzy matching
+  // 2025 Enhancement: Case-insensitive matching for user convenience
+  const findCaseInsensitive = (obj, searchName) => {
+    const searchLower = searchName.toLowerCase();
+    for (const [key, value] of Object.entries(obj)) {
+      if (key.toLowerCase() === searchLower) {
+        return { key, data: value };
+      }
+    }
+    return null;
+  };
+  
+  // Get item data with case-insensitive matching
   let itemData = null;
   let foundItem = null;
   
   if (slot === 'artefact') {
-    foundItem = fuzzyMatch(inventoryDB.artefacts, trimmed);
+    foundItem = findCaseInsensitive(inventoryDB.artefacts, trimmed);
     if (foundItem) {
       itemData = { name: foundItem.key, ...foundItem.data, locked: true };
     }
   } else if (slot === 'iris') {
-    foundItem = fuzzyMatch(inventoryDB.irises, trimmed);
+    foundItem = findCaseInsensitive(inventoryDB.irises, trimmed);
     if (foundItem) {
       itemData = { name: foundItem.key, ...foundItem.data, locked: true };
     }
   } else if (slot === 'item') {
-    foundItem = fuzzyMatch(inventoryDB.items, trimmed);
+    foundItem = findCaseInsensitive(inventoryDB.items, trimmed);
     if (foundItem) {
       itemData = { name: foundItem.key, ...foundItem.data, locked: true };
     }
@@ -4651,24 +4308,6 @@ function validateInventoryName(name, slot, excludeIndex = -1) {
   }
   
   return itemData;
-}
-
-// Helper function to find item data in inventoryDB
-function findItemInDB(itemName) {
-  if (!itemName) return null;
-  
-  // Check items section for exact match
-  if (inventoryDB.items[itemName]) {
-    return inventoryDB.items[itemName];
-  }
-  
-  // Fuzzy match if exact match fails
-  const fuzzyResult = fuzzyMatch(inventoryDB.items, itemName);
-  if (fuzzyResult) {
-    return fuzzyResult.data;
-  }
-  
-  return null;
 }
 
 function bindInventoryEvents() {
@@ -4722,24 +4361,22 @@ function bindInventoryEvents() {
       }
     };
     
-    // Image click: Only consume for consumables, no zoom
+    // Image click: Consume prompt for potions/elixirs/drinks, or zoom for artefact/iris
     imageDiv.onclick = () => {
       const item = inventory[index];
       if (!item?.name) return;
       
-      // Check if consumable
+      // Check if this is artefact or iris slot with an image
+      if ((slot === 'artefact' || slot === 'iris') && item.image) {
+        // Zoom the image
+        const zoomedImage = document.getElementById('zoomedImage');
+        zoomedImage.src = item.image;
+        document.getElementById('imageZoomOverlay').classList.add('visible');
+        return;
+      }
+      
       if (isConsumable(item.type)) {
         if (confirm(`Consume "${item.name}"?`)) {
-          // Execute item effect if it exists
-          const itemData = findItemInDB(item.name);
-          if (itemData && itemData.effect && typeof itemData.effect === 'function') {
-            try {
-              itemData.effect();
-            } catch (error) {
-              console.error('Error executing item effect:', error);
-            }
-          }
-          
           // Remove the consumed item
           if (index < 2) {
             inventory[index] = {};
@@ -4754,6 +4391,12 @@ function bindInventoryEvents() {
     };
   });
 }
+
+// Image zoom overlay close handler
+document.getElementById('imageZoomOverlay').addEventListener('click', function() {
+  this.classList.remove('visible');
+  document.getElementById('zoomedImage').src = '';
+});
 
 function saveInventoryItem(index, slot, name) {
   const result = validateInventoryName(name, slot, index);
@@ -4797,1950 +4440,6 @@ renderInventory = function() {
   updateAddItemButtonState();
 };
 
-/* ========= MIND/SPELL SYSTEM ========= */
-const mindBtn = document.getElementById('mindBtn');
-const mindOverlay = document.getElementById('mindOverlay');
-const spellList = document.getElementById('spellList');
-const addSpellBtn = document.getElementById('addSpellBtn');
-
-// Icon mapping for costs (relative to player2026.html location)
-const COST_ICONS = {
-  life: '../icons/Life1.png',
-  stamina: '../icons/stamina1.png',
-  empower: '../icons/empower1.png',
-  mana: '../icons/mana1.png',
-  energy: '../icons/energy1.png',
-  coalesce: '../icons/crys.svg',
-  potency: '../icons/potency7.png',
-  mastery: '../icons/mastery4.png',
-  tinge: '../icons/mana4.png',
-  arcane: '../icons/moonworm.png',
-  worm: '../icons/worm1.png',
-  skill: '../icons/skl.png',
-  strength: '../icons/str.png',
-  madness: '../icons/madness.png',
-  swap: '../icons/swap.svg',
-  tap: '../icons/tap2.png',
-  untap: '../icons/untap2.png',
-  channel: '../icons/slow4.png',
-  ready: '../icons/slow1.png',
-  armour: '../icons/armour.svg',
-  shield: '../icons/mshield.svg',
-  generic: '../icons/crys.svg', // Generic cost - player chooses
-  x: '../icons/crys.svg' // X cost - player inputs amount
-};
-
-// Spell Database - cards 380-531 regular, 532-549 special (artefact-locked)
-// Structure: { id, name, subtitle, primaryType, secondaryType, cost, description, style }
-// Cost format: array of {type, amount} where type matches COST_ICONS keys
-// Special types: "generic" = player chooses resource, "x" = player inputs amount
-// Total spells: 109
-const spellDB = {
-  "Sprint, Dash, Run": {
-    name: "Sprint, Dash, Run",
-    primaryType: "Basic",
-    secondaryType: "Adventure Action",
-    cost: [{"type": "stamina", "amount": 1}],
-    description: "Simple movement action. \n(Affected by <img src='../icons/str.png' class='desc-icon' alt='str' /> or <img src='../icons/skl.png' class='desc-icon' alt='skl' />)\n<em>Quick! On the double!</em>",
-    image: "cards/fronts/380.webp"
-  },
-  "Throw, Climb, Steal, Hide": {
-    name: "Throw, Climb, Steal, Hide",
-    primaryType: "Basic",
-    secondaryType: "Adventure Action",
-    cost: [{"type": "stamina", "amount": 1}],
-    description: "Extra movement action. \nInteract with the environment. \n(Can require <img src='../icons/str.png' class='desc-icon' alt='str' /> or <img src='../icons/skl.png' class='desc-icon' alt='skl' />)\n<em>You gotta do what you gotta do...</em>",
-    image: "cards/fronts/381.webp"
-  },
-  "Jump, Attack, Dodge, Evade": {
-    name: "Jump, Attack, Dodge, Evade",
-    primaryType: "Basic",
-    secondaryType: "Adventure Reaction",
-    cost: [{"type": "stamina", "amount": 1}],
-    description: "When you have quick, \nusable as a reaction. \n(Can require <img src='../icons/str.png' class='desc-icon' alt='str' /> or <img src='../icons/skl.png' class='desc-icon' alt='skl' />)\n<em>Think fast!</em>",
-    image: "cards/fronts/382.webp"
-  },
-  "Enhance": {
-    name: "Enhance",
-    primaryType: "Basic",
-    secondaryType: "Magical Action",
-    cost: [{"type": "empower", "amount": 1}],
-    description: "Increase or improve any physical action proportional to <img src='../icons/potency8.png' class='desc-icon' alt='potency' />. \n<img src='../icons/str.png' class='desc-icon' alt='str' /> 5: Refund the next <img src='../icons/stamina1.png' class='desc-icon' alt='stamina' /> used. (requires five <img src='../icons/str.png' class='desc-icon' alt='str' /> or higher)\n<em>Pooling light into limbs allows for superhuman strength, speed, or silliness.</em>",
-    image: "cards/fronts/383.webp"
-  },
-  "Regenerate": {
-    name: "Regenerate",
-    primaryType: "Basic Spell",
-    secondaryType: "Magical Action",
-    cost: [{"type": "coalesce", "amount": 0}],
-    description: "Remove <img src='../icons/madness.png' class='desc-icon' alt='madness' /> then:\nRegain <img src='../icons/Life1.png' class='desc-icon' alt='life' /><img src='../icons/Life1.png' class='desc-icon' alt='life' /> or\nRegain <img src='../icons/stamina1.png' class='desc-icon' alt='stamina' /><img src='../icons/stamina1.png' class='desc-icon' alt='stamina' /> or\nRegain <img src='../icons/energy1.png' class='desc-icon' alt='energy' /><img src='../icons/energy1.png' class='desc-icon' alt='energy' />.\n<em>Blood for power.</em>",
-    image: "cards/fronts/384.webp"
-  },
-  "Replenish": {
-    name: "Replenish",
-    primaryType: "Nature Spell",
-    secondaryType: "Magical Action",
-    cost: [{"type": "channel", "amount": 0}],
-    description: "Tap <img src='../icons/tap2.png' class='desc-icon' alt='tap' />, you may remove 1 from any of your own duration counters, then: \n<img src='../icons/potency8.png' class='desc-icon' alt='potency' /> 3: Regain <img src='../icons/mana1.png' class='desc-icon' alt='mana' />. \n<img src='../icons/mastery4.png' class='desc-icon' alt='mastery' /> 3: Regain <img src='../icons/energy1.png' class='desc-icon' alt='energy' />. \nWhen you gain <img src='../icons/madness.png' class='desc-icon' alt='madness' /> or bathe: Untap <img src='../icons/untap2.png' class='desc-icon' alt='untap' />.\n<em>I become me, anew.</em>",
-    image: "cards/fronts/385.webp"
-  },
-  "Arclight": {
-    name: "Arclight",
-    primaryType: "Basic Spell",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 1}],
-    description: "Deal 2 damage.\nPay <img src='../icons/stamina1.png' class='desc-icon' alt='stamina' />: Ricochet, hit one more target, dealing +1 damage.\nDim (double the cost in low light)\n<em>Thrown like a ball, \nhits like a hammer!</em>",
-    image: "cards/fronts/390.webp"
-  },
-  "Metallicize": {
-    name: "Metallicize",
-    primaryType: "Enchantment",
-    secondaryType: "Light",
-    cost: [{"type": "empower", "amount": 1}, {"type": "mana", "amount": 2}],
-    description: "Create a skin-like shield <img src='../icons/mshield.svg' class='desc-icon' alt='shield' />, \nabsorb damage equal to tinge. \nSoftlight (nullify in moonlight)\n<em>Innerlight starts soft, \nbecoming strong and rubbery.</em>",
-    image: "cards/fronts/393.webp"
-  },
-  "Veil": {
-    name: "Veil",
-    primaryType: "Quick Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 3}],
-    description: "Block 2 damage. \nPay <img src='../icons/stamina1.png' class='desc-icon' alt='stamina' />: Block +1 per <img src='../icons/potency8.png' class='desc-icon' alt='potency' />. \nDim (double cost in low light)\n<em>Useful in a pinch.</em>",
-    image: "cards/fronts/395.webp"
-  },
-  "Sunkiss": {
-    name: "Sunkiss",
-    primaryType: "Enchantment",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 3}],
-    description: "Target spell gains lightborne (counts as light-magic) until dawnlight, add <img src='../icons/mastery4.png' class='desc-icon' alt='mastery' /> to values. \nHardlight (requires sunlight)\n<em>Blessed be thine, \nforever and for true.</em>",
-    image: "cards/fronts/396.webp"
-  },
-  "Mark": {
-    name: "Mark",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "channel", "amount": 0}, {"type": "mana", "amount": 2}],
-    description: "Conjures a seal. \nSpells against target gain swift. \nTrack target through walls and at any distance.\n<em>Some light forms as words, shapes, lines, designed to act upon a certain place \nor a certain time.</em>",
-    image: "cards/fronts/398.webp"
-  },
-  "Seal of Tripwire": {
-    name: "Seal of Tripwire",
-    primaryType: "Seal",
-    secondaryType: "Light Trap",
-    cost: [{"type": "channel", "amount": 0}, {"type": "mana", "amount": 3}],
-    description: "Inscribe two seals. \nFast movement triggers a string of hardened light between the two points, stuns or slows victims.\n<em>Hard to see, until it isn't.</em>",
-    image: "cards/fronts/400.webp"
-  },
-  "Seal of Reflection": {
-    name: "Seal of Reflection",
-    primaryType: "Seal",
-    secondaryType: "Light Trap",
-    cost: [{"type": "channel", "amount": 0}, {"type": "mana", "amount": 2}],
-    description: "Inscribe a seal. \nUpon physical contact, trigger an amplified and opposite force. \nDim (double the cost in low light)\n<em>The strangeness of light \nis understood by few.</em>",
-    image: "cards/fronts/402.webp"
-  },
-  "Seal of Grace": {
-    name: "Seal of Grace",
-    primaryType: "Seal",
-    secondaryType: "Light Trap",
-    cost: [{"type": "channel", "amount": 0}, {"type": "mana", "amount": 2}],
-    description: "Inscribe a seal. \nIf you would pay or lose <img src='../icons/Life1.png' class='desc-icon' alt='life' />, you may consume this instead.\nSoftlight (nullify in moonlight)\n<em>You forget the shape when it fades.</em>",
-    image: "cards/fronts/404.webp"
-  },
-  "Seal of Sound": {
-    name: "Seal of Sound",
-    primaryType: "Seal",
-    secondaryType: "Light Trap",
-    cost: [{"type": "channel", "amount": 0}, {"type": "mana", "amount": 2}],
-    description: "Inscribe a seal. \nWith a clap, the user consumes the seal, causing thunderous sounds and shaking in its place.\n<em>Placed on a weapon, underfoot, or on a saddle, it makes for a wondrous surprise.</em>",
-    image: "cards/fronts/406.webp"
-  },
-  "Seal of Burning Bones": {
-    name: "Seal of Burning Bones",
-    primaryType: "Seal",
-    secondaryType: "Light",
-    cost: [{"type": "channel", "amount": 0}, {"type": "mana", "amount": 3}],
-    description: "Inscribe a seal. \nTarget receives <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> additional damage over 3 duration. \nPay <img src='../icons/empower1.png' class='desc-icon' alt='empower' />: Double the damage.\n<em>Intricate lines, no matter how beautiful, are still made of sunlight. It burns.</em>",
-    image: "cards/fronts/408.webp"
-  },
-  "Imbue Light": {
-    name: "Imbue Light",
-    primaryType: "Enchantment",
-    secondaryType: "Light Seal",
-    cost: [{"type": "mana", "amount": 3}],
-    description: "Infuse anything with light, empowering it for a time. \nAdd <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> when resolving. \nPay <img src='../icons/empower1.png' class='desc-icon' alt='empower' />: Re-activate the seal.\n<em>Bright burning heat packed tightly, ready to burst... on purpose, of course.</em>",
-    image: "cards/fronts/410.webp"
-  },
-  "Lasso": {
-    name: "Lasso",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 2}],
-    description: "Conjure a rope of light and throw it at a target. \nPay <img src='../icons/empower1.png' class='desc-icon' alt='empower' />: Stun target. \nDim (double cost in low light)\n<em>Whoa there!</em>",
-    image: "cards/fronts/412.webp"
-  },
-  "Pillar": {
-    name: "Pillar",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 1}],
-    description: "Conjure heavy a rod of light, useful for keeping doors open and switches pressed.\nChannel <img src='../icons/slow4.png' class='desc-icon' alt='channel' />: Levitate Pillar.\n<em>Now is the time to use that.</em>",
-    image: "cards/fronts/414.webp"
-  },
-  "Aura Flash": {
-    name: "Aura Flash",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 1}, {"type": "stamina", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "Nullify incoming projectile magics for a duration equal to X. \nSoftlight (nullify in moonlight)\nTinge 10: Quick.\n<em>Deflection is protection!</em>",
-    image: "cards/fronts/416.webp"
-  },
-  "Bubble": {
-    name: "Bubble",
-    primaryType: "Quick Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 2}, {"type": "stamina", "amount": 2}],
-    description: "Throw a dome of protection around a target. Nullify one type of incoming damage; end upon sustaining another type.\n<em>Quick thinking saved them from the arrows, but not the rocks.</em>",
-    image: "cards/fronts/418.webp"
-  },
-  "Haste": {
-    name: "Haste",
-    primaryType: "Enchantment",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 3}, {"type": "stamina", "amount": 2}, {"type": "empower", "amount": 1}],
-    description: "Think, move, act, and react faster; all actions are considered quick. Effect ends upon taking damage. \nTinge 17: Act again immediately.\n<em>Prolong each moment.</em>",
-    image: "cards/fronts/419.webp"
-  },
-  "Radiant Palms": {
-    name: "Radiant Palms",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 2}],
-    description: "Emit light from your palms. \nTinge 18: Create a blinding flash of light, stunning foes.\nTinge 30: Quick.\n<em>So useful, yet so inconvenient.</em>",
-    image: "cards/fronts/420.webp"
-  },
-  "Sunblade": {
-    name: "Sunblade",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 5}],
-    description: "Wield a blade made of sunlight. Slash for 5 damage. Repeat again for each point of <img src='../icons/str.png' class='desc-icon' alt='str' />. \nHardlight (requires sunlight)\n<em>The executioner. \nKneel.</em>",
-    image: "cards/fronts/422.webp"
-  },
-  "Sunhammer": {
-    name: "Sunhammer",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 5}],
-    description: "Wield a hammer made of sunlight. Strike for maximum <img src='../icons/mana1.png' class='desc-icon' alt='mana' />. \nStuns a target based on <img src='../icons/str.png' class='desc-icon' alt='str' />. \nHardlight (requires sunlight)\n<em>Righteous and mighty! Tremble!</em>",
-    image: "cards/fronts/423.webp"
-  },
-  "Mirage Barrage": {
-    name: "Mirage Barrage",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 7}, {"type": "empower", "amount": 1}, {"type": "stamina", "amount": 1}],
-    description: "Conjure a myriad of small, \nfloating daggers made of sunlight, equal to maximum <img src='../icons/mana1.png' class='desc-icon' alt='mana' />. \nSlash each blade for <img src='../icons/str.png' class='desc-icon' alt='str' /> or <img src='../icons/skl.png' class='desc-icon' alt='skl' />. \nDim (double the cost in low light)\n<em>Now I'm motivated.</em>",
-    image: "cards/fronts/424.webp"
-  },
-  "Lay On Hands": {
-    name: "Lay On Hands",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "Pay X using only <img src='../icons/mana1.png' class='desc-icon' alt='mana' />.\nTouch a fallen ally, revive them with life <img src='../icons/Life1.png' class='desc-icon' alt='life' /> equal to X.\n<em>Do not go quietly into the darkness. Seek the light and come home.</em>",
-    image: "cards/fronts/425.webp"
-  },
-  "Lightbringer": {
-    name: "Lightbringer",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 2}],
-    description: "Pull a small object, creature, or other target toward you. \nPay <img src='../icons/stamina1.png' class='desc-icon' alt='stamina' />: Pull a larger target. \nTinge 20: Griplock target.\n<em>Catch this!</em>",
-    image: "cards/fronts/426.webp"
-  },
-  "Sphere Smash": {
-    name: "Sphere Smash",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "stamina", "amount": 1}, {"type": "life", "amount": 1}, {"type": "mana", "amount": 3}/*, {"type": "generic", "amount": 0}*/],
-    description: "Floats and maintains speed toward any target; powered by <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> and <img src='../icons/mastery4.png' class='desc-icon' alt='mastery' />. \nPay <img src='../icons/empower1.png' class='desc-icon' alt='empower' />: Shatter, destroy stone walls with concussive force.\nSoftlight (nullify in moonlight)\n<em>Slow and steady.</em>",
-    image: "cards/fronts/428.webp"
-  },
-  "Dawn Spear": {
-    name: "Dawn Spear",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "stamina", "amount": 2}, {"type": "mana", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "Throw a spear of light, \nembedding into a surface. \nDeal <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> pierce damage.\n<img src='../icons/str.png' class='desc-icon' alt='str' /> and <img src='../icons/skl.png' class='desc-icon' alt='skl' /> 2: Climb and manoeuvre using spears.\n<em>Incredibly real, until the jealous moon waves it away.</em>",
-    image: "cards/fronts/430.webp"
-  },
-  "Sunswipe": {
-    name: "Sunswipe",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "stamina", "amount": 1}, {"type": "mana", "amount": 2}/*, {"type": "generic", "amount": 0}*/],
-    description: "Strike with the hands. \nCut and slice through objects.\nDeal damage based on <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> and <img src='../icons/skl.png' class='desc-icon' alt='skl' />. \nPay <img src='../icons/empower1.png' class='desc-icon' alt='empower' />: Immediately cast again.\n<em>The arcs of light buzz and hum as if pulling thousands of wires.</em>",
-    image: "cards/fronts/432.webp"
-  },
-  "Petals Of Brilliance": {
-    name: "Petals Of Brilliance",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "stamina", "amount": 1}, {"type": "life", "amount": 1}, {"type": "mana", "amount": 3}],
-    description: "Bloom a flower made of light in the hand, blow petals outward. Amount are based on <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> and <img src='../icons/mastery4.png' class='desc-icon' alt='mastery' />. \nPetals heal 1 <img src='../icons/Life1.png' class='desc-icon' alt='life' />.\n<em>Beautiful and fragile. Feels like a warm cheek pressed against your skin.</em>",
-    image: "cards/fronts/434.webp"
-  },
-  "Shimmering Masonry": {
-    name: "Shimmering Masonry",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "stamina", "amount": 1}, {"type": "mana", "amount": 2}/*, {"type": "generic", "amount": 0}*/],
-    description: "Conjure bricks made of light. Number of bricks is based on <img src='../icons/potency8.png' class='desc-icon' alt='potency' />.\n<img src='../icons/str.png' class='desc-icon' alt='str' /> or <img src='../icons/skl.png' class='desc-icon' alt='skl' /> 3: Climb bricks. \nPay <img src='../icons/empower1.png' class='desc-icon' alt='empower' />: Launch bricks, dealing <img src='../icons/str.png' class='desc-icon' alt='str' />.\nSoftlight (nullify in moonlight)\n<em>Incredibly real, \nlest the moon wash them away.</em>",
-    image: "cards/fronts/436.webp"
-  },
-  "Light Bolt": {
-    name: "Light Bolt",
-    primaryType: "Quick Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "stamina", "amount": 1}, {"type": "mana", "amount": 2}],
-    description: "Shoot a beam of light, knocking target and you back D20+6. \nDeal 3 pierce damage. \nChannel <img src='../icons/slow4.png' class='desc-icon' alt='channel' />: Ignore knockback.\n<em>Quite the shock at both ends.</em>",
-    image: "cards/fronts/438.webp"
-  },
-  "Light Arrow": {
-    name: "Light Arrow",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 4}/*, {"type": "generic", "amount": 0}*/],
-    description: "Pierce using <img src='../icons/potency8.png' class='desc-icon' alt='potency' />. \nChannel <img src='../icons/slow4.png' class='desc-icon' alt='channel' />: Add current <img src='../icons/mana1.png' class='desc-icon' alt='mana' />. \nPay <img src='../icons/empower1.png' class='desc-icon' alt='empower' />: Knockback per <img src='../icons/potency8.png' class='desc-icon' alt='potency' />.\nSoftlight (nullify in moonlight)\n<em>An art developed for war. Holding brings forth conviction, or doubt.</em>",
-    image: "cards/fronts/440.webp"
-  },
-  "Sparkle": {
-    name: "Sparkle",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "stamina", "amount": 1}, {"type": "mana", "amount": 2}/*, {"type": "generic", "amount": 0}*/],
-    description: "Toss a handful of diamond dust, floats in the air. Upon contact, victims receive 1 damage and are stunned for 1 duration.\n<em>An art developed for war. Holding brings forth conviction, or doubt.</em>",
-    image: "cards/fronts/441.webp"
-  },
-  "Spiralis": {
-    name: "Spiralis",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "stamina", "amount": 1}, {"type": "mana", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "Shoot out tendrils of light, whipping out in a clockwise pattern. Upon contact, draw targets closer to you with force based on <img src='../icons/skl.png' class='desc-icon' alt='skl' />.\n<em>The right-hand-rule applies to the strangest of things.</em>",
-    image: "cards/fronts/442.webp"
-  },
-  "Flash": {
-    name: "Flash",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "mana", "amount": 3}, {"type": "stamina", "amount": 1}],
-    description: "Dash in a direction, tackling obstacles. \nUpon contact, victims receive increasing damage and knockback. Distance, damage, and knockback are based on <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> & <img src='../icons/skl.png' class='desc-icon' alt='skl' />. Tinge 11: Quick.\n<em>Apex and zenith blur together at such extreme speed.</em>",
-    image: "cards/fronts/443.webp"
-  },
-  "Intercept": {
-    name: "Intercept",
-    primaryType: "Quick Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "empower", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "Catch any spell. \nRedirect spell to any target.\n<em>Requires a tremendous \namount of focus. Focus!</em>",
-    image: "cards/fronts/445.webp"
-  },
-  "Scorching Ray": {
-    name: "Scorching Ray",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "empower", "amount": 1}, {"type": "mana", "amount": 4}],
-    description: "Funnel an eye of sun. Always acts.\n<img src='../icons/tap2.png' class='desc-icon' alt='tap' />: Consume 1 <img src='../icons/mana1.png' class='desc-icon' alt='mana' /> and deal 1 damage each turn. Increase damage steadily, up to a maximum of <img src='../icons/potency8.png' class='desc-icon' alt='potency' />. \n<img src='../icons/untap2.png' class='desc-icon' alt='untap' />: Dismiss Scorching Ray.\n<em>Feel the heat!</em>",
-    image: "cards/fronts/446.webp"
-  },
-  "Field Crush": {
-    name: "Field Crush",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "empower", "amount": 1}, {"type": "channel", "amount": 0}, {"type": "mana", "amount": 2}],
-    description: "Press hands into the ground, and funnel <img src='../icons/mana1.png' class='desc-icon' alt='mana' /> into surrounding area. After a time, launch nearby targets into the air, based on Tinge.\n<em>Why hit with light when you could strike with the world?</em>",
-    image: "cards/fronts/448.webp"
-  },
-  "Fingers Of Flame": {
-    name: "Fingers Of Flame",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "empower", "amount": 1}, {"type": "mana", "amount": 3}],
-    description: "Emit embers of flame from fingertips. Burn <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> damage. \nPay <img src='../icons/empower1.png' class='desc-icon' alt='empower' />: Spread fire.\n<em>Concentrating the sun's warmth to such a small point results in combustion. Ouch.</em>",
-    image: "cards/fronts/450.webp"
-  },
-  "Eruption": {
-    name: "Eruption",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "empower", "amount": 1}, {"type": "mana", "amount": 4}],
-    description: "Press hands into the ground, summon a burst of fire from a connected surface. Distance, size, and damage of pillar is based on Tinge.\n<em>Allow your collected heat to ebb out and rip through the world.</em>",
-    image: "cards/fronts/452.webp"
-  },
-  "Flamelick": {
-    name: "Flamelick",
-    primaryType: "Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "empower", "amount": 1}, {"type": "mana", "amount": 3}],
-    description: "Summon a whip of fire, inflict 2 burn per hit. \nPay <img src='../icons/empower1.png' class='desc-icon' alt='empower' />: Repeat for each <img src='../icons/skl.png' class='desc-icon' alt='skl' />. \n\nSkill <img src='../icons/skl.png' class='desc-icon' alt='skl' /> 3: Manoeuvre.\n<em>The terrifying sound it makes drowns out the smells of burning grass and flesh.</em>",
-    image: "cards/fronts/454.webp"
-  },
-  "Fire Shot": {
-    name: "Fire Shot",
-    primaryType: "Quick Spellcast",
-    secondaryType: "Light",
-    cost: [{"type": "empower", "amount": 1}, {"type": "mana", "amount": 2}/*, {"type": "generic", "amount": 0}*/],
-    description: "Inflict burn, damage and duration is based on <img src='../icons/potency8.png' class='desc-icon' alt='potency' />. Nullify target's armour <img src='../icons/armour.svg' class='desc-icon' alt='armour' /> and shields <img src='../icons/mshield.svg' class='desc-icon' alt='shield' />. \nPay <img src='../icons/empower1.png' class='desc-icon' alt='empower' />: Cast twice.\n<em>Renders most metals useless.</em>",
-    image: "cards/fronts/456.webp"
-  },
-  "Green Fever": {
-    name: "Green Fever",
-    primaryType: "Enchantment",
-    secondaryType: "Nature",
-    cost: [{"type": "life", "amount": 2}/*, {"type": "generic", "amount": 0}*/],
-    description: "Increase physicks by X; \nremove bleed, poison, or toxic. \nDuration is equal to <img src='../icons/madness.png' class='desc-icon' alt='madness' />. Gain <img src='../icons/madness.png' class='desc-icon' alt='madness' /> when effect ends.\n<em>Nothing is more ferocious than\nmother nature's wrath.</em>",
-    image: "cards/fronts/457.webp"
-  },
-  "Wild Eyes": {
-    name: "Wild Eyes",
-    primaryType: "Enchantment",
-    secondaryType: "Nature",
-    cost: [{"type": "life", "amount": 2}/*, {"type": "generic", "amount": 0}*/],
-    description: "Improve magicks by X; \nremove dread, stun, or panic.\nDuration is equal to <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\nGain <img src='../icons/madness.png' class='desc-icon' alt='madness' /> when effect ends.\n<em>You get a little mean \nwhen you start seeing green.</em>",
-    image: "cards/fronts/458.webp"
-  },
-  "Conceal": {
-    name: "Conceal",
-    primaryType: "Quick Spellcast",
-    secondaryType: "Nature Arts",
-    cost: [{"type": "stamina", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "Coerce nearby vegetation to hide presence; very effective outdoors. \nIf undetected or unseen when cast, refund <img src='../icons/stamina1.png' class='desc-icon' alt='stamina' />.\n<em>Look not here for I, \nfor here I am not.</em>",
-    image: "cards/fronts/460.webp"
-  },
-  "Listen": {
-    name: "Listen",
-    primaryType: "Spellcast",
-    secondaryType: "Nature Arts",
-    cost: [{"type": "life", "amount": 1}, {"type": "stamina", "amount": 1}],
-    description: "Silence the symphony around you, and let the world speak. \nIf successful, gain favour during next encounter or event.\n<em>You can hear it too, can't you?</em>",
-    image: "cards/fronts/462.webp"
-  },
-  "Yummify": {
-    name: "Yummify",
-    primaryType: "Spellcast",
-    secondaryType: "Nature Arts",
-    cost: [{"type": "life", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "<img src='../icons/tap2.png' class='desc-icon' alt='tap' />: Enrich the deliciousness of any fruit or vegetable and it provides maximum nutrients or benefits. \nConsume item: Untap <img src='../icons/untap2.png' class='desc-icon' alt='untap' />.\n<em>If only everything good for you \ntasted this amazing!</em>",
-    image: "cards/fronts/463.webp"
-  },
-  "Haze": {
-    name: "Haze",
-    primaryType: "Spellcast",
-    secondaryType: "Nature Arts",
-    cost: [{"type": "life", "amount": 1}, {"type": "energy", "amount": 1}],
-    description: "Twilight (Cannot be used in \ndirect sunlight or moonlight) \nSummon sticky mist to cover position. Remove <img src='../icons/stamina1.png' class='desc-icon' alt='stamina' /> from actions. Reduce all detection within mist.\n<em>Unseen. Unidentified. Unknown.</em>",
-    image: "cards/fronts/464.webp"
-  },
-  "Bloomgift": {
-    name: "Bloomgift",
-    primaryType: "Spellcast",
-    secondaryType: "Nature Arts",
-    cost: [{"type": "life", "amount": 1}],
-    description: "Encourage a vegetable or fruit-bearing tree or berry-bush to produce edible items. \nTinge 16: Act again.\n<em>A gift for you, and a gift for me. The fruits of our labour after all?</em>",
-    image: "cards/fronts/465.webp"
-  },
-  "Mend": {
-    name: "Mend",
-    primaryType: "Spellcast",
-    secondaryType: "Nature Arts",
-    cost: [{"type": "life", "amount": 1}],
-    description: "<img src='../icons/tap2.png' class='desc-icon' alt='tap' />: Temporarily heal any target injury or wound; stop bleeding or poison. \n<img src='../icons/untap2.png' class='desc-icon' alt='untap' />: Dismiss Mend.\n<em>Bind the flesh in her coil, vines and green abate the bleeding... For now.</em>",
-    image: "cards/fronts/466.webp"
-  },
-  "Rootrope": {
-    name: "Rootrope",
-    primaryType: "Spellcast",
-    secondaryType: "Nature Arts",
-    cost: [{"type": "life", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "<img src='../icons/tap2.png' class='desc-icon' alt='tap' />: Command roots and vines beneath feet to intertwine. Create ropes, bridges, or bindings. \n<img src='../icons/untap2.png' class='desc-icon' alt='untap' />: Dismiss Rootrope.\n<em>I asked for help. Amazing how useful things can come from unexpected places.</em>",
-    image: "cards/fronts/467.webp"
-  },
-  "Growth": {
-    name: "Growth",
-    primaryType: "Spellcast",
-    secondaryType: "Nature Arts",
-    cost: [{"type": "life", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "<img src='../icons/tap2.png' class='desc-icon' alt='tap' />: Encourage the foliage around you to grow in a great burst of life. \n<img src='../icons/untap2.png' class='desc-icon' alt='untap' />: Affected plants wither.\n<em>This place was once nothing but wilds as far as you could see. All it takes is time.</em>",
-    image: "cards/fronts/468.webp"
-  },
-  "River": {
-    name: "River",
-    primaryType: "Quick Spellcast",
-    secondaryType: "Nature Arts",
-    cost: [{"type": "stamina", "amount": 2}/*, {"type": "generic", "amount": 0}*/],
-    description: "<img src='../icons/tap2.png' class='desc-icon' alt='tap' />: Combine <img src='../icons/skl.png' class='desc-icon' alt='skl' /> and <img src='../icons/str.png' class='desc-icon' alt='str' />; move steadily and with flow. \n<img src='../icons/untap2.png' class='desc-icon' alt='untap' />: Cleanse hands with clean or flowing water.\n<em>You cannot borrow what nature gives you. These things are sacred, and command your respect.</em>",
-    image: "cards/fronts/470.webp"
-  },
-  "Mountain": {
-    name: "Mountain",
-    primaryType: "Enchant",
-    secondaryType: "Nature Arts",
-    cost: [{"type": "life", "amount": 2}/*, {"type": "generic", "amount": 0}*/],
-    description: "Combine <img src='../icons/str.png' class='desc-icon' alt='str' /> and endurance, then regain that much <img src='../icons/stamina1.png' class='desc-icon' alt='stamina' /> stamina. \nWhenever you have 1 or less <img src='../icons/stamina1.png' class='desc-icon' alt='stamina' /> stamina, resolve madness <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>The summit will remain \nwhen you are forgotten.</em>",
-    image: "cards/fronts/472.webp"
-  },
-  "Breeze": {
-    name: "Breeze",
-    primaryType: "Quick Enchant",
-    secondaryType: "Nature Arts",
-    cost: [{"type": "empower", "amount": 1}, {"type": "mana", "amount": 1}, {"type": "stamina", "amount": 1}],
-    description: "Become uplifted, reduce weight significantly; glide while falling.\nMomentum is problematic and you become dizzy more easily.\n<em>Falling, slowly, gently... \nlest the winds have other plans.</em>",
-    image: "cards/fronts/474.webp"
-  },
-  "Myceliosum": {
-    name: "Myceliosum",
-    primaryType: "Quick Spellcast",
-    secondaryType: "Nature Arts",
-    cost: [{"type": "energy", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "<img src='../icons/tap2.png' class='desc-icon' alt='tap' />: Activate local mycofauna effects and spells; or do nothing. \n<img src='../icons/untap2.png' class='desc-icon' alt='untap' />: Consume fungal or mushroomic substances.\n<em>The heartbeat of an ancient beast beneath our feet. Humming, calm and foreboding.</em>",
-    image: "cards/fronts/475.webp"
-  },
-  "Bestow Life": {
-    name: "Bestow Life",
-    primaryType: "Spellcast",
-    secondaryType: "Nature Arts",
-    cost: [{"type": "life", "amount": 1}],
-    description: "Consume half of your current life <img src='../icons/Life1.png' class='desc-icon' alt='life' /> to revive one ally with half of their maximum life <img src='../icons/Life1.png' class='desc-icon' alt='life' />, mana <img src='../icons/mana1.png' class='desc-icon' alt='mana' />, and energy <img src='../icons/energy1.png' class='desc-icon' alt='energy' />.\n<em>I call upon ye from the land of roots and songs, return that which once was lost.</em>",
-    image: "cards/fronts/476.webp"
-  },
-  "Hookshot": {
-    name: "Hookshot",
-    primaryType: "Spellcast",
-    secondaryType: "Adventure Action",
-    cost: [{"type": "energy", "amount": 1}, {"type": "stamina", "amount": 1}],
-    description: "Pull self across terrain over a distance relative to <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> and <img src='../icons/mastery4.png' class='desc-icon' alt='mastery' />.\n<em>Not usable on all surfaces.</em>",
-    image: "cards/fronts/478.webp"
-  },
-  "Befriend": {
-    name: "Befriend",
-    primaryType: "Spellcast",
-    secondaryType: "Beast Arts",
-    cost: [{"type": "life", "amount": 2}, {"type": "stamina", "amount": 1}],
-    description: "Attempt to befriend a beast.\nSuccess: Refund <img src='../icons/Life1.png' class='desc-icon' alt='life' />, gain a beastfriend and lose this card.\n<em>You never know until you try!</em>",
-    image: "cards/fronts/479.webp"
-  },
-  "Summon Friend": {
-    name: "Summon Friend",
-    primaryType: "Spellcast",
-    secondaryType: "Beast Arts",
-    cost: [{"type": "life", "amount": 3}],
-    description: "A beast may come to your aid. \nSuccess: Refund <img src='../icons/Life1.png' class='desc-icon' alt='life' />, gain a beastfriend and lose this card.\n<em>A furry friend never forgets a hand that feeds. Especially if that hand feeds a lot.</em>",
-    image: "cards/fronts/480.webp"
-  },
-  "Embolden": {
-    name: "Embolden",
-    primaryType: "Spellcast",
-    secondaryType: "Beast Arts",
-    cost: [{"type": "life", "amount": 1}],
-    description: "Empower summoned beast; \nif possible, it must switch forme. Beast gains quick and favour, and must act immediately.\n<em>There will come a time when such an act of heroism will be its last.</em>",
-    image: "cards/fronts/481.webp"
-  },
-  "Mend Friend": {
-    name: "Mend Friend",
-    primaryType: "Spellcast",
-    secondaryType: "Beast Arts",
-    cost: [{"type": "life", "amount": 2}, {"type": "stamina", "amount": 1}],
-    description: "Fully heal a summoned beast.\nTinge 13: For the next 1 duration, this beast takes no damage.\n<em>The bond between us and beasts is a thing of beauty... and patience.</em>",
-    image: "cards/fronts/484.webp"
-  },
-  "Protect": {
-    name: "Protect",
-    primaryType: "Quick Action",
-    secondaryType: "Beast Arts",
-    cost: [{"type": "stamina", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "If you would sustain damage, swap places with beast friend, and the beast friend receives damage instead.\n<em>In our time of need, our furry friends \ndon't need to think twice.</em>",
-    image: "cards/fronts/485.webp"
-  },
-  "Guardian": {
-    name: "Guardian",
-    primaryType: "Quick Action",
-    secondaryType: "Beast Arts",
-    cost: [{"type": "life", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "If beast friend would sustain damage, swap places with beast friend, and you receive the damage.\n<em>Even protectors need protectin'!</em>",
-    image: "cards/fronts/486.webp"
-  },
-  "Innervate": {
-    name: "Innervate",
-    primaryType: "Enchant",
-    secondaryType: "Potency",
-    cost: [{"type": "channel", "amount": 0}, {"type": "mana", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "Add 3 to physicks for 3 duration. \nPay <img src='../icons/stamina1.png' class='desc-icon' alt='stamina' />: Maintain Innervate duration.\nTinge 22: Cost is <img src='../icons/mana1.png' class='desc-icon' alt='mana' /><img src='../icons/mana1.png' class='desc-icon' alt='mana' />{1}.\n<em>Focus. Rejuvenate. Unleash.</em>",
-    image: "cards/fronts/488.webp"
-  },
-  "Evoke": {
-    name: "Evoke",
-    primaryType: "Spellcast",
-    secondaryType: "Potency",
-    cost: [{"type": "empower", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "<img src='../icons/tap2.png' class='desc-icon' alt='tap' />: Empower next light spell. \n<img src='../icons/untap2.png' class='desc-icon' alt='untap' />: Sleep, or gain <img src='../icons/madness.png' class='desc-icon' alt='madness' />. \nTinge 15: Empower any spell.\n<em>Burn brightly that fire within.</em>",
-    image: "cards/fronts/490.webp"
-  },
-  "Amplify": {
-    name: "Amplify",
-    primaryType: "Enchantment",
-    secondaryType: "Potency",
-    cost: [{"type": "empower", "amount": 2}],
-    description: "Attach to a spell: \nIgnore requirements & negatives. \n(e.g. Cast Hardlight or Dim spells normally; ignore moonlight negations; etcetera.)\n<em>Burn a bit of the soul.</em>",
-    image: "cards/fronts/492.webp"
-  },
-  "Spellsurge": {
-    name: "Spellsurge",
-    primaryType: "Enchantment",
-    secondaryType: "Potency",
-    cost: [{"type": "empower", "amount": 2}],
-    description: "Attach to a spell: \nIncrease all values by 1. \nIf the spell does not list any damage or block values, it now deals or blocks 1 damage.\n<em>Use wisely. Or not.</em>",
-    image: "cards/fronts/494.webp"
-  },
-  "Detect Magic": {
-    name: "Detect Magic",
-    primaryType: "Spellcast",
-    secondaryType: "Arcane",
-    cost: [{"type": "energy", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "Momentarily reveal magical traps, energies, and other secrets. \nArcane 6: \nPay <img src='../icons/mana1.png' class='desc-icon' alt='mana' /> or <img src='../icons/energy1.png' class='desc-icon' alt='energy' />, lasts until you sleep.\n<em>My senses are tingling...</em>",
-    image: "cards/fronts/496.webp"
-  },
-  "Arcane Touch": {
-    name: "Arcane Touch",
-    primaryType: "Enchant",
-    secondaryType: "Arcane Action",
-    cost: [{"type": "energy", "amount": 1}],
-    description: "Infuse the skin with arcane energy, transfer energy upon contact. \nActivate arcane relics. \nArcane 5: Snap fingers and return the <img src='../icons/energy1.png' class='desc-icon' alt='energy' /> to you, refunding the cost.\n<em>Long ago, the arcane was everywhere. Now, it's all gone... far away.</em>",
-    image: "cards/fronts/497.webp"
-  },
-  "Arcane Blast": {
-    name: "Arcane Blast",
-    primaryType: "Spellcast",
-    secondaryType: "Arcane",
-    cost: [{"type": "energy", "amount": 1}, {"type": "mana", "amount": 1}],
-    description: "Deal 2 damage; knockback. Activates arcane relics. \n<img src='../icons/mastery4.png' class='desc-icon' alt='mastery' /> 3: Add <img src='../icons/potency8.png' class='desc-icon' alt='potency' />. \nArcane 6: Cast again for <img src='../icons/energy1.png' class='desc-icon' alt='energy' />.\n<em>Shot at incredible speed, this single straight line flies as if it yearns for somewhere else to be.</em>",
-    image: "cards/fronts/500.webp"
-  },
-  "Arcane Shock": {
-    name: "Arcane Shock",
-    primaryType: "Spellcast",
-    secondaryType: "Arcane",
-    cost: [{"type": "energy", "amount": 2}, {"type": "stamina", "amount": 1}],
-    description: "Deal 1 damage to nearby targets. Activate nearby arcane relics. \n<img src='../icons/mastery4.png' class='desc-icon' alt='mastery' /> 3: Base damage is now <img src='../icons/mastery4.png' class='desc-icon' alt='mastery' />.\nArcane 8: Cast again for <img src='../icons/energy1.png' class='desc-icon' alt='energy' />.\n<em>Crackling through the air, seeking.</em>",
-    image: "cards/fronts/503.webp"
-  },
-  "Arcane Walk": {
-    name: "Arcane Walk",
-    primaryType: "Spellcast",
-    secondaryType: "Arcane",
-    cost: [{"type": "energy", "amount": 1}, {"type": "stamina", "amount": 1}],
-    description: "While moving: Leave a trail of ethereal footprints, for a time. \nWhen you stop moving, the footprints create a slippery path. \n<img src='../icons/mastery4.png' class='desc-icon' alt='mastery' /> 3: Activate arcane relics.\n<em>Tendrils pour out tenderly, waiting.</em>",
-    image: "cards/fronts/506.webp"
-  },
-  "Levitate": {
-    name: "Levitate",
-    primaryType: "Enchantment",
-    secondaryType: "Arcane",
-    cost: [{"type": "energy", "amount": 3}],
-    description: "Lift self delicately and walk in the air, about 10cm high. \nAny damage ends the effect.\nArcane 10: Hover 1 meter.\n<em>Feels like skating but way more fun-- \nand way more dangerous!</em>",
-    image: "cards/fronts/508.webp"
-  },
-  "Magnetohazard": {
-    name: "Magnetohazard",
-    primaryType: "Spellcast",
-    secondaryType: "Arcane",
-    cost: [{"type": "energy", "amount": 1}, {"type": "mana", "amount": 1}, {"type": "empower", "amount": 1}],
-    description: "Apply Arcane Touch twice, you may magnetize those things together or apart.\n<img src='../icons/slow4.png' class='desc-icon' alt='channel' />: Amplify magnetic force.\n<em>With a simple clap, you can momentarily marry things. Useful.</em>",
-    image: "cards/fronts/510.webp"
-  },
-  "Arcfield": {
-    name: "Arcfield",
-    primaryType: "Spellcast",
-    secondaryType: "Arcane",
-    cost: [{"type": "energy", "amount": 2}, {"type": "stamina", "amount": 1}, {"type": "empower", "amount": 1}/*, {"type": "generic", "amount": 0}*/],
-    description: "The surrounding area becomes infused with unstable energy. Spells cast within this area are cast at maximum Tinge or Arcane.\n<em>Ancient forces are ambivalent to our struggles. A raindrop in the ocean.</em>",
-    image: "cards/fronts/511.webp"
-  },
-  "Shadowshock": {
-    name: "Shadowshock",
-    primaryType: "Quick Spellcast",
-    secondaryType: "Madness Magic",
-    cost: [/*{"type": "generic", "amount": 2}*/],
-    description: "Twilight (Cannot be used in \ndirect sunlight or moonlight) \nReduce target life, power, or other stat equal to your current <img src='../icons/madness.png' class='desc-icon' alt='madness' />. \nLose this card or resolve <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>The lingering feeling as if touched \nby a sneer made of oil.</em>",
-    image: "cards/fronts/513.webp"
-  },
-  "Cursewax": {
-    name: "Cursewax",
-    primaryType: "Spellcast",
-    secondaryType: "Madness Magic",
-    cost: [/*{"type": "generic", "amount": 3}*/],
-    description: "Twilight (Cannot be used in direct sunlight or moonlight) \nConjure a bespoke curse. \nLose this card or resolve <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>Necessary acts are sometimes grotesque.</em>",
-    image: "cards/fronts/515.webp"
-  },
-  "Uneasy Feeling": {
-    name: "Uneasy Feeling",
-    primaryType: "Spellcast",
-    secondaryType: "Madness Magic",
-    cost: [/*{"type": "generic", "amount": 2}*/],
-    description: "Reduce, lower, or diminish something by the number of curses active among all players. \nLose this card or resolve <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>That sinking feel won't go away? \nOh no...</em>",
-    image: "cards/fronts/516.webp"
-  },
-  "Mind Thorn": {
-    name: "Mind Thorn",
-    primaryType: "Enchantment",
-    secondaryType: "Madness Magic",
-    cost: [/*{"type": "generic", "amount": 2}*/],
-    description: "Afflict target with a phobia, with duration counters equal to remaining <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\nLose this card or resolve <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>Can you feel the creep and crawl? \nThe breath against your ear?</em>",
-    image: "cards/fronts/517.webp"
-  },
-  "Siphon Seal": {
-    name: "Siphon Seal",
-    primaryType: "Enchantment",
-    secondaryType: "Madness Seal",
-    cost: [{"type": "generic", "amount": 4}],
-    description: "You cannot heal normally. \nIf target loses life, regain life. \nDismiss Siphon Seal:\nLose this card or resolve <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>The circle of life is sometimes sinister.</em>",
-    image: "cards/fronts/518.webp"
-  },
-  "Chiral Trepidations": {
-    name: "Chiral Trepidations",
-    primaryType: "Enchant",
-    secondaryType: "Madness Magic",
-    cost: [/*{"type": "generic", "amount": 3}, */{"type": "mana", "amount": 2}, {"type": "energy", "amount": 2}],
-    description: "Instead of paying the last three costs in a spell, resolve <img src='../icons/madness.png' class='desc-icon' alt='madness' />. \nThis cannot affect the first cost. \nDismiss Chiral Trepidations:\nLose this card or resolve <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>It feels as if you've been split in twain \nby a mirror.</em>",
-    image: "cards/fronts/520.webp"
-  },
-  "Nightmare Expansion": {
-    name: "Nightmare Expansion",
-    primaryType: "Spellcast",
-    secondaryType: "Madness Magic",
-    cost: [/*{"type": "generic", "amount": 0}*/],
-    description: "Consume all remaining <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\nYou must reduce that many non-cursed targets' life to 1, then inflict terror on those targets. Lose this card if you targeted yourself.\n<em>Something evil lurks within us all.\nHere it comes.</em>",
-    image: "cards/fronts/521.webp"
-  },
-  "Magick Missile": {
-    name: "Magick Missile",
-    primaryType: "Spellcast",
-    secondaryType: "Beyond",
-    cost: [{"type": "energy", "amount": 2}, {"type": "mana", "amount": 2}/*, {"type": "generic", "amount": 0}*/],
-    description: "Swift (Cannot miss) \nDeal damage equal to combined <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> and <img src='../icons/mastery4.png' class='desc-icon' alt='mastery' />, or divide that damage across many targets.\n<em>Best when wielded \nagainst the unwise.</em>",
-    image: "cards/fronts/523.webp"
-  },
-  "Moonlake Handsign": {
-    name: "Moonlake Handsign",
-    primaryType: "Spellcast",
-    secondaryType: "Beyond",
-    cost: [/*{"type": "generic", "amount": 0}, */{"type": "mana", "amount": 1}],
-    description: "Convert all light in area into moonlight. Any light spell or enchantment cast gains dim.\nEmpower wormridden things.\n<em>Those on the moon watch us carefully, and will send aid to their children.</em>",
-    image: "cards/fronts/525.webp"
-  },
-  "Wormbolt": {
-    name: "Wormbolt",
-    primaryType: "Spellcast",
-    secondaryType: "Beyond",
-    cost: [/*{"type": "generic", "amount": 2}, */{"type": "energy", "amount": 1}],
-    description: "Moonbless: Swift.\nHurl a festering ball of worm eggs that explode on impact.\nInflict slime.\n<em>A brief putrid stench accompanies this horrific blast of vile energy.</em>",
-    image: "cards/fronts/527.webp"
-  },
-  "Wormiousness": {
-    name: "Wormiousness",
-    primaryType: "Spellcast",
-    secondaryType: "Beyond",
-    cost: [/*{"type": "generic", "amount": 3}, */{"type": "empower", "amount": 1}],
-    description: "Moonbless:\nPay {1} instead of <img src='../icons/empower1.png' class='desc-icon' alt='empower' />.\nGain shield <img src='../icons/mshield.svg' class='desc-icon' alt='shield' /> equal to <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\nLose half <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>Adapt and overcome.\nEvolve and overwhelm.</em>",
-    image: "cards/fronts/529.webp"
-  },
-  "Tentacle": {
-    name: "Tentacle",
-    primaryType: "Enchantment",
-    secondaryType: "Beyond",
-    cost: [/*{"type": "generic", "amount": 0}, */{"type": "empower", "amount": 1}, {"type": "life", "amount": 1}, {"type": "stamina", "amount": 1}],
-    description: "After initial cast, you may pay life <img src='../icons/Life1.png' class='desc-icon' alt='life' /> to grow more and extend the length of tentacles.\nMoonbless: Double tentacles.\n<em>The pain oozes away. It feels as if you have always been this way. So natural.</em>",
-    image: "cards/fronts/531.webp"
-  },
-  "Smile and Nod": {
-    name: "Smile and Nod",
-    primaryType: "Legendary Enchantment",
-    secondaryType: "Skill",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Focus on a target: \nReduce power by your <img src='../icons/potency8.png' class='desc-icon' alt='potency' />.\nAdd <img src='../icons/mastery4.png' class='desc-icon' alt='mastery' /> to patience or interest.\n<em>First impressions are important.</em>",
-    image: "cards/fronts/532.webp"
-  },
-  "Socks": {
-    name: "Socks",
-    primaryType: "Legendary Enchantment",
-    secondaryType: "Skill",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "When wearing only the socks:\nMake no sound when moving.\nWalk across still water, leaves, etc.\nNullifies 99% of physical force.\nRemove socks: Gain <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>Walking on eggshells? \nEasy. Very easy.</em>",
-    image: "cards/fronts/533.webp"
-  },
-  "Glove": {
-    name: "Glove",
-    primaryType: "Legendary Enchantment",
-    secondaryType: "Skill",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Intercept projectiles and some weapons aimed at the bearer.\nPointing terrifies most beasts.\nNullifies 90% of physical force.\nRemove glove: Gain <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>If a mountain fell, \nthe glove may refuse.</em>",
-    image: "cards/fronts/534.webp"
-  },
-  "Make-a-Blade": {
-    name: "Make-a-Blade",
-    primaryType: "Legendary Quick Spell",
-    secondaryType: "Skill",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Reshape the blade like clay rubber.\nThe bearer can extend or retract the blade or handle grip at will.\nWhistle, snap, or clap: Reset blade.\n<em>Maintains any shape, \nas per the bearer.</em>",
-    image: "cards/fronts/535.webp"
-  },
-  "Fencing Forme": {
-    name: "Fencing Forme",
-    primaryType: "Legendary Enchantment",
-    secondaryType: "Skill",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Reshape into a proficient weapon.\nParry most melee weapons freely.\n<img src='../icons/tap2.png' class='desc-icon' alt='tap' />: Slay, then reset Trickblade.\n<img src='../icons/untap2.png' class='desc-icon' alt='untap' />: Apologize, or gain <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>Mighty, but fearful of cats.</em>",
-    image: "cards/fronts/536.webp"
-  },
-  "Heatsoul": {
-    name: "Heatsoul",
-    primaryType: "Legendary Enchantment",
-    secondaryType: "Magick",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Affect body temperature during actions or events; \nboil water with palms, etc.\nControl flames and combustion.\nSummon anything sacrificed.\n<em>We see it in your eyes, \nthat fire within.</em>",
-    image: "cards/fronts/537.webp"
-  },
-  "Coldsoul": {
-    name: "Coldsoul",
-    primaryType: "Legendary Enchantment",
-    secondaryType: "Magick",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Affect body temperature during actions or events; freeze water, etc.\nReduce any incoming damage taken.\nChange local zone weather.\nInterrupt some magic.\n<em>Regal and pure, \nsnow on the mountain.</em>",
-    image: "cards/fronts/538.webp"
-  },
-  "Gaze and Influence": {
-    name: "Gaze and Influence",
-    primaryType: "Legendary Enchantment",
-    secondaryType: "Magick",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "While fixing eyes on a target: Influence their mood or thoughts.\nAlter their prowess by your own <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> or <img src='../icons/mastery4.png' class='desc-icon' alt='mastery' /> or <img src='../icons/str.png' class='desc-icon' alt='str' /> or <img src='../icons/skl.png' class='desc-icon' alt='skl' />.\n<em>Eyes are a window to the soul, \nmakes for an easy heist.</em>",
-    image: "cards/fronts/539.webp"
-  },
-  "Mundane": {
-    name: "Mundane",
-    primaryType: "Legendary Action",
-    secondaryType: "",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Flip a coin: Lose, gain <img src='../icons/madness.png' class='desc-icon' alt='madness' /> and <img src='../icons/tap2.png' class='desc-icon' alt='tap' /> tap. \nWin, choose one:\nThrow, deal no damage, distract.\nAny one action cannot fail.\nReturn to senses, remove 1 ailment.\nSpend the coin to <img src='../icons/untap2.png' class='desc-icon' alt='untap' /> untap.\n<em>The usefulness is a matter of \nspace and time.</em>",
-    image: "cards/fronts/540.webp"
-  },
-  "Ignite": {
-    name: "Ignite",
-    primaryType: "Legendary Quick Spell",
-    secondaryType: "Magick",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Engulf the whole body or a single part in flame for a short time, \nthen you may:\nMaintain immolation.\nBillow and manipulate smoke.\n<em>This dark power... may your fiery imagination burn brightly.</em>",
-    image: "cards/fronts/541.webp"
-  },
-  "Fingers of Frost": {
-    name: "Fingers of Frost",
-    primaryType: "Legendary Quick Spell",
-    secondaryType: "Magick",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Calms and soothes the nature of some entities. Things touched will slowly cool down and freeze.\nCan be used as a quick reaction.\n<em>Eventually, winter kills everything.</em>",
-    image: "cards/fronts/542.webp"
-  },
-  "Futuresight Glance": {
-    name: "Futuresight Glance",
-    primaryType: "Legendary Quick Spell",
-    secondaryType: "Magick",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "See into the near future: \nYou may perform any other action immediately, and it becomes perfect or true.\n<em>Free will is a matter of perspective.</em>",
-    image: "cards/fronts/543.webp"
-  },
-  "Fireball": {
-    name: "Fireball",
-    primaryType: "Legendary Spell",
-    secondaryType: "Magick",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Conjure a Flaming Orb. \nDeal damage, with a chance to explode or ignite.\nUser may snuff out flames.\n<em>Fire. Beautiful. Devastating.</em>",
-    image: "cards/fronts/544.webp"
-  },
-  "Frostbolt": {
-    name: "Frostbolt",
-    primaryType: "Legendary Spell",
-    secondaryType: "Magick",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Conjure an Ice Lance. \nDeal true damage, spreading frost over time. \nUser may consume frost.\n<em>You cannot outrun the cold.</em>",
-    image: "cards/fronts/545.webp"
-  },
-  "Pour": {
-    name: "Pour",
-    primaryType: "Legendary Spell",
-    secondaryType: "Magick",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Pour any liquid substance.\nEmit any sound for a time.\nGain <img src='../icons/madness.png' class='desc-icon' alt='madness' />: Change substance.\n<em>Holding it grants a great sense of direction, but gets you a bit tipsy. Ha!</em>",
-    image: "cards/fronts/546.webp"
-  },
-  "Scan": {
-    name: "Scan",
-    primaryType: "Legendary Spell",
-    secondaryType: "Magick",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Choose one:\nUnderstand written words.\nDiscern a face's true intent. \nKnow the nature of the unfamiliar.\n<em>The world has always \nbeen this way.</em>",
-    image: "cards/fronts/547.webp"
-  },
-  "Scribe": {
-    name: "Scribe",
-    primaryType: "Legendary Action",
-    secondaryType: "",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Write in the book. What is writ was, is, or will be true...\nClose the book: Remove <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>Book and pen are well-loved. Upon the first page \"Dear Scathe,\" is written.</em>",
-    image: "cards/fronts/548.webp"
-  },
-  "Luck": {
-    name: "Luck",
-    primaryType: "Legendary Quick Action",
-    secondaryType: "",
-    cost: [{"type": "coalesce", "amount": 1}],
-    description: "Flip coin, if you lose: Tap <img src='../icons/tap2.png' class='desc-icon' alt='tap' />.\nIf you win: \nResolve anything to your whim.\n<img src='../icons/untap2.png' class='desc-icon' alt='untap' />: Spend the coin.\n<em>In the end, \nmoney and fate are useless.</em>",
-    image: "cards/fronts/549.webp"
-  },
-  // Flicker and Whisper - starter spells for certain Iris types
-  "MISSINGNO": {
-    name: "MISSINGNO NAMEFIELD",
-    primaryType: "MISSINGNo PRIMARY TYPE",
-    secondaryType: "Missingno Secondary Type",
-    cost: [{ type: "life", amount: 1 },{ type: "stamina", amount: 1 },{ type: "mana", amount: 1 },{ type: "energy", amount: 1 },{ type: "empower", amount: 1 }],
-    description: "Turn invisible then shadow-step a moderate distance. If you attack or take damage, lose invisibility, become stunned, halve all resource pools.\n<em>Now you see me...</em>",
-    image: "../icons/999.webp"
-  }
-};
-
-// Artefact to Legendary Spell mapping (532-549 range)
-// Artefact to Legendary Spell(s) mapping - some artefacts grant multiple legendary spells
-const ARTEFACT_LEGENDARY_SPELLS = {
-  "The Bronze Ring of Smiles": [
-    { id: 532, name: "Smile and Nod" },
-    { id: 539, name: "Gaze and Influence" }
-  ],
-  "The Pair and a Half": [
-    { id: 533, name: "Socks" },
-    { id: 534, name: "Glove" }
-  ],
-  "The Trickblade": [
-    { id: 535, name: "Make-a-Blade" },
-    { id: 536, name: "Fencing Forme" }
-  ],
-  "The Darkflame": [
-    { id: 537, name: "Heatsoul" },
-    { id: 541, name: "Ignite" },
-    { id: 544, name: "Fireball" }
-  ],
-  "The Wintergrace": [
-    { id: 538, name: "Coldsoul" },
-    { id: 542, name: "Fingers of Frost" },
-    { id: 545, name: "Frostbolt" }
-  ],
-  "The Coin": [
-    { id: 540, name: "Mundane" },
-    { id: 549, name: "Luck" }
-  ],
-  "The Prismatic Glasses": [
-    { id: 543, name: "Futuresight Glance" },
-    { id: 547, name: "Scan" }
-  ],
-  "The Fisherman's Flask": [
-    { id: 546, name: "Pour" }
-  ],
-  "Scathe's Memo Book": [
-    { id: 548, name: "Scribe" }
-  ],
-  "The Wand": [] // The Wand has no legendary spells - allows any non-legendary spell to be slotted instead
-};
-
-// Track which legendary spells were originally assigned to the player
-// This ensures they can only relearn spells from their artefact's pool
-let assignedLegendarySpells = loadState('assignedLegendarySpells', {});
-
-let spells = loadState('spells', []);
-let mindOpen = false;
-let castWarningDisabled = loadState('castWarningDisabled', false);
-
-// Check if player has soulbound artefact and iris
-function hasSoulboundAndIris() {
-  return inventory[0]?.name && inventory[1]?.name;
-}
-
-// Get current Iris name
-function getCurrentIris() {
-  return inventory[1]?.name || '';
-}
-
-// Get current Soulbound Artefact name
-function getCurrentArtefact() {
-  return inventory[0]?.name || '';
-}
-
-// Update mind button state
-function updateMindButtonState() {
-  const allowed = hasSoulboundAndIris();
-  mindBtn.classList.toggle('disabled', !allowed);
-}
-
-// Calculate spell slot configuration based on Iris
-function getSpellSlotConfig() {
-  const iris = getCurrentIris();
-  const artefact = getCurrentArtefact();
-  const mastery = Number(loadState('Mastery', 0)) || 0;
-  const potency = Number(loadState('Potency', 0)) || 0;
-  
-  // Pair and a Half grants 2 legendary spell slots
-  const legendarySlotOverride = (artefact === "The Pair and a Half") ? 2 : null;
-  
-  if (iris === "Softly Strange Violet") {
-    // Violet: 2 legendary (or override), 2 starter (Arclight + Replenish), mastery+potency additional
-    return {
-      legendarySlots: legendarySlotOverride || 2,
-      starterSlots: 2,
-      starterSpells: ["Arclight", "Replenish"],
-      flexSlots: mastery + potency,
-      fixedTotal: false
-    };
-  } else if (iris === "Otherworldly Odd") {
-    // Odd: 1 legendary (or override), 3 prefilled (Arclight, Replenish, Veil), 2 empty = 6 total
-    return {
-      legendarySlots: legendarySlotOverride || 1,
-      starterSlots: 5, // 3 prefilled + 2 empty
-      starterSpells: ["Arclight", "Replenish", "Veil"],
-      flexSlots: 0,
-      fixedTotal: true,
-      totalSlots: (legendarySlotOverride || 1) + 5 // Adjust total if legendary slots change
-    };
-  } else {
-    // Default: 1 legendary (or override), 1 starter (Arclight), max(mastery, potency) additional
-    return {
-      legendarySlots: legendarySlotOverride || 1,
-      starterSlots: 1,
-      starterSpells: ["Arclight"],
-      flexSlots: Math.max(mastery, potency),
-      fixedTotal: false
-    };
-  }
-}
-
-// Calculate total max spell slots
-function getMaxSpellSlots() {
-  const config = getSpellSlotConfig();
-  if (config.fixedTotal) {
-    return config.totalSlots;
-  }
-  return config.legendarySlots + config.starterSlots + config.flexSlots;
-}
-
-// Get number of legendary slots
-function getLegendarySlotCount() {
-  return getSpellSlotConfig().legendarySlots;
-}
-
-function getCurrentSpellCount() {
-  return spells.filter(s => s?.name).length;
-}
-
-function updateAddSpellButtonState() {
-  const config = getSpellSlotConfig();
-  const maxSlots = getMaxSpellSlots();
-  const legendaryCount = getLegendarySlotCount();
-  const regularMax = maxSlots - legendaryCount;
-  const regularCurrent = spells.slice(legendaryCount).filter(s => s?.name).length;
-  const full = regularCurrent >= regularMax;
-  
-  // Don't disable button - keep it bright and clickable at all times
-  addSpellBtn.innerHTML = full 
-    ? 'Mind Full - Improve Mastery/Potency' 
-    : '<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Learn New Spell';
-}
-
-// Fuzzy spell lookup (case-insensitive)
-/* ========= IMPROVED FUZZY MATCHING ========= */
-// Enhanced fuzzy search that matches partial strings from the beginning
-function fuzzyMatch(database, searchTerm) {
-  if (!searchTerm) return null;
-  const searchLower = searchTerm.toLowerCase().trim();
-  
-  // 1. Exact match (case-insensitive)
-  for (const [key, data] of Object.entries(database)) {
-    if (key.toLowerCase() === searchLower) {
-      return { key, data };
-    }
-  }
-  
-  // 2. Starts with match (e.g., "Mur" matches "Murky Elixir")
-  for (const [key, data] of Object.entries(database)) {
-    if (key.toLowerCase().startsWith(searchLower)) {
-      return { key, data };
-    }
-  }
-  
-  // 3. Word starts with match (e.g., "Fev" matches "Feverspin Crimson")
-  for (const [key, data] of Object.entries(database)) {
-    const words = key.toLowerCase().split(' ');
-    if (words.some(word => word.startsWith(searchLower))) {
-      return { key, data };
-    }
-  }
-  
-  // 4. Contains match (e.g., "dark" matches "Beastblood Elixir" if it contains "dark")
-  for (const [key, data] of Object.entries(database)) {
-    if (key.toLowerCase().includes(searchLower)) {
-      return { key, data };
-    }
-  }
-  
-  return null;
-}
-
-function findSpellByName(name) {
-  if (!name) return null;
-  const result = fuzzyMatch(spellDB, name);
-  return result ? { ...result.data, name: result.key } : null;
-}
-
-// Render cost as icons
-function renderCostIcons(cost) {
-  if (!cost || !Array.isArray(cost)) return '';
-  
-  return cost.map(c => {
-    const iconPath = COST_ICONS[c.type] || COST_ICONS.generic;
-    const amount = c.amount || 1;
-    
-    if (c.type === 'x') {
-      return `<span class="cost-item cost-x" data-type="x"><img src="${iconPath}" alt="X" class="cost-icon" /><span class="cost-amount">X</span></span>`;
-    } else if (c.type === 'generic') {
-      return `<span class="cost-item cost-generic" data-type="generic"><img src="${iconPath}" alt="Any" class="cost-icon" /><span class="cost-amount">${amount}</span></span>`;
-    } else {
-      let icons = '';
-      for (let i = 0; i < amount; i++) {
-        icons += `<img src="${iconPath}" alt="${c.type}" class="cost-icon" title="${c.type}" />`;
-      }
-      return `<span class="cost-item" data-type="${c.type}">${icons}</span>`;
-    }
-  }).join('');
-}
-
-// Check if player can afford spell cost
-
-// Deduct spell cost from resources
-
-// Check if cost has variable components (X or generic)
-function hasVariableCost(cost) {
-  if (!cost || !Array.isArray(cost)) return { hasX: false, hasGeneric: false };
-  return {
-    hasX: cost.some(c => c.type === 'x'),
-    hasGeneric: cost.some(c => c.type === 'generic')
-  };
-}
-
-mindBtn.onclick = () => {
-  if (!hasSoulboundAndIris()) {
-    alert('Your mind cannot open without a Soulbound Artefact and Iris. Add them in your Inventory first.');
-    return;
-  }
-  mindOpen = !mindOpen;
-  mindOverlay.classList.toggle('visible', mindOpen);
-  mindBtn.classList.toggle('active', mindOpen);
-  if (mindOpen) {
-    initializeSpells();
-    renderSpells();
-  }
-};
-
-mindOverlay.addEventListener('click', (e) => {
-  if (e.target === mindOverlay) {
-    mindOpen = false;
-    mindOverlay.classList.remove('visible');
-    mindBtn.classList.remove('active');
-  }
-});
-
-// Initialize spells based on Iris configuration
-function initializeSpells() {
-  const config = getSpellSlotConfig();
-  const legendaryCount = config.legendarySlots;
-  const totalSlots = getMaxSpellSlots();
-  const artefact = getCurrentArtefact();
-  
-  // Ensure we have the minimum slots
-  while (spells.length < totalSlots) {
-    spells.push({});
-  }
-  
-  // Initialize legendary slots based on artefact type
-  const legendarySpellList = ARTEFACT_LEGENDARY_SPELLS[artefact] || [];
-  
-  // Special handling for "The Wand" - allows any non-legendary spell with coalesce cost
-  if (artefact === "The Wand") {
-    // The Wand doesn't auto-assign legendary spells
-    // Players can manually enter any non-legendary spell name
-    // The cost will be handled specially in saveSpell
-    for (let i = 0; i < legendaryCount; i++) {
-      if (!spells[i]?.name) {
-        spells[i] = {
-          name: "",
-          isLegendary: true,
-          isWandSlot: true // Special flag for Wand slots
-        };
-      }
-    }
-  }
-  // Special handling for "The Pair and a Half" - grants both legendary spells
-  else if (artefact === "The Pair and a Half" && legendarySpellList.length === 2) {
-    // Assign both spells to the two legendary slots
-    for (let i = 0; i < 2; i++) {
-      if (!spells[i]?.name && legendarySpellList[i]) {
-        const legendarySpell = legendarySpellList[i];
-        const spellData = spellDB[legendarySpell.name];
-        
-        if (spellData) {
-          spells[i] = {
-            ...spellData,
-            isLegendary: true
-          };
-        } else {
-          spells[i] = {
-            name: legendarySpell.name,
-            id: legendarySpell.id,
-            image: `cards/fronts/${legendarySpell.id}.webp`,
-            primaryType: "Legendary Spell",
-            secondaryType: "",
-            description: "A legendary spell granted by your Soulbound Artefact.",
-            cost: [{ type: "coalesce", amount: 1 }],
-            isLegendary: true
-          };
-        }
-        
-        // Track the assigned spell
-        if (!assignedLegendarySpells[artefact]) {
-          assignedLegendarySpells[artefact] = [];
-        }
-        if (!assignedLegendarySpells[artefact].includes(legendarySpell.name)) {
-          assignedLegendarySpells[artefact].push(legendarySpell.name);
-        }
-      }
-    }
-  }
-  // Normal artefacts - randomly assign one legendary spell from the pool
-  else if (legendarySpellList.length > 0) {
-    // Check if we've already assigned legendary spells for this artefact
-    if (!assignedLegendarySpells[artefact] || assignedLegendarySpells[artefact].length === 0) {
-      // First time - randomly select one spell from the pool
-      const randomIndex = Math.floor(Math.random() * legendarySpellList.length);
-      const selectedSpell = legendarySpellList[randomIndex];
-      
-      // Save this as the assigned spell for this artefact
-      assignedLegendarySpells[artefact] = [selectedSpell.name];
-      saveState('assignedLegendarySpells', assignedLegendarySpells);
-      
-      console.log(`Randomly assigned legendary spell for ${artefact}: ${selectedSpell.name}`);
-    }
-    
-    // Initialize legendary slots with assigned spells
-    for (let i = 0; i < legendaryCount; i++) {
-      if (!spells[i]?.name && assignedLegendarySpells[artefact] && assignedLegendarySpells[artefact][i]) {
-        const assignedSpellName = assignedLegendarySpells[artefact][i];
-        const legendarySpell = legendarySpellList.find(s => s.name === assignedSpellName);
-        
-        if (legendarySpell) {
-          const spellData = spellDB[legendarySpell.name];
-          if (spellData) {
-            spells[i] = {
-              ...spellData,
-              isLegendary: true
-            };
-          } else {
-            spells[i] = {
-              name: legendarySpell.name,
-              id: legendarySpell.id,
-              image: `cards/fronts/${legendarySpell.id}.webp`,
-              primaryType: "Legendary Spell",
-              secondaryType: "",
-              description: "A legendary spell granted by your Soulbound Artefact.",
-              cost: [{ type: "coalesce", amount: 1 }],
-              isLegendary: true
-            };
-          }
-        }
-      }
-    }
-  }
-  
-  // Initialize starter spells if empty
-  for (let i = 0; i < config.starterSpells.length; i++) {
-    const slotIndex = legendaryCount + i;
-    if (slotIndex < spells.length && !spells[slotIndex]?.name) {
-      const starterName = config.starterSpells[i];
-      const starterData = spellDB[starterName];
-      if (starterData) {
-        spells[slotIndex] = {
-          ...starterData,
-          prefilled: true // Prefilled but not locked - players can delete these
-        };
-      }
-    }
-  }
-  
-  saveState('spells', spells);
-}
-
-function renderSpells() {
-  const config = getSpellSlotConfig();
-  const maxSlots = getMaxSpellSlots();
-  const legendaryCount = config.legendarySlots;
-  
-  const currentCount = getCurrentSpellCount();
-  const capacityEl = document.getElementById('mindCapacity');
-  if (capacityEl) {
-    const isFull = currentCount >= maxSlots;
-    capacityEl.innerHTML = `Spells: <span class="${isFull ? 'capacity-full' : ''}">${currentCount} / ${maxSlots}</span>`;
-  }
-
-  spellList.innerHTML = '';
-  
-  // Render legendary slots
-  spellList.innerHTML += `<div class="spell-section-title">Legendary Spell${legendaryCount > 1 ? 's' : ''}</div>`;
-  for (let i = 0; i < legendaryCount; i++) {
-    spellList.innerHTML += createSpellCard(i, spells[i] || {}, true);
-  }
-  
-  // Render regular slots
-  spellList.innerHTML += '<div class="spell-section-title">Regular Spells</div>';
-  for (let i = legendaryCount; i < spells.length && i < maxSlots; i++) {
-    spellList.innerHTML += createSpellCard(i, spells[i] || {}, false);
-  }
-  
-  bindSpellEvents();
-  updateAddSpellButtonState();
-}
-
-function createSpellCard(index, data = {}, isLegendary = false) {
-  const hasImage = data.image ? 'has-image' : '';
-  const isLocked = data.locked ? 'locked' : '';
-  const isPrefilled = data.prefilled ? 'prefilled' : '';
-  const imgContent = data.image 
-    ? `<img src="${data.image}" alt="${data.name || 'Spell'}" />`
-    : `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`;
-  
-  // Special placeholder for The Wand
-  const artefact = getCurrentArtefact();
-  let placeholder = isLegendary ? 'NEW LEGENDARY SPELL' : 'NEW SPELL';
-  if (isLegendary && artefact === "The Wand") {
-    placeholder = 'ENTER ANY NON-LEGENDARY SPELL';
-  }
-  
-  const typeLabel = data.primaryType && data.secondaryType 
-    ? `${data.primaryType} — ${data.secondaryType}` 
-    : (data.type || (isLegendary ? 'Legendary Spell' : 'Regular Spell'));
-  
-  const costHtml = data.cost ? renderCostIcons(data.cost) : '';
-  const canCast = data.name && canAffordSpell(data.cost);
-  const showDelete = !data.locked;
-  
-  return `
-  <div class="spell-slot${isLegendary ? ' legendary' : ''}" data-index="${index}" data-spell-name="${data.name || ''}">
-    <div class="spell-left-column">
-      <div class="spell-image ${hasImage}">${imgContent}</div>
-      ${data.name ? `<button class="spell-cast-btn ${canCast ? '' : 'disabled'}" ${canCast ? '' : 'disabled'}>Cast</button>` : ''}
-    </div>
-    <div class="spell-info">
-      <input class="spell-name ${isLocked}" placeholder="${placeholder}" value="${data.name || ''}" ${isLocked ? 'readonly' : ''} />
-      <div class="spell-type">${typeLabel}</div>
-      <div class="spell-subtitle">${data.subtitle || ''}</div>
-      <div class="spell-description">${data.description || '—'}</div>
-      <div class="spell-footer">
-        <div class="spell-cost">${costHtml}</div>
-      </div>
-    </div>
-    <button class="spell-confirm-btn"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
-    <button class="spell-delete-btn" style="${showDelete ? '' : 'display:none'}"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  </div>`;
-}
-
-function bindSpellEvents() {
-  document.querySelectorAll('.spell-slot').forEach(card => {
-    const index = +card.dataset.index;
-    const nameInput = card.querySelector('.spell-name');
-    const confirmBtn = card.querySelector('.spell-confirm-btn');
-    const deleteBtn = card.querySelector('.spell-delete-btn');
-    const castBtn = card.querySelector('.spell-cast-btn');
-    const imageDiv = card.querySelector('.spell-image');
-    
-    // Name input for learning new spells
-    nameInput.addEventListener('input', () => {
-      const hasChange = nameInput.value.trim() !== (spells[index]?.name || '');
-      confirmBtn.classList.toggle('visible', hasChange && nameInput.value.trim().length > 0);
-    });
-    
-    nameInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        saveSpell(index, nameInput.value.trim());
-        nameInput.blur();
-      }
-    });
-    
-    confirmBtn.onclick = () => saveSpell(index, nameInput.value.trim());
-    
-    // Delete (forget) spell
-    if (deleteBtn) {
-      deleteBtn.onclick = () => {
-        const spell = spells[index];
-        if (spell?.locked) return;
-        const spellName = spell?.name || 'this spell';
-        if (confirm(`Forget ${spellName}?`)) {
-          spells[index] = {};
-          saveState('spells', spells);
-          renderSpells();
-        }
-      };
-    }
-    
-    // Cast spell
-    if (castBtn) {
-      castBtn.onclick = () => handleCastSpell(index);
-    }
-  });
-}
-
-/* ========= CASTING LOGIC ========= */
-function castSpell(index) {
-  const spell = spells[index];
-  if (!spell || !spell.cost) return;
-
-  // 1. Check stamina cost
-  const staminaCostObj = spell.cost.find(c => c.type === 'stamina');
-  const staminaCost = staminaCostObj ? staminaCostObj.amount : 0;
-  
-  if (stamina < staminaCost) {
-    alert("Not enough Stamina!");
-    return;
-  }
-
-  // 2. Check Heart costs
-  const heartsToRemove = [];
-  let success = true;
-
-  for (const c of spell.cost) {
-    if (c.type === 'stamina') continue;
-
-    if (c.type === 'generic') {
-      let found = 0;
-      for (let i = hearts.length - 1; i >= 0; i--) {
-        if (!heartsToRemove.includes(i)) {
-          heartsToRemove.push(i);
-          found++;
-          if (found >= c.amount) break;
-        }
-      }
-      if (found < c.amount) { success = false; break; }
-    } 
-    else if (c.type === 'choice') {
-      let found = 0;
-      // Look for any heart that matches the allowed options
-      for (let i = hearts.length - 1; i >= 0; i--) {
-        if (c.options.includes(hearts[i].type) && !heartsToRemove.includes(i)) {
-          heartsToRemove.push(i);
-          found++;
-          if (found >= c.amount) break;
-        }
-      }
-      if (found < c.amount) { success = false; break; }
-    }
-    else if (c.type === 'x') {
-      for (let i = 0; i < hearts.length; i++) {
-        if (!heartsToRemove.includes(i)) heartsToRemove.push(i);
-      }
-    } 
-    else {
-      // Specific color
-      let found = 0;
-      for (let i = hearts.length - 1; i >= 0; i--) {
-        if (hearts[i].type === c.type && !heartsToRemove.includes(i)) {
-          heartsToRemove.push(i);
-          found++;
-          if (found >= c.amount) break;
-        }
-      }
-      if (found < c.amount) { success = false; break; }
-    }
-  }
-
-  if (!success) {
-    alert("Not enough Hearts of the required types!");
-    return;
-  }
-  
-  // 3. Deduct resources
-  stamina -= staminaCost;
-  
-  // Remove hearts (highest index first to maintain array order)
-  heartsToRemove.sort((a, b) => b - a);
-  heartsToRemove.forEach(idx => hearts.splice(idx, 1));
-
-  // 4. Save and Update UI
-  saveState('stamina', stamina);
-  saveState('hearts', hearts);
-  renderStats();
-  renderHearts();
-  
-  const spellCard = document.querySelectorAll('.spell-card')[index];
-  if (spellCard) {
-    spellCard.classList.add('cast-flash');
-    setTimeout(() => spellCard.classList.remove('cast-flash'), 500);
-  }
-}
-
-// Check if player has enough resources
-function canAffordSpell(cost, xValue = 0, genericChoice = null) {
-  if (!cost || !Array.isArray(cost)) return true;
-  
-  // Mapping spell cost types (DB) to localStorage keys (System)
-  const resourceMap = {
-    'life': 'life',
-    'stamina': 'stamina',
-    'empower': 'empower',
-    'mana': 'mana',
-    'energy': 'energy',
-    'coalesce': 'coalesce', // coalesce in cards = Coalesce in code
-    'coalesce': 'coalesce',
-    'crys': 'coalesce' // Crys also maps to coalesce
-  };
-
-  for (const c of cost) {
-    // Skip costs that aren't player resources (display but don't deduct)
-    const nonPlayerResources = [
-      'tap', 'untap', 'channel', 'ready', 'swap', 'arrow', 'action',
-      'potency', 'mastery', 'tinge', 'arcane', 'worm', 'skill', 
-      'strength', 'madness', 'armour', 'shield'
-    ];
-    if (nonPlayerResources.includes(c.type.toLowerCase())) {
-      continue;
-    }
-
-    let typeToCheck = c.type.toLowerCase();
-    let amount = c.amount || 1;
-    
-    // Handle X costs
-    if (typeToCheck === 'x') {
-      amount = xValue;
-      typeToCheck = (genericChoice || 'mana').toLowerCase();
-    } 
-    // Handle Generic costs
-    else if (typeToCheck === 'generic') {
-      typeToCheck = (genericChoice || 'mana').toLowerCase();
-    }
-
-    const storageKey = resourceMap[typeToCheck];
-    
-    // If it's a valid resource, check amount
-    if (storageKey) {
-      const current = Number(loadState(storageKey, 0)) || 0;
-      if (current < amount) return false;
-    }
-  }
-  return true;
-}
-
-// Deduct resources and update UI
-function deductSpellCost(cost, xValue = 0, genericChoice = null) {
-  if (!cost || !Array.isArray(cost)) return;
-
-  const resourceMap = {
-    'life': 'life',
-    'stamina': 'stamina',
-    'empower': 'empower',
-    'mana': 'mana',
-    'energy': 'energy',
-    'coalesce': 'coalesce',
-    'coalesce': 'coalesce',
-    'crys': 'coalesce'
-  };
-  
-  for (const c of cost) {
-    // Skip costs that aren't player resources (display but don't deduct)
-    const nonPlayerResources = [
-      'tap', 'untap', 'channel', 'ready', 'swap', 'arrow', 'action',
-      'potency', 'mastery', 'tinge', 'arcane', 'worm', 'skill', 
-      'strength', 'madness', 'armour', 'shield'
-    ];
-    if (nonPlayerResources.includes(c.type.toLowerCase())) {
-      continue;
-    }
-
-    let typeToCheck = c.type.toLowerCase();
-    let amount = c.amount || 1;
-    
-    if (typeToCheck === 'x') {
-      amount = xValue;
-      typeToCheck = (genericChoice || 'mana').toLowerCase();
-    } else if (typeToCheck === 'generic') {
-      typeToCheck = (genericChoice || 'mana').toLowerCase();
-    }
-
-    const storageKey = resourceMap[typeToCheck];
-    
-    if (storageKey) {
-      const current = Number(loadState(storageKey, 0)) || 0;
-      const newValue = Math.max(0, current - amount);
-      saveState(storageKey, newValue);
-      console.log(`Paid ${amount} ${storageKey}. New value: ${newValue}`);
-    }
-  }
-  
-  // Force UI update for all bars
-  updateAllBars();
-  updateBottomStats();
-}
-
-// Handle the button click
-function handleCastSpell(index) {
-  const spell = spells[index];
-  if (!spell?.name) return;
-  // Ensure we always use canonical spellDB data
-  const canonical = findSpellByName(spell.name);
-  const cost = canonical?.cost ?? spell.cost ?? [];
-
-  const { hasX, hasGeneric } = hasVariableCost(spell.cost);
-  let xValue = 0;
-  let genericChoice = 'Mana';
-  
-  // 1. Handle "X" Variable Costs
-  if (hasX) {
-    // First ask which resource
-    const resourceInput = prompt(
-      `Pay X cost with which resource?\n(Type: Life, Stamina, Mana, Energy, Empower, or coalesce)`, 
-      'Mana'
-    );
-    if (resourceInput === null) return; // User cancelled
-    
-    genericChoice = resourceInput.trim();
-    const validChoices = ['life', 'stamina', 'mana', 'energy', 'empower', 'coalesce', 'coalesce', 'crys'];
-    
-    if (!validChoices.includes(genericChoice.toLowerCase())) {
-      alert('Invalid resource. Please type: Life, Stamina, Mana, Energy, Empower, or coalesce.');
-      return;
-    }
-    
-    // Then ask for amount
-    const input = prompt(`Enter value for X (How much ${genericChoice} to spend?):`, '1');
-    if (input === null) return; // User cancelled
-    xValue = parseInt(input) || 0;
-    if (xValue <= 0) {
-      alert('X must be at least 1');
-      return;
-    }
-  }
-  
-  // 2. Handle "Generic" (Grey Crystal) Costs
-  if (hasGeneric) {
-    // Simple prompt for resource selection
-    const rawChoice = prompt(
-      `Pay Generic Cost with which resource?\n(Type: Life, Stamina, Mana, Energy, Empower, or coalesce)`, 
-      'Mana'
-    );
-    if (rawChoice === null) return; // User cancelled
-    
-    genericChoice = rawChoice.trim();
-    const validChoices = ['life', 'stamina', 'mana', 'energy', 'empower', 'coalesce', 'coalesce', 'crys'];
-    
-    if (!validChoices.includes(genericChoice.toLowerCase())) {
-      alert('Invalid resource. Please type: Life, Stamina, Mana, Energy, Empower, or coalesce.');
-      return;
-    }
-  }
-  
-  // 3. Check Affordability
-  if (!canAffordSpell(spell.cost, xValue, genericChoice)) {
-    alert('Not enough resources to cast this spell!');
-    return;
-  }
-  
-  // 4. Confirmation (Optional)
-  if (!castWarningDisabled) {
-    if (!confirm(`Cast "${spell.name}"?`)) return;
-  }
-  
-  // 5. Deduct and Finish
-  deductSpellCost(spell.cost, xValue, genericChoice);
-  
-  // Visual Feedback
-  const btn = document.querySelector(`.spell-slot[data-index="${index}"] .spell-cast-btn`);
-  if(btn) {
-    const originalText = btn.textContent;
-    btn.textContent = "Cast!";
-    btn.style.background = "rgba(76, 175, 80, 0.6)";
-    setTimeout(() => {
-      btn.textContent = originalText;
-      btn.style.background = "";
-    }, 1000);
-  }
-}
-
-
-function saveSpell(index, name) {
-  const legendaryCount = getLegendarySlotCount();
-  const isLegendarySlot = index < legendaryCount;
-  const artefact = getCurrentArtefact();
-  
-  if (!name) {
-    // Don't clear locked/prefilled spells
-    if (!spells[index]?.locked && !spells[index]?.prefilled) {
-      spells[index] = {};
-    }
-  } else {
-    // Fuzzy lookup
-    const foundSpell = findSpellByName(name);
-    
-    // Validate legendary slot restrictions
-    if (isLegendarySlot) {
-      const legendarySpellList = ARTEFACT_LEGENDARY_SPELLS[artefact] || [];
-      const assignedSpells = assignedLegendarySpells[artefact] || [];
-      
-      // Special handling for The Wand
-      if (artefact === "The Wand") {
-        // The Wand allows any NON-LEGENDARY spell
-        if (foundSpell) {
-          // Check if the spell is legendary (id >= 532)
-          if (foundSpell.id && foundSpell.id >= 532) {
-            alert("The Wand can only hold non-legendary spells!");
-            return;
-          }
-          
-          // Replace cost with single coalesce
-          spells[index] = {
-            ...foundSpell,
-            cost: [{ type: "coalesce", amount: 1 }],
-            isLegendary: true, // It's in a legendary slot
-            isWandSlot: true,
-            originalCost: foundSpell.cost // Preserve original for reference
-          };
-        } else {
-          // Custom spell for The Wand
-          spells[index] = {
-            name,
-            type: 'Spell (via The Wand)',
-            description: 'Custom spell - The Wand reduces all costs to a single coalesce.',
-            cost: [{ type: "coalesce", amount: 1 }],
-            isLegendary: true,
-            isWandSlot: true
-          };
-        }
-      } 
-      // Normal legendary slots - restrict to assigned pool
-      else {
-        // First, try to fuzzy match the input to find the actual spell name
-        let spellNameToCheck = name;
-        let matchedSpell = foundSpell;
-        
-        // If foundSpell exists, use its name for validation (fuzzy match succeeded)
-        if (foundSpell) {
-          spellNameToCheck = foundSpell.name;
-        }
-        
-        // Check if the spell (or fuzzy-matched spell) is from the artefact's legendary pool
-        const isFromPool = legendarySpellList.some(s => 
-          s.name.toLowerCase() === spellNameToCheck.toLowerCase()
-        );
-        
-        if (!isFromPool) {
-          const poolNames = legendarySpellList.map(s => s.name).join(', ');
-          alert(`This legendary slot can only learn spells from ${artefact}'s pool:\n${poolNames}`);
-          return;
-        }
-        
-        // Valid legendary spell from pool
-        if (matchedSpell) {
-          spells[index] = {
-            ...matchedSpell,
-            isLegendary: true
-          };
-        } else {
-          // Find the spell in the legendary list (for fallback)
-          const legendarySpell = legendarySpellList.find(s => 
-            s.name.toLowerCase() === spellNameToCheck.toLowerCase()
-          );
-          
-          if (legendarySpell) {
-            spells[index] = {
-              name: legendarySpell.name,
-              id: legendarySpell.id,
-              image: `cards/fronts/${legendarySpell.id}.webp`,
-              primaryType: "Legendary Spell",
-              secondaryType: "",
-              description: "A legendary spell granted by your Soulbound Artefact.",
-              cost: [{ type: "coalesce", amount: 1 }],
-              isLegendary: true
-            };
-          } else {
-            spells[index] = {
-              name: spellNameToCheck,
-              type: 'Legendary Spell',
-              description: 'Custom legendary spell - no data available.',
-              cost: [],
-              isLegendary: true
-            };
-          }
-        }
-      }
-    } else {
-      // Regular spell slot - no restrictions
-      if (foundSpell) {
-        spells[index] = {
-          ...foundSpell,
-          isLegendary: false
-        };
-      } else {
-        // Custom spell (not in database)
-        spells[index] = {
-          name,
-          type: 'Regular Spell',
-          description: 'Custom spell - no data available.',
-          cost: []
-        };
-      }
-    }
-  }
-  saveState('spells', spells);
-  renderSpells();
-}
-
-addSpellBtn.onclick = () => {
-  const maxSlots = getMaxSpellSlots();
-  const legendaryCount = getLegendarySlotCount();
-  const regularMax = maxSlots - legendaryCount;
-  
-  // Check if all regular spell slots are full
-  const regularCurrent = spells.slice(legendaryCount).filter(s => s?.name).length;
-  
-  if (regularCurrent >= regularMax) {
-    // All slots full - show warning
-    alert('Please improve Mastery or Potency to expand spell slots!');
-    return;
-  }
-  
-  // Find first empty regular spell slot
-  let emptySlotIndex = -1;
-  for (let i = legendaryCount; i < spells.length; i++) {
-    if (!spells[i]?.name) {
-      emptySlotIndex = i;
-      break;
-    }
-  }
-  
-  // If no empty slots exist but we need more, create them
-  if (emptySlotIndex === -1 && spells.length < maxSlots) {
-    emptySlotIndex = spells.length;
-    spells.push({});
-  }
-  
-  if (emptySlotIndex === -1) {
-    alert('Please improve Mastery or Potency to expand spell slots!');
-    return;
-  }
-  
-  // Get all learnable spells from spellDB
-  // Exclude: legendary spells (id >= 532), and types "Madness Magic", "Beyond", "Basic"
-  const excludedTypes = ["Madness Magic", "Beyond", "Basic"];
-  
-  const learnableSpells = Object.values(spellDB).filter(spell => {
-    // Exclude legendary spells (id >= 532)
-    if (spell.id && spell.id >= 532) {
-      return false;
-    }
-    
-    // Exclude forbidden primary types
-    if (spell.primaryType && excludedTypes.includes(spell.primaryType)) {
-      return false;
-    }
-    
-    // Exclude forbidden secondary types
-    if (spell.secondaryType && excludedTypes.includes(spell.secondaryType)) {
-      return false;
-    }
-    
-    return true;
-  });
-  
-  if (learnableSpells.length === 0) {
-    alert('No spells available to learn!');
-    return;
-  }
-  
-  // Randomly select a spell
-  const randomIndex = Math.floor(Math.random() * learnableSpells.length);
-  const randomSpell = learnableSpells[randomIndex];
-  
-  // Assign the spell to the empty slot
-  spells[emptySlotIndex] = {
-    ...randomSpell,
-    isLegendary: false
-  };
-  
-  saveState('spells', spells);
-  renderSpells();
-  
-  console.log(`Learned random spell: ${randomSpell.name}`);
-};
-
-// Update mind button state when inventory changes
-const originalRenderInventoryForMind = renderInventory;
-renderInventory = function() {
-  originalRenderInventoryForMind();
-  updateMindButtonState();
-};
-
-// Initialize mind button state on page load
-setTimeout(() => {
-  updateMindButtonState();
-}, 100);
-// Helper function to render spell cost (keep your existing version)
-function renderSpellCost(costs) {
-  if (!costs || !Array.isArray(costs)) return '';
-  
-  return costs.map(cost => {
-    // Handle Stamina icons
-    if (cost.type === 'stamina') {
-      return `<span class="cost-stamina" style="color:#ffcc00; font-weight:bold; margin: 0 4px;">⚡${cost.amount}</span>`;
-    }
-    
-    // Handle Generic/X
-    if (cost.type === 'generic' || cost.type === 'x') {
-      return `<span class="cost-${cost.type}">${cost.amount || 'X'}</span>`;
-    }
-
-    // Handle Choice (e.g., Listen, Focus)
-    if (cost.type === 'choice') {
-      const optionsHtml = cost.options.map(opt => {
-        const icon = COST_ICONS[opt] || COST_ICONS.generic;
-        return `<div class="cost-icon mini" style="background-image: url('${icon}')"></div>`;
-      }).join('<span class="choice-slash">/</span>');
-      
-      return `
-      <div class="cost-choice-group">
-        ${optionsHtml}
-        ${cost.amount > 1 ? `<span class="cost-amount" style="margin-left:2px">x${cost.amount}</span>` : ''}
-      </div>`;
-    }
-
-    // Default specific color
-    const icon = COST_ICONS[cost.type] || COST_ICONS.generic;
-    return `
-    <div class="cost-icon" style="background-image: url('${icon}')">
-      ${cost.amount > 1 ? `<span class="cost-amount">${cost.amount}</span>` : ''}
-    </div>`;
-  }).join('');
-}
 </script>
 </body>
 </html>
