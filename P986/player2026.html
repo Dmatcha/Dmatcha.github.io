@@ -2487,18 +2487,131 @@ function calculateLevel() {
 
 function calculateTinge() {
   const potency = Number(loadState('Potency', 0)) || 0;
-  const currentMana = Number(loadState('mana', 0)) || 0;
   
-  console.log('Tinge calc - Potency:', potency, 'Current Mana:', currentMana, 'Total:', potency + currentMana);
-  return potency + currentMana;
+  // Safety check: return early if spells or inventory aren't initialized yet
+  try {
+    // This will throw if spells isn't initialized
+    if (!spells || !inventory) {
+      console.log('Tinge calc - spells or inventory not ready');
+      return potency;
+    }
+  } catch (e) {
+    // Not initialized yet, just return potency
+    console.log('Tinge calc - caught error, returning potency only:', potency);
+    return potency;
+  }
+  
+  // Count light spells in player's spell list
+  let lightSpellCount = 0;
+  let totalSpellCount = 0;
+  
+  spells.forEach(spell => {
+    if (spell && spell.name) {
+      totalSpellCount++;
+      
+      // Check if primaryType or secondaryType contains "light" (case-insensitive)
+      const primaryType = (spell.primaryType || '').toLowerCase();
+      const secondaryType = (spell.secondaryType || '').toLowerCase();
+      
+      if (primaryType.includes('light') || secondaryType.includes('light')) {
+        lightSpellCount++;
+      }
+    }
+  });
+  
+  // Check for soulgems in inventory
+  let hasSoulgem = false;
+  inventory.forEach(item => {
+    if (item && item.toLowerCase && item.toLowerCase().includes('soulgem')) {
+      hasSoulgem = true;
+    }
+    // Also check if it's an object with a name property
+    if (item && item.name && item.name.toLowerCase().includes('soulgem')) {
+      hasSoulgem = true;
+    }
+  });
+  
+  // Check if majority of spells are light spells
+  const majorityLight = totalSpellCount > 0 && (lightSpellCount > totalSpellCount / 2);
+  
+  // Calculate tinge: Potency + light spell count + soulgem bonus + majority bonus
+  let tinge = potency + lightSpellCount;
+  if (hasSoulgem) tinge += 1;
+  if (majorityLight) tinge += 1;
+  
+  console.log('Tinge calc - Potency:', potency, 'Light Spells:', lightSpellCount, 
+              'Soulgem:', hasSoulgem, 'Majority Light:', majorityLight, 'Total:', tinge);
+  return tinge;
 }
 
 function calculateArcane() {
   const mastery = Number(loadState('Mastery', 0)) || 0;
-  const currentEnergy = Number(loadState('energy', 0)) || 0;
   
-  console.log('Arcane calc - Mastery:', mastery, 'Current Energy:', currentEnergy, 'Total:', mastery + currentEnergy);
-  return mastery + currentEnergy;
+  // Safety check: return early if spells or inventory aren't initialized yet
+  try {
+    // This will throw if spells isn't initialized
+    if (!spells || !inventory) {
+      console.log('Arcane calc - spells or inventory not ready');
+      return mastery;
+    }
+  } catch (e) {
+    // Not initialized yet, just return mastery
+    console.log('Arcane calc - caught error, returning mastery only:', mastery);
+    return mastery;
+  }
+  
+  // Count arcane and light spells in player's spell list
+  let arcaneSpellCount = 0;
+  let lightSpellCount = 0;
+  
+  spells.forEach(spell => {
+    if (spell && spell.name) {
+      const primaryType = (spell.primaryType || '').toLowerCase();
+      const secondaryType = (spell.secondaryType || '').toLowerCase();
+      
+      // Check for arcane spells
+      if (primaryType.includes('arcane') || secondaryType.includes('arcane')) {
+        arcaneSpellCount++;
+      }
+      
+      // Check for light spells (needed for comparison bonus)
+      if (primaryType.includes('light') || secondaryType.includes('light')) {
+        lightSpellCount++;
+      }
+    }
+  });
+  
+  // Check for arcane equipment in inventory
+  let hasArcaneEquipment = false;
+  inventory.forEach(item => {
+    if (item && item.toLowerCase && item.toLowerCase().includes('arcane')) {
+      hasArcaneEquipment = true;
+    }
+    // Also check if it's an object with a name property
+    if (item && item.name && item.name.toLowerCase().includes('arcane')) {
+      hasArcaneEquipment = true;
+    }
+  });
+  
+  // If player has at least one light spell and one arcane spell,
+  // add the difference (arcane - light) if positive
+  let comparisonBonus = 0;
+  if (lightSpellCount >= 1 && arcaneSpellCount >= 1) {
+    const difference = arcaneSpellCount - lightSpellCount;
+    if (difference > 0) {
+      comparisonBonus = difference;
+    }
+  }
+  
+  // Calculate arcane: Mastery + arcane spell count + arcane equipment bonus + comparison bonus
+  let arcane = mastery + arcaneSpellCount;
+  if (hasArcaneEquipment) arcane += 1;
+  arcane += comparisonBonus;
+  
+  console.log('Arcane calc - Mastery:', mastery, 'Arcane Spells:', arcaneSpellCount, 
+              'Light Spells:', lightSpellCount, 'Arcane Equipment:', hasArcaneEquipment, 
+              'Comparison Bonus:', comparisonBonus, 'Total:', arcane);
+  return arcane;
 }
 
 function updateBottomStats() {
@@ -3837,45 +3950,35 @@ const inventoryBtn = document.getElementById('inventoryBtn');
 const inventoryList = document.getElementById('inventoryList');
 const addItemBtn = document.getElementById('addItemBtn');
 
+// Debug: Check if elements exist
+console.log('inventoryOverlay:', inventoryOverlay);
+console.log('inventoryBtn:', inventoryBtn);
+console.log('inventoryList:', inventoryList);
+
+if (!inventoryOverlay || !inventoryBtn || !inventoryList) {
+  console.error('CRITICAL: Inventory elements not found!');
+  console.error('inventoryOverlay:', inventoryOverlay);
+  console.error('inventoryBtn:', inventoryBtn);
+  console.error('inventoryList:', inventoryList);
+}
+
 let inventoryOpen = false;
 let inventory = loadState('inventory', []);
 
-function renderInventory() {
-  inventoryList.innerHTML = '';
-  inventory.forEach((item, i) => {
-    const row = document.createElement('div');
-    row.className = 'inventory-slot';
-
-    const input = document.createElement('input');
-    input.value = item || '';
-    input.placeholder =
-      i === 0 ? 'Soulbound Artefact' :
-      i === 1 ? 'Iris' : 'Item';
-
-    input.onblur = () => {
-      inventory[i] = input.value.trim();
-      saveState('inventory', inventory);
-    };
-
-    const clear = document.createElement('button');
-    clear.className = 'clear-btn';
-    clear.textContent = '×';
-    clear.onclick = () => {
-      inventory[i] = '';
-      saveState('inventory', inventory);
-      renderInventory();
-    };
-
-    row.append(input, clear);
-    inventoryList.appendChild(row);
-  });
+// Ensure minimum inventory slots
+if (inventory.length < 2) {
+  inventory = ['', ''];
+  saveState('inventory', inventory);
 }
 
 inventoryBtn.onclick = () => {
+  console.log('Inventory button clicked!');
   inventoryOpen = !inventoryOpen;
+  console.log('inventoryOpen:', inventoryOpen);
   inventoryOverlay.classList.toggle('visible', inventoryOpen);
   inventoryBtn.classList.toggle('active', inventoryOpen);
   renderInventory();
+  console.log('Overlay classes:', inventoryOverlay.className);
 };
 
 const addInventoryBtn = document.getElementById('addInventoryItem');
@@ -4848,6 +4951,7 @@ renderInventory = function() {
   bindInventoryEvents();
   updateAddItemButtonState();
 };
+
 
 /* ========= MIND/SPELL SYSTEM ========= */
 const mindBtn = document.getElementById('mindBtn');
@@ -6504,6 +6608,7 @@ function renderSpells() {
   
   bindSpellEvents();
   updateAddSpellButtonState();
+  updateBottomStats(); // Update Tinge and Arcane when spells change
 }
 
 function createSpellCard(index, data = {}, isLegendary = false) {
@@ -7117,6 +7222,7 @@ const originalRenderInventoryForMind = renderInventory;
 renderInventory = function() {
   originalRenderInventoryForMind();
   updateMindButtonState();
+  updateBottomStats(); // Update Tinge and Arcane when inventory changes
 };
 
 // Initialize mind button state on page load
