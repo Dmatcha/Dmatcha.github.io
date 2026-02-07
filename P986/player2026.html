@@ -2485,7 +2485,7 @@ function calculateLevel() {
   return 1 + endurance + skill + strength + mastery + potency;
 }
 
-function calculateTinge() {
+function calculateTinge(skipWandBonus = false) {
   const potency = Number(loadState('Potency', 0)) || 0;
   
   // Safety check: return early if spells or inventory aren't initialized yet
@@ -2534,13 +2534,40 @@ function calculateTinge() {
   // Check if majority of spells are light spells
   const majorityLight = totalSpellCount > 0 && (lightSpellCount > totalSpellCount / 2);
   
-  // Calculate tinge: Potency + light spell count + soulgem bonus + majority bonus
+  // Check equipped Soulbound Artefact (slot 0)
+  let artefactBonus = 0;
+  let artefactName = '';
+  const artefactSlot = inventory[0];
+  if (artefactSlot) {
+    if (typeof artefactSlot === 'string') {
+      artefactName = artefactSlot.toLowerCase();
+    } else if (artefactSlot.name) {
+      artefactName = artefactSlot.name.toLowerCase();
+    }
+    
+    // Prismatic Glasses: +2 Tinge
+    if (artefactName.includes('prismatic') && artefactName.includes('glasses')) {
+      artefactBonus += 2;
+      console.log('Prismatic Glasses equipped: +2 Tinge');
+    }
+    
+    // The Wand: Add current Arcane to Tinge (but prevent infinite recursion)
+    if (!skipWandBonus && artefactName.includes('wand')) {
+      const currentArcane = calculateArcane(); // Get current arcane value
+      artefactBonus += currentArcane;
+      console.log('The Wand equipped: +' + currentArcane + ' Tinge (from Arcane)');
+    }
+  }
+  
+  // Calculate tinge: Potency + light spell count + soulgem bonus + majority bonus + artefact bonus
   let tinge = potency + lightSpellCount;
   if (hasSoulgem) tinge += 1;
   if (majorityLight) tinge += 1;
+  tinge += artefactBonus;
   
   console.log('Tinge calc - Potency:', potency, 'Light Spells:', lightSpellCount, 
-              'Soulgem:', hasSoulgem, 'Majority Light:', majorityLight, 'Total:', tinge);
+              'Soulgem:', hasSoulgem, 'Majority Light:', majorityLight, 
+              'Artefact Bonus:', artefactBonus, 'Total:', tinge);
   return tinge;
 }
 
@@ -2603,14 +2630,33 @@ function calculateArcane() {
     }
   }
   
-  // Calculate arcane: Mastery + arcane spell count + arcane equipment bonus + comparison bonus
+  // Check equipped Soulbound Artefact (slot 0)
+  let artefactBonus = 0;
+  let artefactName = '';
+  const artefactSlot = inventory[0];
+  if (artefactSlot) {
+    if (typeof artefactSlot === 'string') {
+      artefactName = artefactSlot.toLowerCase();
+    } else if (artefactSlot.name) {
+      artefactName = artefactSlot.name.toLowerCase();
+    }
+    
+    // The Fisherman's Flask: +2 Arcane
+    if (artefactName.includes('fisherman') && artefactName.includes('flask')) {
+      artefactBonus += 2;
+      console.log("The Fisherman's Flask equipped: +2 Arcane");
+    }
+  }
+  
+  // Calculate arcane: Mastery + arcane spell count + arcane equipment bonus + comparison bonus + artefact bonus
   let arcane = mastery + arcaneSpellCount;
   if (hasArcaneEquipment) arcane += 1;
   arcane += comparisonBonus;
+  arcane += artefactBonus;
   
   console.log('Arcane calc - Mastery:', mastery, 'Arcane Spells:', arcaneSpellCount, 
               'Light Spells:', lightSpellCount, 'Arcane Equipment:', hasArcaneEquipment, 
-              'Comparison Bonus:', comparisonBonus, 'Total:', arcane);
+              'Comparison Bonus:', comparisonBonus, 'Artefact Bonus:', artefactBonus, 'Total:', arcane);
   return arcane;
 }
 
@@ -5879,7 +5925,7 @@ const spellDB = {
     cost: [/*{"type": "generic", "amount": 3}*/],
     description: "Twilight (Cannot be used in direct sunlight or moonlight) \nConjure a bespoke curse. \nLose this card or resolve <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>Necessary acts are sometimes grotesque.</em>",
     image: "cards/fronts/515.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -5890,7 +5936,7 @@ const spellDB = {
     cost: [/*{"type": "generic", "amount": 2}*/],
     description: "Reduce, lower, or diminish something by the number of curses active among all players. \nLose this card or resolve <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>That sinking feel won't go away? \nOh no...</em>",
     image: "cards/fronts/516.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -5901,7 +5947,7 @@ const spellDB = {
     cost: [/*{"type": "generic", "amount": 2}*/],
     description: "Afflict target with a phobia, with duration counters equal to remaining <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\nLose this card or resolve <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>Can you feel the creep and crawl? \nThe breath against your ear?</em>",
     image: "cards/fronts/517.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -5912,7 +5958,7 @@ const spellDB = {
     cost: [{"type": "generic", "amount": 4}],
     description: "You cannot heal normally. \nIf target loses life, regain life. \nDismiss Siphon Seal:\nLose this card or resolve <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>The circle of life is sometimes sinister.</em>",
     image: "cards/fronts/518.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -5923,7 +5969,7 @@ const spellDB = {
     cost: [/*{"type": "generic", "amount": 3}, */{"type": "mana", "amount": 2}, {"type": "energy", "amount": 2}],
     description: "Instead of paying the last three costs in a spell, resolve <img src='../icons/madness.png' class='desc-icon' alt='madness' />. \nThis cannot affect the first cost. \nDismiss Chiral Trepidations:\nLose this card or resolve <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>It feels as if you've been split in twain \nby a mirror.</em>",
     image: "cards/fronts/520.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -5934,7 +5980,7 @@ const spellDB = {
     cost: [/*{"type": "generic", "amount": 0}*/],
     description: "Consume all remaining <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\nYou must reduce that many non-cursed targets' life to 1, then inflict terror on those targets. Lose this card if you targeted yourself.\n<em>Something evil lurks within us all.\nHere it comes.</em>",
     image: "cards/fronts/521.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -5945,7 +5991,7 @@ const spellDB = {
     cost: [{"type": "energy", "amount": 2}, {"type": "mana", "amount": 2}/*, {"type": "generic", "amount": 0}*/],
     description: "Swift (Cannot miss) \nDeal damage equal to combined <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> and <img src='../icons/mastery4.png' class='desc-icon' alt='mastery' />, or divide that damage across many targets.\n<em>Best when wielded \nagainst the unwise.</em>",
     image: "cards/fronts/523.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -5956,7 +6002,7 @@ const spellDB = {
     cost: [/*{"type": "generic", "amount": 0}, */{"type": "mana", "amount": 1}],
     description: "Convert all light in area into moonlight. Any light spell or enchantment cast gains dim.\nEmpower wormridden things.\n<em>Those on the moon watch us carefully, and will send aid to their children.</em>",
     image: "cards/fronts/525.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -5967,7 +6013,7 @@ const spellDB = {
     cost: [/*{"type": "generic", "amount": 2}, */{"type": "energy", "amount": 1}],
     description: "Moonbless: Swift.\nHurl a festering ball of worm eggs that explode on impact.\nInflict slime.\n<em>A brief putrid stench accompanies this horrific blast of vile energy.</em>",
     image: "cards/fronts/527.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -5978,7 +6024,7 @@ const spellDB = {
     cost: [/*{"type": "generic", "amount": 3}, */{"type": "empower", "amount": 1}],
     description: "Moonbless:\nPay {1} instead of <img src='../icons/empower1.png' class='desc-icon' alt='empower' />.\nGain shield <img src='../icons/mshield.svg' class='desc-icon' alt='shield' /> equal to <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\nLose half <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>Adapt and overcome.\nEvolve and overwhelm.</em>",
     image: "cards/fronts/529.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -5989,7 +6035,7 @@ const spellDB = {
     cost: [/*{"type": "generic", "amount": 0}, */{"type": "empower", "amount": 1}, {"type": "life", "amount": 1}, {"type": "stamina", "amount": 1}],
     description: "After initial cast, you may pay life <img src='../icons/Life1.png' class='desc-icon' alt='life' /> to grow more and extend the length of tentacles.\nMoonbless: Double tentacles.\n<em>The pain oozes away. It feels as if you have always been this way. So natural.</em>",
     image: "cards/fronts/531.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6000,7 +6046,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Focus on a target: \nReduce power by your <img src='../icons/potency8.png' class='desc-icon' alt='potency' />.\nAdd <img src='../icons/mastery4.png' class='desc-icon' alt='mastery' /> to patience or interest.\n<em>First impressions are important.</em>",
     image: "cards/fronts/532.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6011,7 +6057,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "When wearing only the socks:\nMake no sound when moving.\nWalk across still water, leaves, etc.\nNullifies 99% of physical force.\nRemove socks: Gain <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>Walking on eggshells? \nEasy. Very easy.</em>",
     image: "cards/fronts/533.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6022,7 +6068,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Intercept projectiles and some weapons aimed at the bearer.\nPointing terrifies most beasts.\nNullifies 90% of physical force.\nRemove glove: Gain <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>If a mountain fell, \nthe glove may refuse.</em>",
     image: "cards/fronts/534.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6033,7 +6079,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Reshape the blade like clay rubber.\nThe bearer can extend or retract the blade or handle grip at will.\nWhistle, snap, or clap: Reset blade.\n<em>Maintains any shape, \nas per the bearer.</em>",
     image: "cards/fronts/535.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6044,7 +6090,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Reshape into a proficient weapon.\nParry most melee weapons freely.\n<img src='../icons/tap2.png' class='desc-icon' alt='tap' />: Slay, then reset Trickblade.\n<img src='../icons/untap2.png' class='desc-icon' alt='untap' />: Apologize, or gain <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>Mighty, but fearful of cats.</em>",
     image: "cards/fronts/536.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6055,7 +6101,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Affect body temperature during actions or events; \nboil water with palms, etc.\nControl flames and combustion.\nSummon anything sacrificed.\n<em>We see it in your eyes, \nthat fire within.</em>",
     image: "cards/fronts/537.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6066,7 +6112,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Affect body temperature during actions or events; freeze water, etc.\nReduce any incoming damage taken.\nChange local zone weather.\nInterrupt some magic.\n<em>Regal and pure, \nsnow on the mountain.</em>",
     image: "cards/fronts/538.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6077,7 +6123,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "While fixing eyes on a target: Influence their mood or thoughts.\nAlter their prowess by your own <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> or <img src='../icons/mastery4.png' class='desc-icon' alt='mastery' /> or <img src='../icons/str.png' class='desc-icon' alt='str' /> or <img src='../icons/skl.png' class='desc-icon' alt='skl' />.\n<em>Eyes are a window to the soul, \nmakes for an easy heist.</em>",
     image: "cards/fronts/539.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6088,7 +6134,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Flip a coin: Lose, gain <img src='../icons/madness.png' class='desc-icon' alt='madness' /> and <img src='../icons/tap2.png' class='desc-icon' alt='tap' /> tap. \nWin, choose one:\nThrow, deal no damage, distract.\nAny one action cannot fail.\nReturn to senses, remove 1 ailment.\nSpend the coin to <img src='../icons/untap2.png' class='desc-icon' alt='untap' /> untap.\n<em>The usefulness is a matter of \nspace and time.</em>",
     image: "cards/fronts/540.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6099,7 +6145,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Engulf the whole body or a single part in flame for a short time, \nthen you may:\nMaintain immolation.\nBillow and manipulate smoke.\n<em>This dark power... may your fiery imagination burn brightly.</em>",
     image: "cards/fronts/541.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6110,7 +6156,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Calms and soothes the nature of some entities. Things touched will slowly cool down and freeze.\nCan be used as a quick reaction.\n<em>Eventually, winter kills everything.</em>",
     image: "cards/fronts/542.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6121,7 +6167,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "See into the near future: \nYou may perform any other action immediately, and it becomes perfect or true.\n<em>Free will is a matter of perspective.</em>",
     image: "cards/fronts/543.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6132,7 +6178,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Conjure a Flaming Orb. \nDeal damage, with a chance to explode or ignite.\nUser may snuff out flames.\n<em>Fire. Beautiful. Devastating.</em>",
     image: "cards/fronts/544.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6143,7 +6189,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Conjure an Ice Lance. \nDeal true damage, spreading frost over time. \nUser may consume frost.\n<em>You cannot outrun the cold.</em>",
     image: "cards/fronts/545.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6154,7 +6200,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Pour any liquid substance.\nEmit any sound for a time.\nGain <img src='../icons/madness.png' class='desc-icon' alt='madness' />: Change substance.\n<em>Holding it grants a great sense of direction, but gets you a bit tipsy. Ha!</em>",
     image: "cards/fronts/546.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6165,7 +6211,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Choose one:\nUnderstand written words.\nDiscern a face's true intent. \nKnow the nature of the unfamiliar.\n<em>The world has always \nbeen this way.</em>",
     image: "cards/fronts/547.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6176,7 +6222,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Write in the book. What is writ was, is, or will be true...\nClose the book: Remove <img src='../icons/madness.png' class='desc-icon' alt='madness' />.\n<em>Book and pen are well-loved. Upon the first page \"Dear Scathe,\" is written.</em>",
     image: "cards/fronts/548.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6187,7 +6233,7 @@ const spellDB = {
     cost: [{"type": "coalesce", "amount": 1}],
     description: "Flip coin, if you lose: Tap <img src='../icons/tap2.png' class='desc-icon' alt='tap' />.\nIf you win: \nResolve anything to your whim.\n<img src='../icons/untap2.png' class='desc-icon' alt='untap' />: Spend the coin.\n<em>In the end, \nmoney and fate are useless.</em>",
     image: "cards/fronts/549.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   },
@@ -6199,7 +6245,7 @@ const spellDB = {
     cost: [{ type: "life", amount: 1 },{ type: "stamina", amount: 1 },{ type: "mana", amount: 1 },{ type: "energy", amount: 1 },{ type: "empower", amount: 1 }],
     description: "Turn invisible then shadow-step a moderate distance. If you attack or take damage, lose invisibility, become stunned, halve all resource pools.\n<em>Now you see me...</em>",
     image: "../icons/999.webp",
-    DiscoveryChance: 1,
+    DiscoveryChance: 0,
     LevelPotency: 0,
     LevelMastery: 0
   }
