@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Host Tracker</title>
+<style>
+:root {
+  --bg: #121212;
+  --card: #1f1f1f;
+  --muted: #9aa3ad;
+  --glass: rgba(255, 255, 255, 0.04);
+}
+/* ==========================
+   BODY
+========================== */
+body {
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(180deg, #0f0f12 0%, #141417 60%);
+  color: #e9eef6;
+  margin: 0;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  gap: 1rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+/* ==========================
+   BUTTONS
+========================== */
+.btn {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  color: #fff;
+  font-weight: 700;
+  padding: 0.35rem 0.7rem;
+  background: rgba(255, 255, 255, 0.06);
+  transition: transform 0.12s ease, background 0.12s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn:hover { background: #ff00ff; }
+.btn:active { transform: scale(0.95); }
+
+.btn.minus {
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+}
+
+.btn.plus {
+  border-radius: 10px;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+}
+
+.big-button {
+  border-radius: 12px;
+  background: linear-gradient(145deg, #4a32a8, #6A1B9A39);
+  padding: 10px 18px;
+  font-size: 1rem;
+  margin: 0.2rem;
+}
+.big-button:hover { transform: scale(1.03); }
+.big-button:active { transform: scale(0.98); }
+
+#enemyBtn.open { background-color: #3399ff; }
+#enemyBtn.closed { background-color: #ff3333; }
+#enemyBtn { color: #fff; transition: background 0.2s ease; }
+
+/* ==========================
+   HEADER
+========================== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #1f1f1f, #141414);
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+}
+.header select, .header div { font-size: 1rem; color: #f1f5fb; background: #1a1a1a; border: 1px solid #444; padding: 0.2rem 0.25rem; border-radius: 6px; }
+
+#actCounter {
+  cursor: pointer;
+  font-weight: bold;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.06);
+  transition: 0.2s;
+  min-width: 60px;
+  text-align: center;
+  border: 0;
+  color: #fff;
+  font-family: inherit;
+}
+#actCounter:hover { background: #666; }
+
+/* ==========================
+   PLAYER CARD
+========================== */
+.player-section {
+  background: var(--glass);
+  backdrop-filter: blur(6px);
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+  transition: 0.12s ease;
+}
+.player-section:hover { transform: translateY(-2px); box-shadow: 0 20px 30px rgba(0,0,0,0.7); }
+
+.player-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 1fr 1fr;
+  gap: 1rem;
+}
+.player-row input[type=text] {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  color: white;
+  padding: 0.3rem;
+  font-size: 1rem;
+}
+
+/* Madness / Life bars */
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.03);
+  padding: 0.4rem 0.6rem;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+.bar .value { 
+  min-width: 40px; 
+  text-align: center; 
+  font-weight: bold; 
+  font-size: 1.35rem; /*adjust sizes as needed*/
+}
+.madness .value { color: #f28b8b; }
+.life .value { color: #9de3b6; }
+
+/* ==========================
+   CHECKBOXES
+========================== */
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.checkbox-grid label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: var(--muted);
+}
+.checkbox-grid input { transform: scale(1.2); }
+
+/* ==========================
+   STATS BOX
+========================== */
+.stats-box { margin-top: 1rem; background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 10px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.4); }
+.stats-grid { display: grid; gap: 1rem; }
+@media(min-width: 831px) { .stats-grid { grid-template-columns: repeat(3,1fr); } }
+@media(min-width: 501px) and (max-width:830px) { .stats-grid { grid-template-columns: repeat(3,1fr); } }
+@media(max-width: 500px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+
+.stat-block { display: flex; flex-direction: column; gap: 0.4rem; text-align: center; }
+.stat-label { font-size: 0.9rem; opacity: 0.85; }
+.stat-controls { display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+
+/* ==========================
+   FOOTER
+========================== */
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255,255,255,0.03);
+  padding: 0.8rem;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
+/* ==========================
+   RESPONSIVE PLAYER ROW
+========================== */
+@media (max-width: 830px) and (min-width: 500px) {
+  .player-row {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 0.5rem;
+  }
+  .player-row input[type="text"] { grid-column: 1 / -1; }
+  .player-row .madness { grid-column: 1; grid-row: 2; }
+  .player-row .life { grid-column: 2; grid-row: 2; }
+  .player-row .checkbox-grid { grid-column: 1 / -1; grid-row: 3; }
+}
+@media (max-width: 499px) {
+  .player-row { display: flex; flex-direction: column; gap: 0.6rem; }
+  .bar-wrapper { display: flex; gap: 1rem; flex-wrap: wrap; width: 100%; }
+  .bar-wrapper .bar { flex: 1 1 150px; }
+  .checkbox-grid { grid-template-columns: repeat(4, auto); gap: 6px; }
+}
+
+/* ==========================
+   ENEMY TRACKER
+========================== */
+#enemyTracker { display: none; opacity: 0; transform: translateY(-10px); transition: all 0.3s ease; }
+#enemyTracker.open { display: block; opacity: 1; transform: translateY(0); }
+#enemiesContainer { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 1rem; margin-top: 1rem; }
+
+.enemy-row {
+  background: linear-gradient(160deg,#3a2a44,#2a1f33);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition: transform 0.2s ease;
+}
+.enemy-row:hover { transform: translateY(-2px); }
+
+.enemy-row input { font-size: 1rem; border: none; border-bottom: 1px solid #777; background: transparent; color: #fff; padding: 0.25rem; }
+.enemy-row input::placeholder { color: #aaa; }
+
+.enemy-row button { background: #5e3b77; border: none; padding: 0.3rem 0.7rem; border-radius: 6px; color: white; cursor: pointer; transition: 0.2s; }
+.enemy-row button:hover { background: #7a5097; }
+
+/* STAT COLORS FOR DARK BACKGROUND */
+.stat-playerSoul { color: #9b59b6; }       /* Purple */
+.stat-playerLevel { color: #e67e22; }      /* Orange */
+.stat-playerCoins { color: #f1c40f; }      /* Sunshine Yellow */
+
+/* Fix width so buttons weeegle jump */
+.stat-controls .value {
+  display: inline-block;
+  width: 26px;          /* fixed width (adjust if needed) */
+  text-align: center;   /* center digits still looks bad*/
+  font-weight: bold;
+  font-size: 1.35rem;    /* adjust sizes as needed */
+  font-family: "Courier New", Courier, monospace;
+}
+</style>
+</head>
+<body>
+<!-- HEADER -->
+<div class="header">
+  <div style="display:flex; align-items:center; gap:0.5rem;">
+    <span style="font-size:1.2rem; font-weight:bold;">HOST</span>
+    <button id="resetBtn" class="btn">Reset</button>
+  </div>
+  <select id="villainSelect">
+    <option>Angelo Adair</option>
+    <option>Byron vey Byornn</option>
+    <option>Ceng Zhangyi</option>
+    <option>Daisuke Daioh</option>
+    <option>Elizabeth Einsborough</option>
+    <option>Fal</option>
+    <option>Gary Gigantes</option>
+    <option>Hyunjin Halvela</option>
+    <option>Isaac Ivanson</option>
+    <option>JJ The Beast</option>
+    <option>Kleo</option>
+    <option>Li</option>
+    <option>Maelle</option>
+    <option>Neville Schwarz</option>
+    <option>Olum Farhoud</option>
+    <option>Paarth Lomedi</option>
+    <option>Qing</option>
+    <option>Reeve Basilisk</option>
+    <option>Vincent</option>
+    <option>Taeonora</option>
+  </select>
+  <div id="actCounter">Act 0</div>
+</div>
+<!-- PLAYERS -->
+<div id="playersContainer"></div>
+<!-- FOOTER -->
+<div class="footer">
+  <div>
+    <div id="rollResult" style="font-size:1.2rem; min-height:1.5rem; text-align:center;"></div>
+    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.4rem;">
+      <button class="big-button btn diceBtn" data-dice="1d6">1d6</button>
+      <button class="big-button btn diceBtn" data-dice="2d6">2d6</button>
+      <button class="big-button btn diceBtn" data-dice="1d8">1d8</button>
+      <button class="big-button btn diceBtn" data-dice="1d10">1d10</button>
+      <button class="big-button btn diceBtn" data-dice="1d12">1d12</button>
+      <button class="big-button btn diceBtn" data-dice="1d20">1d20</button>
+      <button id="coinTossBtn" class="big-button btn">Coin Toss</button>
+      <button id="enemyBtn" class="big-button btn">Enemy</button>
+    </div>
+  </div>
+</div>
+<!-- ENEMY TRACKER -->
+<div id="enemyTracker">
+  <h3 style="display:flex; justify-content:space-between; align-items:center;">
+    Enemy Encounter
+    <button id="addEnemyBtn" class="btn">Add Enemy</button>
+  </h3>
+  <div id="enemiesContainer"></div>
+</div>
+<!-- MADNESS REPORT MODAL -->
+<div id="madnessModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:1000; align-items:center; justify-content:center;">
+  <div id="madnessModalInner" style="
+    background: linear-gradient(160deg, #1a1025, #0f0f18);
+    border: 1px solid rgba(242,139,139,0.25);
+    border-radius: 16px;
+    padding: 1.6rem 2rem;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+    position: relative;
+    color: #e9eef6;
+    font-family: inherit;
+  ">
+    <button onclick="closeMadnessModal()" style="
+      position:absolute; top:0.8rem; right:0.9rem;
+      background:none; border:none; color:#888; font-size:1.3rem; cursor:pointer; line-height:1;
+    ">✕</button>
+    <div id="madnessModalContent"></div>
+  </div>
+</div>
+
+<script>
+// ==========================
+// LOCAL STORAGE HELPERS
+// ==========================
+const saveState = (k,v) => localStorage.setItem(k,JSON.stringify(v));
+const loadState = (k,f) => { const v=localStorage.getItem(k); return v?JSON.parse(v):f; };
+
+// ==========================
+// ACT COUNTER
+// ==========================
+const acts = ["Act 0","Act I","Act II","Act III","Finale"];
+let currentAct = loadState("currentAct",0);
+const actBtn = document.getElementById("actCounter");
+actBtn.textContent = acts[currentAct];
+let actCooldown = false;
+actBtn.onclick = () => {
+  if(actCooldown) return;
+  actCooldown = true;
+  currentAct = (currentAct + 1) % acts.length;
+  actBtn.textContent = acts[currentAct];
+  saveState("currentAct", currentAct);
+  setTimeout(()=>actCooldown=false,2000);
+};
+
+// ==========================
+// VILLAIN SELECT
+// ==========================
+const villainSelect = document.getElementById("villainSelect");
+villainSelect.value = loadState("currentVillain", villainSelect.value);
+villainSelect.onchange = () => saveState("currentVillain", villainSelect.value);
+
+// ==========================
+// PLAYER RENDERING
+// ==========================
+const playersContainer = document.getElementById("playersContainer");
+let players = loadState("hostPlayers", ["P1","P2","P3"]);
+const RANGES={soul:[0,5],level:[1,20],maxLife:[-1,20],maxStam:[-1,9],maxMana:[0,20],maxEnergy:[0,20]};
+const clamp = (v,min,max) => Math.min(max,Math.max(min,v));
+
+function makeStatControl(label, key, min, max, initial, idx) {
+  let v = clamp(loadState(key + idx, initial), min, max);
+  const block = document.createElement("div");
+  block.className = "stat-block";
+
+  const labelDiv = document.createElement("div");
+  labelDiv.className = "stat-label";
+  labelDiv.textContent = label;
+
+  const controls = document.createElement("div");
+  controls.className = "stat-controls";
+
+  const minus = document.createElement("button");
+  minus.className = "btn minus";
+  minus.textContent = "−";
+
+  const val = document.createElement("span");
+  val.className = `value stat-${key}`; // Add a class based on the key
+  val.textContent = v;
+
+  const plus = document.createElement("button");
+  plus.className = "btn plus";
+  plus.textContent = "+";
+
+  minus.onclick = () => {
+    v = clamp(v - 1, min, max);
+    val.textContent = v;
+    saveState(key + idx, v);
+  };
+
+  plus.onclick = () => {
+    v = clamp(v + 1, min, max);
+    val.textContent = v;
+    saveState(key + idx, v);
+  };
+
+  controls.append(minus, val, plus);
+  block.append(labelDiv, controls);
+  return { block, get value() { return v; }, set value(x) { v = x; val.textContent = x; } };
+}
+
+function enforceLifeCap(current,maxLife){ return Math.min(Math.max(current,-20),maxLife); }
+
+// ==========================
+// MADNESS REPORT
+// ==========================
+function closeMadnessModal() {
+  const modal = document.getElementById("madnessModal");
+  modal.style.opacity = "0";
+  setTimeout(() => { modal.style.display = "none"; modal.style.opacity = ""; }, 200);
+}
+
+function showMadnessReport(idx, playerName) {
+  // --- This player's stats ---
+  const madness  = loadState("playerMadness" + idx, 0);
+  const life     = loadState("playerLife"    + idx, 0);
+  const soul     = loadState("playerSoul"    + idx, 0);
+  const level    = loadState("playerLevel"   + idx, 1);
+  const coins    = loadState("playerCoins"   + idx, 0);
+
+  // --- Madness trend (compare to last snapshot) ---
+  const prevMadness = loadState("prevMadness" + idx, null);
+  let trendText = "";
+  let trendColor = "#9aa3ad";
+  if (prevMadness === null) {
+    trendText = "No previous record";
+  } else if (madness > prevMadness) {
+    const delta = madness - prevMadness;
+    trendText = `▲ +${delta} since last check`;
+    trendColor = "#f28b8b";
+  } else if (madness < prevMadness) {
+    const delta = prevMadness - madness;
+    trendText = `▼ −${delta} since last check`;
+    trendColor = "#9de3b6";
+  } else {
+    trendText = "↔ Unchanged since last check";
+    trendColor = "#9aa3ad";
+  }
+  // Save current as new snapshot
+  saveState("prevMadness" + idx, madness);
+
+  // --- Collective madness across all players ---
+  const totalPlayers = loadState("hostPlayers", ["P1","P2","P3"]).length;
+  let allMadness = [];
+  for (let i = 0; i < totalPlayers; i++) {
+    const n = loadState("playerName" + i, "");
+    const m = loadState("playerMadness" + i, 0);
+    allMadness.push({ name: n || `Player ${i+1}`, madness: m, isThis: i === idx });
+  }
+  const collective = allMadness.reduce((s, p) => s + p.madness, 0);
+  const maxVal = Math.max(...allMadness.map(p => p.madness));
+  const minVal = Math.min(...allMadness.map(p => p.madness));
+  const isHighest = madness === maxVal && allMadness.filter(p => p.madness === maxVal).length === 1;
+  const isLowest  = madness === minVal && allMadness.filter(p => p.madness === minVal).length === 1;
+  const isTied    = !isHighest && madness === maxVal;
+
+  let standingBadge = "";
+  if (allMadness.length > 1) {
+    if (isHighest) standingBadge = `<span style="color:#f28b8b; font-weight:bold;">⚠ Most Madness</span>`;
+    else if (isLowest) standingBadge = `<span style="color:#9de3b6; font-weight:bold;">✦ Least Madness</span>`;
+    else if (isTied)   standingBadge = `<span style="color:#f5c842; font-weight:bold;">≈ Tied for Most</span>`;
+  }
+
+  const otherRows = allMadness.map(p => `
+    <div style="display:flex; justify-content:space-between; opacity:${p.isThis ? 1 : 0.65}; font-weight:${p.isThis ? 'bold' : 'normal'};">
+      <span>${p.isThis ? "▶ " : ""}${p.name}</span>
+      <span style="color:#f28b8b;">${p.madness}</span>
+    </div>`).join("");
+
+  // --- Render modal ---
+  const content = document.getElementById("madnessModalContent");
+  content.innerHTML = `
+    <h2 style="margin:0 0 0.2rem; font-size:1.3rem; color:#f28b8b;">🩸 ${playerName}</h2>
+    <div style="font-size:0.8rem; color:#666; margin-bottom:1.1rem;">Madness Report</div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem 1.2rem; margin-bottom:1.2rem;">
+      <div><span style="opacity:0.6; font-size:0.85rem;">Madness</span><br><strong style="font-size:1.5rem; color:#f28b8b;">${madness}</strong></div>
+      <div><span style="opacity:0.6; font-size:0.85rem;">Life</span><br><strong style="font-size:1.5rem; color:#9de3b6;">${life}</strong></div>
+      <div><span style="opacity:0.6; font-size:0.85rem;">Soul</span><br><strong style="font-size:1.5rem; color:#9b59b6;">${soul}</strong></div>
+      <div><span style="opacity:0.6; font-size:0.85rem;">Level</span><br><strong style="font-size:1.5rem; color:#e67e22;">${level}</strong></div>
+      <div><span style="opacity:0.6; font-size:0.85rem;">Coins</span><br><strong style="font-size:1.5rem; color:#f1c40f;">${coins}</strong></div>
+    </div>
+
+    <div style="font-size:0.9rem; color:${trendColor}; margin-bottom:1.1rem; padding:0.5rem 0.7rem; background:rgba(255,255,255,0.04); border-radius:8px;">
+      ${trendText}
+    </div>
+
+    <div style="font-size:0.85rem; opacity:0.5; margin-bottom:0.4rem; text-transform:uppercase; letter-spacing:0.05em;">All Players · Collective: ${collective}</div>
+    <div style="display:flex; flex-direction:column; gap:0.3rem; font-size:0.95rem; margin-bottom:${standingBadge ? '0.9rem' : '0'};">
+      ${otherRows}
+    </div>
+    ${standingBadge ? `<div style="margin-top:0.7rem; font-size:0.95rem;">${standingBadge}</div>` : ""}
+  `;
+
+  const modal = document.getElementById("madnessModal");
+  modal.style.display = "flex";
+  modal.style.opacity = "0";
+  setTimeout(() => { modal.style.opacity = "1"; }, 10);
+  modal.style.transition = "opacity 0.2s ease";
+}
+
+// Close modal on backdrop click
+document.getElementById("madnessModal").addEventListener("click", function(e) {
+  if (e.target === this) closeMadnessModal();
+});
+
+function renderPlayers(){
+  playersContainer.innerHTML="";
+  players.forEach((name,idx)=>{
+    const card = document.createElement("div"); card.className="player-section";
+    const row = document.createElement("div"); row.className="player-row";
+
+    // Name
+    const nameInput = document.createElement("input"); nameInput.type="text"; nameInput.placeholder=`Player ${idx+1} Name`;
+    const savedName = loadState("playerName"+idx,"");
+    if(savedName) nameInput.value = savedName;
+    nameInput.onblur = () => saveState("playerName"+idx,nameInput.value);
+    nameInput.onkeydown = e => { if(e.key==="Enter"){ saveState("playerName"+idx,nameInput.value); nameInput.blur(); } };
+    row.appendChild(nameInput);
+
+    // Bars helper
+    const createBar = (type, key) => {
+      let valNum = loadState(key+idx,0);
+      const bar = document.createElement("div"); bar.className = `bar ${type}`;
+      const wrap = document.createElement("div"); wrap.style.display="flex"; wrap.style.alignItems="center"; wrap.style.gap="6px";
+      const minus = document.createElement("button"); minus.className="btn minus"; minus.textContent="−";
+      const val = document.createElement("span"); val.className="value"; val.textContent = valNum;
+      const plus = document.createElement("button"); plus.className="btn plus"; plus.textContent="+";
+      minus.onclick = ()=>{ valNum--; val.textContent=valNum; saveState(key+idx,valNum); };
+      plus.onclick = ()=>{ valNum++; val.textContent=valNum; saveState(key+idx,valNum); };
+
+      const capitalType = type.charAt(0).toUpperCase()+type.slice(1);
+      if (type === "madness") {
+        const madnessLabel = document.createElement("span");
+        madnessLabel.textContent = capitalType;
+        madnessLabel.style.transition = "text-decoration 0.15s";
+
+        const updateMadnessLabel = () => {
+          if (nameInput.value.trim()) {
+            madnessLabel.style.textDecoration = "underline";
+            madnessLabel.style.cursor = "pointer";
+            madnessLabel.title = "View madness report";
+            madnessLabel.onclick = () => showMadnessReport(idx, nameInput.value.trim());
+          } else {
+            madnessLabel.style.textDecoration = "none";
+            madnessLabel.style.cursor = "default";
+            madnessLabel.title = "";
+            madnessLabel.onclick = null;
+          }
+        };
+
+        nameInput.addEventListener("input", updateMadnessLabel);
+        nameInput.addEventListener("blur", updateMadnessLabel);
+        updateMadnessLabel();
+
+        wrap.append(minus, madnessLabel, ":", val, plus);
+      } else {
+        wrap.append(minus, capitalType+":", val, plus);
+      }
+
+      bar.appendChild(wrap);
+      return bar;
+    };
+
+    row.appendChild(createBar("madness","playerMadness"));
+    row.appendChild(createBar("life","playerLife"));
+
+    // Checkboxes
+    const cbDiv = document.createElement("div"); cbDiv.className="checkbox-grid";
+    ["Favour","Dread","Blessed","Cursed"].forEach(cbName=>{
+      const lbl = document.createElement("label");
+      const cb = document.createElement("input"); cb.type="checkbox"; cb.checked=loadState(cbName+idx,false);
+      cb.onchange=()=>saveState(cbName+idx,cb.checked);
+      lbl.append(cb,cbName); cbDiv.appendChild(lbl);
+    });
+    row.appendChild(cbDiv);
+
+    card.appendChild(row);
+
+    // Stats
+    const statsBox = document.createElement("div"); statsBox.className="stats-box";
+    const statsGrid = document.createElement("div"); statsGrid.className="stats-grid";
+    ["Soul","Level","Coins"].forEach((label,i)=>{
+      const keys = ["playerSoul","playerLevel","playerCoins"];
+      const mins = [0,1,0]; const maxs=[5,20,999]; const initials=[0,1,0];
+      statsGrid.appendChild(makeStatControl(label,keys[i],mins[i],maxs[i],initials[i],idx).block);
+    });
+    statsBox.appendChild(statsGrid); card.appendChild(statsBox);
+
+    playersContainer.appendChild(card);
+  });
+
+  // Add Player Button
+  if(players.length<10){
+    const addBtn=document.createElement("button"); addBtn.className="btn"; addBtn.textContent="Add Player";
+    addBtn.onclick=()=>{ players.push("P"+(players.length+1)); saveState("hostPlayers",players); renderPlayers(); };
+    playersContainer.appendChild(addBtn);
+  }
+}
+
+renderPlayers();
+
+// Reset
+document.getElementById("resetBtn").onclick = () => {
+  if(confirm("Reset EVERYTHING?")){ localStorage.clear(); location.reload(); }
+};
+
+// ==========================
+// ENEMY TRACKER
+// ==========================
+const enemyTracker = document.getElementById("enemyTracker");
+const enemyBtn = document.getElementById("enemyBtn");
+enemyBtn.onclick = () => {
+  const isOpen = enemyTracker.style.display==="block";
+  if(isOpen){
+    enemyTracker.style.opacity="0"; setTimeout(()=>enemyTracker.style.display="none",200);
+    enemyBtn.classList.remove("open"); enemyBtn.classList.add("closed");
+  } else {
+    enemyTracker.style.display="block"; setTimeout(()=>enemyTracker.style.opacity="1",20);
+    enemyBtn.classList.remove("closed"); enemyBtn.classList.add("open");
+  }
+};
+if(enemyTracker.style.display==="block") enemyBtn.classList.add("open"); else enemyBtn.classList.add("closed");
+
+let enemies = loadState("enemies",[]);
+const saveEnemies = ()=>saveState("enemies",enemies);
+
+function renderEnemies(){
+  const cont=document.getElementById("enemiesContainer");
+  cont.innerHTML="";
+  enemies.forEach((enemy,idx)=>{
+    enemy = enemy || {name:"",power:0,life:0};
+    const row=document.createElement("div"); row.className="enemy-row";
+
+    const createInput = (type, key) => {
+      const bar = document.createElement("div"); bar.className="bar";
+      const wrap = document.createElement("div"); wrap.style.display="flex"; wrap.style.alignItems="center"; wrap.style.gap="6px";
+      const minus = document.createElement("button"); minus.className="btn minus"; minus.textContent="−";
+      const val = document.createElement("span"); val.className="value"; val.textContent=enemy[key]||0;
+      const plus = document.createElement("button"); plus.className="btn plus"; plus.textContent="+";
+      minus.onclick = ()=>{ if(enemy[key]>0){ enemy[key]--; val.textContent=enemy[key]; saveEnemies(); } };
+      plus.onclick = ()=>{ enemy[key]++; val.textContent=enemy[key]; saveEnemies(); };
+      wrap.append(minus,type+":",val,plus); bar.appendChild(wrap); return bar;
+    };
+
+    const nameInput=document.createElement("input"); nameInput.placeholder=`Enemy ${idx+1}`; nameInput.value=enemy.name||"";
+    nameInput.onblur=()=>{ enemy.name=nameInput.value; saveEnemies(); };
+    nameInput.onkeydown=e=>{ if(e.key==="Enter"){ enemy.name=nameInput.value; saveEnemies(); nameInput.blur(); }};
+    row.appendChild(nameInput);
+
+    row.appendChild(createInput("Power","power"));
+    row.appendChild(createInput("Life","life"));
+
+    const killBtn=document.createElement("button"); killBtn.className="btn"; killBtn.textContent="Kill";
+    killBtn.onclick=()=>{ enemies.splice(idx,1); saveEnemies(); renderEnemies(); };
+    row.appendChild(killBtn);
+
+    cont.appendChild(row);
+  });
+}
+
+document.getElementById("addEnemyBtn").onclick=()=>{
+  if(enemies.length<16){ enemies.push({name:"",power:0,life:0}); saveEnemies(); renderEnemies(); }
+};
+renderEnemies();
+
+// ==========================
+// DICE + COIN TOSS
+// ==========================
+let rollCooldown=false;
+const animateButton = btn => { btn.classList.add("animate"); setTimeout(()=>btn.classList.remove("animate"),400); };
+const setRollResult = text => { document.getElementById("rollResult").textContent=text; rollCooldown=true; setTimeout(()=>rollCooldown=false,1200); };
+
+document.getElementById("coinTossBtn").onclick = e => {
+  if(rollCooldown) return; animateButton(e.target); setRollResult("Coin Toss: "+(Math.random()<0.5?"Heads":"Tails"));
+};
+
+document.querySelectorAll(".diceBtn").forEach(btn=>{
+  btn.onclick=e=>{
+    if(rollCooldown) return; animateButton(e.target);
+    const [n,d] = btn.dataset.dice.split("d").map(Number);
+    let total = 0; for(let i=0;i<n;i++) total+=Math.floor(Math.random()*d)+1;
+    setRollResult(`${btn.dataset.dice}: ${total}`);
+  };
+});
+</script>
+</body>
+</html>
