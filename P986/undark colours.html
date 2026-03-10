@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hex Color Squares</title>
+<style>
+body{
+  font-family: Arial, sans-serif;
+  background:#222;
+  color:white;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(6, 120px);
+  gap:14px;
+}
+
+.colorbox{
+  width:120px;
+  height:120px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  font-size:12px;
+  font-weight:bold;
+  background:gray;
+  padding-bottom:6px;
+  box-sizing:border-box;
+  border-radius:6px;
+  border:2px solid #000;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Color Examples</h2>
+
+<div class="grid">
+
+<div class="colorbox" style="background:#00FF00">#00FF00</div>
+<div class="colorbox" style="background:#FFFF00">#FFFF00</div>
+<div class="colorbox" style="background:#00FFFF">#00FFFF</div>
+
+<div class="colorbox" style="background:#FFA500">#FFA500</div>
+<div class="colorbox" style="background:#FFC0CB">#FFC0CB</div>
+<div class="colorbox" style="background:#A52A2A">#A52A2A</div>
+<div class="colorbox" style="background:#40E0D0">#40E0D0</div>
+
+<div class="colorbox" style="background:#F5DEB3">#F5DEB3</div>
+<div class="colorbox" style="background:#FF6347">#FF6347</div>
+<div class="colorbox" style="background:#46F6F6">#46F6F6</div>
+<div class="colorbox" style="background:#FA8072">#FA8072</div>
+
+<div class="colorbox" style="background:#8FBC8F">#8FBC8F</div>
+<div class="colorbox" style="background:#B0C4DE">#B0C4DE</div>
+<div class="colorbox" style="background:#FF7F50">#FF7F50</div>
+<div class="colorbox" style="background:#6495ED">#6495ED</div>
+<div class="colorbox" style="background:#DC143C">#DC143C</div>
+
+<div class="colorbox" style="background:#FFD700">#FFD700</div>
+<div class="colorbox" style="background:#C0C0C0">#C0C0C0</div>
+<div class="colorbox" style="background:#FF4500">#FF4500</div>
+<div class="colorbox" style="background:#ADFF2F">#ADFF2F</div>
+<div class="colorbox" style="background:#FF69B4">#FF69B4</div>
+
+</div>
+
+</body>
+</html>
