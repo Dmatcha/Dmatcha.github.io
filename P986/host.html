@@ -1580,13 +1580,13 @@ h1, h2, h3, h4 {
         <button class="clear-btn" onclick="clearResults()">(clear)</button>
       </div>
       <div class="dice-buttons">
-        <button class="dice-btn" onclick="rollDice(1, 6)">1d6</button>
+        <button class="dice-btn" onclick="rollDice(1, 6)">d6</button>
         <button class="dice-btn" onclick="rollDice(2, 6)">2d6</button>
-        <button class="dice-btn" onclick="rollDice(1, 8)">1d8</button>
-        <button class="dice-btn" onclick="rollDice(1, 10)">1d10</button>
-        <button class="dice-btn" onclick="rollDice(1, 12)">1d12</button>
-        <button class="dice-btn" onclick="rollDice(1, 20)">1d20</button>
-        <button class="dice-btn coin-btn" onclick="flipCoin()">Coin Toss</button>
+        <button class="dice-btn" onclick="rollDice(1, 8)">d8</button>
+        <button class="dice-btn" onclick="rollDice(1, 10)">d10</button>
+        <button class="dice-btn" onclick="rollDice(1, 12)">d12</button>
+        <button class="dice-btn" onclick="rollDice(1, 20)">d20</button>
+        <button class="dice-btn coin-btn" onclick="flipCoin()">Coin</button>
         <button class="dice-btn enemy-btn" id="enemyBtn" onclick="toggleEnemy()">ENEMY</button>
       </div>
     </section>
@@ -2084,10 +2084,10 @@ function rollDice(count, sides) {
     total += roll;
   }
   
-  const notation = count === 1 ? `1d${sides}` : `${count}d${sides}`;
+  const notation = count === 1 ? `d${sides}` : `${count}d${sides}`;
   const resultText = rolls.length > 1 
-    ? `${notation}: [${rolls.join(', ')}] = ${total}`
-    : `${notation}: ${total}`;
+    ? `${notation}:${rolls.join('+')}[${total}],`
+    : `${notation}[${total}],`;
   
   addDiceResult(resultText);
 }
