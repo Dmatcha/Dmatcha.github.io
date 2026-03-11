@@ -4,548 +4,3356 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Host Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ==========================
+   CSS VARIABLES
+========================== */
 :root {
-  --bg: #121212;
-  --card: #1f1f1f;
-  --muted: #9aa3ad;
-  --glass: rgba(255, 255, 255, 0.04);
+  --bg-primary: #0a0a0c;
+  --bg-secondary: #141418;
+  --bg-card: #1a1a1f;
+  --bg-elevated: #222228;
+  --text-primary: #e8eaf0;
+  --text-secondary: #8b8d94;
+  --text-muted: #5a5c63;
+  --accent-primary: #8b5cf6;
+  --accent-secondary: #a78bfa;
+  --accent-danger: #ef4444;
+  --accent-warning: #f59e0b;
+  --accent-success: #10b981;
+  --accent-info: #3b82f6;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(26, 26, 31, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
 }
-/* ==========================
-   BODY
-========================== */
-body {
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
-  background: linear-gradient(180deg, #0f0f12 0%, #141417 60%);
-  color: #e9eef6;
-  margin: 0;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  gap: 1rem;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-/* ==========================
-   BUTTONS
-========================== */
-.btn {
-  appearance: none;
-  border: 0;
-  cursor: pointer;
-  color: #fff;
-  font-weight: 700;
-  padding: 0.35rem 0.7rem;
-  background: rgba(255, 255, 255, 0.06);
-  transition: transform 0.12s ease, background 0.12s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.btn:hover { background: #ff00ff; }
-.btn:active { transform: scale(0.95); }
 
-.btn.minus {
-  border-radius: 50%;
-  width: 34px;
-  height: 34px;
+/* ==========================
+   RESET & BASE
+========================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
   padding: 0;
 }
 
-.btn.plus {
-  border-radius: 10px;
-  min-width: 34px;
-  height: 34px;
-  padding: 0 10px;
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
 }
 
-.big-button {
-  border-radius: 12px;
-  background: linear-gradient(145deg, #4a32a8, #6A1B9A39);
-  padding: 10px 18px;
-  font-size: 1rem;
-  margin: 0.2rem;
+body {
+  font-family: 'Crimson Pro', 'Georgia', serif;
+  background: linear-gradient(165deg, #0c0c10 0%, #0f0f14 40%, #141418 100%);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
-.big-button:hover { transform: scale(1.03); }
-.big-button:active { transform: scale(0.98); }
-
-#enemyBtn.open { background-color: #3399ff; }
-#enemyBtn.closed { background-color: #ff3333; }
-#enemyBtn { color: #fff; transition: background 0.2s ease; }
 
 /* ==========================
-   HEADER
+   TYPOGRAPHY
+========================== */
+h1, h2, h3, h4 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ==========================
+   LAYOUT CONTAINER
+========================== */
+.app-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow-x: hidden;
+}
+
+/* ==========================
+   HEADER SECTION
 ========================== */
 .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, #1f1f1f, #141414);
-  padding: 0.8rem 1.2rem;
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  padding: 0rem 1.5rem;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  box-shadow: var(--shadow-md);
 }
-.header select, .header div { font-size: 1rem; color: #f1f5fb; background: #1a1a1a; border: 1px solid #444; padding: 0.2rem 0.25rem; border-radius: 6px; }
 
-#actCounter {
-  cursor: pointer;
-  font-weight: bold;
-  padding: 0.3rem 0.6rem;
-  border-radius: 6px;
-  background: rgba(255,255,255,0.06);
-  transition: 0.2s;
-  min-width: 60px;
-  text-align: center;
-  border: 0;
-  color: #fff;
-  font-family: inherit;
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
-#actCounter:hover { background: #666; }
+
+.header-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.host-btn {
+  appearance: none;
+  border: 1px solid var(--border-medium);
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--accent-danger);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.5rem 0.25rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.05em;
+}
+
+.host-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: var(--accent-danger);
+}
+
+.villain-input {
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-medium);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.4rem 0.75rem;
+  min-width: 180px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.villain-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background: rgba(139, 92, 246, 0.1);
+}
+
+.villain-input option {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.act-btn {
+  appearance: none;
+  border: 1px solid var(--border-medium);
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--accent-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0rem 1.25rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.act-btn:hover {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: var(--accent-primary);
+}
+
+.book-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.book-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.book-btn svg {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* ==========================
+   MAIN CONTENT AREA
+========================== */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 5rem;
+  padding-bottom: 8rem;
+}
+
+/* ==========================
+   PLAYERS GRID
+========================== */
+.players-grid {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+/* Prevent last odd child from spanning full width in multi-column grids */
+.player-card:last-child:nth-child(odd) {
+  grid-column: span 1;
+}
+
+/* Wide: 3 columns */
+@media (min-width: 1024px) {
+  .players-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Half-wide: 2 columns */
+@media (min-width: 812px) and (max-width: 1023px) {
+  .players-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Narrow: 1 column (default) */
+@media (max-width: 811px) {
+  .players-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 
 /* ==========================
    PLAYER CARD
 ========================== */
-.player-section {
-  background: var(--glass);
-  backdrop-filter: blur(6px);
-  border-radius: 14px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
-  transition: 0.12s ease;
+.player-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
 }
-.player-section:hover { transform: translateY(-2px); box-shadow: 0 20px 30px rgba(0,0,0,0.7); }
 
-.player-row {
-  display: grid;
-  grid-template-columns: 150px 1fr 1fr 1fr;
-  gap: 1rem;
+.player-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
-.player-row input[type=text] {
+
+/* Delete Player Button */
+.delete-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  transform: scale(var(--scale, 1));
+  transition: transform 0.15s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  z-index: 10;
+}
+
+.delete-btn .halo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 140%;
+  height: 140%;
+  transform: translate(-50%, -50%) scale(calc(1 + var(--glow, 0) * 0.15));
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgba(255, 42, 42, 0.75) 0%,
+    rgba(255, 42, 42, 0.45) 35%,
+    rgba(255, 42, 42, 0.2) 55%,
+    rgba(255, 42, 42, 0) 70%
+  );
+  opacity: calc(var(--glow, 0) * 0.5);
+  transition: opacity 0.1s linear, transform 0.1s linear;
+}
+
+.delete-btn svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.delete-btn .ring-white {
+  fill: none;
+  stroke: #4a4a4a;
+  stroke-width: 6;
+  opacity: 0.9;
+}
+
+.delete-btn .ring-progress {
+  fill: none;
+  stroke: var(--accent-danger);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 157;
+  stroke-dashoffset: 157;
+}
+
+.delete-btn .icon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-danger);
+}
+
+.delete-btn .icon svg {
+  width: 50%;
+  height: 50%;
+  transform: rotate(90deg);
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.player-name-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.player-right-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  align-items: flex-end;
+  min-width: 0;
+}
+
+.player-card-header {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.player-memobook-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.75rem;
+  padding: 0.1rem 0rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 1.75rem;
+}
+
+.player-memobook-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.player-name {
   background: transparent;
   border: none;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  color: white;
-  padding: 0.3rem;
+  border-bottom: 2px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-family: inherit;
   font-size: 1rem;
+  font-weight: 600;
+  padding: 0.25rem 0;
+  width: 100%;
+  transition: border-color 0.2s ease;
 }
 
-/* Madness / Life bars */
-.bar {
+.player-name:focus {
+  outline: none;
+  border-bottom-color: var(--accent-primary);
+}
+
+.player-name::placeholder {
+  color: var(--text-muted);
+}
+
+.player-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.artefact-select,
+.iris-select {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tag-select {
+  appearance: none;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.tag-select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.status-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  min-width: 0;
+  padding-top: 0.1rem;
+}
+
+.status-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+}
+
+.status-checkbox:hover {
+  color: var(--text-primary);
+}
+
+.status-checkbox:has(input:checked) {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.status-checkbox input {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--border-medium);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.status-checkbox input:checked {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.status-checkbox input:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* ==========================
+   STATS SECTION
+========================== */
+.stats-section {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-subtle);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 0.5rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.stat-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.stat-row:last-child {
+  margin-bottom: 0;
+}
+
+.stat-label {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  min-width: 65px;
+  text-align: right;
+  margin-right: 1rem;
+}
+
+.stat-label.madness-clickable {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.stat-label.madness-clickable:hover {
+  color: var(--accent-danger);
+}
+
+.stat-label.madness-clickable {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.stat-label.madness-clickable:hover {
+  color: var(--accent-danger);
+}
+
+.stat-controls {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255,255,255,0.03);
-  padding: 0.4rem 0.6rem;
-  border-radius: 10px;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+  min-width: 0;
 }
-.bar .value { 
-  min-width: 40px; 
-  text-align: center; 
-  font-weight: bold; 
-  font-size: 1.35rem; /*adjust sizes as needed*/
-}
-.madness .value { color: #f28b8b; }
-.life .value { color: #9de3b6; }
 
-/* ==========================
-   CHECKBOXES
-========================== */
-.checkbox-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-.checkbox-grid label {
+.stat-btn {
+  appearance: none;
+  border: 1px solid var(--border-medium);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
   display: flex;
-  gap: 6px;
   align-items: center;
-  color: var(--muted);
-}
-.checkbox-grid input { transform: scale(1.2); }
-
-/* ==========================
-   STATS BOX
-========================== */
-.stats-box { margin-top: 1rem; background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 10px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.4); }
-.stats-grid { display: grid; gap: 1rem; }
-@media(min-width: 831px) { .stats-grid { grid-template-columns: repeat(6,1fr); } }
-@media(min-width: 501px) and (max-width:830px) { .stats-grid { grid-template-columns: repeat(3,1fr); } }
-@media(max-width: 500px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
-
-.stat-block { display: flex; flex-direction: column; gap: 0.4rem; text-align: center; }
-.stat-label { font-size: 0.9rem; opacity: 0.85; }
-.stat-controls { display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-
-/* ==========================
-   FOOTER
-========================== */
-.footer {
-  display: flex;
   justify-content: center;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.stat-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+}
+
+.stat-btn.minus {
+  border-radius: 50%;
+}
+
+.stat-btn.plus {
+  border-radius: 8px;
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  min-width: 32px;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.stat-value.madness {
+  color: #DC143C;
+}
+
+.stat-value.life {
+  color: #228B22;
+}
+
+.stat-value.soul {
+  color: #800080;
+}
+
+.stat-value.coins {
+  color: #FFD700;
+}
+
+/* ==========================
+   ADD PLAYER BUTTON
+========================== */
+.add-player-btn {
+  appearance: none;
+  border: 4px dashed var(--border-medium);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 1.5rem;
+  padding: 0.5rem;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.35s ease;
+  display: flex;
   align-items: center;
-  background: rgba(255,255,255,0.03);
-  padding: 0.8rem;
-  border-radius: 10px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.add-player-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  background: rgba(139, 92, 246, 0.05);
 }
 
 /* ==========================
-   RESPONSIVE PLAYER ROW
+   DICE TRAY SECTION
 ========================== */
-@media (max-width: 830px) and (min-width: 500px) {
-  .player-row {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto auto;
-    gap: 0.5rem;
-  }
-  .player-row input[type="text"] { grid-column: 1 / -1; }
-  .player-row .madness { grid-column: 1; grid-row: 2; }
-  .player-row .life { grid-column: 2; grid-row: 2; }
-  .player-row .checkbox-grid { grid-column: 1 / -1; grid-row: 3; }
+.dice-tray {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 0rem 0.25rem;
+  box-shadow: var(--shadow-md);
 }
-@media (max-width: 499px) {
-  .player-row { display: flex; flex-direction: column; gap: 0.6rem; }
-  .bar-wrapper { display: flex; gap: 1rem; flex-wrap: wrap; width: 100%; }
-  .bar-wrapper .bar { flex: 1 1 150px; }
-  .checkbox-grid { grid-template-columns: repeat(4, auto); gap: 6px; }
+
+.dice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.1rem;
+}
+
+.results-display {
+  flex: 1;
+  text-align: left;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  color: var(--accent-success);
+  height: 2rem;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0.1rem 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.results-display:empty::before {
+  content: '{ results }';
+  color: var(--text-muted);
+}
+
+.clear-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+
+.clear-btn:hover {
+  color: var(--accent-danger);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.dice-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-bottom: 0.25rem;
+}
+
+.dice-btn {
+  appearance: none;
+  border: 1px solid var(--border-medium);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.8rem 0.25rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dice-btn:hover {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: var(--accent-primary);
+  transform: translateY(-1px);
+}
+
+.dice-btn:active {
+  transform: translateY(0);
+}
+
+.coin-btn {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.3);
+  color: var(--accent-warning);
+}
+
+.coin-btn:hover {
+  background: rgba(251, 191, 36, 0.2);
+  border-color: var(--accent-warning);
+}
+
+.enemy-btn {
+  margin-left: auto;
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--accent-danger);
+  padding: 0.5rem 0.5rem;
+}
+
+.enemy-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: var(--accent-danger);
+}
+
+.enemy-btn.open {
+  background: var(--accent-info);
+  border-color: var(--accent-info);
+  color: white;
 }
 
 /* ==========================
-   ENEMY TRACKER
+   MADNESS OVERLAY
 ========================== */
-#enemyTracker { display: none; opacity: 0; transform: translateY(-10px); transition: all 0.3s ease; }
-#enemyTracker.open { display: block; opacity: 1; transform: translateY(0); }
-#enemiesContainer { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 1rem; margin-top: 1rem; }
 
-.enemy-row {
-  background: linear-gradient(160deg,#3a2a44,#2a1f33);
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+/* Enemy add button */
+.add-enemy-btn {
+  appearance: none;
+  border: 1px solid var(--accent-danger);
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--accent-danger);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 1rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-enemy-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: var(--accent-danger);
+}
+
+.add-enemy-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Enemy Grid - 6 columns, 3 rows max = 18 enemies */
+.enemy-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.75rem;
+  max-height: none;
+}
+
+/* Fixed size enemy cards - NO stretching */
+.enemy-card {
+  width: 100%;
+  aspect-ratio: 2/3;
+  perspective: 1000px;
+  min-width: 0;
+}
+
+.enemy-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+
+.enemy-card.flipped .enemy-card-inner {
+  transform: rotateY(180deg);
+}
+
+.enemy-card-front,
+.enemy-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Front face - dark theme matching website */
+.enemy-card-front {
+  background: var(--bg-card);
+  border: 3px solid #7030A0;
+  border-radius: var(--radius-md);
+  padding: 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  transition: transform 0.2s ease;
+  color: var(--text-primary);
 }
-.enemy-row:hover { transform: translateY(-2px); }
 
-.enemy-row input { font-size: 1rem; border: none; border-bottom: 1px solid #777; background: transparent; color: #fff; padding: 0.25rem; }
-.enemy-row input::placeholder { color: #aaa; }
+/* Back face */
+.enemy-card-back {
+  background: var(--bg-card);
+  border: 3px solid #7030A0;
+  border-radius: var(--radius-md);
+  padding: 0.5rem;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  color: var(--text-primary);
+}
 
-.enemy-row button { background: #5e3b77; border: none; padding: 0.3rem 0.7rem; border-radius: 6px; color: white; cursor: pointer; transition: 0.2s; }
-.enemy-row button:hover { background: #7a5097; }
+/* Card content styles */
+.enemy-type-line {
+  font-size: 0.55rem;
+  text-align: center;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 0.15rem;
+}
 
-/* STAT COLORS FOR DARK BACKGROUND */
-.stat-playerSoul { color: #9b59b6; }       /* Purple */
-.stat-playerLevel { color: #e67e22; }      /* Orange */
-.stat-playerMaxLife { color: #2ecc71; }    /* Vibrant Green */
-.stat-playerMaxStamina { color: #3498db; } /* Vibrant Blue */
-.stat-playerMaxMana { color: #f1c40f; }    /* Sunshine Yellow */
-.stat-playerMaxEnergy { color: #1abc9c; }  /* Electric Sky Blue / Teal */
+.enemy-name-input {
+  width: 100%;
+  font-family: 'Crimson Pro', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  border: none;
+  border-bottom: 2px solid var(--accent-primary);
+  background: transparent;
+  color: var(--text-primary);
+  padding: 0.2rem;
+  margin-bottom: 0.35rem;
+}
 
-/* Fix width so buttons weeegle jump */
-.stat-controls .value {
+.enemy-name-input:focus {
+  outline: none;
+  border-bottom-color: var(--accent-secondary);
+}
+
+.enemy-name-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Name wrapper for positioning suggestions dropdown */
+.enemy-name-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Suggestions dropdown */
+.enemy-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.enemy-suggestion-item {
+  padding: 0.4rem 0.5rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.15s ease;
+}
+
+.enemy-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.enemy-suggestion-item:hover,
+.enemy-suggestion-item.highlighted {
+  background: var(--accent-primary);
+}
+
+.suggestion-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+}
+
+.suggestion-type {
+  font-size: 0.55rem;
+  color: var(--text-secondary);
+  margin-top: 0.1rem;
+}
+
+.suggestion-stats {
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  margin-top: 0.1rem;
+}
+
+/* Flavour and Effect preview on front */
+.enemy-info-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  margin: 0.25rem 0;
+  padding: 0.35rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+.enemy-effect-preview {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-bottom: 0.4rem;
+  font-weight: 500;
+}
+
+.enemy-effect-preview::before {
+  content: "Effect: ";
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+.enemy-flavour-preview {
+  font-size: 0.5rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin-top: auto;
+  font-style: italic;
+}
+
+.enemy-flavour-preview::before {
+  content: "Flavour: ";
+  font-weight: 700;
+  font-style: normal;
+  color: var(--text-muted);
+}
+
+.desc-icon {
   display: inline-block;
-  width: 26px;          /* fixed width (adjust if needed) */
-  text-align: center;   /* center digits still looks bad*/
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+
+.enemy-stats-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.enemy-stat-block {
+  flex: 1;
+  text-align: center;
+}
+
+.enemy-stat-label {
+  font-size: 0.5rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  display: block;
+}
+
+.enemy-stat-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  margin-top: 0.1rem;
+}
+
+.enemy-stat-btn {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--border-medium);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  font-size: 1rem;
   font-weight: bold;
-  font-size: 1.35rem;    /* adjust sizes as needed */
-  font-family: "Courier New", Courier, monospace;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  padding: 0;
+  border-radius: 4px;
+}
+
+.enemy-stat-btn:hover {
+  background: var(--accent-primary);
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+}
+
+.enemy-stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 500;
+  min-width: 20px;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.enemy-actions-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.2rem;
+  margin-top: auto;
+  padding-top: 0.2rem;
+}
+
+.enemy-flip-btn {
+  flex: 1;
+  appearance: none;
+  border: 1px solid var(--border-medium);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.5rem;
+  font-weight: 600;
+  padding: 0.2rem 0.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+}
+
+.enemy-flip-btn:hover {
+  background: var(--accent-primary);
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+}
+
+.enemy-kill-btn {
+  display: block;
+  width: 100%;
+  margin-top: 0.4rem;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.65rem;
+  text-align: center;
+  cursor: not-allowed;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.enemy-kill-btn.active {
+  color: var(--accent-danger);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.enemy-kill-btn.active:hover {
+  color: #ff6666;
+}
+
+/* Back face content */
+.enemy-back-label {
+  font-size: 0.55rem;
+  font-weight: bold;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.enemy-back-text {
+  font-size: 0.6rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  flex: 1;
+  overflow-y: auto;
+  word-wrap: break-word;
+}
+
+.enemy-back-textarea {
+  width: 100%;
+  height: calc(100% - 1rem);
+  min-height: 80px;
+  font-family: inherit;
+  font-size: 0.6rem;
+  line-height: 1.4;
+  border: 1px solid var(--border-medium);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-primary);
+  padding: 0.25rem;
+  resize: none;
+  border-radius: var(--radius-sm);
+}
+
+.enemy-back-textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.enemy-back-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.enemy-return-btn {
+  appearance: none;
+  border: 1px solid var(--accent-primary);
+  background: rgba(139, 92, 246, 0.1);
+  color: #333;
+  font-family: inherit;
+  font-size: 0.55rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+  align-self: center;
+}
+
+.enemy-return-btn:hover {
+  background: #7030A0;
+  color: #FFFFFF;
+}
+
+/* Responsive adjustments for enemy grid */
+@media (max-width: 1200px) {
+  .enemy-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .enemy-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .enemy-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Enemy Section - shown/hidden by toggle */
+.enemy-section {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 1rem;
+  display: none;
+}
+
+.enemy-section.visible {
+  display: block;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.enemy-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.enemy-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent-danger);
+}
+
+/* ==========================
+   MADNESS OVERLAY
+========================== */
+.madness-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.madness-overlay.visible {
+  display: flex;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.madness-content {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  max-width: 800px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.madness-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  appearance: none;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.madness-close:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--accent-danger);
+}
+
+.madness-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-danger);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.madness-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+.madness-text .player-ref {
+  color: var(--accent-secondary);
+  font-weight: 600;
+}
+
+.madness-text .stat-highlight {
+  color: var(--accent-warning);
+  font-weight: 600;
+}
+
+/* ==========================
+   NOTEPAD OVERLAY
+========================== */
+.notepad-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.notepad-overlay.visible {
+  display: flex;
+  animation: fadeIn 0.3s ease;
+}
+
+.notepad-content {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  width: 90vw;
+  height: 80vh;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+.notepad-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  appearance: none;
+  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.notepad-close:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--accent-danger);
+}
+
+.notepad-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.notepad-title-icon {
+  width: 4rem;
+  height: 3rem;
+  flex-shrink: 0;
+}
+
+.notepad-textarea {
+  width: 100%;
+  flex: 1;
+  min-height: 200px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.notepad-textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.notepad-textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* ==========================
+   RESPONSIVE ADJUSTMENTS
+========================== */
+@media (max-width: 759px) {
+  .app-container {
+    padding: 0 0.5rem;
+    gap: 1rem;
+    overflow-x: hidden;
+  }
+  
+  .header {
+    gap: 0.5rem;
+    padding: 0.1rem 0.75rem;
+  }
+  
+  .header-left {
+    gap: 0.5rem;
+  }
+  
+  .header-right {
+    gap: 0.5rem;
+  }
+  
+  .player-card {
+    padding: 1rem;
+  }
+  
+  .dice-buttons {
+    justify-content: center;
+  }
+  
+  .enemy-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================
+   UTILITY CLASSES
+========================== */
+.hidden {
+  display: none !important;
+}
+
+.text-danger {
+  color: var(--accent-danger);
+}
+
+.text-warning {
+  color: var(--accent-warning);
+}
+
+.text-success {
+  color: var(--accent-success);
+}
+
+.text-info {
+  color: var(--accent-info);
 }
 </style>
 </head>
 <body>
-<!-- HEADER -->
-<div class="header">
-  <div style="display:flex; align-items:center; gap:0.5rem;">
-    <span style="font-size:1.2rem; font-weight:bold;">HOST</span>
-    <button id="resetBtn" class="btn">Reset</button>
-  </div>
-  <select id="villainSelect">
-    <option>Angelo Adair</option>
-    <option>Byron vey Byornn</option>
-    <option>Ceng Zhangyi</option>
-    <option>Daisuke Daioh</option>
-    <option>Elizabeth Einsborough</option>
-    <option>Fal</option>
-    <option>Gary Gigantes</option>
-    <option>Hyunjin Halvela</option>
-    <option>Isaac Ivanson</option>
-    <option>JJ The Beast</option>
-    <option>Kleo</option>
-    <option>Li</option>
-    <option>Maelle</option>
-    <option>Neville Schwarz</option>
-    <option>Olum Farhoud</option>
-    <option>Paarth Lomedi</option>
-    <option>Qing</option>
-    <option>Reeve Basilisk</option>
-    <option>Vincent</option>
-    <option>Taeonora</option>
-  </select>
-  <div id="actCounter">Act 0</div>
-</div>
-<!-- PLAYERS -->
-<div id="playersContainer"></div>
-<!-- FOOTER -->
-<div class="footer">
-  <div>
-    <div id="rollResult" style="font-size:1.2rem; min-height:1.5rem; text-align:center;"></div>
-    <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:0.4rem;">
-      <button class="big-button btn diceBtn" data-dice="1d6">1d6</button>
-      <button class="big-button btn diceBtn" data-dice="2d6">2d6</button>
-      <button class="big-button btn diceBtn" data-dice="1d8">1d8</button>
-      <button class="big-button btn diceBtn" data-dice="1d10">1d10</button>
-      <button class="big-button btn diceBtn" data-dice="1d12">1d12</button>
-      <button class="big-button btn diceBtn" data-dice="1d20">1d20</button>
-      <button id="coinTossBtn" class="big-button btn">Coin Toss</button>
-      <button id="enemyBtn" class="big-button btn">Enemy</button>
+<div class="app-container">
+  <!-- Header Section -->
+  <header class="header">
+    <div class="header-left">
+      <button class="host-btn" onclick="resetAll()">HOST (RESET)</button>
     </div>
+    <div class="header-center">
+      <select class="villain-input" id="villainName" onchange="saveState()">
+        <option value=""><Villain></option>
+        <option value="Angelo Adair">Angelo Adair</option>
+        <option value="Byron vey">Byron vey</option>
+        <option value="Byornn">Byornn</option>
+        <option value="Ceng Zhangyi">Ceng Zhangyi</option>
+        <option value="Daisuke Daioh">Daisuke Daioh</option>
+        <option value="Elizabeth Einsborough">Elizabeth Einsborough</option>
+        <option value="Fal">Fal</option>
+        <option value="Gary Gigantes">Gary Gigantes</option>
+        <option value="Hyunjin Halvela">Hyunjin Halvela</option>
+        <option value="Isaac Ivanson">Isaac Ivanson</option>
+        <option value="JJ The Beast">JJ The Beast</option>
+        <option value="Kleo">Kleo</option>
+        <option value="Li">Li</option>
+        <option value="Maelle">Maelle</option>
+        <option value="Neville Schwarz">Neville Schwarz</option>
+        <option value="Olum Farhoud">Olum Farhoud</option>
+        <option value="Paarth Lomedi">Paarth Lomedi</option>
+        <option value="Qing">Qing</option>
+        <option value="Reeve Basilisk">Reeve Basilisk</option>
+        <option value="Vincent">Vincent</option>
+        <option value="Taeonora">Taeonora</option>
+      </select>
+    </div>
+    <div class="header-right">
+      <button class="act-btn" id="actBtn" onclick="cycleAct()">ACT 0</button>
+      <button class="book-btn" onclick="toggleNotepad()" title="Notes">
+              <svg version="1.1" viewBox="0 0 508 508" xml:space="preserve">
+                <circle cx="254" cy="254" r="254" fill="#9ce0f7"/>
+                <path d="M89.2,447.2c44.4,38,102,60.8,164.8,60.8s120.4-22.8,164.8-60.8H89.2z" fill="#9f6a2d"/>
+                <path d="M283.2,212c-14,6.8-28.4,14.8-42,23.6c10.8-3.2,21.2-5.6,32-8c-17.2,26-36.8,51.2-59.6,74 c-13.2-29.2-15.2-66.4-5.6-102.4c5.2,10.4,10.8,20.4,16.8,30c-4.4-16.4-7.6-33.6-9.6-50.8l0,0c4.8-12,10.8-23.6,18-34.8 c0.4,11.6,1.2,22.8,2.8,34c2-18,6-35.6,10.8-53.2c7.2-8.4,15.2-16.4,23.6-23.2c-1.2,12.4-1.6,24.8-1.2,36.8 c4.4-16,9.6-32,16-48c20-13.2,41.6-21.6,62.8-24c-5.6,20.8-12.8,40.8-20.8,60.4c-13.6,7.2-26.8,15.6-39.6,24.4 c11.2-4,22-7.2,33.2-9.6c-4,8.4-8,17.2-12,25.2l0,0c-12.8,8.8-25.6,18.8-38,29.6c9.6-4.4,18.8-8.4,28.4-12 c-1.6,2.8-3.2,5.6-4.8,8.8C291.2,199.2,287.2,205.6,283.2,212z" fill="#FFFFFF"/>
+                <path d="M335.2,76.8c-8,7.2-19.6,17.6-32,31.6c-12.4,13.6-25.6,30.8-38,50c-6,9.6-12,20-17.6,30.8s-10.4,21.6-15.2,33.2 c-4.4,11.2-8.4,22.8-12,34.4c-3.6,11.6-6.4,23.2-8.4,34.4c-4,19.6-6,38.8-7.2,55.6c0,2.8,1.6,5.2,4,6.4l0,0 c1.6-18,4.4-38.8,9.6-60.4c2.4-11.2,5.6-22.4,9.2-33.6c3.6-11.2,7.6-22.4,12-33.6c4.4-11.2,9.2-22,14.8-32.8 c5.2-10.4,10.8-20.8,16.8-30.4c11.6-19.2,24-36.4,35.6-50.8c11.6-14,22-25.6,29.6-33.2s12-12,12-12 C348.4,66,343.2,69.6,335.2,76.8z" fill="#7d7f82"/>
+                <path d="M260.8,328h-89.2c-28,12.4-47.2,35.6-47.2,62.4c0,20.8,11.6,39.6,30,52.8c3.6,2.4,8,4,12,4h99.2 c4.4,0,8.4-1.6,12-4c18.4-13.2,30-32,30-52.8C308,363.6,288.8,340,260.8,328z" fill="#324A5E"/>
+                <rect x="171.6" y="312.4" width="89.2" height="15.6" fill="#2B3B4E"/>
+                <path d="M265.2,312.4h-98.4c-1.2,0-2-0.8-2-2V294c0-1.2,0.8-2,2-2h98.4c1.2,0,2,0.8,2,2v16.8 C267.2,311.6,266.4,312.4,265.2,312.4z" fill="#324A5E"/>
+              </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Players Grid -->
+    <div class="players-grid" id="playersGrid">
+      <!-- Player cards will be rendered here -->
+    </div>
+
+    <button class="add-player-btn" onclick="addPlayer()">
+      <span>+</span> ADD PLAYER
+    </button>
+
+    <!-- Dice Tray -->
+    <section class="dice-tray">
+      <div class="dice-header">
+        <div class="results-display" id="resultsDisplay"></div>
+        <button class="clear-btn" onclick="clearResults()">(clear)</button>
+      </div>
+      <div class="dice-buttons">
+        <button class="dice-btn" onclick="rollDice(1, 6)">1d6</button>
+        <button class="dice-btn" onclick="rollDice(2, 6)">2d6</button>
+        <button class="dice-btn" onclick="rollDice(1, 8)">1d8</button>
+        <button class="dice-btn" onclick="rollDice(1, 10)">1d10</button>
+        <button class="dice-btn" onclick="rollDice(1, 12)">1d12</button>
+        <button class="dice-btn" onclick="rollDice(1, 20)">1d20</button>
+        <button class="dice-btn coin-btn" onclick="flipCoin()">Coin Toss</button>
+        <button class="dice-btn enemy-btn" id="enemyBtn" onclick="toggleEnemy()">ENEMY</button>
+      </div>
+    </section>
+
+    <!-- Enemy Tracker Section -->
+    <section class="enemy-section" id="enemySection">
+      <div class="enemy-header">
+        <h2 class="enemy-title">Enemy Tracker</h2>
+        <button class="add-enemy-btn" id="addEnemyBtn" onclick="addEnemy()">+Enemy</button>
+      </div>
+      <div class="enemy-grid" id="enemyGrid">
+        <!-- Enemy cards will be rendered here -->
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Madness Overlay -->
+<div class="madness-overlay" id="madnessOverlay" onclick="closeMadnessOnOverlay(event)">
+  <div class="madness-content">
+    <button class="madness-close" onclick="closeMadness()">&times;</button>
+    <h2 class="madness-title">Madness Report</h2>
+    <div class="madness-text" id="madnessText"></div>
   </div>
 </div>
-<!-- ENEMY TRACKER -->
-<div id="enemyTracker">
-  <h3 style="display:flex; justify-content:space-between; align-items:center;">
-    Enemy Encounter
-    <button id="addEnemyBtn" class="btn">Add Enemy</button>
-  </h3>
-  <div id="enemiesContainer"></div>
+
+<!-- Notepad Overlay -->
+<div class="notepad-overlay" id="notepadOverlay" onclick="closeNotepadOnOverlay(event)">
+  <div class="notepad-content">
+    <button class="notepad-close" onclick="closeNotepad()">&times;</button>
+    <h2 class="notepad-title" id="notepadTitle">
+      <svg class="notepad-title-icon" viewBox="0 0 508 508" version="1.1" xmlns="http://www.w3.org/2000/svg" width="2.5rem" height="2.5rem">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+        <g id="SVGRepo_iconCarrier"> <circle style="fill:#9ce0f7;" cx="254" cy="254" r="254"/> <path style="fill:#9f6a2d;" d="M89.2,447.2c44.4,38,102,60.8,164.8,60.8s120.4-22.8,164.8-60.8H89.2z"/> <path style="fill:#FFFFFF;" d="M283.2,212c-14,6.8-28.4,14.8-42,23.6c10.8-3.2,21.2-5.6,32-8c-17.2,26-36.8,51.2-59.6,74 c-13.2-29.2-15.2-66.4-5.6-102.4c5.2,10.4,10.8,20.4,16.8,30c-4.4-16.4-7.6-33.6-9.6-50.8l0,0c4.8-12,10.8-23.6,18-34.8 c0.4,11.6,1.2,22.8,2.8,34c2-18,6-35.6,10.8-53.2c7.2-8.4,15.2-16.4,23.6-23.2c-1.2,12.4-1.6,24.8-1.2,36.8 c4.4-16,9.6-32,16-48c20-13.2,41.6-21.6,62.8-24c-5.6,20.8-12.8,40.8-20.8,60.4c-13.6,7.2-26.8,15.6-39.6,24.4 c11.2-4,22-7.2,33.2-9.6c-4,8.4-8,17.2-12,25.2l0,0c-12.8,8.8-25.6,18.8-38,29.6c9.6-4.4,18.8-8.4,28.4-12 c-1.6,2.8-3.2,5.6-4.8,8.8C291.2,199.2,287.2,205.6,283.2,212z"/> <path style="fill:#7d7f82;" d="M335.2,76.8c-8,7.2-19.6,17.6-32,31.6c-12.4,13.6-25.6,30.8-38,50c-6,9.6-12,20-17.6,30.8 s-10.4,21.6-15.2,33.2c-4.4,11.2-8.4,22.8-12,34.4c-3.6,11.6-6.4,23.2-8.4,34.4c-4,19.6-6,38.8-7.2,55.6c0,2.8,1.6,5.2,4,6.4 l0,0c1.6-18,4.4-38.8,9.6-60.4c2.4-11.2,5.6-22.4,9.2-33.6c3.6-11.2,7.6-22.4,12-33.6c4.4-11.2,9.2-22,14.8-32.8 c5.2-10.4,10.8-20.8,16.8-30.4c11.6-19.2,24-36.4,35.6-50.8c11.6-14,22-25.6,29.6-33.2s12-12,12-12 C348.4,66,343.2,69.6,335.2,76.8z"/> <path style="fill:#324A5E;" d="M260.8,328h-89.2c-28,12.4-47.2,35.6-47.2,62.4c0,20.8,11.6,39.6,30,52.8c3.6,2.4,8,4,12,4h99.2 c4.4,0,8.4-1.6,12-4c18.4-13.2,30-32,30-52.8C308,363.6,288.8,340,260.8,328z"/> <rect x="171.6" y="312.4" style="fill:#2B3B4E;" width="89.2" height="15.6"/> <path style="fill:#324A5E;" d="M265.2,312.4h-98.4c-1.2,0-2-0.8-2-2V294c0-1.2,0.8-2,2-2h98.4c1.2,0,2,0.8,2,2v16.8 C267.2,311.6,266.4,312.4,265.2,312.4z"/> </g>
+      </svg>
+      <span id="notepadTitleText">Game Notes</span>
+    </h2>
+    <textarea class="notepad-textarea" id="notepadText" placeholder="Write your notes here..." oninput="saveNotepad()"></textarea>
+  </div>
 </div>
+
+<!-- Player Notepad Overlay -->
+<div class="notepad-overlay" id="playerNotepadOverlay" onclick="closePlayerNotepadOnOverlay(event)">
+  <div class="notepad-content">
+    <button class="notepad-close" onclick="closePlayerNotepad()">&times;</button>
+    <h2 class="notepad-title" id="playerNotepadTitle">
+      <svg class="notepad-title-icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+          <path d="M879.3 794.4H144.7c-17.7 0-32.1-14.4-32.1-32.1V261.6c0-17.7 14.4-32.1 32.1-32.1h734.5c17.7 0 32.1 14.4 32.1 32.1v500.7c0 17.8-14.3 32.1-32 32.1z" fill="#a05a40"/>
+          <path d="M879.3 799.9H144.7c-20.7 0-37.6-16.8-37.6-37.6V261.6c0-20.7 16.8-37.6 37.6-37.6h734.5c20.7 0 37.6 16.8 37.6 37.6v500.7c0 20.8-16.8 37.6-37.5 37.6zM144.7 235.1c-14.6 0-26.6 11.9-26.6 26.6v500.7c0 14.6 11.9 26.6 26.6 26.6h734.5c14.6 0 26.6-11.9 26.6-26.6V261.6c0-14.6-11.9-26.6-26.6-26.6H144.7z" fill="#333236"/>
+          <path d="M830.4 554.8l29.9-10.2c7.7-2.6 12.9-9.8 12.9-17.9V394.1c0-8.1-5.2-15.3-12.9-17.9L830.4 366v188.8z" fill="#FFD632"/>
+          <path d="M824.9 562.4V358.3l37.2 12.6c9.9 3.4 16.6 12.7 16.6 23.1v132.6c0 10.5-6.7 19.8-16.6 23.2l-37.2 12.6z m11-188.7v173.4l22.7-7.7c5.5-1.9 9.1-7 9.1-12.7V394.1c0-5.8-3.7-10.9-9.1-12.7l-22.7-7.7z" fill="#333236"/>
+          <path d="M830.4 652.2l29.9-10.2c7.7-2.6 12.9-9.8 12.9-17.9V491.6c0-8.1-5.2-15.3-12.9-17.9l-29.9-10.2v188.7z" fill="#D8A128"/>
+          <path d="M824.9 659.9V455.8l37.2 12.6c9.9 3.4 16.6 12.7 16.6 23.1v132.6c0 10.5-6.7 19.8-16.6 23.2l-37.2 12.6z m11-188.8v173.4l22.7-7.7c5.5-1.9 9.1-7 9.1-12.7V491.6c0-5.8-3.7-10.9-9.1-12.7l-22.7-7.8z" fill="#333236"/>
+          <path d="M830.4 719.7l29.9-10.2c7.7-2.6 12.9-9.8 12.9-17.9V589c0-8.1-5.2-15.3-12.9-17.9l-29.9-10.2v158.8z" fill="#FFD632"/>
+          <path d="M824.9 727.4V553.3l37.2 12.6c9.9 3.4 16.6 12.7 16.6 23.1v102.6c0 10.5-6.7 19.8-16.6 23.2l-37.2 12.6z m11-158.8V712l22.7-7.7c5.5-1.9 9.1-7 9.1-12.7V589c0-5.8-3.7-10.9-9.1-12.7l-22.7-7.7z" fill="#333236"/>
+          <path d="M203.1 450.6l-38.7-13.8c-9.4-3.3-15.7-12.2-15.7-22.2v-95c0-9.8 8-17.8 17.8-17.8h36.6v148.8z" fill="#FFD632"/>
+          <path d="M208.6 458.4L162.5 442c-11.6-4.1-19.3-15.1-19.3-27.4v-95c0-12.9 10.5-23.3 23.3-23.3h42.1v162.1z m-42.1-151.1c-6.8 0-12.3 5.5-12.3 12.3v95c0 7.6 4.8 14.5 12 17l31.4 11.2V307.3h-31.1z" fill="#333236"/>
+          <path d="M501.3 282.4H199.8c-8.9 0-16.1 7.2-16.1 16.1v426.9c0 8.9 7.2 16.1 16.1 16.1h301.5V282.4z" fill="#D5D9CF"/>
+          <path d="M506.8 747.1h-307c-11.9 0-21.6-9.7-21.6-21.6v-427c0-11.9 9.7-21.6 21.6-21.6h307v470.2z m-307-459.2c-5.9 0-10.6 4.8-10.6 10.6v426.9c0 5.9 4.8 10.6 10.6 10.6h296V287.9h-296z" fill="#333236"/>
+          <path d="M824.2 282.4H522.7v459.1h301.5c8.9 0 16.1-7.2 16.1-16.1V298.5c0-8.9-7.2-16.1-16.1-16.1z" fill="#D5D9CF"/>
+          <path d="M824.2 747.1h-307V276.9h307c11.9 0 21.6 9.7 21.6 21.6v426.9c0 12-9.7 21.7-21.6 21.7z m-296-11h296c5.9 0 10.6-4.8 10.6-10.6v-427c0-5.9-4.8-10.6-10.6-10.6h-296v448.2z" fill="#333236"/>
+          <path d="M466 392.6c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M558.5 392.6c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z"/>
+          <path d="M466 460.4c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M558.5 460.4c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M466 625.9c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M558.5 625.9c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M466 693.7c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M558.5 693.7c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M558.5 374.2H466c-3 0-5.5-2.5-5.5-5.5s2.5-5.5 5.5-5.5h92.5c3 0 5.5 2.5 5.5 5.5s-2.5 5.5-5.5 5.5z" fill="#333236"/>
+          <path d="M558.5 441.9H466c-3 0-5.5-2.5-5.5-5.5s2.5-5.5 5.5-5.5h92.5c3 0 5.5 2.5 5.5 5.5s-2.5 5.5-5.5 5.5z" fill="#333236"/>
+          <path d="M558.5 606.6H466c-3 0-5.5-2.5-5.5-5.5s2.5-5.5 5.5-5.5h92.5c3 0 5.5 2.5 5.5 5.5s-2.5 5.5-5.5 5.5z" fill="#333236"/>
+          <path d="M558.5 675.8H466c-3 0-5.5-2.5-5.5-5.5s2.5-5.5 5.5-5.5h92.5c3 0 5.5 2.5 5.5 5.5s-2.5 5.5-5.5 5.5z" fill="#333236"/>
+          <path d="M373.7 230.1h28.9v562.8h-28.9z" fill="#FFD632"/>
+          <path d="M408.1 798.4h-39.9V224.6h39.9v573.8z m-28.9-11h17.9V235.6h-17.9v551.8z" fill="#333236"/>
+          <path d="M756.8 426.8v321.4c0 11-8.9 19.9-19.9 19.9-11 0-19.9-8.9-19.9-19.9V426.8" fill="#a05a40"/>
+          <path d="M736.9 773.6c-14 0-25.4-11.4-25.4-25.4V426.8h11v321.4c0 7.9 6.5 14.4 14.4 14.4s14.4-6.5 14.4-14.4V426.8h11v321.4c0 14-11.4 25.4-25.4 25.4z" fill="#333236"/>
+          <path d="M756.6 428c0.1 0 0.2-0.1 0.2-0.3L746 393.4c-2.3-9.4-15.6-9.4-18 0l-10.9 34.3c0 0.1 0.1 0.3 0.2 0.3h39.3z" fill="#FFD632"/>
+          <path d="M756.6 433.5h-39.3c-1.8 0-3.5-0.9-4.6-2.3-1.1-1.5-1.4-3.4-0.8-5.1l10.8-34.1c1.7-6.6 7.4-11 14.3-11 6.8 0 12.5 4.4 14.3 11l10.8 34.1c0.5 1.7 0.2 3.6-0.8 5.1s-2.9 2.3-4.7 2.3z m-32.1-11h24.8l-8.8-27.7c-0.6-2.6-2.8-2.8-3.6-2.8-0.7 0-3 0.2-3.6 2.8l-0.1 0.3-8.7 27.4z" fill="#333236"/>
+          <path d="M717 702.3h39.8v55c0 9.3-7.5 16.8-16.8 16.8h-6.3c-9.3 0-16.8-7.5-16.8-16.8v-55z" fill="#FFD632"/>
+          <path d="M740.1 779.5h-6.3c-12.3 0-22.3-10-22.3-22.3v-60.5h50.8v60.5c0 12.4-10 22.3-22.2 22.3z m-17.6-71.7v49.5c0 6.2 5.1 11.3 11.3 11.3h6.3c6.2 0 0 11.3-5.1 11.3-11.3v-49.5h-28.9z" fill="#333236"/>
+          <path d="M729.2 388.1h15.3l-6.8-27.5c-0.2-0.9-1.5-0.9-1.7 0l-6.8 27.5z" fill="#a05a40"/>
+          <path d="M751.6 393.6h-29.4l8.5-34.3c0.7-2.9 3.3-4.9 6.2-4.9 2.9 0 5.5 2 6.2 4.9l8.5 34.3z m-15.3-11h1.3l-0.6-2.6-0.7 2.6z" fill="#333236"/>
+        </svg>
+      </svg>
+      <span id="playerNotepadTitleText"></span>
+    </h2>
+    <textarea class="notepad-textarea" id="playerNotepadText" placeholder="Write player notes here..." oninput="savePlayerNotepad()"></textarea>
+  </div>
+</div>
+
 <script>
 // ==========================
-// LOCAL STORAGE HELPERS
+// STATE MANAGEMENT
 // ==========================
-const saveState = (k,v) => localStorage.setItem(k,JSON.stringify(v));
-const loadState = (k,f) => { const v=localStorage.getItem(k); return v?JSON.parse(v):f; };
-
-// ==========================
-// ACT COUNTER
-// ==========================
-const acts = ["Act 0","Act I","Act II","Act III","Finale"];
-let currentAct = loadState("currentAct",0);
-const actBtn = document.getElementById("actCounter");
-actBtn.textContent = acts[currentAct];
-let actCooldown = false;
-actBtn.onclick = () => {
-  if(actCooldown) return;
-  actCooldown = true;
-  currentAct = (currentAct + 1) % acts.length;
-  actBtn.textContent = acts[currentAct];
-  saveState("currentAct", currentAct);
-  setTimeout(()=>actCooldown=false,2000);
+let gameState = {
+  villain: '',
+  act: 0,
+  players: [],
+  enemies: [],
+  diceResults: []
 };
 
-// ==========================
-// VILLAIN SELECT
-// ==========================
-const villainSelect = document.getElementById("villainSelect");
-villainSelect.value = loadState("currentVillain", villainSelect.value);
-villainSelect.onchange = () => saveState("currentVillain", villainSelect.value);
+const actStages = ['0', 'I', 'II', 'III', 'Finale'];
 
 // ==========================
-// PLAYER RENDERING
+// INITIALIZATION
 // ==========================
-const playersContainer = document.getElementById("playersContainer");
-let players = loadState("hostPlayers", ["P1","P2","P3"]);
-const RANGES={soul:[0,5],level:[1,20],maxLife:[-1,20],maxStam:[-1,9],maxMana:[0,20],maxEnergy:[0,20]};
-const clamp = (v,min,max) => Math.min(max,Math.max(min,v));
-
-function makeStatControl(label, key, min, max, initial, idx) {
-  let v = clamp(loadState(key + idx, initial), min, max);
-  const block = document.createElement("div");
-  block.className = "stat-block";
-
-  const labelDiv = document.createElement("div");
-  labelDiv.className = "stat-label";
-  labelDiv.textContent = label;
-
-  const controls = document.createElement("div");
-  controls.className = "stat-controls";
-
-  const minus = document.createElement("button");
-  minus.className = "btn minus";
-  minus.textContent = "−";
-
-  const val = document.createElement("span");
-  val.className = `value stat-${key}`; // Add a class based on the key
-  val.textContent = v;
-
-  const plus = document.createElement("button");
-  plus.className = "btn plus";
-  plus.textContent = "+";
-
-  minus.onclick = () => {
-    v = clamp(v - 1, min, max);
-    val.textContent = v;
-    saveState(key + idx, v);
-  };
-
-  plus.onclick = () => {
-    v = clamp(v + 1, min, max);
-    val.textContent = v;
-    saveState(key + idx, v);
-  };
-
-  controls.append(minus, val, plus);
-  block.append(labelDiv, controls);
-  return { block, get value() { return v; }, set value(x) { v = x; val.textContent = x; } };
-}
-
-function enforceLifeCap(current,maxLife){ return Math.min(Math.max(current,-20),maxLife); }
-
-function renderPlayers(){
-  playersContainer.innerHTML="";
-  players.forEach((name,idx)=>{
-    const card = document.createElement("div"); card.className="player-section";
-    const row = document.createElement("div"); row.className="player-row";
-
-    // Name
-    const nameInput = document.createElement("input"); nameInput.type="text"; nameInput.placeholder=`Player ${idx+1} Name`;
-    const savedName = loadState("playerName"+idx,"");
-    if(savedName) nameInput.value = savedName;
-    nameInput.onblur = () => saveState("playerName"+idx,nameInput.value);
-    nameInput.onkeydown = e => { if(e.key==="Enter"){ saveState("playerName"+idx,nameInput.value); nameInput.blur(); } };
-    row.appendChild(nameInput);
-
-    // Bars helper
-    const createBar = (type, key) => {
-      let valNum = loadState(key+idx,0);
-      const bar = document.createElement("div"); bar.className = `bar ${type}`;
-      const wrap = document.createElement("div"); wrap.style.display="flex"; wrap.style.alignItems="center"; wrap.style.gap="6px";
-      const minus = document.createElement("button"); minus.className="btn minus"; minus.textContent="−";
-      const val = document.createElement("span"); val.className="value"; val.textContent = valNum;
-      const plus = document.createElement("button"); plus.className="btn plus"; plus.textContent="+";
-      minus.onclick = ()=>{ valNum--; val.textContent=valNum; saveState(key+idx,valNum); };
-      plus.onclick = ()=>{ valNum++; val.textContent=valNum; saveState(key+idx,valNum); };
-      wrap.append(minus, type.charAt(0).toUpperCase()+type.slice(1)+":", val, plus);
-      bar.appendChild(wrap);
-      return bar;
-    };
-
-    row.appendChild(createBar("madness","playerMadness"));
-    row.appendChild(createBar("life","playerLife"));
-
-    // Checkboxes
-    const cbDiv = document.createElement("div"); cbDiv.className="checkbox-grid";
-    ["Favour","Dread","Blessed","Cursed"].forEach(cbName=>{
-      const lbl = document.createElement("label");
-      const cb = document.createElement("input"); cb.type="checkbox"; cb.checked=loadState(cbName+idx,false);
-      cb.onchange=()=>saveState(cbName+idx,cb.checked);
-      lbl.append(cb,cbName); cbDiv.appendChild(lbl);
-    });
-    row.appendChild(cbDiv);
-
-    card.appendChild(row);
-
-    // Stats
-    const statsBox = document.createElement("div"); statsBox.className="stats-box";
-    const statsGrid = document.createElement("div"); statsGrid.className="stats-grid";
-    ["Soul","Level","Max Life","Max Stamina","Max Mana","Max Energy"].forEach((label,i)=>{
-      const keys = ["playerSoul","playerLevel","playerMaxLife","playerMaxStamina","playerMaxMana","playerMaxEnergy"];
-      const mins = [0,1,-1,-1,0,0]; const maxs=[5,20,20,9,20,20]; const initials=[0,1,3,1,0,0];
-      statsGrid.appendChild(makeStatControl(label,keys[i],mins[i],maxs[i],initials[i],idx).block);
-    });
-    statsBox.appendChild(statsGrid); card.appendChild(statsBox);
-
-    playersContainer.appendChild(card);
-  });
-
-  // Add Player Button
-  if(players.length<10){
-    const addBtn=document.createElement("button"); addBtn.className="btn"; addBtn.textContent="Add Player";
-    addBtn.onclick=()=>{ players.push("P"+(players.length+1)); saveState("hostPlayers",players); renderPlayers(); };
-    playersContainer.appendChild(addBtn);
-  }
-}
-
-renderPlayers();
-
-// Reset
-document.getElementById("resetBtn").onclick = () => {
-  if(confirm("Reset EVERYTHING?")){ localStorage.clear(); location.reload(); }
-};
-
-// ==========================
-// ENEMY TRACKER
-// ==========================
-const enemyTracker = document.getElementById("enemyTracker");
-const enemyBtn = document.getElementById("enemyBtn");
-enemyBtn.onclick = () => {
-  const isOpen = enemyTracker.style.display==="block";
-  if(isOpen){
-    enemyTracker.style.opacity="0"; setTimeout(()=>enemyTracker.style.display="none",200);
-    enemyBtn.classList.remove("open"); enemyBtn.classList.add("closed");
-  } else {
-    enemyTracker.style.display="block"; setTimeout(()=>enemyTracker.style.opacity="1",20);
-    enemyBtn.classList.remove("closed"); enemyBtn.classList.add("open");
-  }
-};
-if(enemyTracker.style.display==="block") enemyBtn.classList.add("open"); else enemyBtn.classList.add("closed");
-
-let enemies = loadState("enemies",[]);
-const saveEnemies = ()=>saveState("enemies",enemies);
-
-function renderEnemies(){
-  const cont=document.getElementById("enemiesContainer");
-  cont.innerHTML="";
-  enemies.forEach((enemy,idx)=>{
-    enemy = enemy || {name:"",power:0,life:0};
-    const row=document.createElement("div"); row.className="enemy-row";
-
-    const createInput = (type, key) => {
-      const bar = document.createElement("div"); bar.className="bar";
-      const wrap = document.createElement("div"); wrap.style.display="flex"; wrap.style.alignItems="center"; wrap.style.gap="6px";
-      const minus = document.createElement("button"); minus.className="btn minus"; minus.textContent="−";
-      const val = document.createElement("span"); val.className="value"; val.textContent=enemy[key]||0;
-      const plus = document.createElement("button"); plus.className="btn plus"; plus.textContent="+";
-      minus.onclick = ()=>{ if(enemy[key]>0){ enemy[key]--; val.textContent=enemy[key]; saveEnemies(); } };
-      plus.onclick = ()=>{ enemy[key]++; val.textContent=enemy[key]; saveEnemies(); };
-      wrap.append(minus,type+":",val,plus); bar.appendChild(wrap); return bar;
-    };
-
-    const nameInput=document.createElement("input"); nameInput.placeholder=`Enemy ${idx+1}`; nameInput.value=enemy.name||"";
-    nameInput.onblur=()=>{ enemy.name=nameInput.value; saveEnemies(); };
-    nameInput.onkeydown=e=>{ if(e.key==="Enter"){ enemy.name=nameInput.value; saveEnemies(); nameInput.blur(); }};
-    row.appendChild(nameInput);
-
-    row.appendChild(createInput("Power","power"));
-    row.appendChild(createInput("Life","life"));
-
-    const killBtn=document.createElement("button"); killBtn.className="btn"; killBtn.textContent="Kill";
-    killBtn.onclick=()=>{ enemies.splice(idx,1); saveEnemies(); renderEnemies(); };
-    row.appendChild(killBtn);
-
-    cont.appendChild(row);
-  });
-}
-
-document.getElementById("addEnemyBtn").onclick=()=>{
-  if(enemies.length<16){ enemies.push({name:"",power:0,life:0}); saveEnemies(); renderEnemies(); }
-};
-renderEnemies();
-
-// ==========================
-// DICE + COIN TOSS
-// ==========================
-let rollCooldown=false;
-const animateButton = btn => { btn.classList.add("animate"); setTimeout(()=>btn.classList.remove("animate"),400); };
-const setRollResult = text => { document.getElementById("rollResult").textContent=text; rollCooldown=true; setTimeout(()=>rollCooldown=false,1200); };
-
-document.getElementById("coinTossBtn").onclick = e => {
-  if(rollCooldown) return; animateButton(e.target); setRollResult("Coin Toss: "+(Math.random()<0.5?"Heads":"Tails"));
-};
-
-document.querySelectorAll(".diceBtn").forEach(btn=>{
-  btn.onclick=e=>{
-    if(rollCooldown) return; animateButton(e.target);
-    const [n,d] = btn.dataset.dice.split("d").map(Number);
-    let total = 0; for(let i=0;i<n;i++) total+=Math.floor(Math.random()*d)+1;
-    setRollResult(`${btn.dataset.dice}: ${total}`);
-  };
+document.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  renderPlayers();
+  setupDeleteButtons();
+  renderEnemies();
+  updateAddEnemyButton();
+  updateActButton();
+  
+  // Set up notepad
+  document.getElementById('notepadText').value = gameState.notepad || '';
 });
+
+// ==========================
+// PLAYER MANAGEMENT
+// ==========================
+function createPlayer(id) {
+  return {
+    id: id,
+    name: '',
+    artefact: '',
+    iris: '',
+    favour: false,
+    dread: false,
+    blessed: false,
+    curse: false,
+    madness: 0,
+    life: 1,
+    soul: 0,
+    coins: 0,
+    previousMadness: 0,
+    notes: ''
+  };
+}
+
+function renderPlayers() {
+  const grid = document.getElementById('playersGrid');
+  grid.innerHTML = '';
+  
+  gameState.players.forEach((player, index) => {
+    const card = document.createElement('div');
+    card.className = 'player-card';
+    card.innerHTML = `
+      <button class="delete-btn" id="deleteBtn${index}" data-player-index="${index}" title="Delete Player">
+        <div class="halo"></div>
+        <svg viewBox="0 0 60 60">
+          <circle class="ring-white" cx="30" cy="30" r="25"/>
+          <circle class="ring-progress" id="progressRing${index}" cx="30" cy="30" r="25"/>
+        </svg>
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M17 7L7 17M7 7L17 17" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </button>
+      <div class="player-header">
+        <div class="player-name-section">
+          <input type="text" class="player-name" value="${player.name}" 
+            placeholder="Player ${index + 1} Name" 
+            onchange="updatePlayer(${index}, 'name', this.value)">
+          <select class="tag-select artefact-select" onchange="updatePlayer(${index}, 'artefact', this.value)">
+            <option value="">Choose artefact</option>
+            <option value="The Darkflame" ${player.artefact === 'The Darkflame' ? 'selected' : ''}>The Darkflame</option>
+            <option value="The Wintergrace" ${player.artefact === 'The Wintergrace' ? 'selected' : ''}>The Wintergrace</option>
+            <option value="The Bronze Ring of Smiles" ${player.artefact === 'The Bronze Ring of Smiles' ? 'selected' : ''}>The Bronze Ring of Smiles</option>
+            <option value="The Wand" ${player.artefact === 'The Wand' ? 'selected' : ''}>The Wand</option>
+            <option value="The Pair and a Half" ${player.artefact === 'The Pair and a Half' ? 'selected' : ''}>The Pair and a Half</option>
+            <option value="The Trickblade" ${player.artefact === 'The Trickblade' ? 'selected' : ''}>The Trickblade</option>
+            <option value="The Fisherman's Flask" ${player.artefact === "The Fisherman's Flask" ? 'selected' : ''}>The Fisherman's Flask</option>
+            <option value="Scathe's Memo Book" ${player.artefact === "Scathe's Memo Book" ? 'selected' : ''}>Scathe's Memo Book</option>
+            <option value="The Prismatic Glasses" ${player.artefact === 'The Prismatic Glasses' ? 'selected' : ''}>The Prismatic Glasses</option>
+            <option value="The Coin" ${player.artefact === 'The Coin' ? 'selected' : ''}>The Coin</option>
+          </select>
+          <select class="tag-select iris-select" onchange="updatePlayer(${index}, 'iris', this.value)">
+            <option value="">Choose Iris</option>
+            <option value="Steady Sky Blue" ${player.iris === 'Steady Sky Blue' ? 'selected' : ''}>Steady Sky Blue</option>
+            <option value="Bravely Bold Gold" ${player.iris === 'Bravely Bold Gold' ? 'selected' : ''}>Bravely Bold Gold</option>
+            <option value="Radiant Emerald Green" ${player.iris === 'Radiant Emerald Green' ? 'selected' : ''}>Radiant Emerald Green</option>
+            <option value="Softly Strange Violet" ${player.iris === 'Softly Strange Violet' ? 'selected' : ''}>Softly Strange Violet</option>
+            <option value="Feverspin Crimson" ${player.iris === 'Feverspin Crimson' ? 'selected' : ''}>Feverspin Crimson</option>
+            <option value="Amberbright Hazel" ${player.iris === 'Amberbright Hazel' ? 'selected' : ''}>Amberbright Hazel</option>
+            <option value="Honeydark Smoulder" ${player.iris === 'Honeydark Smoulder' ? 'selected' : ''}>Honeydark Smoulder</option>
+            <option value="Silver Slivers" ${player.iris === 'Silver Slivers' ? 'selected' : ''}>Silver Slivers</option>
+            <option value="Otherworldly Odd" ${player.iris === 'Otherworldly Odd' ? 'selected' : ''}>Otherworldly Odd</option>
+            <option value="Absolute Cloying Dark" ${player.iris === 'Absolute Cloying Dark' ? 'selected' : ''}>Absolute Cloying Dark</option>
+          </select>
+        </div>
+        <div class="player-right-section">
+          <div class="player-card-header">
+            <button class="player-memobook-btn" onclick="togglePlayerNotepad(${index})" title="Player Notes">
+        <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+          <path d="M879.3 794.4H144.7c-17.7 0-32.1-14.4-32.1-32.1V261.6c0-17.7 14.4-32.1 32.1-32.1h734.5c17.7 0 32.1 14.4 32.1 32.1v500.7c0 17.8-14.3 32.1-32 32.1z" fill="#a05a40"/>
+          <path d="M879.3 799.9H144.7c-20.7 0-37.6-16.8-37.6-37.6V261.6c0-20.7 16.8-37.6 37.6-37.6h734.5c20.7 0 37.6 16.8 37.6 37.6v500.7c0 20.8-16.8 37.6-37.5 37.6zM144.7 235.1c-14.6 0-26.6 11.9-26.6 26.6v500.7c0 14.6 11.9 26.6 26.6 26.6h734.5c14.6 0 26.6-11.9 26.6-26.6V261.6c0-14.6-11.9-26.6-26.6-26.6H144.7z" fill="#333236"/>
+          <path d="M830.4 554.8l29.9-10.2c7.7-2.6 12.9-9.8 12.9-17.9V394.1c0-8.1-5.2-15.3-12.9-17.9L830.4 366v188.8z" fill="#FFD632"/>
+          <path d="M824.9 562.4V358.3l37.2 12.6c9.9 3.4 16.6 12.7 16.6 23.1v132.6c0 10.5-6.7 19.8-16.6 23.2l-37.2 12.6z m11-188.7v173.4l22.7-7.7c5.5-1.9 9.1-7 9.1-12.7V394.1c0-5.8-3.7-10.9-9.1-12.7l-22.7-7.7z" fill="#333236"/>
+          <path d="M830.4 652.2l29.9-10.2c7.7-2.6 12.9-9.8 12.9-17.9V491.6c0-8.1-5.2-15.3-12.9-17.9l-29.9-10.2v188.7z" fill="#D8A128"/>
+          <path d="M824.9 659.9V455.8l37.2 12.6c9.9 3.4 16.6 12.7 16.6 23.1v132.6c0 10.5-6.7 19.8-16.6 23.2l-37.2 12.6z m11-188.8v173.4l22.7-7.7c5.5-1.9 9.1-7 9.1-12.7V491.6c0-5.8-3.7-10.9-9.1-12.7l-22.7-7.8z" fill="#333236"/>
+          <path d="M830.4 719.7l29.9-10.2c7.7-2.6 12.9-9.8 12.9-17.9V589c0-8.1-5.2-15.3-12.9-17.9l-29.9-10.2v158.8z" fill="#FFD632"/>
+          <path d="M824.9 727.4V553.3l37.2 12.6c9.9 3.4 16.6 12.7 16.6 23.1v102.6c0 10.5-6.7 19.8-16.6 23.2l-37.2 12.6z m11-158.8V712l22.7-7.7c5.5-1.9 9.1-7 9.1-12.7V589c0-5.8-3.7-10.9-9.1-12.7l-22.7-7.7z" fill="#333236"/>
+          <path d="M203.1 450.6l-38.7-13.8c-9.4-3.3-15.7-12.2-15.7-22.2v-95c0-9.8 8-17.8 17.8-17.8h36.6v148.8z" fill="#FFD632"/>
+          <path d="M208.6 458.4L162.5 442c-11.6-4.1-19.3-15.1-19.3-27.4v-95c0-12.9 10.5-23.3 23.3-23.3h42.1v162.1z m-42.1-151.1c-6.8 0-12.3 5.5-12.3 12.3v95c0 7.6 4.8 14.5 12 17l31.4 11.2V307.3h-31.1z" fill="#333236"/>
+          <path d="M501.3 282.4H199.8c-8.9 0-16.1 7.2-16.1 16.1v426.9c0 8.9 7.2 16.1 16.1 16.1h301.5V282.4z" fill="#D5D9CF"/>
+          <path d="M506.8 747.1h-307c-11.9 0-21.6-9.7-21.6-21.6v-427c0-11.9 9.7-21.6 21.6-21.6h307v470.2z m-307-459.2c-5.9 0-10.6 4.8-10.6 10.6v426.9c0 5.9 4.8 10.6 10.6 10.6h296V287.9h-296z" fill="#333236"/>
+          <path d="M824.2 282.4H522.7v459.1h301.5c8.9 0 16.1-7.2 16.1-16.1V298.5c0-8.9-7.2-16.1-16.1-16.1z" fill="#D5D9CF"/>
+          <path d="M824.2 747.1h-307V276.9h307c11.9 0 21.6 9.7 21.6 21.6v426.9c0 12-9.7 21.7-21.6 21.7z m-296-11h296c5.9 0 10.6-4.8 10.6-10.6v-427c0-5.9-4.8-10.6-10.6-10.6h-296v448.2z" fill="#333236"/>
+          <path d="M466 392.6c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M558.5 392.6c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z"/>
+          <path d="M466 460.4c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M558.5 460.4c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M466 625.9c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M558.5 625.9c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M466 693.7c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M558.5 693.7c-13.2 0-23.9-10.7-23.9-23.9s10.7-23.9 23.9-23.9 23.9 10.7 23.9 23.9-10.7 23.9-23.9 23.9z m0-36.8c-7.1 0-12.9 5.8-12.9 12.9s5.8 12.9 12.9 12.9 12.9-5.8 12.9-12.9-5.8-12.9-12.9-12.9z" fill="#333236"/>
+          <path d="M558.5 374.2H466c-3 0-5.5-2.5-5.5-5.5s2.5-5.5 5.5-5.5h92.5c3 0 5.5 2.5 5.5 5.5s-2.5 5.5-5.5 5.5z" fill="#333236"/>
+          <path d="M558.5 441.9H466c-3 0-5.5-2.5-5.5-5.5s2.5-5.5 5.5-5.5h92.5c3 0 5.5 2.5 5.5 5.5s-2.5 5.5-5.5 5.5z" fill="#333236"/>
+          <path d="M558.5 606.6H466c-3 0-5.5-2.5-5.5-5.5s2.5-5.5 5.5-5.5h92.5c3 0 5.5 2.5 5.5 5.5s-2.5 5.5-5.5 5.5z" fill="#333236"/>
+          <path d="M558.5 675.8H466c-3 0-5.5-2.5-5.5-5.5s2.5-5.5 5.5-5.5h92.5c3 0 5.5 2.5 5.5 5.5s-2.5 5.5-5.5 5.5z" fill="#333236"/>
+          <path d="M373.7 230.1h28.9v562.8h-28.9z" fill="#FFD632"/>
+          <path d="M408.1 798.4h-39.9V224.6h39.9v573.8z m-28.9-11h17.9V235.6h-17.9v551.8z" fill="#333236"/>
+          <path d="M756.8 426.8v321.4c0 11-8.9 19.9-19.9 19.9-11 0-19.9-8.9-19.9-19.9V426.8" fill="#a05a40"/>
+          <path d="M736.9 773.6c-14 0-25.4-11.4-25.4-25.4V426.8h11v321.4c0 7.9 6.5 14.4 14.4 14.4s14.4-6.5 14.4-14.4V426.8h11v321.4c0 14-11.4 25.4-25.4 25.4z" fill="#333236"/>
+          <path d="M756.6 428c0.1 0 0.2-0.1 0.2-0.3L746 393.4c-2.3-9.4-15.6-9.4-18 0l-10.9 34.3c0 0.1 0.1 0.3 0.2 0.3h39.3z" fill="#FFD632"/>
+          <path d="M756.6 433.5h-39.3c-1.8 0-3.5-0.9-4.6-2.3-1.1-1.5-1.4-3.4-0.8-5.1l10.8-34.1c1.7-6.6 7.4-11 14.3-11 6.8 0 12.5 4.4 14.3 11l10.8 34.1c0.5 1.7 0.2 3.6-0.8 5.1s-2.9 2.3-4.7 2.3z m-32.1-11h24.8l-8.8-27.7c-0.6-2.6-2.8-2.8-3.6-2.8-0.7 0-3 0.2-3.6 2.8l-0.1 0.3-8.7 27.4z" fill="#333236"/>
+          <path d="M717 702.3h39.8v55c0 9.3-7.5 16.8-16.8 16.8h-6.3c-9.3 0-16.8-7.5-16.8-16.8v-55z" fill="#FFD632"/>
+          <path d="M740.1 779.5h-6.3c-12.3 0-22.3-10-22.3-22.3v-60.5h50.8v60.5c0 12.4-10 22.3-22.2 22.3z m-17.6-71.7v49.5c0 6.2 5.1 11.3 11.3 11.3h6.3c6.2 0 0 11.3-5.1 11.3-11.3v-49.5h-28.9z" fill="#333236"/>
+          <path d="M729.2 388.1h15.3l-6.8-27.5c-0.2-0.9-1.5-0.9-1.7 0l-6.8 27.5z" fill="#a05a40"/>
+          <path d="M751.6 393.6h-29.4l8.5-34.3c0.7-2.9 3.3-4.9 6.2-4.9 2.9 0 5.5 2 6.2 4.9l8.5 34.3z m-15.3-11h1.3l-0.6-2.6-0.7 2.6z" fill="#333236"/>
+        </svg>
+            </button>
+          </div>
+          <div class="status-checkboxes">
+            <label class="status-checkbox">
+              <input type="checkbox" ${player.favour ? 'checked' : ''} 
+                onchange="updatePlayer(${index}, 'favour', this.checked)">
+              Favour
+            </label>
+            <label class="status-checkbox">
+              <input type="checkbox" ${player.dread ? 'checked' : ''} 
+                onchange="updatePlayer(${index}, 'dread', this.checked)">
+              Dread
+            </label>
+            <label class="status-checkbox">
+              <input type="checkbox" ${player.blessed ? 'checked' : ''} 
+                onchange="updatePlayer(${index}, 'blessed', this.checked)">
+              Blessed
+            </label>
+            <label class="status-checkbox">
+              <input type="checkbox" ${player.curse ? 'checked' : ''} 
+                onchange="updatePlayer(${index}, 'curse', this.checked)">
+              Curse
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="stats-section">
+        <div class="stat-row">
+          <span class="stat-label ${player.madness > 0 ? 'madness-clickable' : ''}" 
+            onclick="${player.madness > 0 ? `showMadnessReport(${index})` : ''}">Madness:</span>
+          <div class="stat-controls">
+            <button class="stat-btn minus" onclick="updateStat(${index}, 'madness', -1)">
+              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem">
+                <path d="M0 16q0 3.264 1.28 6.208t3.392 5.12 5.12 3.424 6.208 1.248 6.208-1.248 5.12-3.424 3.392-5.12 1.28-6.208-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM8 16q0 0.832 0.576 1.44t1.44 0.576h12q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-12q-0.832 0-1.44 0.576t-0.576 1.408z"/>
+              </svg>
+            </button>
+            <span class="stat-value madness">${player.madness}</span>
+            <button class="stat-btn plus" onclick="updateStat(${index}, 'madness', 1)">
+              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem">
+                <path d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-20q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v20q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM8 16q0 0.832 0.576 1.44t1.44 0.576h4v4q0 0.832 0.576 1.408t1.408 0.576 1.408-0.576 0.608-1.408v-4h4q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-4v-4q0-0.832-0.608-1.408t-1.408-0.608-1.408 0.608-0.576 1.408v4h-4q-0.832 0-1.44 0.576t-0.576 1.408z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Life:</span>
+          <div class="stat-controls">
+            <button class="stat-btn minus" onclick="updateStat(${index}, 'life', -1)">
+              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>minus-round</title> <path d="M0 16q0 3.264 1.28 6.208t3.392 5.12 5.12 3.424 6.208 1.248 6.208-1.248 5.12-3.424 3.392-5.12 1.28-6.208-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM8 16q0 0.832 0.576 1.44t1.44 0.576h12q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-12q-0.832 0-1.44 0.576t-0.576 1.408z"></path> </g></svg>
+            </button>
+            <span class="stat-value life">${player.life}</span>
+            <button class="stat-btn plus" onclick="updateStat(${index}, 'life', 1)">
+              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem">
+                <path d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-20q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v20q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM8 16q0 0.832 0.576 1.44t1.44 0.576h4v4q0 0.832 0.576 1.408t1.408 0.576 1.408-0.576 0.608-1.408v-4h4q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-4v-4q0-0.832-0.608-1.408t-1.408-0.608-1.408 0.608-0.576 1.408v4h-4q-0.832 0-1.44 0.576t-0.576 1.408z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Soul:</span>
+          <div class="stat-controls">
+            <button class="stat-btn minus" onclick="updateStat(${index}, 'soul', -1)">
+              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>minus-round</title> <path d="M0 16q0 3.264 1.28 6.208t3.392 5.12 5.12 3.424 6.208 1.248 6.208-1.248 5.12-3.424 3.392-5.12 1.28-6.208-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM8 16q0 0.832 0.576 1.44t1.44 0.576h12q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-12q-0.832 0-1.44 0.576t-0.576 1.408z"></path> </g></svg>
+            </button>
+            <span class="stat-value soul">${player.soul}</span>
+            <button class="stat-btn plus" onclick="updateStat(${index}, 'soul', 1)">
+              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem">
+                <path d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-20q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v20q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM8 16q0 0.832 0.576 1.44t1.44 0.576h4v4q0 0.832 0.576 1.408t1.408 0.576 1.408-0.576 0.608-1.408v-4h4q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-4v-4q0-0.832-0.608-1.408t-1.408-0.608-1.408 0.608-0.576 1.408v4h-4q-0.832 0-1.44 0.576t-0.576 1.408z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Coins:</span>
+          <div class="stat-controls">
+            <button class="stat-btn minus" onclick="updateStat(${index}, 'coins', -1)">
+              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>minus-round</title> <path d="M0 16q0 3.264 1.28 6.208t3.392 5.12 5.12 3.424 6.208 1.248 6.208-1.248 5.12-3.424 3.392-5.12 1.28-6.208-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM8 16q0 0.832 0.576 1.44t1.44 0.576h12q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-12q-0.832 0-1.44 0.576t-0.576 1.408z"></path> </g></svg>
+            </button>
+            <span class="stat-value coins">${player.coins}</span>
+            <button class="stat-btn plus" onclick="updateStat(${index}, 'coins', 1)">
+              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem">
+                <path d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-20q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v20q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM8 16q0 0.832 0.576 1.44t1.44 0.576h4v4q0 0.832 0.576 1.408t1.408 0.576 1.408-0.576 0.608-1.408v-4h4q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-4v-4q0-0.832-0.608-1.408t-1.408-0.608-1.408 0.608-0.576 1.408v4h-4q-0.832 0-1.44 0.576t-0.576 1.408z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+  
+  updateMadnessLinks();
+}
+
+function getArrowText(placeholder) {
+  return `<${placeholder}>`;
+}
+
+function addPlayer() {
+  const newId = gameState.players.length + 1;
+  gameState.players.push(createPlayer(newId));
+  renderPlayers();
+  setupDeleteButtons();
+  saveState();
+}
+
+// Hold-to-delete functionality
+const deleteState = {};
+
+function setupDeleteButtons() {
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.onmousedown = null;
+    btn.onmouseup = null;
+    btn.onmouseleave = null;
+    btn.ontouchstart = null;
+    btn.ontouchend = null;
+    btn.ontouchcancel = null;
+    
+    const index = btn.dataset.playerIndex;
+    
+    btn.onmousedown = () => startHold(btn, index);
+    btn.onmouseup = () => cancelHold(btn);
+    btn.onmouseleave = () => cancelHold(btn);
+    btn.ontouchstart = (e) => { e.preventDefault(); startHold(btn, index); };
+    btn.ontouchend = () => cancelHold(btn);
+    btn.ontouchcancel = () => cancelHold(btn);
+  });
+}
+
+function startHold(btn, index) {
+  const ring = document.getElementById(`progressRing${index}`);
+  if (!ring) return;
+  
+  deleteState[index] = {
+    holding: true,
+    startTime: Date.now(),
+    btn: btn,
+    ring: ring
+  };
+  
+  updateDelete(index);
+}
+
+function updateDelete(index) {
+  const state = deleteState[index];
+  if (!state || !state.holding) return;
+  
+  const elapsed = Date.now() - state.startTime;
+  const progress = Math.min(elapsed / 3000, 1);
+  
+  const circumference = 2 * Math.PI * 25;
+  const offset = circumference * (1 - progress);
+  state.ring.style.strokeDashoffset = offset;
+  
+  state.btn.style.setProperty('--glow', progress);
+  state.btn.style.setProperty('--scale', 1 + (progress * 0.08));
+  
+  if (progress < 1) {
+    requestAnimationFrame(() => updateDelete(index));
+  } else {
+    state.holding = false;
+    state.btn.style.setProperty('--scale', 1.2);
+    
+    setTimeout(() => {
+      state.btn.style.setProperty('--scale', 1);
+      confirmDelete(state.btn);
+      resetDelete(index);
+    }, 150);
+  }
+}
+
+function cancelHold(btn) {
+  const index = btn.dataset.playerIndex;
+  if (deleteState[index] && deleteState[index].holding) {
+    resetDelete(index);
+  }
+}
+
+function resetDelete(index) {
+  const state = deleteState[index];
+  if (!state) return;
+  
+  state.holding = false;
+  
+  const ring = document.getElementById(`progressRing${index}`);
+  if (ring) {
+    ring.style.strokeDashoffset = 2 * Math.PI * 25;
+  }
+  state.btn.style.setProperty('--glow', 0);
+  state.btn.style.setProperty('--scale', 1);
+  
+  delete deleteState[index];
+}
+
+function confirmDelete(btn) {
+  const index = btn.dataset.playerIndex;
+  const playerName = gameState.players[index]?.name || 'Player ' + (parseInt(index) + 1);
+  
+  setTimeout(() => {
+    if (confirm(`Are you sure you want to delete ${playerName}?`)) {
+      gameState.players.splice(parseInt(index), 1);
+      renderPlayers();
+      setupDeleteButtons();
+      saveState();
+    }
+  }, 50);
+}
+
+function updatePlayer(index, field, value) {
+  gameState.players[index][field] = value;
+  saveState();
+}
+
+function updateStat(index, stat, delta) {
+  gameState.players[index][stat] += delta;
+  if (gameState.players[index][stat] < 0) {
+    gameState.players[index][stat] = 0;
+  }
+  
+  // Track madness changes for the report
+  if (stat === 'madness') {
+    gameState.players[index].previousMadness = gameState.players[index].madness - delta;
+  }
+  
+  renderPlayers();
+  saveState();
+}
+
+function updateMadnessLinks() {
+  document.querySelectorAll('.madness-clickable').forEach(el => {
+    el.style.cursor = 'pointer';
+  });
+}
+
+// ==========================
+// ACT MANAGEMENT
+// ==========================
+function cycleAct() {
+  gameState.act = (gameState.act + 1) % actStages.length;
+  updateActButton();
+  saveState();
+}
+
+function updateActButton() {
+  document.getElementById('actBtn').textContent = `ACT ${actStages[gameState.act]}`;
+}
+
+// ==========================
+// DICE ROLLING
+// ==========================
+function rollDice(count, sides) {
+  let total = 0;
+  let rolls = [];
+  
+  for (let i = 0; i < count; i++) {
+    const roll = Math.floor(Math.random() * sides) + 1;
+    rolls.push(roll);
+    total += roll;
+  }
+  
+  const notation = count === 1 ? `1d${sides}` : `${count}d${sides}`;
+  const resultText = rolls.length > 1 
+    ? `${notation}: [${rolls.join(', ')}] = ${total}`
+    : `${notation}: ${total}`;
+  
+  addDiceResult(resultText);
+}
+
+function flipCoin() {
+  const result = Math.random() < 0.5 ? 'HEADS' : 'TAILS';
+  addDiceResult(`${result}`);
+}
+
+function addDiceResult(text) {
+  // User-provided color pool (websafe, legible on dark background)
+  const colorPool = [
+    '#00FF00', '#FFFF00', '#00FFFF', 
+    '#FFA500', '#FFC0CB', '#40E0D0',
+    '#F5DEB3', '#FF6347', '#46F6F6', '#FA8072',
+    '#8FBC8F', '#B0C4DE', '#FF7F50', '#6495ED',
+    '#FFD700', '#FF4500', '#ADFF2F', '#FF69B4'
+  ];
+  
+  // Get colors already used in current results
+  const usedColors = gameState.diceResults.map(r => r.color);
+  
+  // Find available colors (not currently displayed)
+  const availableColors = colorPool.filter(c => !usedColors.includes(c));
+  
+  // Pick from available colors, or from full pool if all are used
+  let selectionPool = availableColors.length > 0 ? availableColors : colorPool;
+  const randomColor = selectionPool[Math.floor(Math.random() * selectionPool.length)];
+  
+  // Store result with its color
+  gameState.diceResults.push({ text: text, color: randomColor });
+  
+  // Keep only the last 6 results
+  if (gameState.diceResults.length > 6) {
+    gameState.diceResults.shift();
+  }
+  
+  renderDiceResults();
+  saveState();
+}
+
+function renderDiceResults() {
+  const display = document.getElementById('resultsDisplay');
+  
+  const html = gameState.diceResults.map((result) => {
+    return `<span style="color: ${result.color}; margin-right: 0.5rem;">${result.text}</span>`;
+  }).join('');
+  
+  display.innerHTML = html;
+}
+
+function clearResults() {
+  gameState.diceResults = [];
+  renderDiceResults();
+  saveState();
+}
+
+// ==========================
+// ENEMY DATABASE
+// ==========================
+const enemyDatabase = [
+  {
+    name: "Knights I",
+    aliases: ['knights', 'ki', 'knightsi', 'k1', 'knight1'],
+    type: "Creature",
+    subtype: "Human Knight",
+    defaultLife: 6,
+    defaultPower: 6,
+    flavour: "Enforcers paid to hold a blade, but not much else. Intimidation goes both ways.",
+    effect: `Armour {armour}1  <br>Gang 2 (summon two Knights I; defeated if only one remains)  <br>{d} 5: Lacerate, inflict bleed.`
+  },
+  {
+    name: "Knights II",
+    aliases: ['knights', 'kii', 'knightsii', 'k2', 'knight2'],
+    type: "Creature",
+    subtype: "Human Knight",
+    defaultLife: 7,
+    defaultPower: 7,
+    flavour: "If they have orders, you run.",
+    effect: `Armour {armour}2 & Shield {mshield}2 & Gang 2 Honour {hon} (arrest weak targets) <br>{d} 5: Sword and shield, swiftly strike and regain shield {mshield}.`
+  },
+  {
+    name: "Knights III",
+    aliases: ['knights', 'kiii', 'knightsiii', 'k3', 'knight3', 'juggernaut'],
+    type: "Creature",
+    subtype: "Human Juggernaut",
+    defaultLife: 10,
+    defaultPower: 10,
+    flavour: "They only obey their commander.",
+    effect: `{armour}3 & {mshield}3 & {hon} Honour <br>Summon six additional Knights III. <br>{d} 5: Overwhelming strike, swiftly strike and inflict stun or knockdown.`
+  },
+  {
+    name: "Bandits — Dastardly Duo",
+    aliases: ['bandits', 'dastardly', 'duo', 'bdd', 'banditsdastardlyduo'],
+    type: "Creature",
+    subtype: "Human Mercenary",
+    defaultLife: 1,
+    defaultPower: 2,
+    flavour: "Two heads are better than one. Which is especially true for these two.",
+    effect: `Life is equal to highest player's life<br>Odd: Shoot, deal double the result<br>Even: Slash and grab, steal coins.  {p2} Can be bribed.`
+  },
+  {
+    name: "Kyth — Juvenile",
+    aliases: ['kyth', 'juvenile', 'kj', 'kythjuvenile'],
+    type: "Creature",
+    subtype: "Wormridden",
+    defaultLife: 7,
+    defaultPower: 1,
+    flavour: "Overtaken by the worm, flesh and bone mutate. Compelled by an unseen master.",
+    effect: `Reduce damage by attacker's {B}. {d} 4: Shed worms in small area. Slain: Remove {B} from slayer.`
+  },
+  {
+    name: "Kyth — Mature",
+    aliases: ['kyth', 'mature', 'km', 'kythmature'],
+    type: "Creature",
+    subtype: "Wormridden",
+    defaultLife: 11,
+    defaultPower: 5,
+    flavour: "Worms throb under the skin's surface. Cleverness makes it dangerous.",
+    effect: `After any action, move closer toward any target based on {B}. Damage restores health. Immune to pierce. Slain: Remove {B} from slayer.`
+  },
+  {
+    name: "Kyth — Failed",
+    aliases: ['kyth', 'failed', 'kf', 'kythfailed'],
+    type: "Creature",
+    subtype: "Wormridden",
+    defaultLife: 9,
+    defaultPower: 1,
+    flavour: "Mages naturally resist worms— but should they succumb, run away.",
+    effect: `Scale with target's {B}. {d} 5: Wormbolt, knockdown & slime. Slain: Remove {B} from slayer.`
+  },
+  {
+    name: "Kyth — Evolved",
+    aliases: ['kyth', 'evolved', 'ke', 'kythevolved'],
+    type: "Creature",
+    subtype: "Wormridden Horror",
+    defaultLife: 16,
+    defaultPower: 6,
+    flavour: "Unafraid of sunlight, empowered by moonlight, but most horrifying of all: it has purpose.",
+    effect: `All Kyth abilities. Attacks inflict {B}.<br>Summon two random Kyth. {d} 6: Deal {B} damage, gain life.`
+  },
+  {
+    name: "Kyth — Canine",
+    aliases: ['kyth', 'canine', 'kc', 'kythcanine'],
+    type: "Creature",
+    subtype: "Wormridden Beast",
+    defaultLife: 6,
+    defaultPower: 3,
+    flavour: "Beasts are scary, but have you ever seen one with worms... writhing?",
+    effect: `Bites can inflict bleed. {d} 6: Spit Tar, apply slow to target.  Moonbless: +1 to attacks.`
+  },
+  {
+    name: "Kyth — Tiger",
+    aliases: ['kyth', 'tiger', 'kt', 'kythtiger'],
+    type: "Creature",
+    subtype: "Wormridden Beast",
+    defaultLife: 5,
+    defaultPower: 4,
+    flavour: "Oh, great, now it has worms? Really!?",
+    effect: `Attempt counterattack after evading. {d} 6: Spit Tar, apply slow to target.  Moonbless: +1 to any evasion.`
+  },
+  {
+    name: "Kyth — Critters",
+    aliases: ['kyth', 'critters', 'kc', 'kythcritters'],
+    type: "Creature",
+    subtype: "Wormridden Beast",
+    defaultLife: 3,
+    defaultPower: 2,
+    flavour: "Terribly cute in any other circumstance. Now? Just terrible.",
+    effect: `Quick. (Acts first) {p2} Summon {d}20 Kyth — Critters. {d} 6: Crazy stupid bite, apply poison or bleed for each Kyth — Critters.`
+  },
+  {
+    name: "Chantash the Greathorn",
+    aliases: ['chantash', 'the', 'greathorn', 'ctg', 'chantashthegreathorn'],
+    type: "Creature",
+    subtype: "Ogre",
+    defaultLife: 13,
+    defaultPower: 7,
+    flavour: "One of the fearsome five. Laughter like a thunderclap. Friend or foe?",
+    effect: `Speaks slowly. Laughs at danger. {d} 5: Strike twice. {p2} Summon wildlife allies to fight.`
+  },
+  {
+    name: "Grazuul the Oakcutter",
+    aliases: ['grazuul', 'the', 'oakcutter', 'gto', 'grazuultheoakcutter'],
+    type: "Creature",
+    subtype: "Ogre",
+    defaultLife: 14,
+    defaultPower: 9,
+    flavour: "One of the fearsome five. Rends the world to his will. Friend or foe?",
+    effect: `Strike and alter the environment. {d} 6: Throw a massive object. {p2} Withstand a killing blow.`
+  },
+  {
+    name: "Yangar the Saltskin",
+    aliases: ['yangar', 'the', 'saltskin', 'yts', 'yangarthesaltskin'],
+    type: "Creature",
+    subtype: "Ogre",
+    defaultLife: 13,
+    defaultPower: 7,
+    flavour: "One of the fearsome five. Unafraid of sea monsters. Friend or foe?",
+    effect: `Grab target. {d} 6: Throw axe. Gain juggernaut. {p2} Ranged attacks deal 1 damage.`
+  },
+  {
+    name: "Vasok the Smasher",
+    aliases: ['vasok', 'the', 'smasher', 'vts', 'vasokthesmasher'],
+    type: "Creature",
+    subtype: "Ogre",
+    defaultLife: 15,
+    defaultPower: 8,
+    flavour: "One of the fearsome five. Conqueror and defender. Friend or foe?",
+    effect: `Armour {armour}5  {d} 6: Skullstone, inflict blind or silence to all targets in front. {p2} Commanding presence.`
+  },
+  {
+    name: "Arocka the Godqueen",
+    aliases: ['arocka', 'the', 'godqueen', 'atg', 'arockathegodqueen'],
+    type: "Creature",
+    subtype: "Ogre Primarch",
+    defaultLife: 12,
+    defaultPower: 12,
+    flavour: "Eyes are a window to the soul, and hers burn a wicked green. Friend or—?",
+    effect: `Armour {armour}2 & Shield {mshield}8 {d} 7: Close-Quarters Combat. {p2} Empower, +1 to all stats when shield is zero.`
+  },
+  {
+    name: "Dreck the Slain",
+    aliases: ['dreck', 'the', 'slain', 'dts', 'drecktheslain'],
+    type: "Creature",
+    subtype: "Ogre Horror",
+    defaultLife: 6,
+    defaultPower: 9,
+    flavour: "One of the fearsome five. Unchained, undying, unthinking. Foe? Foe.",
+    effect: `{d} 6: Charge, stun on impact. {d} 13: Rot Bolt, negates target's nature sorcery or enchantment. {p2} Resurrects when slain.`  
+  },
+  {
+    name: "Ugly Bogsnoot",
+    aliases: ['ugly', 'bogsnoot', 'ub', 'uglybogsnoot'],
+    type: "Creature — Hag",
+    subtype: "",
+    defaultLife: 7,
+    defaultPower: 9,
+    flavour: "Devours children and babies to gain power, or beauty. Smells of bile.",
+    effect: `Long limbs, grabs target easily.  {d} 6: Hex, crippled by moonlight.`
+  },
+  {
+    name: "Alluring Maiden",
+    aliases: ['alluring', 'maiden', 'am', 'alluringmaiden'],
+    type: "Creature — Hag",
+    subtype: "",
+    defaultLife: 9,
+    defaultPower: 7,
+    flavour: "Devours children and babies to gain power, or beauty. Smells of mushrooms.",
+    effect: `Pinprick, target shares effects. {d} 8: Fae Snap, magicks target victim. {d} 11: Hex, compel target to use magicks or act in any other way.`
+  },
+  {
+    name: "Bountyhunter",
+    aliases: ['bountyhunter'],
+    type: "Creature — Human Inquisitor",
+    subtype: "",
+    defaultLife: 6,
+    defaultPower: 6,
+    flavour: "Rewarded for a body, or beating heart?",
+    effect: `{p2} Kunai, interrupt and {t} a spell. {d} 8: Needle, paralyze target. {d} 11: Bolt, deal {t} card damage.`
+  },
+  {
+    name: "Ravenous Dongodon",
+    aliases: ['ravenous', 'dongodon', 'rd', 'ravenousdongodon'],
+    type: "Creature — Lizard Beast",
+    subtype: "",
+    defaultLife: 14,
+    defaultPower: 6,
+    flavour: "Mountains of bones mark its territory.",
+    effect: `Draconic & Slow Fever Skin, resist some magicks. {d} 6: Firebite, add fire to attack.`
+  },
+  {
+    name: "Flying Dongodon",
+    aliases: ['flying', 'dongodon', 'fd', 'flyingdongodon'],
+    type: "Creature — Lizard Beast",
+    subtype: "",
+    defaultLife: 20,
+    defaultPower: 11,
+    flavour: "It is as rare as those who tell tales of it. Meat is said to be spicy.",
+    effect: `Flying & Draconic {d} 16: Breathe Fire, burn an area.`
+  },
+  {
+    name: "Baby Dongodon",
+    aliases: ['baby', 'dongodon', 'bd', 'babydongodon'],
+    type: "Creature — Lizard Beast",
+    subtype: "",
+    defaultLife: 6,
+    defaultPower: 1,
+    flavour: "Docile, possesses a venomous burning saliva well-known among poachers.",
+    effect: `Draconic (halve physical damage)  {d} 3: Flamelick, target catches fire.`
+  },
+  {
+    name: "Dongodon Pack",
+    aliases: ['dongodon', 'pack', 'dp', 'dongodonpack'],
+    type: "Creature — Lizard Beast",
+    subtype: "",
+    defaultLife: 8,
+    defaultPower: 3,
+    flavour: "The young cooperate to survive.",
+    effect: `Draconic  {d} 5: Spitfire, deal ranged damage. Gang 2 (summon two additional Dongodon Pack; defeated if only one remains)`
+  },
+  {
+    name: "Leafy Gorgoonah",
+    aliases: ['leafy', 'gorgoonah', 'lg', 'leafygorgoonah'],
+    type: "Creature — Lizard Beast",
+    subtype: "",
+    defaultLife: 13,
+    defaultPower: 2,
+    flavour: "Camouflage matches the season's foliage. Fierce ambush predator.",
+    effect: `{d} 8: Chomp, inflict poison fever.`
+  },
+  {
+    name: "Mooneyed Warlock",
+    aliases: ['mooneyed', 'warlock', 'mw', 'mooneyedwarlock'],
+    type: "Creature — Human Warlock",
+    subtype: "",
+    defaultLife: 7,
+    defaultPower: 2,
+    flavour: "His eyes betray a pact made long ago.",
+    effect: `{p2} Glare, interrupt and {t} spell. {d} 5: Arcbolt, {t} a random spell.`
+  },
+  {
+    name: "Moonhead Warlock",
+    aliases: ['moonhead', 'warlock', 'mw', 'moonheadwarlock'],
+    type: "Creature — Human Warlock",
+    subtype: "",
+    defaultLife: 9,
+    defaultPower: 2,
+    flavour: "The protrusions from the bulbous bloated head reach up, yearning for the stars.",
+    effect: `{d} 11: Inflict dread. (witnesses resolve two dice, using the worst result) {p2} When targeted, lose 1 non-legendary equipment.`
+  },
+  {
+    name: "Moontree Behemoth",
+    aliases: ['moontree', 'behemoth', 'mb', 'moontreebehemoth'],
+    type: "Creature — Nightmare Horror",
+    subtype: "",
+    defaultLife: 13,
+    defaultPower: 2,
+    flavour: "Run. Run. Run far away. Ever, ever, evermore, in your dreams it will stay.",
+    effect: `Horrify (afflict panic and dread) {d} 9: Nightcall, deal {B} and bind targets; +1 to {dur} of targets.`
+  },
+  {
+    name: "Wicked Hunter",
+    aliases: ['wicked', 'hunter', 'wh', 'wickedhunter'],
+    type: "Creature — Human Hunter",
+    subtype: "",
+    defaultLife: 10,
+    defaultPower: 8,
+    flavour: "Runes cover flesh. A mission of malice.",
+    effect: `Trick weapons.  Killing intent (cannot negotiate) {p2} Parry (vs {skl}).  {d} 10: Arcane Volley, area magic.`
+  },
+  {
+    name: "Carver of Bones",
+    aliases: ['carver', 'bones', 'cob', 'carverofbones'],
+    type: "Creature — Ghoul",
+    subtype: "",
+    defaultLife: 6,
+    defaultPower: 2,
+    flavour: "It sees through you, yearning to etch the master's runes unto your bones, too.",
+    effect: `Bone knife, +1 to injured.  {d} 6: Screech, injured deal -1 until the next time they remove {B}.`
+  },
+  {
+    name: "Ghastly Wax",
+    aliases: ['ghastly', 'wax', 'gw', 'ghastlywax'],
+    type: "Creature — Ghoul",
+    subtype: "",
+    defaultLife: 6,
+    defaultPower: 3,
+    flavour: "Radiates heat when moving, skin endlessly rippling and folding.",
+    effect: `Vomit wax, bind target. {d} 6: Boiling Smoke, increase duration of afflictions by 1.`
+  },
+  {
+    name: "Rotten Manbat",
+    aliases: ['rotten', 'manbat', 'rm', 'rottenmanbat'],
+    type: "Creature — Ghoul",
+    subtype: "",
+    defaultLife: 5,
+    defaultPower: 3,
+    flavour: "You will hear it or smell it first.",
+    effect: `Flying {d} 6: Dung Toss, poison to one target.  Spreads disease or poison upon death; {d} d6 for duration.`
+  },
+  {
+    name: "Mouldhare",
+    aliases: ['mouldhare'],
+    type: "Creature — Fungus Mutant",
+    subtype: "",
+    defaultLife: 5,
+    defaultPower: 2,
+    flavour: "Delicious if thoroughly cooked.",
+    effect: `{d} 5: Shroomdook, lay toxic egg. {d} 6: Fungal wheeze, take 1 damage, spread poison spores.`
+  },
+  {
+    name: "Barkers",
+    aliases: ['barkers'],
+    type: "Creature — Monkey Beast",
+    subtype: "",
+    defaultLife: 4,
+    defaultPower: 3,
+    flavour: "Adorn one another with local foliage and flowers, depending on the season. The most adorned are safest.",
+    effect: `{d} 4: Dirty scratch, infect with fever. {d} 6: Rebark, restore life.  Resolve {d} d6 for fever duration.`
+  },
+  {
+    name: "Pine Cougar",
+    aliases: ['pine', 'cougar', 'pc', 'pinecougar'],
+    type: "Creature — Cat Beast",
+    subtype: "",
+    defaultLife: 9,
+    defaultPower: 3,
+    flavour: "The soft underbelly betrays the plates covering the remainder. A lackadaisical apex predator.",
+    effect: `{d} 4: Rend, afflict bleed. {d} 5: Reshell, add shield {mshield}+2.`
+  },
+  {
+    name: "Beta Rainbear",
+    aliases: ['beta', 'rainbear', 'br', 'betarainbear'],
+    type: "Creature — Bear Beast",
+    subtype: "",
+    defaultLife: 8,
+    defaultPower: 3,
+    flavour: "Often seen frolicking during heavy rains. Coveted for its fluffy fur.",
+    effect: `{d} 4: Swipe, hit all nearby targets. {d} 6: Woolfunk, shake fur and release pungent, sticky odour.`
+  },
+  {
+    name: "Alpha Rainbear",
+    aliases: ['alpha', 'rainbear', 'ar', 'alpharainbear'],
+    type: "Creature — Bear Beast",
+    subtype: "",
+    defaultLife: 10,
+    defaultPower: 8,
+    flavour: "Sits patiently during heavy rains. Emits a foul stench when seeking a mate.",
+    effect: `{d} 3: Swipe, afflict bleed or stun. {d} 5: Antler Crash, charge forward.`
+  },
+  {
+    name: "Fog Slike",
+    aliases: ['fog', 'slike', 'fs', 'fogslike'],
+    type: "Creature — Crab",
+    subtype: "",
+    defaultLife: 3,
+    defaultPower: 2,
+    flavour: "Despite diminutive size, it hunts in packs, rushing anything wandering into the caves it calls home.",
+    effect: `{d} 2: Pinch-pinch. Ouch. {d} 5: Billow fumes, attackers miss. Delicious.`
+  },
+  {
+    name: "Claw Viper",
+    aliases: ['claw', 'viper', 'cv', 'clawviper'],
+    type: "Creature — Snake",
+    subtype: "",
+    defaultLife: 7,
+    defaultPower: 5,
+    flavour: "Ambush predator that lazily eats once a week. Said to be an adequate meal, a difficult kill for the famished.",
+    effect: `{d} 6: Slithergrip, snare target, all strikes gain quick against target. Attacks inflict poison, {dur} increases with each hit.`
+  },
+  {
+    name: "Sandwaller",
+    aliases: ['sandwaller'],
+    type: "Creature — Snake",
+    subtype: "",
+    defaultLife: 9,
+    defaultPower: 2,
+    flavour: "Blind. Feeds on insects and cavewall cheese. Constricts and crushes predators. Urine dissolves corpses.",
+    effect: `{d} 6: Constriction, immobilize target and deal increasing damage. Target is afflicted with terror (panic and dread).`
+  },
+  {
+    name: "Mother of Many",
+    aliases: ['mother', 'many', 'mom', 'motherofmany'],
+    type: "Creature — Wormridden Worm",
+    subtype: "",
+    defaultLife: 11,
+    defaultPower: 5,
+    flavour: "The body swells and rolls with fleshy tendrils: offspring sloughed off to make way for more. More and more...",
+    effect: `{d} 6: Wet fleshy slap, spread worms; if target suffering from bleed, poison, venom, or curse, add 1 to the damage.`
+  },
+  {
+    name: "Redcoat Centipede",
+    aliases: ['redcoat', 'centipede', 'rc', 'redcoatcentipede'],
+    type: "Creature — Insect Worm",
+    subtype: "",
+    defaultLife: 8,
+    defaultPower: 3,
+    flavour: "Coats dwellings in slime, feasting upon creatures stuck within. Blood is surprisingly flammable.",
+    effect: `{d} 4: Ooze, spread sticky slime. {d} 6: Curl, gain armour {armour}+1. Slimed targets cannot use quick spells, etc..`
+  },
+  {
+    name: "Shivering Beetle",
+    aliases: ['shivering', 'beetle', 'sb', 'shiveringbeetle'],
+    type: "Creature — Insect",
+    subtype: "",
+    defaultLife: 6,
+    defaultPower: 2,
+    flavour: "Shivers and shakes, disorienting predators; deflects some ranged attacks.",
+    effect: `{d} 4: Sticky Carapace, armour {armour}+1. {d} 5: Instantly move to furthest target and attack, slime target. Weapons may become stuck.`
+  },
+  {
+    name: "Gnuchs",
+    aliases: ['gnuchs'],
+    type: "Creature — Insect",
+    subtype: "",
+    defaultLife: 3,
+    defaultPower: 3,
+    flavour: "Their erratic movement makes them impossible to count. Nightmare fuel.",
+    effect: `{d} 5: Summon 3 Gnuchs. {d} 6: Attack with all Gnuchs, gain shield {mshield} based on number of Gnuchs. Attacks cause fevers.`
+  },
+  {
+    name: "Hypogean Scorp",
+    aliases: ['hypogean', 'scorp', 'hs', 'hypogeanscorp'],
+    type: "Creature — Insect",
+    subtype: "",
+    defaultLife: 5,
+    defaultPower: 3,
+    flavour: "The venom affects creatures larger than a rabbit differently, making for an unreliable political tool.",
+    effect: `{p2} Quick {d} 5: Sting, inflict poison. Resolve {d} d20 for poison duration.`
+  },
+  {
+    name: "Crackling Chimaera",
+    aliases: ['crackling', 'chimaera', 'cc', 'cracklingchimaera'],
+    type: "Creature — Elemental Beast",
+    subtype: "",
+    defaultLife: 7,
+    defaultPower: 7,
+    flavour: "Created by some mage for some purpose. Both long forgotten, but its purpose remains.",
+    effect: `{d} 3: Flip a coin:  Heads, immune to {g} spells;  Tails, immune to {w} spells. {d} 4: Chain lightning.`
+  },
+  {
+    name: "Yakyak",
+    aliases: ['yakyak'],
+    type: "Creature — Ravenous Beast",
+    subtype: "",
+    defaultLife: 8,
+    defaultPower: 6,
+    flavour: "Pursues fruits, vegetables, and flesh with equal fervor. Docile when satisfied.",
+    effect: `Slow. Aim for and gain doublestrike against targets with food.<br>{p2} Gain shield {mshield} when damaged.<br>{d}6: Stomp, knockdown targets.`
+  },
+  {
+    name: "Quacoa",
+    aliases: ['quacoa'],
+    type: "Creature — Bird of Prey",
+    subtype: "",
+    defaultLife: 8,
+    defaultPower: 4,
+    flavour: "Fishing and seafaring vessels often prefer its senses over traditional navigation.",
+    effect: `Flying<br>Gain swift against any target with a status ailment or less than half life.<br>{d}6: Attacks inflict bleed.`
+  },
+  {
+    name: "Vostrodile",
+    aliases: ['vostrodile'],
+    type: "Creature — Sea Serpent",
+    subtype: "",
+    defaultLife: 1,
+    defaultPower: 10,
+    flavour: "Be it minutes or days, you'll see one. Hope both your ship is fast and the beast is small.",
+    effect: `{p2} Life is five times the resolved die.<br>Flip a coin each turn: Slow or Swift.<br>After attacking, attempt to constrict a tentacle around something.`
+  },
+  {
+    name: "Cheepcheap",
+    aliases: ['cheepcheap'],
+    type: "Creature — Prey",
+    subtype: "",
+    defaultLife: 17,
+    defaultPower: 1,
+    flavour: "Eggs and feathers resemble gold coins.",
+    effect: `Flying<br>Drops gold coins when slain. Delicious when eaten.<br>{p2} Difficult to hit. Blinds attackers.`
+  },
+  {
+    name: "Construct — Pico",
+    aliases: ['construct', 'pico', 'cp', 'constructpico'],
+    type: "Arcane Creature — Living Stone",
+    subtype: "",
+    defaultLife: 6,
+    defaultPower: 1,
+    flavour: "Originally tasked with safeguarding against small rodents and other pests, it's almost cute-- if it weren't for the terrifying sheer number of them.",
+    effect: `Can enter small spaces. Easily discombobulates. Moves quickly and can jump, float. {mast} 3: Obey.`
+  },
+  {
+    name: "Construct — Milli",
+    aliases: ['construct', 'milli', 'cm', 'constructmilli'],
+    type: "Arcane Creature — Living Stone",
+    subtype: "",
+    defaultLife: 7,
+    defaultPower: 1,
+    flavour: "Purpose-built to be helpful. With no one left to help, they've become something else entirely. Oh no.",
+    effect: `Can carry keys and small items in its mouth without breaking them. Can activate doors. {mast} 4: Obey.`
+  },
+  {
+    name: "Construct — Kilo",
+    aliases: ['construct', 'kilo', 'ck', 'constructkilo'],
+    type: "Arcane Creature — Living Stone",
+    subtype: "",
+    defaultLife: 8,
+    defaultPower: 2,
+    flavour: "At first they were couriers of small packages. Apt runners, they seem to build momentum. Ouch.",
+    effect: `Moves slowly but can carry items. When unencumbered, can roll into a ball, building speed and momentum. {mast} 5: Obey.`
+  },
+  {
+    name: "Construct — Mega",
+    aliases: ['construct', 'mega', 'cm', 'constructmega'],
+    type: "Arcane Creature — Living Stone",
+    subtype: "",
+    defaultLife: 10,
+    defaultPower: 3,
+    flavour: "Slow and steady movements betray their former utility as consctruction devices.",
+    effect: `Slow, articulate movemets. Can construct or deconstruct objects. {mast} 6: Obey.`
+  },
+  {
+    name: "Construct — Giga",
+    aliases: ['construct', 'giga', 'cg', 'constructgiga'],
+    type: "Arcane Creature — Living Stone",
+    subtype: "",
+    defaultLife: 16,
+    defaultPower: 18,
+    flavour: "Monolithic machinations, administering the intellect of engineers and architects over decades. Oh, the wonders they had built...",
+    effect: `Slow, massive construction machine. {mast} 7: Obey.`
+  },
+  {
+    name: "Construct — Ruined",
+    aliases: ['construct', 'ruined', 'cr', 'constructruined'],
+    type: "Arcane Creature — Living Stone",
+    subtype: "",
+    defaultLife: 5,
+    defaultPower: 7,
+    flavour: "Does the malfunction make it less lethal or more lethal?",
+    effect: `Arcbeam, flamethrower. Forge, repair, recreate:   items, tools, weapons, and more. {mast} 8 & {d} 10: Obey.  Volatile.`
+  },
+  {
+    name: "Construct — Sentinel",
+    aliases: ['construct', 'sentinel', 'cs', 'constructsentinel'],
+    type: "Arcane Creature — Living Stone",
+    subtype: "",
+    defaultLife: 13,
+    defaultPower: 13,
+    flavour: "By some twist of fate, it has been perfectly preserved-- save for the indelible dusts of time, of course...",
+    effect: `Fluid, sensitive movements. Executes command protocol. Deadly combat prowess. {mast} 8: Obey.`
+  }
+];
+
+// Fuzzy search for enemy in database
+function findEnemyInDatabase(searchName) {
+  if (!searchName || searchName.trim() === '') return null;
+  
+  const search = searchName.toLowerCase().trim();
+  
+  // First try exact match on name
+  let match = enemyDatabase.find(e => e.name.toLowerCase() === search);
+  if (match) return match;
+  
+  // Try exact match on aliases
+  match = enemyDatabase.find(e => e.aliases.some(a => a.toLowerCase() === search));
+  if (match) return match;
+  
+  // Try fuzzy match on name (contains)
+  match = enemyDatabase.find(e => e.name.toLowerCase().includes(search));
+  if (match) return match;
+  
+  // Try fuzzy match on aliases
+  match = enemyDatabase.find(e => e.aliases.some(a => a.toLowerCase().includes(search)));
+  if (match) return match;
+  
+  // Try partial word match
+  const searchWords = search.split(' ');
+  match = enemyDatabase.find(e => {
+    const fullText = [e.name, ...e.aliases].join(' ').toLowerCase();
+    return searchWords.every(word => fullText.includes(word));
+  });
+  
+  return match;
+}
+
+// Handle enter key for enemy name lookup
+function handleEnemyNameKeydown(event, enemyId, currentName) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    const enemy = gameState.enemies.find(e => e.id === enemyId);
+    if (!enemy) return;
+    
+    // Use the input value directly from the event
+    const inputValue = event.target.value;
+    
+    // Search database
+    const dbEntry = findEnemyInDatabase(inputValue);
+    if (dbEntry) {
+      // Replace alias with actual enemy name
+      enemy.name = dbEntry.name;
+      // Populate enemy from database
+      enemy.type = dbEntry.type;
+      enemy.subtype = dbEntry.subtype;
+      enemy.life = dbEntry.defaultLife;
+      enemy.power = dbEntry.defaultPower;
+      enemy.flavourText = dbEntry.flavour;
+      enemy.effectText = dbEntry.effect;
+    } else {
+      // Keep the typed name if no match
+      enemy.name = inputValue;
+      // Clear type/subtype if no match
+      enemy.type = '';
+      enemy.subtype = '';
+      enemy.flavourText = '';
+      enemy.effectText = '';
+    }
+    
+    // Hide suggestions after selection
+    hideEnemySuggestions(enemyId);
+    
+    renderEnemies();
+    saveState();
+  } else if (event.key === 'Escape') {
+    hideEnemySuggestions(enemyId);
+  } else if (event.key === 'ArrowDown') {
+    event.preventDefault();
+    moveSuggestionSelection(enemyId, 1);
+  } else if (event.key === 'ArrowUp') {
+    event.preventDefault();
+    moveSuggestionSelection(enemyId, -1);
+  }
+}
+
+// Handle input for autocomplete suggestions
+function handleEnemyNameInput(event, enemyId, currentValue) {
+  const suggestionsBox = document.getElementById(`suggestions-${enemyId}`);
+  if (!suggestionsBox) return;
+  
+  const search = currentValue.toLowerCase().trim();
+  
+  if (search.length < 1) {
+    suggestionsBox.innerHTML = '';
+    suggestionsBox.style.display = 'none';
+    return;
+  }
+  
+  // Find matching enemies
+  const matches = enemyDatabase.filter(enemy => {
+    const nameMatch = enemy.name.toLowerCase().includes(search);
+    const aliasMatch = enemy.aliases.some(alias => alias.toLowerCase().includes(search));
+    return nameMatch || aliasMatch;
+  }).slice(0, 8); // Limit to 8 suggestions
+  
+  if (matches.length === 0) {
+    suggestionsBox.innerHTML = '';
+    suggestionsBox.style.display = 'none';
+    return;
+  }
+  
+  // Render suggestions
+  suggestionsBox.innerHTML = matches.map((enemy, index) => `
+    <div class="enemy-suggestion-item" data-index="${index}" 
+      onclick="selectEnemySuggestion('${enemyId}', '${encodeURIComponent(enemy.name)}')"
+      onmouseenter="highlightSuggestion('${enemyId}', ${index})">
+      <div class="suggestion-name">${escapeHtml(enemy.name)}</div>
+      <div class="suggestion-type">${escapeHtml(enemy.type)}</div>
+      <div class="suggestion-stats">Life: ${enemy.defaultLife} | Power: ${enemy.defaultPower}</div>
+    </div>
+  `).join('');
+  
+  suggestionsBox.style.display = 'block';
+}
+
+// Hide suggestions dropdown
+function hideEnemySuggestions(enemyId) {
+  const suggestionsBox = document.getElementById(`suggestions-${enemyId}`);
+  if (suggestionsBox) {
+    suggestionsBox.innerHTML = '';
+    suggestionsBox.style.display = 'none';
+  }
+}
+
+// Select a suggestion from the dropdown
+function selectEnemySuggestion(enemyId, encodedName) {
+  const enemy = gameState.enemies.find(e => e.id === enemyId);
+  if (!enemy) return;
+  
+  const name = decodeURIComponent(encodedName);
+  enemy.name = name;
+  
+  // Search database and populate
+  const dbEntry = findEnemyInDatabase(name);
+  if (dbEntry) {
+    enemy.type = dbEntry.type;
+    enemy.subtype = dbEntry.subtype;
+    enemy.life = dbEntry.defaultLife;
+    enemy.power = dbEntry.defaultPower;
+    enemy.flavourText = dbEntry.flavour;
+    enemy.effectText = dbEntry.effect;
+  }
+  
+  hideEnemySuggestions(enemyId);
+  renderEnemies();
+  saveState();
+}
+
+// Highlight a suggestion on hover
+function highlightSuggestion(enemyId, index) {
+  const suggestionsBox = document.getElementById(`suggestions-${enemyId}`);
+  if (!suggestionsBox) return;
+  
+  const items = suggestionsBox.querySelectorAll('.enemy-suggestion-item');
+  items.forEach((item, i) => {
+    if (i === index) {
+      item.classList.add('highlighted');
+    } else {
+      item.classList.remove('highlighted');
+    }
+  });
+}
+
+// Move selection with arrow keys
+function moveSuggestionSelection(enemyId, direction) {
+  const suggestionsBox = document.getElementById(`suggestions-${enemyId}`);
+  if (!suggestionsBox) return;
+  
+  const items = suggestionsBox.querySelectorAll('.enemy-suggestion-item');
+  if (items.length === 0) return;
+  
+  let currentIndex = -1;
+  items.forEach((item, i) => {
+    if (item.classList.contains('highlighted')) {
+      currentIndex = i;
+      item.classList.remove('highlighted');
+    }
+  });
+  
+  let newIndex = currentIndex + direction;
+  if (newIndex < 0) newIndex = items.length - 1;
+  if (newIndex >= items.length) newIndex = 0;
+  
+  items[newIndex].classList.add('highlighted');
+  
+  // Scroll into view if needed
+  items[newIndex].scrollIntoView({ block: 'nearest' });
+}
+
+function createEnemy(id) {
+  return {
+    id: id,
+    name: '',
+    type: '',
+    subtype: '',
+    life: 1,
+    power: 1,
+    flavourText: '',
+    effectText: '',
+    flipped: false,
+    flippedContent: null // 'flavour' or 'effect'
+  };
+}
+
+function addEnemy() {
+  // Max 18 enemies
+  if (gameState.enemies.length >= 18) {
+    return;
+  }
+  
+  const newId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+  gameState.enemies.push(createEnemy(newId));
+  renderEnemies();
+  updateAddEnemyButton();
+  saveState();
+}
+
+// Toggle enemy section visibility
+function toggleEnemy() {
+  gameState.enemyVisible = !gameState.enemyVisible;
+  
+  const btn = document.getElementById('enemyBtn');
+  const section = document.getElementById('enemySection');
+  
+  if (gameState.enemyVisible) {
+    btn.classList.add('open');
+    section.classList.add('visible');
+  } else {
+    btn.classList.remove('open');
+    section.classList.remove('visible');
+  }
+  
+  saveState();
+}
+
+function renderEnemies() {
+  const grid = document.getElementById('enemyGrid');
+  
+  grid.innerHTML = gameState.enemies.map((enemy, index) => {
+    const isFlipped = enemy.flipped;
+    const killActive = enemy.life <= 0;
+    const typeLine = enemy.type && enemy.subtype ? `${enemy.type} - ${enemy.subtype}` : (enemy.type || 'Enemy');
+    
+    return `
+      <div class="enemy-card ${isFlipped ? 'flipped' : ''}" data-enemy-id="${enemy.id}">
+        <div class="enemy-card-inner">
+          <!-- Front Face -->
+          <div class="enemy-card-front">
+            <div class="enemy-type-line">${escapeHtml(typeLine)}</div>
+            <div class="enemy-name-wrapper">
+              <input type="text" class="enemy-name-input" 
+                value="${escapeHtml(enemy.name)}" 
+                placeholder="NAME (type to search)"
+                oninput="handleEnemyNameInput(event, '${enemy.id}', this.value)"
+                onkeydown="handleEnemyNameKeydown(event, '${enemy.id}', this.value)"
+                onblur="setTimeout(() => hideEnemySuggestions('${enemy.id}'), 200)"
+                autocomplete="off">
+              <div class="enemy-suggestions" id="suggestions-${enemy.id}"></div>
+            </div>
+            
+            <div class="enemy-stats-row">
+              <div class="enemy-stat-block">
+                <span class="enemy-stat-label">Power</span>
+                <div class="enemy-stat-controls">
+                  <button class="enemy-stat-btn" onclick="updateEnemyStat('${enemy.id}', 'power', -1)">−</button>
+                  <span class="enemy-stat-value">${enemy.power}</span>
+                  <button class="enemy-stat-btn" onclick="updateEnemyStat('${enemy.id}', 'power', 1)">+</button>
+                </div>
+              </div>
+              <div class="enemy-stat-block">
+                <span class="enemy-stat-label">Life</span>
+                <div class="enemy-stat-controls">
+                  <button class="enemy-stat-btn" onclick="updateEnemyStat('${enemy.id}', 'life', -1)">−</button>
+                  <span class="enemy-stat-value">${enemy.life}</span>
+                  <button class="enemy-stat-btn" onclick="updateEnemyStat('${enemy.id}', 'life', 1)">+</button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="enemy-info-section">
+              <div class="enemy-effect-preview">${convertTextToRichText(enemy.effectText || 'No effect text')}</div>
+              <div class="enemy-flavour-preview">${convertTextToRichText(enemy.flavourText || 'No flavour text')}</div>
+            </div>
+            
+            <div class="enemy-actions-row">
+              <button class="enemy-flip-btn" onclick="flipEnemyCard('${enemy.id}', 'flavour')">Flavour</button>
+              <button class="enemy-flip-btn" onclick="flipEnemyCard('${enemy.id}', 'effect')">Effects</button>
+            </div>
+            
+            <a href="javascript:void(0)" class="enemy-kill-btn ${killActive ? 'active' : ''}" 
+              onclick="${killActive ? `killEnemy('${enemy.id}')` : ''}">[kill]</a>
+          </div>
+          
+          <!-- Back Face -->
+          <div class="enemy-card-back">
+            <div class="enemy-back-label">${enemy.flippedContent === 'flavour' ? 'Flavour' : 'Effects'}</div>
+            ${enemy.flippedContent === 'flavour' ? 
+              `<textarea class="enemy-back-textarea" placeholder="Enter flavour text..." 
+                onchange="updateEnemyText('${enemy.id}', 'flavourText', this.value)">${escapeHtml(enemy.flavourText || '')}</textarea>` :
+              `<textarea class="enemy-back-textarea" placeholder="Enter effect text..." 
+                onchange="updateEnemyText('${enemy.id}', 'effectText', this.value)">${escapeHtml(enemy.effectText || '')}</textarea>`
+            }
+            <button class="enemy-return-btn" onclick="flipEnemyCard('${enemy.id}', null)">Return</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Convert text placeholders to rich icon format
+function convertTextToRichText(text) {
+  if (!text) return '';
+  
+  const iconMappings = {
+    '{armour}': "<img src='../icons/armour.svg' class='desc-icon' alt='armour' />",
+    '{mshield}': "<img src='../icons/mshield.svg' class='desc-icon' alt='shield' />",
+    '{d}': "<img src='../icons/D20.png' class='desc-icon' alt='d' />",
+    '{p2}': "<img src='../icons/innate5.png' class='desc-icon' alt='p2' />",
+    '{B}': "<img src='../icons/madness.png' class='desc-icon' alt='bleed' />",
+    '{hon}': "<img src='../icons/authority1.svg' class='desc-icon' alt='honour' />",
+    '{t}': "<img src='../icons/tap2.png' class='desc-icon' alt='tarot' />",
+    '{skl}': "<img src='../icons/skl.png' class='desc-icon' alt='skill' />",
+    '{dur}': "<img src='../icons/duration.svg' class='desc-icon' alt='duration' />",
+    '{u}': "<img src='../icons/stamina1.png' class='desc-icon' alt='stamina' />",
+    '{mast}': "<img src='../icons/mastery4.png' class='desc-icon' alt='mastery' />",
+    '{g}': "<img src='../icons/life1.png' class='desc-icon' alt='life' />",
+    '{w}': "<img src='../icons/mana1.png' class='desc-icon' alt='mana' />"
+  };
+  
+  let result = text;
+  for (const [placeholder, icon] of Object.entries(iconMappings)) {
+    result = result.split(placeholder).join(icon);
+  }
+  
+  return result;
+}
+
+function updateEnemyName(enemyId, name) {
+  const enemy = gameState.enemies.find(e => e.id === enemyId);
+  if (enemy) {
+    enemy.name = name;
+    saveState();
+  }
+}
+
+function updateEnemyStat(enemyId, stat, delta) {
+  const enemy = gameState.enemies.find(e => e.id === enemyId);
+  if (enemy) {
+    enemy[stat] += delta;
+    if (enemy[stat] < 0) {
+      enemy[stat] = 0;
+    }
+    renderEnemies();
+    saveState();
+  }
+}
+
+function updateEnemyText(enemyId, field, value) {
+  const enemy = gameState.enemies.find(e => e.id === enemyId);
+  if (enemy) {
+    enemy[field] = value;
+    saveState();
+  }
+}
+
+function flipEnemyCard(enemyId, content) {
+  const enemy = gameState.enemies.find(e => e.id === enemyId);
+  if (enemy) {
+    if (content === null) {
+      // Return to front
+      enemy.flipped = false;
+      enemy.flippedContent = null;
+    } else {
+      enemy.flipped = true;
+      enemy.flippedContent = content;
+    }
+    renderEnemies();
+    saveState();
+  }
+}
+
+function killEnemy(enemyId) {
+  if (confirm('Are you sure you want to remove this enemy?')) {
+    gameState.enemies = gameState.enemies.filter(e => e.id !== enemyId);
+    renderEnemies();
+    updateAddEnemyButton();
+    saveState();
+  }
+}
+
+function updateAddEnemyButton() {
+  const btn = document.getElementById('addEnemyBtn');
+  if (btn) {
+    btn.disabled = gameState.enemies.length >= 18;
+  }
+}
+
+// ==========================
+// MADNESS REPORT
+// ==========================
+function showMadnessReport(playerIndex) {
+  const player = gameState.players[playerIndex];
+  const otherPlayers = gameState.players.filter((p, i) => i !== playerIndex);
+  
+  // Find players with most and least madness
+  const madnessValues = gameState.players.map(p => p.madness);
+  const maxMadness = Math.max(...madnessValues);
+  const minMadness = Math.min(...madnessValues.filter(m => m > 0));
+  
+  const hasMost = player.madness === maxMadness;
+  const hasLeast = player.madness === minMadness || (minMadness === Infinity && player.madness === 0);
+  const madnessIncreased = player.madness > player.previousMadness;
+  const madnessDecreased = player.madness < player.previousMadness;
+  const lifeLow = player.life <= Math.floor(player.life / 2);
+  
+  // Find target player (most innocent looking - lowest madness)
+  let targetPlayer = otherPlayers.find(p => p.madness === minMadness) || otherPlayers[0];
+  
+  // Generate madness text
+  let madnessText = generateMadnessText({
+    player,
+    targetPlayer,
+    hasMost,
+    hasLeast,
+    madnessIncreased,
+    madnessDecreased,
+    lifeLow,
+    otherPlayers
+  });
+  
+  document.getElementById('madnessText').innerHTML = madnessText;
+  document.getElementById('madnessOverlay').classList.add('visible');
+}
+
+function generateMadnessText(params) {
+  const { player, targetPlayer, hasMost, hasLeast, madnessIncreased, madnessDecreased, lifeLow, otherPlayers } = params;
+  
+  const templates = [];
+  
+  if (hasMost && madnessIncreased) {
+    templates.push(`The sweat on your neck is chilling, slithering against your boiling skin. You look to <span class="player-ref">${targetPlayer.name}</span>, so innocent, so obnoxious, so rotten. They act high and mighty, better than you... Immediately destroy one non-legendary item from <span class="player-ref">${targetPlayer.name}</span>'s inventory. Anyone caught in the altercation loses 1 coin.`);
+  }
+  
+  if (hasMost && !madnessDecreased) {
+    templates.push(`Your mind fractures as the weight of your sanity becomes unbearable. The voices scream for release. Point at <span class="player-ref">${targetPlayer.name}</span> and accuse them of treachery. They must defend their innocence or lose 1 <span class="stat-highlight">Soul</span>.`);
+  }
+  
+  if (lifeLow && player.madness > 2) {
+    templates.push(`The line between reality and nightmare blurs. You see things that aren't there—shadows that move, faces in the dark. You must spend 1 <span class="stat-highlight">Coin</span> or lose 1 <span class="stat-highlight">Soul</span> to calm your racing thoughts.`);
+  }
+  
+  if (hasLeast && otherPlayers.length > 0) {
+    templates.push(`Despite the chaos around you, you feel a strange clarity. The madness has not touched you... yet. You may give 1 <span class="stat-highlight">Coin</span> to <span class="player-ref">${targetPlayer.name}</span> or take 1 from anyone with more Madness than you.`);
+  }
+  
+  if (madnessDecreased && player.madness > 0) {
+    templates.push(`The fog in your mind lifts slightly, but the darkness remains. You glimpse the truth behind the veil. Record one secret in your notes. If you refuse, lose 1 <span class="stat-highlight">Coin</span>.`);
+  }
+  
+  if (player.madness >= 5) {
+    templates.push(`The ancient horror within you stirs. You cannot contain it much longer. Either sacrifice 2 <span class="stat-highlight">Coins</span> to appease the void, or all players must make a <span class="stat-highlight">Life</span> check (roll 1d6, lose 1 Life on 4+).`);
+  }
+  
+  if (templates.length === 0) {
+    templates.push(`Your thoughts scatter like dead leaves in a storm. The world feels unreal, distant. You hear whispers that no one else can hear. Take a moment to collect yourself... or surrender to the madness.`);
+  }
+  
+  // Return a random template or combine a few
+  return templates[Math.floor(Math.random() * templates.length)];
+}
+
+function closeMadness() {
+  document.getElementById('madnessOverlay').classList.remove('visible');
+}
+
+function closeMadnessOnOverlay(event) {
+  if (event.target === document.getElementById('madnessOverlay')) {
+    closeMadness();
+  }
+}
+
+// ==========================
+// NOTEPAD
+// ==========================
+function toggleNotepad() {
+  const overlay = document.getElementById('notepadOverlay');
+  overlay.classList.toggle('visible');
+}
+
+function closeNotepad() {
+  document.getElementById('notepadOverlay').classList.remove('visible');
+}
+
+function closeNotepadOnOverlay(event) {
+  if (event.target === document.getElementById('notepadOverlay')) {
+    closeNotepad();
+  }
+}
+
+function saveNotepad() {
+  gameState.notepad = document.getElementById('notepadText').value;
+  saveState();
+}
+
+let currentPlayerIndex = -1;
+
+function togglePlayerNotepad(playerIndex) {
+  currentPlayerIndex = playerIndex;
+  const player = gameState.players[playerIndex];
+  document.getElementById('playerNotepadTitleText').textContent = `${player.name || 'Player ' + (playerIndex + 1)} Notes`;
+  document.getElementById('playerNotepadText').value = player.notes || '';
+  document.getElementById('playerNotepadOverlay').classList.add('visible');
+}
+
+function closePlayerNotepad() {
+  document.getElementById('playerNotepadOverlay').classList.remove('visible');
+  currentPlayerIndex = -1;
+}
+
+function closePlayerNotepadOnOverlay(event) {
+  if (event.target === document.getElementById('playerNotepadOverlay')) {
+    closePlayerNotepad();
+  }
+}
+
+function savePlayerNotepad() {
+  if (currentPlayerIndex >= 0 && gameState.players[currentPlayerIndex]) {
+    gameState.players[currentPlayerIndex].notes = document.getElementById('playerNotepadText').value;
+    saveState();
+  }
+}
+
+// ==========================
+// STATE PERSISTENCE
+// ==========================
+function saveState() {
+  gameState.villain = document.getElementById('villainName').value;
+  localStorage.setItem('hostTrackerState', JSON.stringify(gameState));
+}
+
+function loadState() {
+  const saved = localStorage.getItem('hostTrackerState');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      gameState = { ...gameState, ...parsed };
+      
+      // Ensure enemies array exists
+      if (!gameState.enemies) {
+        gameState.enemies = [];
+      }
+      
+      // Ensure enemyVisible exists
+      if (gameState.enemyVisible === undefined) {
+        gameState.enemyVisible = false;
+      }
+      
+      document.getElementById('villainName').value = gameState.villain || '';
+      
+      // Restore enemy visibility
+      if (gameState.enemyVisible) {
+        document.getElementById('enemyBtn').classList.add('open');
+        document.getElementById('enemySection').classList.add('visible');
+      }
+      
+      // Restore dice results
+      renderDiceResults();
+      renderEnemies();
+      updateAddEnemyButton();
+    } catch (e) {
+      console.error('Failed to load state:', e);
+      // Initialize with default players if loading fails
+      gameState.players = [
+        createPlayer(1),
+        createPlayer(2),
+        createPlayer(3)
+      ];
+      gameState.enemies = [];
+      gameState.enemyVisible = false;
+    }
+  } else {
+    // Default state with 3 players
+    gameState.players = [
+      createPlayer(1),
+      createPlayer(2),
+      createPlayer(3)
+    ];
+    gameState.enemies = [];
+  }
+}
+
+function resetAll() {
+  if (confirm('Are you sure you want to reset all game state? This cannot be undone.')) {
+    localStorage.removeItem('hostTrackerState');
+    gameState = {
+      villain: '',
+      act: 0,
+      players: [
+        createPlayer(1),
+        createPlayer(2),
+        createPlayer(3)
+      ],
+      enemies: [],
+      enemyVisible: false,
+      diceResults: [],
+      notepad: ''
+    };
+    
+    document.getElementById('villainName').value = '';
+    document.getElementById('notepadText').value = '';
+    document.getElementById('enemyBtn').classList.remove('open');
+    document.getElementById('enemySection').classList.remove('visible');
+    
+    renderPlayers();
+    renderEnemies();
+    updateAddEnemyButton();
+    updateActButton();
+    renderDiceResults();
+    saveState();
+  }
+}
 </script>
 </body>
 </html>
