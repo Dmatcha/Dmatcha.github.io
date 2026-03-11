@@ -37,6 +37,18 @@
   --radius-xl: 20px;
 }
 
+/* Mobile-specific variables for better differentiation */
+@media (max-width: 811px) {
+  :root {
+    --bg-card: #252530;
+    --bg-elevated: #2d2d38;
+    --glass-bg: rgba(35, 35, 45, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --border-subtle: rgba(255, 255, 255, 0.12);
+    --border-medium: rgba(255, 255, 255, 0.2);
+  }
+}
+
 /* ==========================
    RESET & BASE
 ========================== */
@@ -106,6 +118,15 @@ h1, h2, h3, h4 {
   padding: 0rem 1.5rem;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   box-shadow: var(--shadow-md);
+}
+
+/* Mobile gradient for header */
+@media (max-width: 811px) {
+  .header {
+    background: linear-gradient(180deg, rgba(35, 35, 48, 0.95) 0%, rgba(28, 28, 38, 0.95) 100%);
+    border: 1px solid var(--border-medium);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
 }
 
 .header-left {
@@ -227,8 +248,19 @@ h1, h2, h3, h4 {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding-top: 5rem;
+  padding-top: 4rem;
+  margin-top: 1rem;
   padding-bottom: 8rem;
+  gap: 1rem;
+}
+
+/* Mobile gradient background for main content */
+@media (max-width: 811px) {
+  .main-content {
+    background: linear-gradient(180deg, rgba(20, 20, 28, 0.3) 0%, transparent 100%);
+    border-radius: var(--radius-lg);
+    margin: 0 0.5rem;
+  }
 }
 
 /* ==========================
@@ -239,6 +271,7 @@ h1, h2, h3, h4 {
   gap: 0.5rem;
   min-width: 0;
   overflow-x: hidden;
+  padding-top: 4px;
 }
 
 /* Prevent last odd child from spanning full width in multi-column grids */
@@ -277,6 +310,7 @@ h1, h2, h3, h4 {
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   padding: 1.25rem;
+  padding-top: 1.5rem;
   box-shadow: var(--shadow-md);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   min-width: 0;
@@ -284,8 +318,17 @@ h1, h2, h3, h4 {
   position: relative;
 }
 
+/* Mobile gradient overlay for better section differentiation */
+@media (max-width: 811px) {
+  .player-card {
+    background: linear-gradient(145deg, var(--bg-card) 0%, rgba(45, 45, 58, 0.9) 100%);
+    border: 1px solid var(--border-medium);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+}
+
 .player-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: var(--shadow-lg);
 }
 
@@ -429,6 +472,17 @@ h1, h2, h3, h4 {
   transition: border-color 0.2s ease;
 }
 
+/* Mobile input improvements */
+@media (max-width: 811px) {
+  .player-name {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.5rem;
+    border-bottom: 2px solid var(--border-subtle);
+  }
+}
+
 .player-name:focus {
   outline: none;
   border-bottom-color: var(--accent-primary);
@@ -467,6 +521,16 @@ h1, h2, h3, h4 {
   max-width: 100%;
 }
 
+/* Mobile select improvements */
+@media (max-width: 811px) {
+  .tag-select {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-medium);
+    padding: 0.4rem 0.5rem;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+}
+
 .tag-select:focus {
   outline: none;
   border-color: var(--accent-primary);
@@ -478,6 +542,16 @@ h1, h2, h3, h4 {
   gap: 0.5rem;
   min-width: 0;
   padding-top: 0.1rem;
+}
+
+/* Mobile checkbox improvements */
+@media (max-width: 811px) {
+  .status-checkboxes {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+  }
 }
 
 .status-checkbox {
@@ -539,6 +613,17 @@ h1, h2, h3, h4 {
   gap: 0.5rem 0.5rem;
   min-width: 0;
   overflow: hidden;
+}
+
+/* Mobile stats section improvements */
+@media (max-width: 811px) {
+  .stats-section {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+    border-top: 1px solid var(--border-subtle);
+  }
 }
 
 .stat-row {
@@ -685,6 +770,15 @@ h1, h2, h3, h4 {
   box-shadow: var(--shadow-md);
 }
 
+/* Mobile gradient for dice tray */
+@media (max-width: 811px) {
+  .dice-tray {
+    background: linear-gradient(180deg, rgba(40, 40, 55, 0.95) 0%, rgba(30, 30, 42, 0.95) 100%);
+    border: 1px solid var(--border-medium);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+}
+
 .dice-header {
   display: flex;
   justify-content: space-between;
@@ -797,16 +891,16 @@ h1, h2, h3, h4 {
 /* Enemy add button */
 .add-enemy-btn {
   appearance: none;
-  border: 1px solid var(--accent-danger);
-  background: rgba(239, 68, 68, 0.1);
+  border: 3px solid var(--accent-danger);
+  background: rgba(240, 68, 68, 0.15);
   color: var(--accent-danger);
   font-family: inherit;
-  font-size: 0.85rem;
+  font-size: 1.25rem;
   font-weight: 600;
-  padding: 1rem 1rem;
+  padding: 0.5rem 1rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.35s ease;
 }
 
 .add-enemy-btn:hover {
@@ -1197,6 +1291,168 @@ h1, h2, h3, h4 {
   color: #FFFFFF;
 }
 
+/* Card Image View */
+.enemy-card-image-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.enemy-card-image-label {
+  font-size: 0.55rem;
+  font-weight: bold;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+  text-align: center;
+}
+
+.enemy-card-image-placeholder {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  min-height: 80px;
+  /* Constrain to 5:7 ratio for card display */
+  aspect-ratio: 5 / 7;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.enemy-card-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  /* Maintain 5:7 aspect ratio (1200x1680) */
+  aspect-ratio: 5 / 7;
+  width: auto;
+  height: auto;
+}
+
+.enemy-card-image-input-area {
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 100%;
+}
+
+.enemy-card-url-input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 0.6rem;
+  padding: 0.3rem;
+  border: 1px solid var(--border-medium);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+}
+
+.enemy-card-url-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.enemy-card-url-input::placeholder {
+  color: var(--text-muted);
+}
+
+.enemy-card-image-hint {
+  font-size: 0.45rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.enemy-remove-card-btn {
+  appearance: none;
+  border: 1px solid var(--accent-danger);
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--accent-danger);
+  font-family: inherit;
+  font-size: 0.5rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  margin-top: 0.3rem;
+  transition: all 0.2s ease;
+}
+
+.enemy-remove-card-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* Details View */
+.enemy-details-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.enemy-details-label {
+  font-size: 0.55rem;
+  font-weight: bold;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+  text-align: center;
+}
+
+.enemy-details-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.3rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+.enemy-term-item {
+  margin-bottom: 0.4rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.enemy-term-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.enemy-term-name {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--accent-secondary);
+  text-transform: uppercase;
+  margin-bottom: 0.15rem;
+}
+
+.enemy-term-definition {
+  font-size: 0.5rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.enemy-no-terms {
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Edit View (original textarea view) */
+.enemy-edit-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
 /* Responsive adjustments for enemy grid */
 @media (max-width: 1200px) {
   .enemy-grid {
@@ -1229,6 +1485,15 @@ h1, h2, h3, h4 {
   display: none;
 }
 
+/* Mobile gradient for enemy section */
+@media (max-width: 811px) {
+  .enemy-section {
+    background: linear-gradient(145deg, var(--bg-card) 0%, rgba(45, 45, 58, 0.9) 100%);
+    border: 1px solid var(--border-medium);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+}
+
 .enemy-section.visible {
   display: block;
   animation: slideDown 0.3s ease;
@@ -1255,7 +1520,7 @@ h1, h2, h3, h4 {
 }
 
 .enemy-title {
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--accent-danger);
 }
@@ -1695,6 +1960,59 @@ let gameState = {
 const actStages = ['0', 'I', 'II', 'III', 'Finale'];
 
 // ==========================
+// WEBP MAPPING (from CSV)
+// ==========================
+const webpMapping = {
+  "Knights I": 230,
+  "Knights II": 232,
+  "Knights III": 234,
+  "Bandits — Dastardly Duo": 236,
+  "Kyth — Juvenile": 238,
+  "Kyth — Mature": 240,
+  "Kyth — Failed": 242,
+  "Kyth — Evolved": 243,
+  "Kyth — Canine": 245,
+  "Kyth — Tiger": 247,
+  "Kyth — Critters": 248,
+  "Chantash the Greathorn": 249,
+  "Grazuul the Oakcutter": 250,
+  "Yangar the Saltskin": 251,
+  "Vasok the Smasher": 252,
+  "Arocka the Godqueen": 253,
+  "Dreck the Slain": 254,
+  "Ugly Bogsnoot": 256,
+  "Alluring Maiden": 258
+};
+
+// ==========================
+// TERM DICTIONARY (for Details view)
+// ==========================
+const termDictionary = {
+  "armour": "Passive damage reduction. Armour+X adds that many HP of protection that must be depleted before taking actual damage.",
+  "mshield": "Magic shield. Provides temporary protection that can absorb damage from attacks.",
+  "hon": "Honour. A measure of the enemy's loyalty or moral standing that may affect their actions.",
+  "d": "Dice roll. The number following indicates the dice type (e.g., d6, d8).",
+  "B": "Biomass. A resource representing the enemy's organic matter or parasitic essence.",
+  "p2": "Power level 2. Indicates the enemy's tier or strength category.",
+  "Gang": "Summon allies. The number indicates how many additional creatures are summoned.",
+  "Lacerate": "Inflict bleed damage over time.",
+  "bleed": "Continuous damage that stacks with other damage. Requires healing to remove.",
+  "Slain": "Triggered when the enemy is defeated. May have lingering effects on the slayer.",
+  "Shed": "Release spawned minions or remove attached effects.",
+  "Immune": "Cannot be affected by certain damage types or conditions.",
+  "Pierce": "Damage that ignores armour and shield protections.",
+  "Scale": "Power adjusts based on the target's stats.",
+  "Knockdown": "Stuns the target, preventing actions for a turn.",
+  "Slime": "Reduces movement and evasion capabilities.",
+  "Slow": "Reduces the target's action speed and dodge chance.",
+  "Moonbless": "Powerful under moonlight, grants bonus to attacks.",
+  "Evade": "Attempt to dodge incoming attacks.",
+  "Counterattack": "Strike back when evading or being attacked.",
+  "Bribe": "Can be convinced to leave or switch sides with enough coins.",
+  "Steal": "Take coins from players."
+};
+
+// ==========================
 // INITIALIZATION
 // ==========================
 document.addEventListener('DOMContentLoaded', () => {
@@ -1856,13 +2174,13 @@ function renderPlayers() {
             onclick="${player.madness > 0 ? `showMadnessReport(${index})` : ''}">Madness:</span>
           <div class="stat-controls">
             <button class="stat-btn minus" onclick="updateStat(${index}, 'madness', -1)">
-              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem">
+              <svg fill="currentColor" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="1.25rem" height="1.25rem">
                 <path d="M0 16q0 3.264 1.28 6.208t3.392 5.12 5.12 3.424 6.208 1.248 6.208-1.248 5.12-3.424 3.392-5.12 1.28-6.208-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM8 16q0 0.832 0.576 1.44t1.44 0.576h12q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-12q-0.832 0-1.44 0.576t-0.576 1.408z"/>
               </svg>
             </button>
             <span class="stat-value madness">${player.madness}</span>
             <button class="stat-btn plus" onclick="updateStat(${index}, 'madness', 1)">
-              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem">
+              <svg fill="currentColor" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="1.25rem" height="1.25rem">
                 <path d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-20q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v20q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM8 16q0 0.832 0.576 1.44t1.44 0.576h4v4q0 0.832 0.576 1.408t1.408 0.576 1.408-0.576 0.608-1.408v-4h4q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-4v-4q0-0.832-0.608-1.408t-1.408-0.608-1.408 0.608-0.576 1.408v4h-4q-0.832 0-1.44 0.576t-0.576 1.408z"/>
               </svg>
             </button>
@@ -1872,11 +2190,11 @@ function renderPlayers() {
           <span class="stat-label">Life:</span>
           <div class="stat-controls">
             <button class="stat-btn minus" onclick="updateStat(${index}, 'life', -1)">
-              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>minus-round</title> <path d="M0 16q0 3.264 1.28 6.208t3.392 5.12 5.12 3.424 6.208 1.248 6.208-1.248 5.12-3.424 3.392-5.12 1.28-6.208-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM8 16q0 0.832 0.576 1.44t1.44 0.576h12q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-12q-0.832 0-1.44 0.576t-0.576 1.408z"></path> </g></svg>
+              <svg fill="currentColor" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="1.25rem" height="1.25rem"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>minus-round</title> <path d="M0 16q0 3.264 1.28 6.208t3.392 5.12 5.12 3.424 6.208 1.248 6.208-1.248 5.12-3.424 3.392-5.12 1.28-6.208-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM8 16q0 0.832 0.576 1.44t1.44 0.576h12q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-12q-0.832 0-1.44 0.576t-0.576 1.408z"></path> </g></svg>
             </button>
             <span class="stat-value life">${player.life}</span>
             <button class="stat-btn plus" onclick="updateStat(${index}, 'life', 1)">
-              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem">
+              <svg fill="currentColor" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="1.25rem" height="1.25rem">
                 <path d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-20q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v20q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM8 16q0 0.832 0.576 1.44t1.44 0.576h4v4q0 0.832 0.576 1.408t1.408 0.576 1.408-0.576 0.608-1.408v-4h4q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-4v-4q0-0.832-0.608-1.408t-1.408-0.608-1.408 0.608-0.576 1.408v4h-4q-0.832 0-1.44 0.576t-0.576 1.408z"/>
               </svg>
             </button>
@@ -1886,11 +2204,11 @@ function renderPlayers() {
           <span class="stat-label">Soul:</span>
           <div class="stat-controls">
             <button class="stat-btn minus" onclick="updateStat(${index}, 'soul', -1)">
-              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>minus-round</title> <path d="M0 16q0 3.264 1.28 6.208t3.392 5.12 5.12 3.424 6.208 1.248 6.208-1.248 5.12-3.424 3.392-5.12 1.28-6.208-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM8 16q0 0.832 0.576 1.44t1.44 0.576h12q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-12q-0.832 0-1.44 0.576t-0.576 1.408z"></path> </g></svg>
+              <svg fill="currentColor" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="1.25rem" height="1.25rem"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>minus-round</title> <path d="M0 16q0 3.264 1.28 6.208t3.392 5.12 5.12 3.424 6.208 1.248 6.208-1.248 5.12-3.424 3.392-5.12 1.28-6.208-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM8 16q0 0.832 0.576 1.44t1.44 0.576h12q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-12q-0.832 0-1.44 0.576t-0.576 1.408z"></path> </g></svg>
             </button>
             <span class="stat-value soul">${player.soul}</span>
             <button class="stat-btn plus" onclick="updateStat(${index}, 'soul', 1)">
-              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem">
+              <svg fill="currentColor" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="1.25rem" height="1.25rem">
                 <path d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-20q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v20q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM8 16q0 0.832 0.576 1.44t1.44 0.576h4v4q0 0.832 0.576 1.408t1.408 0.576 1.408-0.576 0.608-1.408v-4h4q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-4v-4q0-0.832-0.608-1.408t-1.408-0.608-1.408 0.608-0.576 1.408v4h-4q-0.832 0-1.44 0.576t-0.576 1.408z"/>
               </svg>
             </button>
@@ -1900,11 +2218,11 @@ function renderPlayers() {
           <span class="stat-label">Coins:</span>
           <div class="stat-controls">
             <button class="stat-btn minus" onclick="updateStat(${index}, 'coins', -1)">
-              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>minus-round</title> <path d="M0 16q0 3.264 1.28 6.208t3.392 5.12 5.12 3.424 6.208 1.248 6.208-1.248 5.12-3.424 3.392-5.12 1.28-6.208-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM8 16q0 0.832 0.576 1.44t1.44 0.576h12q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-12q-0.832 0-1.44 0.576t-0.576 1.408z"></path> </g></svg>
+              <svg fill="currentColor" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="1.25rem" height="1.25rem"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>minus-round</title> <path d="M0 16q0 3.264 1.28 6.208t3.392 5.12 5.12 3.424 6.208 1.248 6.208-1.248 5.12-3.424 3.392-5.12 1.28-6.208-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM8 16q0 0.832 0.576 1.44t1.44 0.576h12q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-12q-0.832 0-1.44 0.576t-0.576 1.408z"></path> </g></svg>
             </button>
             <span class="stat-value coins">${player.coins}</span>
             <button class="stat-btn plus" onclick="updateStat(${index}, 'coins', 1)">
-              <svg fill="#ffffff" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="#ffffff" width="1.25rem" height="1.25rem">
+              <svg fill="currentColor" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="1.25rem" height="1.25rem">
                 <path d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-20q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v20q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM8 16q0 0.832 0.576 1.44t1.44 0.576h4v4q0 0.832 0.576 1.408t1.408 0.576 1.408-0.576 0.608-1.408v-4h4q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-4v-4q0-0.832-0.608-1.408t-1.408-0.608-1.408 0.608-0.576 1.408v4h-4q-0.832 0-1.44 0.576t-0.576 1.408z"/>
               </svg>
             </button>
@@ -2148,6 +2466,67 @@ function clearResults() {
 // ==========================
 // ENEMY DATABASE
 // ==========================
+// Mapping of enemy names to card image webp IDs
+const enemyWebpMap = {
+  "Knights I": "230",
+  "Knights II": "232",
+  "Knights III": "234",
+  "Bandits — Dastardly Duo": "236",
+  "Kyth — Juvenile": "238",
+  "Kyth — Mature": "240",
+  "Kyth — Failed": "242",
+  "Kyth — Evolved": "243",
+  "Kyth — Canine": "245",
+  "Kyth — Tiger": "247",
+  "Kyth — Critters": "248",
+  "Chantash the Greathorn": "249",
+  "Grazuul the Oakcutter": "250",
+  "Yangar the Saltskin": "251",
+  "Vasok the Smasher": "252",
+  "Arocka the Godqueen": "253",
+  "Dreck the Slain": "254",
+  "Ugly Bogsnoot": "256",
+  "Alluring Maiden": "258",
+  "Bountyhunter": "260",
+  "Ravenous Dongodon": "262",
+  "Flying Dongodon": "264",
+  "Baby Dongodon": "266",
+  "Dongodon Pack": "268",
+  "Leafy Gorgoonah": "270",
+  "Mooneyed Warlock": "271",
+  "Moonhead Warlock": "272",
+  "Moontree Behemoth": "273",
+  "Wicked Hunter": "274",
+  "Carver of Bones": "276",
+  "Ghastly Wax": "278",
+  "Rotten Manbat": "280",
+  "Mouldhare": "282",
+  "Barkers": "284",
+  "Pine Cougar": "286",
+  "Beta Rainbear": "288",
+  "Alpha Rainbear": "290",
+  "Fog Slike": "293",
+  "Claw Viper": "294",
+  "Sandwaller": "295",
+  "Mother of Many": "296",
+  "Redcoat Centipede": "297",
+  "Shivering Beetle": "299",
+  "Gnuchs": "301",
+  "Hypogean Scorp": "302",
+  "Crackling Chimaera": "305",
+  "Yakyak": "307",
+  "Quacoa": "309",
+  "Vostrodile": "311",
+  "Cheepcheap": "313",
+  "Construct — Pico": "341",
+  "Construct — Milli": "345",
+  "Construct — Kilo": "349",
+  "Construct — Mega": "353",
+  "Construct — Giga": "355",
+  "Construct — Ruined": "359",
+  "Construct — Sentinel": "363"
+};
+
 const enemyDatabase = [
   {
     name: "Knights I",
@@ -2157,7 +2536,7 @@ const enemyDatabase = [
     defaultLife: 6,
     defaultPower: 6,
     flavour: "Enforcers paid to hold a blade, but not much else. Intimidation goes both ways.",
-    effect: `Armour {armour}1  <br>Gang 2 (summon two Knights I; defeated if only one remains)  <br>{d} 5: Lacerate, inflict bleed.`
+    effect: `<br>Armour {armour}1  <br>Gang 2 (summon two Knights I; defeated if only one remains)  <br>{d} 5: Lacerate, inflict bleed.`
   },
   {
     name: "Knights II",
@@ -2167,7 +2546,7 @@ const enemyDatabase = [
     defaultLife: 7,
     defaultPower: 7,
     flavour: "If they have orders, you run.",
-    effect: `Armour {armour}2 & Shield {mshield}2 & Gang 2 Honour {hon} (arrest weak targets) <br>{d} 5: Sword and shield, swiftly strike and regain shield {mshield}.`
+    effect: `<br>Armour {armour}2 <br>Shield {mshield}2 <br>Gang 2 Honour {hon} (arrest weak targets) <br>{d} 5: Sword and shield, swiftly strike and regain shield {mshield}.`
   },
   {
     name: "Knights III",
@@ -2177,7 +2556,7 @@ const enemyDatabase = [
     defaultLife: 10,
     defaultPower: 10,
     flavour: "They only obey their commander.",
-    effect: `{armour}3 & {mshield}3 & {hon} Honour <br>Summon six additional Knights III. <br>{d} 5: Overwhelming strike, swiftly strike and inflict stun or knockdown.`
+    effect: `<br>{armour}3 <br>{mshield}3 <br>{hon} Honour <br>Summon six additional Knights III. <br>{d} 5: Overwhelming strike, swiftly strike and inflict stun or knockdown.`
   },
   {
     name: "Bandits — Dastardly Duo",
@@ -2187,7 +2566,7 @@ const enemyDatabase = [
     defaultLife: 1,
     defaultPower: 2,
     flavour: "Two heads are better than one. Which is especially true for these two.",
-    effect: `Life is equal to highest player's life<br>Odd: Shoot, deal double the result<br>Even: Slash and grab, steal coins.  {p2} Can be bribed.`
+    effect: `<br>Life is equal to highest player's life<br>Odd: Shoot, deal double the result<br>Even: Slash and grab, steal coins.  {p2} Can be bribed.`
   },
   {
     name: "Kyth — Juvenile",
@@ -2197,7 +2576,7 @@ const enemyDatabase = [
     defaultLife: 7,
     defaultPower: 1,
     flavour: "Overtaken by the worm, flesh and bone mutate. Compelled by an unseen master.",
-    effect: `Reduce damage by attacker's {B}. {d} 4: Shed worms in small area. Slain: Remove {B} from slayer.`
+    effect: `<br>Reduce damage by attacker's {B}. {d} 4: Shed worms in small area. Slain: Remove {B} from slayer.`
   },
   {
     name: "Kyth — Mature",
@@ -2207,7 +2586,7 @@ const enemyDatabase = [
     defaultLife: 11,
     defaultPower: 5,
     flavour: "Worms throb under the skin's surface. Cleverness makes it dangerous.",
-    effect: `After any action, move closer toward any target based on {B}. Damage restores health. Immune to pierce. Slain: Remove {B} from slayer.`
+    effect: `<br>After any action, move closer toward any target based on {B}. Damage restores health. Immune to pierce. Slain: Remove {B} from slayer.`
   },
   {
     name: "Kyth — Failed",
@@ -2217,7 +2596,7 @@ const enemyDatabase = [
     defaultLife: 9,
     defaultPower: 1,
     flavour: "Mages naturally resist worms— but should they succumb, run away.",
-    effect: `Scale with target's {B}. {d} 5: Wormbolt, knockdown & slime. Slain: Remove {B} from slayer.`
+    effect: `<br>Scale with target's {B}. {d} 5: Wormbolt, knockdown & slime. Slain: Remove {B} from slayer.`
   },
   {
     name: "Kyth — Evolved",
@@ -2227,7 +2606,7 @@ const enemyDatabase = [
     defaultLife: 16,
     defaultPower: 6,
     flavour: "Unafraid of sunlight, empowered by moonlight, but most horrifying of all: it has purpose.",
-    effect: `All Kyth abilities. Attacks inflict {B}.<br>Summon two random Kyth. {d} 6: Deal {B} damage, gain life.`
+    effect: `<br>All Kyth abilities. Attacks inflict {B}.<br>Summon two random Kyth. {d} 6: Deal {B} damage, gain life.`
   },
   {
     name: "Kyth — Canine",
@@ -2237,7 +2616,7 @@ const enemyDatabase = [
     defaultLife: 6,
     defaultPower: 3,
     flavour: "Beasts are scary, but have you ever seen one with worms... writhing?",
-    effect: `Bites can inflict bleed. {d} 6: Spit Tar, apply slow to target.  Moonbless: +1 to attacks.`
+    effect: `<br>Bites can inflict bleed. {d} 6: Spit Tar, apply slow to target.  Moonbless: +1 to attacks.`
   },
   {
     name: "Kyth — Tiger",
@@ -2247,7 +2626,7 @@ const enemyDatabase = [
     defaultLife: 5,
     defaultPower: 4,
     flavour: "Oh, great, now it has worms? Really!?",
-    effect: `Attempt counterattack after evading. {d} 6: Spit Tar, apply slow to target.  Moonbless: +1 to any evasion.`
+    effect: `<br>Attempt counterattack after evading. {d} 6: Spit Tar, apply slow to target.  Moonbless: +1 to any evasion.`
   },
   {
     name: "Kyth — Critters",
@@ -2257,7 +2636,7 @@ const enemyDatabase = [
     defaultLife: 3,
     defaultPower: 2,
     flavour: "Terribly cute in any other circumstance. Now? Just terrible.",
-    effect: `Quick. (Acts first) {p2} Summon {d}20 Kyth — Critters. {d} 6: Crazy stupid bite, apply poison or bleed for each Kyth — Critters.`
+    effect: `<br>Quick. (Acts first) {p2} Summon {d}20 Kyth — Critters. {d} 6: Crazy stupid bite, apply poison or bleed for each Kyth — Critters.`
   },
   {
     name: "Chantash the Greathorn",
@@ -2267,7 +2646,7 @@ const enemyDatabase = [
     defaultLife: 13,
     defaultPower: 7,
     flavour: "One of the fearsome five. Laughter like a thunderclap. Friend or foe?",
-    effect: `Speaks slowly. Laughs at danger. {d} 5: Strike twice. {p2} Summon wildlife allies to fight.`
+    effect: `<br>Speaks slowly. Laughs at danger. {d} 5: Strike twice. {p2} Summon wildlife allies to fight.`
   },
   {
     name: "Grazuul the Oakcutter",
@@ -2277,7 +2656,7 @@ const enemyDatabase = [
     defaultLife: 14,
     defaultPower: 9,
     flavour: "One of the fearsome five. Rends the world to his will. Friend or foe?",
-    effect: `Strike and alter the environment. {d} 6: Throw a massive object. {p2} Withstand a killing blow.`
+    effect: `<br>Strike and alter the environment. {d} 6: Throw a massive object. {p2} Withstand a killing blow.`
   },
   {
     name: "Yangar the Saltskin",
@@ -2287,7 +2666,7 @@ const enemyDatabase = [
     defaultLife: 13,
     defaultPower: 7,
     flavour: "One of the fearsome five. Unafraid of sea monsters. Friend or foe?",
-    effect: `Grab target. {d} 6: Throw axe. Gain juggernaut. {p2} Ranged attacks deal 1 damage.`
+    effect: `<br>Grab target. {d} 6: Throw axe. Gain juggernaut. {p2} Ranged attacks deal 1 damage.`
   },
   {
     name: "Vasok the Smasher",
@@ -2297,7 +2676,7 @@ const enemyDatabase = [
     defaultLife: 15,
     defaultPower: 8,
     flavour: "One of the fearsome five. Conqueror and defender. Friend or foe?",
-    effect: `Armour {armour}5  {d} 6: Skullstone, inflict blind or silence to all targets in front. {p2} Commanding presence.`
+    effect: `<br>Armour {armour}5  {d} 6: Skullstone, inflict blind or silence to all targets in front. {p2} Commanding presence.`
   },
   {
     name: "Arocka the Godqueen",
@@ -2307,7 +2686,7 @@ const enemyDatabase = [
     defaultLife: 12,
     defaultPower: 12,
     flavour: "Eyes are a window to the soul, and hers burn a wicked green. Friend or—?",
-    effect: `Armour {armour}2 & Shield {mshield}8 {d} 7: Close-Quarters Combat. {p2} Empower, +1 to all stats when shield is zero.`
+    effect: `<br>Armour {armour}2 <br>Shield {mshield}8 {d} 7: Close-Quarters Combat. {p2} Empower, +1 to all stats when shield is zero.`
   },
   {
     name: "Dreck the Slain",
@@ -2317,7 +2696,7 @@ const enemyDatabase = [
     defaultLife: 6,
     defaultPower: 9,
     flavour: "One of the fearsome five. Unchained, undying, unthinking. Foe? Foe.",
-    effect: `{d} 6: Charge, stun on impact. {d} 13: Rot Bolt, negates target's nature sorcery or enchantment. {p2} Resurrects when slain.`  
+    effect: `<br>{d} 6: Charge, stun on impact. {d} 13: Rot Bolt, negates target's nature sorcery or enchantment. {p2} Resurrects when slain.`  
   },
   {
     name: "Ugly Bogsnoot",
@@ -2327,7 +2706,7 @@ const enemyDatabase = [
     defaultLife: 7,
     defaultPower: 9,
     flavour: "Devours children and babies to gain power, or beauty. Smells of bile.",
-    effect: `Long limbs, grabs target easily.  {d} 6: Hex, crippled by moonlight.`
+    effect: `<br>Long limbs, grabs target easily.  {d} 6: Hex, crippled by moonlight.`
   },
   {
     name: "Alluring Maiden",
@@ -2337,7 +2716,7 @@ const enemyDatabase = [
     defaultLife: 9,
     defaultPower: 7,
     flavour: "Devours children and babies to gain power, or beauty. Smells of mushrooms.",
-    effect: `Pinprick, target shares effects. {d} 8: Fae Snap, magicks target victim. {d} 11: Hex, compel target to use magicks or act in any other way.`
+    effect: `<br>Pinprick, target shares effects. {d} 8: Fae Snap, magicks target victim. {d} 11: Hex, compel target to use magicks or act in any other way.`
   },
   {
     name: "Bountyhunter",
@@ -2347,7 +2726,7 @@ const enemyDatabase = [
     defaultLife: 6,
     defaultPower: 6,
     flavour: "Rewarded for a body, or beating heart?",
-    effect: `{p2} Kunai, interrupt and {t} a spell. {d} 8: Needle, paralyze target. {d} 11: Bolt, deal {t} card damage.`
+    effect: `<br>{p2} Kunai, interrupt and {t} a spell. {d} 8: Needle, paralyze target. {d} 11: Bolt, deal {t} card damage.`
   },
   {
     name: "Ravenous Dongodon",
@@ -2357,7 +2736,7 @@ const enemyDatabase = [
     defaultLife: 14,
     defaultPower: 6,
     flavour: "Mountains of bones mark its territory.",
-    effect: `Draconic & Slow Fever Skin, resist some magicks. {d} 6: Firebite, add fire to attack.`
+    effect: `<br>Draconic <br>Slow Fever Skin, resist some magicks. {d} 6: Firebite, add fire to attack.`
   },
   {
     name: "Flying Dongodon",
@@ -2367,7 +2746,7 @@ const enemyDatabase = [
     defaultLife: 20,
     defaultPower: 11,
     flavour: "It is as rare as those who tell tales of it. Meat is said to be spicy.",
-    effect: `Flying & Draconic {d} 16: Breathe Fire, burn an area.`
+    effect: `<br>Flying <br>Draconic {d} 16: Breathe Fire, burn an area.`
   },
   {
     name: "Baby Dongodon",
@@ -2377,7 +2756,7 @@ const enemyDatabase = [
     defaultLife: 6,
     defaultPower: 1,
     flavour: "Docile, possesses a venomous burning saliva well-known among poachers.",
-    effect: `Draconic (halve physical damage)  {d} 3: Flamelick, target catches fire.`
+    effect: `<br>Draconic (halve physical damage)  {d} 3: Flamelick, target catches fire.`
   },
   {
     name: "Dongodon Pack",
@@ -2387,7 +2766,7 @@ const enemyDatabase = [
     defaultLife: 8,
     defaultPower: 3,
     flavour: "The young cooperate to survive.",
-    effect: `Draconic  {d} 5: Spitfire, deal ranged damage. Gang 2 (summon two additional Dongodon Pack; defeated if only one remains)`
+    effect: `<br>Draconic  {d} 5: Spitfire, deal ranged damage. Gang 2 (summon two additional Dongodon Pack; defeated if only one remains)`
   },
   {
     name: "Leafy Gorgoonah",
@@ -2397,7 +2776,7 @@ const enemyDatabase = [
     defaultLife: 13,
     defaultPower: 2,
     flavour: "Camouflage matches the season's foliage. Fierce ambush predator.",
-    effect: `{d} 8: Chomp, inflict poison fever.`
+    effect: `<br>{d} 8: Chomp, inflict poison fever.`
   },
   {
     name: "Mooneyed Warlock",
@@ -2407,7 +2786,7 @@ const enemyDatabase = [
     defaultLife: 7,
     defaultPower: 2,
     flavour: "His eyes betray a pact made long ago.",
-    effect: `{p2} Glare, interrupt and {t} spell. {d} 5: Arcbolt, {t} a random spell.`
+    effect: `<br>{p2} Glare, interrupt and {t} spell. {d} 5: Arcbolt, {t} a random spell.`
   },
   {
     name: "Moonhead Warlock",
@@ -2417,7 +2796,7 @@ const enemyDatabase = [
     defaultLife: 9,
     defaultPower: 2,
     flavour: "The protrusions from the bulbous bloated head reach up, yearning for the stars.",
-    effect: `{d} 11: Inflict dread. (witnesses resolve two dice, using the worst result) {p2} When targeted, lose 1 non-legendary equipment.`
+    effect: `<br>{d} 11: Inflict dread. (witnesses resolve two dice, using the worst result) {p2} When targeted, lose 1 non-legendary equipment.`
   },
   {
     name: "Moontree Behemoth",
@@ -2427,7 +2806,7 @@ const enemyDatabase = [
     defaultLife: 13,
     defaultPower: 2,
     flavour: "Run. Run. Run far away. Ever, ever, evermore, in your dreams it will stay.",
-    effect: `Horrify (afflict panic and dread) {d} 9: Nightcall, deal {B} and bind targets; +1 to {dur} of targets.`
+    effect: `<br>Horrify (afflict panic and dread) {d} 9: Nightcall, deal {B} and bind targets; +1 to {dur} of targets.`
   },
   {
     name: "Wicked Hunter",
@@ -2437,7 +2816,7 @@ const enemyDatabase = [
     defaultLife: 10,
     defaultPower: 8,
     flavour: "Runes cover flesh. A mission of malice.",
-    effect: `Trick weapons.  Killing intent (cannot negotiate) {p2} Parry (vs {skl}).  {d} 10: Arcane Volley, area magic.`
+    effect: `<br>Trick weapons.  Killing intent (cannot negotiate) {p2} Parry (vs {skl}).  {d} 10: Arcane Volley, area magic.`
   },
   {
     name: "Carver of Bones",
@@ -2447,7 +2826,7 @@ const enemyDatabase = [
     defaultLife: 6,
     defaultPower: 2,
     flavour: "It sees through you, yearning to etch the master's runes unto your bones, too.",
-    effect: `Bone knife, +1 to injured.  {d} 6: Screech, injured deal -1 until the next time they remove {B}.`
+    effect: `<br>Bone knife, +1 to injured.  {d} 6: Screech, injured deal -1 until the next time they remove {B}.`
   },
   {
     name: "Ghastly Wax",
@@ -2457,7 +2836,7 @@ const enemyDatabase = [
     defaultLife: 6,
     defaultPower: 3,
     flavour: "Radiates heat when moving, skin endlessly rippling and folding.",
-    effect: `Vomit wax, bind target. {d} 6: Boiling Smoke, increase duration of afflictions by 1.`
+    effect: `<br>Vomit wax, bind target. {d} 6: Boiling Smoke, increase duration of afflictions by 1.`
   },
   {
     name: "Rotten Manbat",
@@ -2467,7 +2846,7 @@ const enemyDatabase = [
     defaultLife: 5,
     defaultPower: 3,
     flavour: "You will hear it or smell it first.",
-    effect: `Flying {d} 6: Dung Toss, poison to one target.  Spreads disease or poison upon death; {d} d6 for duration.`
+    effect: `<br>Flying {d} 6: Dung Toss, poison to one target.  Spreads disease or poison upon death; {d} d6 for duration.`
   },
   {
     name: "Mouldhare",
@@ -2477,7 +2856,7 @@ const enemyDatabase = [
     defaultLife: 5,
     defaultPower: 2,
     flavour: "Delicious if thoroughly cooked.",
-    effect: `{d} 5: Shroomdook, lay toxic egg. {d} 6: Fungal wheeze, take 1 damage, spread poison spores.`
+    effect: `<br>{d} 5: Shroomdook, lay toxic egg. {d} 6: Fungal wheeze, take 1 damage, spread poison spores.`
   },
   {
     name: "Barkers",
@@ -2487,7 +2866,7 @@ const enemyDatabase = [
     defaultLife: 4,
     defaultPower: 3,
     flavour: "Adorn one another with local foliage and flowers, depending on the season. The most adorned are safest.",
-    effect: `{d} 4: Dirty scratch, infect with fever. {d} 6: Rebark, restore life.  Resolve {d} d6 for fever duration.`
+    effect: `<br>{d} 4: Dirty scratch, infect with fever. {d} 6: Rebark, restore life.  Resolve {d} d6 for fever duration.`
   },
   {
     name: "Pine Cougar",
@@ -2497,7 +2876,7 @@ const enemyDatabase = [
     defaultLife: 9,
     defaultPower: 3,
     flavour: "The soft underbelly betrays the plates covering the remainder. A lackadaisical apex predator.",
-    effect: `{d} 4: Rend, afflict bleed. {d} 5: Reshell, add shield {mshield}+2.`
+    effect: `<br>{d} 4: Rend, afflict bleed. {d} 5: Reshell, add shield {mshield}+2.`
   },
   {
     name: "Beta Rainbear",
@@ -2507,7 +2886,7 @@ const enemyDatabase = [
     defaultLife: 8,
     defaultPower: 3,
     flavour: "Often seen frolicking during heavy rains. Coveted for its fluffy fur.",
-    effect: `{d} 4: Swipe, hit all nearby targets. {d} 6: Woolfunk, shake fur and release pungent, sticky odour.`
+    effect: `<br>{d} 4: Swipe, hit all nearby targets. {d} 6: Woolfunk, shake fur and release pungent, sticky odour.`
   },
   {
     name: "Alpha Rainbear",
@@ -2517,7 +2896,7 @@ const enemyDatabase = [
     defaultLife: 10,
     defaultPower: 8,
     flavour: "Sits patiently during heavy rains. Emits a foul stench when seeking a mate.",
-    effect: `{d} 3: Swipe, afflict bleed or stun. {d} 5: Antler Crash, charge forward.`
+    effect: `<br>{d} 3: Swipe, afflict bleed or stun. {d} 5: Antler Crash, charge forward.`
   },
   {
     name: "Fog Slike",
@@ -2527,7 +2906,7 @@ const enemyDatabase = [
     defaultLife: 3,
     defaultPower: 2,
     flavour: "Despite diminutive size, it hunts in packs, rushing anything wandering into the caves it calls home.",
-    effect: `{d} 2: Pinch-pinch. Ouch. {d} 5: Billow fumes, attackers miss. Delicious.`
+    effect: `<br>{d} 2: Pinch-pinch. Ouch. {d} 5: Billow fumes, attackers miss. Delicious.`
   },
   {
     name: "Claw Viper",
@@ -2537,7 +2916,7 @@ const enemyDatabase = [
     defaultLife: 7,
     defaultPower: 5,
     flavour: "Ambush predator that lazily eats once a week. Said to be an adequate meal, a difficult kill for the famished.",
-    effect: `{d} 6: Slithergrip, snare target, all strikes gain quick against target. Attacks inflict poison, {dur} increases with each hit.`
+    effect: `<br>{d} 6: Slithergrip, snare target, all strikes gain quick against target. Attacks inflict poison, {dur} increases with each hit.`
   },
   {
     name: "Sandwaller",
@@ -2547,7 +2926,7 @@ const enemyDatabase = [
     defaultLife: 9,
     defaultPower: 2,
     flavour: "Blind. Feeds on insects and cavewall cheese. Constricts and crushes predators. Urine dissolves corpses.",
-    effect: `{d} 6: Constriction, immobilize target and deal increasing damage. Target is afflicted with terror (panic and dread).`
+    effect: `<br>{d} 6: Constriction, immobilize target and deal increasing damage. Target is afflicted with terror (panic and dread).`
   },
   {
     name: "Mother of Many",
@@ -2557,7 +2936,7 @@ const enemyDatabase = [
     defaultLife: 11,
     defaultPower: 5,
     flavour: "The body swells and rolls with fleshy tendrils: offspring sloughed off to make way for more. More and more...",
-    effect: `{d} 6: Wet fleshy slap, spread worms; if target suffering from bleed, poison, venom, or curse, add 1 to the damage.`
+    effect: `<br>{d} 6: Wet fleshy slap, spread worms; if target suffering from bleed, poison, venom, or curse, add 1 to the damage.`
   },
   {
     name: "Redcoat Centipede",
@@ -2567,7 +2946,7 @@ const enemyDatabase = [
     defaultLife: 8,
     defaultPower: 3,
     flavour: "Coats dwellings in slime, feasting upon creatures stuck within. Blood is surprisingly flammable.",
-    effect: `{d} 4: Ooze, spread sticky slime. {d} 6: Curl, gain armour {armour}+1. Slimed targets cannot use quick spells, etc..`
+    effect: `<br>{d} 4: Ooze, spread sticky slime. {d} 6: Curl, gain armour {armour}+1. Slimed targets cannot use quick spells, etc..`
   },
   {
     name: "Shivering Beetle",
@@ -2577,7 +2956,7 @@ const enemyDatabase = [
     defaultLife: 6,
     defaultPower: 2,
     flavour: "Shivers and shakes, disorienting predators; deflects some ranged attacks.",
-    effect: `{d} 4: Sticky Carapace, armour {armour}+1. {d} 5: Instantly move to furthest target and attack, slime target. Weapons may become stuck.`
+    effect: `<br>{d} 4: Sticky Carapace, armour {armour}+1. {d} 5: Instantly move to furthest target and attack, slime target. Weapons may become stuck.`
   },
   {
     name: "Gnuchs",
@@ -2587,7 +2966,7 @@ const enemyDatabase = [
     defaultLife: 3,
     defaultPower: 3,
     flavour: "Their erratic movement makes them impossible to count. Nightmare fuel.",
-    effect: `{d} 5: Summon 3 Gnuchs. {d} 6: Attack with all Gnuchs, gain shield {mshield} based on number of Gnuchs. Attacks cause fevers.`
+    effect: `<br>{d} 5: Summon 3 Gnuchs. {d} 6: Attack with all Gnuchs, gain shield {mshield} based on number of Gnuchs. Attacks cause fevers.`
   },
   {
     name: "Hypogean Scorp",
@@ -2597,7 +2976,7 @@ const enemyDatabase = [
     defaultLife: 5,
     defaultPower: 3,
     flavour: "The venom affects creatures larger than a rabbit differently, making for an unreliable political tool.",
-    effect: `{p2} Quick {d} 5: Sting, inflict poison. Resolve {d} d20 for poison duration.`
+    effect: `<br>{p2} Quick {d} 5: Sting, inflict poison. Resolve {d} d20 for poison duration.`
   },
   {
     name: "Crackling Chimaera",
@@ -2607,7 +2986,7 @@ const enemyDatabase = [
     defaultLife: 7,
     defaultPower: 7,
     flavour: "Created by some mage for some purpose. Both long forgotten, but its purpose remains.",
-    effect: `{d} 3: Flip a coin:  Heads, immune to {g} spells;  Tails, immune to {w} spells. {d} 4: Chain lightning.`
+    effect: `<br>{d} 3: Flip a coin:  Heads, immune to {g} spells;  Tails, immune to {w} spells. {d} 4: Chain lightning.`
   },
   {
     name: "Yakyak",
@@ -2617,7 +2996,7 @@ const enemyDatabase = [
     defaultLife: 8,
     defaultPower: 6,
     flavour: "Pursues fruits, vegetables, and flesh with equal fervor. Docile when satisfied.",
-    effect: `Slow. Aim for and gain doublestrike against targets with food.<br>{p2} Gain shield {mshield} when damaged.<br>{d}6: Stomp, knockdown targets.`
+    effect: `<br>Slow. Aim for and gain doublestrike against targets with food.<br>{p2} Gain shield {mshield} when damaged.<br>{d}6: Stomp, knockdown targets.`
   },
   {
     name: "Quacoa",
@@ -2627,7 +3006,7 @@ const enemyDatabase = [
     defaultLife: 8,
     defaultPower: 4,
     flavour: "Fishing and seafaring vessels often prefer its senses over traditional navigation.",
-    effect: `Flying<br>Gain swift against any target with a status ailment or less than half life.<br>{d}6: Attacks inflict bleed.`
+    effect: `<br>Flying<br>Gain swift against any target with a status ailment or less than half life.<br>{d}6: Attacks inflict bleed.`
   },
   {
     name: "Vostrodile",
@@ -2637,7 +3016,7 @@ const enemyDatabase = [
     defaultLife: 1,
     defaultPower: 10,
     flavour: "Be it minutes or days, you'll see one. Hope both your ship is fast and the beast is small.",
-    effect: `{p2} Life is five times the resolved die.<br>Flip a coin each turn: Slow or Swift.<br>After attacking, attempt to constrict a tentacle around something.`
+    effect: `<br>{p2} Life is five times the resolved die.<br>Flip a coin each turn: Slow or Swift.<br>After attacking, attempt to constrict a tentacle around something.`
   },
   {
     name: "Cheepcheap",
@@ -2647,7 +3026,7 @@ const enemyDatabase = [
     defaultLife: 17,
     defaultPower: 1,
     flavour: "Eggs and feathers resemble gold coins.",
-    effect: `Flying<br>Drops gold coins when slain. Delicious when eaten.<br>{p2} Difficult to hit. Blinds attackers.`
+    effect: `<br>Flying<br>Drops gold coins when slain. Delicious when eaten.<br>{p2} Difficult to hit. Blinds attackers.`
   },
   {
     name: "Construct — Pico",
@@ -2657,7 +3036,7 @@ const enemyDatabase = [
     defaultLife: 6,
     defaultPower: 1,
     flavour: "Originally tasked with safeguarding against small rodents and other pests, it's almost cute-- if it weren't for the terrifying sheer number of them.",
-    effect: `Can enter small spaces. Easily discombobulates. Moves quickly and can jump, float. {mast} 3: Obey.`
+    effect: `<br>Can enter small spaces. Easily discombobulates. Moves quickly and can jump, float. {mast} 3: Obey.`
   },
   {
     name: "Construct — Milli",
@@ -2667,7 +3046,7 @@ const enemyDatabase = [
     defaultLife: 7,
     defaultPower: 1,
     flavour: "Purpose-built to be helpful. With no one left to help, they've become something else entirely. Oh no.",
-    effect: `Can carry keys and small items in its mouth without breaking them. Can activate doors. {mast} 4: Obey.`
+    effect: `<br>Can carry keys and small items in its mouth without breaking them. Can activate doors. {mast} 4: Obey.`
   },
   {
     name: "Construct — Kilo",
@@ -2677,7 +3056,7 @@ const enemyDatabase = [
     defaultLife: 8,
     defaultPower: 2,
     flavour: "At first they were couriers of small packages. Apt runners, they seem to build momentum. Ouch.",
-    effect: `Moves slowly but can carry items. When unencumbered, can roll into a ball, building speed and momentum. {mast} 5: Obey.`
+    effect: `<br>Moves slowly but can carry items. When unencumbered, can roll into a ball, building speed and momentum. {mast} 5: Obey.`
   },
   {
     name: "Construct — Mega",
@@ -2687,7 +3066,7 @@ const enemyDatabase = [
     defaultLife: 10,
     defaultPower: 3,
     flavour: "Slow and steady movements betray their former utility as consctruction devices.",
-    effect: `Slow, articulate movemets. Can construct or deconstruct objects. {mast} 6: Obey.`
+    effect: `<br>Slow, articulate movemets. Can construct or deconstruct objects. {mast} 6: Obey.`
   },
   {
     name: "Construct — Giga",
@@ -2697,7 +3076,7 @@ const enemyDatabase = [
     defaultLife: 16,
     defaultPower: 18,
     flavour: "Monolithic machinations, administering the intellect of engineers and architects over decades. Oh, the wonders they had built...",
-    effect: `Slow, massive construction machine. {mast} 7: Obey.`
+    effect: `<br>Slow, massive construction machine. {mast} 7: Obey.`
   },
   {
     name: "Construct — Ruined",
@@ -2707,7 +3086,7 @@ const enemyDatabase = [
     defaultLife: 5,
     defaultPower: 7,
     flavour: "Does the malfunction make it less lethal or more lethal?",
-    effect: `Arcbeam, flamethrower. Forge, repair, recreate:   items, tools, weapons, and more. {mast} 8 & {d} 10: Obey.  Volatile.`
+    effect: `<br>Arcbeam, flamethrower. Forge, repair, recreate:   items, tools, weapons, and more. {mast} 8 & {d} 10: Obey.  Volatile.`
   },
   {
     name: "Construct — Sentinel",
@@ -2717,7 +3096,7 @@ const enemyDatabase = [
     defaultLife: 13,
     defaultPower: 13,
     flavour: "By some twist of fate, it has been perfectly preserved-- save for the indelible dusts of time, of course...",
-    effect: `Fluid, sensitive movements. Executes command protocol. Deadly combat prowess. {mast} 8: Obey.`
+    effect: `<br>Fluid, sensitive movements. Executes command protocol. Deadly combat prowess. {mast} 8: Obey.`
   }
 ];
 
@@ -2867,6 +3246,11 @@ function selectEnemySuggestion(enemyId, encodedName) {
     enemy.power = dbEntry.defaultPower;
     enemy.flavourText = dbEntry.flavour;
     enemy.effectText = dbEntry.effect;
+    
+    // Auto-populate card image from webpMapping
+    if (webpMapping[name]) {
+      enemy.cardImage = `cards/fronts/${webpMapping[name]}.webp`;
+    }
   }
   
   hideEnemySuggestions(enemyId);
@@ -2925,8 +3309,9 @@ function createEnemy(id) {
     power: 1,
     flavourText: '',
     effectText: '',
+    cardImage: '',
     flipped: false,
-    flippedContent: null // 'flavour' or 'effect'
+    flippedContent: null // 'flavour', 'effect', 'card', or 'details'
   };
 }
 
@@ -3011,8 +3396,8 @@ function renderEnemies() {
             </div>
             
             <div class="enemy-actions-row">
-              <button class="enemy-flip-btn" onclick="flipEnemyCard('${enemy.id}', 'flavour')">Flavour</button>
-              <button class="enemy-flip-btn" onclick="flipEnemyCard('${enemy.id}', 'effect')">Effects</button>
+              <button class="enemy-flip-btn" onclick="flipEnemyCard('${enemy.id}', 'card')">Card</button>
+              <button class="enemy-flip-btn" onclick="flipEnemyCard('${enemy.id}', 'details')">Details</button>
             </div>
             
             <a href="javascript:void(0)" class="enemy-kill-btn ${killActive ? 'active' : ''}" 
@@ -3021,12 +3406,36 @@ function renderEnemies() {
           
           <!-- Back Face -->
           <div class="enemy-card-back">
-            <div class="enemy-back-label">${enemy.flippedContent === 'flavour' ? 'Flavour' : 'Effects'}</div>
-            ${enemy.flippedContent === 'flavour' ? 
-              `<textarea class="enemy-back-textarea" placeholder="Enter flavour text..." 
-                onchange="updateEnemyText('${enemy.id}', 'flavourText', this.value)">${escapeHtml(enemy.flavourText || '')}</textarea>` :
-              `<textarea class="enemy-back-textarea" placeholder="Enter effect text..." 
-                onchange="updateEnemyText('${enemy.id}', 'effectText', this.value)">${escapeHtml(enemy.effectText || '')}</textarea>`
+            ${enemy.flippedContent === 'card' ? 
+              `<div class="enemy-card-image-view">
+                <div class="enemy-card-image-label">Card Image</div>
+                <div class="enemy-card-image-placeholder">
+                  ${enemy.cardImage ? 
+                    `<img src="${enemy.cardImage}" alt="Card" class="enemy-card-img" />` :
+                    `<div class="enemy-card-image-input-area">
+                      <input type="text" class="enemy-card-url-input" 
+                        placeholder="Enter card image URL (webp)..."
+                        value="${escapeHtml(enemy.cardImage || '')}"
+                        onchange="updateEnemyCardImage('${enemy.id}', this.value)" />
+                      <div class="enemy-card-image-hint">Paste a .webp URL to display the card image</div>
+                    </div>`
+                  }
+                </div>
+              </div>` :
+              enemy.flippedContent === 'details' ?
+              `<div class="enemy-details-view">
+                <div class="enemy-details-label">Term Definitions</div>
+                <div class="enemy-details-content">${generateTermDefinitions(enemy.effectText)}</div>
+              </div>` :
+              `<div class="enemy-edit-view">
+                <div class="enemy-back-label">${enemy.flippedContent === 'flavour' ? 'Flavour' : 'Effects'}</div>
+                ${enemy.flippedContent === 'flavour' ? 
+                  `<textarea class="enemy-back-textarea" placeholder="Enter flavour text..." 
+                    onchange="updateEnemyText('${enemy.id}', 'flavourText', this.value)">${escapeHtml(enemy.flavourText || '')}</textarea>` :
+                  `<textarea class="enemy-back-textarea" placeholder="Enter effect text..." 
+                    onchange="updateEnemyText('${enemy.id}', 'effectText', this.value)">${escapeHtml(enemy.effectText || '')}</textarea>`
+                }
+              </div>`
             }
             <button class="enemy-return-btn" onclick="flipEnemyCard('${enemy.id}', null)">Return</button>
           </div>
@@ -3108,7 +3517,57 @@ function flipEnemyCard(enemyId, content) {
     } else {
       enemy.flipped = true;
       enemy.flippedContent = content;
+      
+      // Auto-populate card image from webpMapping if not already set
+      if (content === 'card' && !enemy.cardImage && webpMapping[enemy.name]) {
+        enemy.cardImage = `cards/fronts/${webpMapping[enemy.name]}.webp`;
+      }
     }
+    renderEnemies();
+    saveState();
+  }
+}
+
+// Generate detailed definitions for terms found in effect text
+function generateTermDefinitions(effectText) {
+  if (!effectText) {
+    return '<div class="enemy-no-terms">No effect text to analyze</div>';
+  }
+  
+  // Find all dictionary terms in the effect text
+  const terms = Object.keys(termDictionary);
+  const foundTerms = new Set();
+  
+  // Search for each term in the effect text (case insensitive)
+  const lowerText = effectText.toLowerCase();
+  terms.forEach(term => {
+    const regex = new RegExp(`\\b${term}\\b`, 'i');
+    if (regex.test(lowerText)) {
+      foundTerms.add(term);
+    }
+  });
+  
+  if (foundTerms.size === 0) {
+    return '<div class="enemy-no-terms">No defined terms found in effect text</div>';
+  }
+  
+  // Sort terms alphabetically
+  const sortedTerms = Array.from(foundTerms).sort();
+  
+  // Generate HTML for each term
+  return sortedTerms.map(term => `
+    <div class="enemy-term-item">
+      <div class="enemy-term-name">${term}</div>
+      <div class="enemy-term-definition">${termDictionary[term]}</div>
+    </div>
+  `).join('');
+}
+
+// Update enemy card image URL
+function updateEnemyCardImage(enemyId, imageUrl) {
+  const enemy = gameState.enemies.find(e => e.id === enemyId);
+  if (enemy) {
+    enemy.cardImage = imageUrl.trim();
     renderEnemies();
     saveState();
   }
@@ -3284,6 +3743,13 @@ function loadState() {
       if (!gameState.enemies) {
         gameState.enemies = [];
       }
+      
+      // Ensure cardImage exists for each enemy (for backwards compatibility)
+      gameState.enemies.forEach(enemy => {
+        if (enemy.cardImage === undefined) {
+          enemy.cardImage = '';
+        }
+      });
       
       // Ensure enemyVisible exists
       if (gameState.enemyVisible === undefined) {
