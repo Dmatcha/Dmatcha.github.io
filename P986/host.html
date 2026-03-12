@@ -47,6 +47,77 @@
     --border-subtle: rgba(255, 255, 255, 0.12);
     --border-medium: rgba(255, 255, 255, 0.2);
   }
+  
+  /* Player card mobile fixes */
+  .player-card {
+    padding: 1rem 1.25rem;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+  }
+  
+  .stat-row {
+    gap: 0.5rem;
+  }
+  
+  .stat-label {
+    min-width: 55px;
+    font-size: 0.9rem;
+    margin-right: 0.5rem;
+  }
+  
+  .stat-btn {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+  
+  /* Enemy card mobile fixes */
+  .enemy-effect-preview {
+    font-size: 0.9rem;
+    max-height: 120px;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+  }
+  
+  .enemy-flavour-preview {
+    font-size: 0.7rem;
+  }
+  
+  .enemy-title {
+    font-size: 1rem;
+  }
+  
+  .enemy-type {
+    font-size: 0.65rem;
+  }
+  
+  .enemy-stat-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 1.2rem;
+  }
+  
+  .enemy-stat-value {
+    font-size: 1rem;
+    min-width: 28px;
+  }
+  
+  .enemy-stats {
+    gap: 0.5rem;
+  }
+  
+  /* Enemy details flipped view mobile */
+  .enemy-details-content {
+    font-size: 0.85rem;
+  }
+  
+  .enemy-term-name {
+    font-size: 0.9rem;
+  }
+  
+  .enemy-term-definition {
+    font-size: 0.8rem;
+  }
 }
 
 /* ==========================
@@ -1207,25 +1278,31 @@ h1, h2, h3, h4 {
   width: 100%;
   margin-top: 0.4rem;
   appearance: none;
-  border: none;
-  background: transparent;
-  color: var(--text-muted);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.1);
+  color: rgba(239, 68, 68, 0.4);
   font-family: inherit;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
   text-align: center;
   cursor: not-allowed;
   text-decoration: none;
   transition: all 0.2s ease;
+  padding: 0.4rem 0.5rem;
+  border-radius: var(--radius-sm);
 }
 
 .enemy-kill-btn.active {
-  color: var(--accent-danger);
+  background: var(--accent-danger);
+  color: #ffffff;
+  border-color: var(--accent-danger);
   cursor: pointer;
-  text-decoration: underline;
+  font-weight: 700;
 }
 
 .enemy-kill-btn.active:hover {
-  color: #ff6666;
+  background: #ff5555;
+  border-color: #ff5555;
 }
 
 /* Back face content */
@@ -1274,7 +1351,7 @@ h1, h2, h3, h4 {
   appearance: none;
   border: 1px solid var(--accent-primary);
   background: rgba(139, 92, 246, 0.1);
-  color: #333;
+  color: #ffffff;
   font-family: inherit;
   font-size: 0.55rem;
   font-weight: 600;
@@ -1288,7 +1365,6 @@ h1, h2, h3, h4 {
 
 .enemy-return-btn:hover {
   background: #7030A0;
-  color: #FFFFFF;
 }
 
 /* Card Image View */
@@ -1988,28 +2064,34 @@ const webpMapping = {
 // TERM DICTIONARY (for Details view)
 // ==========================
 const termDictionary = {
-  "armour": "Passive damage reduction. Armour+X adds that many HP of protection that must be depleted before taking actual damage.",
-  "mshield": "Magic shield. Provides temporary protection that can absorb damage from attacks.",
-  "hon": "Honour. A measure of the enemy's loyalty or moral standing that may affect their actions.",
-  "d": "Dice roll. The number following indicates the dice type (e.g., d6, d8).",
-  "B": "Biomass. A resource representing the enemy's organic matter or parasitic essence.",
-  "p2": "Power level 2. Indicates the enemy's tier or strength category.",
-  "Gang": "Summon allies. The number indicates how many additional creatures are summoned.",
-  "Lacerate": "Inflict bleed damage over time.",
-  "bleed": "Continuous damage that stacks with other damage. Requires healing to remove.",
-  "Slain": "Triggered when the enemy is defeated. May have lingering effects on the slayer.",
-  "Shed": "Release spawned minions or remove attached effects.",
+  "ARMOUR": "Passive damage reduction. Armour X reduces all incoming damage by X amount.",
+  "SHIELD": "Provides temporary protection that can absorb damage from attacks, acting as temporary HP.",
+  "HONOUR": "Any attack that would normally slay would instead capture or arrest target.",
+  "D": "Dice roll. The number following indicates the dice type (e.g., d6, d8).",
+  "Madness": "Effect is based on madness of current target.",
+  "Innate": "This effect can be triggered once per combat and cannot be stopped.",
+  "Gang": "Summon X additional allies. Defeated if only one remains.",
+  "Poison": "Inflict damage equal to current duration counters.",
+  "Toxic": "Inflict set damage, then reduce duration counters.",
+  "Bleed": "Player takes set damage across a duration. Duration ticks down one whenever a player conducts a physical action.",
+  "Slain": "Triggered when the enemy is defeated.",
+  "Slay": "Triggered when the enemy is defeated or on-kill.",
   "Immune": "Cannot be affected by certain damage types or conditions.",
-  "Pierce": "Damage that ignores armour and shield protections.",
+  "True": "Damage or effects that ignore armour and shield protections.",
   "Scale": "Power adjusts based on the target's stats.",
-  "Knockdown": "Stuns the target, preventing actions for a turn.",
-  "Slime": "Reduces movement and evasion capabilities.",
-  "Slow": "Reduces the target's action speed and dodge chance.",
-  "Moonbless": "Powerful under moonlight, grants bonus to attacks.",
+  "Knockdown": "Target cannot run or move but can still act (not stun). Must spend 1 turn to 'get up'.",
+  "Stun": "Target cannot act for 1 turn.",
+  "Slime": "Reduces movement and evasion capabilities. At enough stacks, target cannot act.",
+  "Slow": "Act after others, sometimes last.",
+  "Quick": "Act before others, sometimes first.",
+  "Moonbless": "When affected by any source of moonlight.",
   "Evade": "Attempt to dodge incoming attacks.",
   "Counterattack": "Strike back when evading or being attacked.",
-  "Bribe": "Can be convinced to leave or switch sides with enough coins.",
-  "Steal": "Take coins from players."
+  "Bribe": "Use coins to affect target.",
+  "Steal": "Take coins or items from target.",
+  "Slash": "Bladed edge or swinging a sharp object. Chance of bleed.",
+  "Smash": "Blunt force damage type. Chance of knockback.",
+  "Pierce": "Straight damage. Chance to ignore armour or shields.",
 };
 
 // ==========================
@@ -2536,7 +2618,7 @@ const enemyDatabase = [
     defaultLife: 6,
     defaultPower: 6,
     flavour: "Enforcers paid to hold a blade, but not much else. Intimidation goes both ways.",
-    effect: `<br>Armour {armour}1  <br>Gang 2 (summon two Knights I; defeated if only one remains)  <br>{d} 5: Lacerate, inflict bleed.`
+    effect: `<br>Armour {armour}1  <br>Gang 2  <br>{d} 5: Lacerate, inflict bleed.`
   },
   {
     name: "Knights II",
@@ -2546,7 +2628,7 @@ const enemyDatabase = [
     defaultLife: 7,
     defaultPower: 7,
     flavour: "If they have orders, you run.",
-    effect: `<br>Armour {armour}2 <br>Shield {mshield}2 <br>Gang 2 Honour {hon} (arrest weak targets) <br>{d} 5: Sword and shield, swiftly strike and regain shield {mshield}.`
+    effect: `<br>Armour {armour}2 & Shield {mshield}2 <br>Honour {hon} & Gang 2  <br>{d} 5: Sword and shield, swiftly strike and regain shield {mshield}.`
   },
   {
     name: "Knights III",
@@ -2556,7 +2638,7 @@ const enemyDatabase = [
     defaultLife: 10,
     defaultPower: 10,
     flavour: "They only obey their commander.",
-    effect: `<br>{armour}3 <br>{mshield}3 <br>{hon} Honour <br>Summon six additional Knights III. <br>{d} 5: Overwhelming strike, swiftly strike and inflict stun or knockdown.`
+    effect: `<br>Armour {armour}3 & Shield {mshield}3 <br>Honour {hon} <br>Summon six additional Knights III. <br>{d} 5: Overwhelming strike, swiftly strike and inflict stun or knockdown.`
   },
   {
     name: "Bandits — Dastardly Duo",
@@ -2766,7 +2848,7 @@ const enemyDatabase = [
     defaultLife: 8,
     defaultPower: 3,
     flavour: "The young cooperate to survive.",
-    effect: `<br>Draconic  {d} 5: Spitfire, deal ranged damage. Gang 2 (summon two additional Dongodon Pack; defeated if only one remains)`
+    effect: `<br>Draconic <br>Gang 2 <br>{d} 5: Spitfire, deal ranged damage.`
   },
   {
     name: "Leafy Gorgoonah",
@@ -2786,7 +2868,7 @@ const enemyDatabase = [
     defaultLife: 7,
     defaultPower: 2,
     flavour: "His eyes betray a pact made long ago.",
-    effect: `<br>{p2} Glare, interrupt and {t} spell. {d} 5: Arcbolt, {t} a random spell.`
+    effect: `<br>{p2} Glare, interrupt and {t} spell. <br>{d} 5: Arcbolt, {t} a random spell.`
   },
   {
     name: "Moonhead Warlock",
@@ -2846,7 +2928,7 @@ const enemyDatabase = [
     defaultLife: 5,
     defaultPower: 3,
     flavour: "You will hear it or smell it first.",
-    effect: `<br>Flying {d} 6: Dung Toss, poison to one target.  Spreads disease or poison upon death; {d} d6 for duration.`
+    effect: `<br>Flying {d} 6: Dung Toss, poison to one target. Slain: Spreads disease or poison; {d} d6 for duration.`
   },
   {
     name: "Mouldhare",
@@ -3400,8 +3482,8 @@ function renderEnemies() {
               <button class="enemy-flip-btn" onclick="flipEnemyCard('${enemy.id}', 'details')">Details</button>
             </div>
             
-            <a href="javascript:void(0)" class="enemy-kill-btn ${killActive ? 'active' : ''}" 
-              onclick="${killActive ? `killEnemy('${enemy.id}')` : ''}">[kill]</a>
+            <button class="enemy-kill-btn ${killActive ? 'active' : ''}" 
+              onclick="${killActive ? `killEnemy('${enemy.id}')` : ''}" ${!killActive ? 'disabled' : ''}>KILL</button>
           </div>
           
           <!-- Back Face -->
