@@ -48,39 +48,73 @@
     --border-medium: rgba(255, 255, 255, 0.2);
   }
   
-  /* Player card mobile fixes */
+  /* Player card mobile fixes - squeeze narrower */
   .player-card {
-    padding: 1rem 1.25rem;
-    margin-left: 0.25rem;
-    margin-right: 0.25rem;
+    padding: 0.75rem;
+    margin-left: 0.15rem;
+    margin-right: 0.15rem;
+  }
+  
+  .player-name-input {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.4rem;
+  }
+  
+  .player-checkboxes {
+    gap: 0.3rem;
+    flex-wrap: wrap;
+  }
+  
+  .player-checkbox-label {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.3rem;
+  }
+  
+  .stats-section {
+    padding: 0.5rem;
+    margin-top: 0.5rem;
   }
   
   .stat-row {
-    gap: 0.5rem;
+    gap: 0.25rem;
+    margin-bottom: 0.25rem;
   }
   
   .stat-label {
-    min-width: 55px;
-    font-size: 0.9rem;
-    margin-right: 0.5rem;
+    min-width: 45px;
+    font-size: 0.75rem;
+    margin-right: 0.25rem;
   }
   
   .stat-btn {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
+    font-size: 0.85rem;
     flex-shrink: 0;
   }
   
+  .stat-value {
+    font-size: 0.85rem;
+    min-width: 24px;
+  }
+  
   /* Enemy card mobile fixes */
+  .enemy-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  
   .enemy-effect-preview {
     font-size: 0.9rem;
-    max-height: 120px;
+    max-height: 100px;
     overflow-y: auto;
     padding-right: 0.25rem;
   }
   
   .enemy-flavour-preview {
     font-size: 0.7rem;
+    max-height: 60px;
+    overflow-y: auto;
   }
   
   .enemy-title {
@@ -106,7 +140,6 @@
     gap: 0.5rem;
   }
   
-  /* Enemy details flipped view mobile */
   .enemy-details-content {
     font-size: 0.85rem;
   }
@@ -1365,6 +1398,7 @@ h1, h2, h3, h4 {
 
 .enemy-return-btn:hover {
   background: #7030A0;
+  color: #FFFFFF;
 }
 
 /* Card Image View */
@@ -1529,24 +1563,7 @@ h1, h2, h3, h4 {
   overflow: hidden;
 }
 
-/* Responsive adjustments for enemy grid */
-@media (max-width: 1200px) {
-  .enemy-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 900px) {
-  .enemy-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .enemy-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
+/* Responsive adjustments for enemy grid - handled in mobile query above */
 
 /* Enemy Section - shown/hidden by toggle */
 .enemy-section {
@@ -2091,7 +2108,8 @@ const termDictionary = {
   "Steal": "Take coins or items from target.",
   "Slash": "Bladed edge or swinging a sharp object. Chance of bleed.",
   "Smash": "Blunt force damage type. Chance of knockback.",
-  "Pierce": "Straight damage. Chance to ignore armour or shields.",
+  "Pierce": "Straight damage. Chance to ignore armour or shields."
+  "Swift": "In almost all cases, cannot miss."
 };
 
 // ==========================
@@ -2848,7 +2866,7 @@ const enemyDatabase = [
     defaultLife: 8,
     defaultPower: 3,
     flavour: "The young cooperate to survive.",
-    effect: `<br>Draconic <br>Gang 2 <br>{d} 5: Spitfire, deal ranged damage.`
+    effect: `<br>Draconic  {d} 5: Spitfire, deal ranged damage. Gang 2 (summon two additional Dongodon Pack; defeated if only one remains)`
   },
   {
     name: "Leafy Gorgoonah",
@@ -2868,7 +2886,7 @@ const enemyDatabase = [
     defaultLife: 7,
     defaultPower: 2,
     flavour: "His eyes betray a pact made long ago.",
-    effect: `<br>{p2} Glare, interrupt and {t} spell. <br>{d} 5: Arcbolt, {t} a random spell.`
+    effect: `<br>{p2} Glare, interrupt and {t} spell. {d} 5: Arcbolt, {t} a random spell.`
   },
   {
     name: "Moonhead Warlock",
@@ -2928,7 +2946,7 @@ const enemyDatabase = [
     defaultLife: 5,
     defaultPower: 3,
     flavour: "You will hear it or smell it first.",
-    effect: `<br>Flying {d} 6: Dung Toss, poison to one target. Slain: Spreads disease or poison; {d} d6 for duration.`
+    effect: `<br>Flying {d} 6: Dung Toss, poison to one target.  Spreads disease or poison upon death; {d} d6 for duration.`
   },
   {
     name: "Mouldhare",
