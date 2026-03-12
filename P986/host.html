@@ -1911,6 +1911,44 @@ h1, h2, h3, h4 {
 .text-info {
   color: var(--accent-info);
 }
+
+/* ==========================
+   MOBILE ENEMY CARD FIX (at end to override everything)
+========================== */
+@media (max-width: 811px) {
+
+  /* Enemy cards - 1 per row, full width */
+  .enemy-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.6rem;
+  }
+
+  .enemy-card {
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 2 / 3;
+  }
+
+  /* Prevent player stat buttons from clipping */
+  .player-card {
+    overflow: visible !important;
+    padding-right: 0.6rem;
+  }
+
+  .stat-controls {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
+
+  .stat-value {
+    min-width: 24px;
+    flex-shrink: 0;
+  }
+
+  .stat-btn {
+    flex-shrink: 0;
+  }
+}
 </style>
 </head>
 <body>
