@@ -8,50 +8,37 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ===========================================
+/* ==========================
    CSS VARIABLES
-   ===========================================
-   THESE VALUES TO CUSTOMIZE THE THEMEY THEME
-   =========================================== */
+========================== */
 :root {
-  /* --- BACKGROUND COLORS --- */
-  --bg-primary: #0a0a0c;       /* Main page background */
-  --bg-secondary: #141418;     /* Section backgrounds */
-  --bg-card: #1a1a1f;          /* Card backgrounds */
-  --bg-elevated: #222228;      /* Hovered/active elements */
-  
-  /* --- TEXT COLORS --- */
-  --text-primary: #e8eaf0;     /* Main text color */
-  --text-secondary: #8b8d94;   /* Secondary text */
-  --text-muted: #5a5c63;       /* Placeholder/disabled text */
-  
-  /* --- ACCENT COLORS (buttons, highlights) --- */
-  --accent-primary: #8b5cf6;   /* Purple - main accent */
-  --accent-secondary: #a78bfa; /* Light purple - hover states */
-  --accent-danger: #ef4444;    /* Red - kill/danger */
-  --accent-warning: #f59e0b;   /* Orange - warnings */
-  --accent-success: #10b981;   /* Green - success states */
-  --accent-info: #3b82f6;      /* Blue - info/links */
-  
-  /* --- BORDERS & GLASS EFFECT --- */
-  --border-subtle: rgba(255, 255, 255, 0.06);   /* Subtle borders */
-  --border-medium: rgba(255, 255, 255, 0.1);     /* Medium borders */
-  --glass-bg: rgba(26, 26, 31, 0.7);            /* Card glass effect */
-  --glass-border: rgba(255, 255, 255, 0.08);    /* Glass border */
-  
-  /* --- SHADOWS --- */
-  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);  /* Large shadows */
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.3);   /* Medium shadows */
-  
-  /* --- BORDER RADIUS --- */
-  --radius-sm: 6px;   /* Small elements */
-  --radius-md: 10px;  /* Medium elements */
-  --radius-lg: 14px;  /* Large elements */
-  --radius-xl: 20px;  /* Extra large elements */
+  --bg-primary: #0a0a0c;
+  --bg-secondary: #141418;
+  --bg-card: #1a1a1f;
+  --bg-elevated: #222228;
+  --text-primary: #e8eaf0;
+  --text-secondary: #8b8d94;
+  --text-muted: #5a5c63;
+  --accent-primary: #8b5cf6;
+  --accent-secondary: #a78bfa;
+  --accent-danger: #ef4444;
+  --accent-warning: #f59e0b;
+  --accent-success: #10b981;
+  --accent-info: #3b82f6;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(26, 26, 31, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
 }
 
 /* Mobile-specific variables for better differentiation */
-@media (max-width: 640px) {
+@media (max-width: 811px) {
   :root {
     --bg-card: #252530;
     --bg-elevated: #2d2d38;
@@ -159,20 +146,20 @@
   }
   
   .enemy-effect-preview {
-    font-size: 1rem;
+    font-size: 0.85rem;
     max-height: 80px;
     overflow-y: auto;
     padding-right: 0.2rem;
   }
   
   .enemy-flavour-preview {
-    font-size: 1rem;
+    font-size: 0.65rem;
     max-height: 50px;
     overflow-y: auto;
   }
   
   .enemy-title {
-    font-size: 1rem;
+    font-size: 0.9rem;
   }
   
   .enemy-type {
@@ -280,7 +267,7 @@ h1, h2, h3, h4 {
 }
 
 /* Mobile gradient for header */
-@media (max-width: 640px) {
+@media (max-width: 811px) {
   .header {
     background: linear-gradient(180deg, rgba(35, 35, 48, 0.95) 0%, rgba(28, 28, 38, 0.95) 100%);
     border: 1px solid var(--border-medium);
@@ -354,258 +341,15 @@ h1, h2, h3, h4 {
   color: var(--text-primary);
 }
 
-/* ==========================
-   VILLAIN CARD & STORY BUTTONS
-========================== */
-.villain-btn {
-  appearance: none;
-  -webkit-appearance: none;
-  border: 1px solid var(--border-medium);
-  background: rgba(139, 92, 246, 0.15);
-  color: var(--accent-secondary);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 0.25rem 0.125rem;
-  margin: 0rem 0.125rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.villain-btn:hover:not(:disabled) {
-  background: var(--accent-primary);
-  color: var(--text-primary);
-  border-color: var(--accent-primary);
-}
-
-.villain-btn:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-/* ==========================
-   OVERLAY STYLES (Villain Card & Story)
-========================== */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(8px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
-.overlay.hidden {
-  display: none;
-}
-
-#villainCardImage {
-  max-width: 90vw;
-  max-height: 90vh;
-  object-fit: contain;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
-}
-
-.story-panel {
-  width: 80vw;
-  height: 80vh;
-  max-width: 900px;
-  max-height: 800px;
-  overflow-y: auto;
-  background: var(--bg-card);
-  color: var(--text-primary);
-  padding: 2rem;
-  border-radius: var(--radius-lg);
-  position: relative;
-  box-shadow: var(--shadow-lg);
-}
-
-.story-panel h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  color: var(--accent-secondary);
-  font-family: 'Crimson Pro', serif;
-}
-
-.story-panel hr {
-  border: none;
-  border-top: 1px solid var(--border-medium);
-  margin: 1.5rem 0;
-}
-
-.story-stats {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
-  align-items: center;
-}
-
-/* Villain power/life controls in story panel */
-.villain-stat-control {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.villain-stat-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1px solid var(--border-medium);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
-  font-size: 1.2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.villain-stat-btn:hover {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-}
-
-.villain-type {
-font-style: italic;
-opacity:0.85;
-margin-bottom:6px;
-}
-
-.villain-flavour {
-font-style: italic;
-opacity:0.9;
-margin-top:10px;
-}
-
-.villain-effect {
-margin-top:10px;
-}
-
-/* Add to your CSS - monospace font for stat values */
-.villain-stat-value {
-  font-family: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
-  font-size: 1.2rem;
-  font-weight: 600;
-  min-width: 40px;  /* Fixed width for power value */
-  text-align: center;
-  display: inline-block;
-  color: var(--accent-secondary);
-}
-
-/* Update villain stat controls for better alignment */
-.villain-stats {
-  display: flex;
-  gap: 40px;
-  margin: 15px 0;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-subtle);
-  align-items: center;
-}
-
-.villain-stat-control {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.villain-stat-control b {
-  color: var(--accent-primary);
-  margin-right: 5px;
-  min-width: 45px;
-  font-size: 1rem;
-}
-
-/* Style for the stat buttons */
-.villain-stat-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1px solid var(--border-medium);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.villain-stat-btn:hover {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-  color: white;
-}
-
-.story-divider {
-margin:18px 0;
-border:none;
-border-top:1px solid rgba(255,255,255,0.3);
-}
-
-.story-stats b {
-  color: var(--accent-primary);
-}
-
-.story-effects {
-  margin-bottom: 1rem;
-  padding: 1rem;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: var(--radius-sm);
-}
-
-.story-text {
-  line-height: 1.7;
-  font-size: 1.05rem;
-}
-
-#storyCloseBtn {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  appearance: none;
-  -webkit-appearance: none;
-  background: transparent;
-  border: 1px solid var(--border-medium);
-  color: var(--text-secondary);
-  font-size: 1.25rem;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-#storyCloseBtn:hover {
-  background: var(--accent-danger);
-  border-color: var(--accent-danger);
-  color: white;
-}
-
 .act-btn {
   appearance: none;
   border: 1px solid var(--border-medium);
   background: rgba(139, 92, 246, 0.1);
   color: var(--accent-secondary);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 500;
-  padding: 0rem 1rem;
+  padding: 0rem 1.25rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -657,7 +401,7 @@ border-top:1px solid rgba(255,255,255,0.3);
 }
 
 /* Mobile gradient background for main content */
-@media (max-width: 640px) {
+@media (max-width: 811px) {
   .main-content {
     background: linear-gradient(180deg, rgba(20, 20, 28, 0.3) 0%, transparent 100%);
     border-radius: var(--radius-lg);
@@ -696,7 +440,7 @@ border-top:1px solid rgba(255,255,255,0.3);
 }
 
 /* Narrow: 1 column (default) */
-@media (max-width: 640px) {
+@media (max-width: 811px) {
   .players-grid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -721,7 +465,7 @@ border-top:1px solid rgba(255,255,255,0.3);
 }
 
 /* Mobile gradient overlay for better section differentiation */
-@media (max-width: 640px) {
+@media (max-width: 811px) {
   .player-card {
     background: linear-gradient(145deg, var(--bg-card) 0%, rgba(45, 45, 58, 0.9) 100%);
     border: 1px solid var(--border-medium);
@@ -875,7 +619,7 @@ border-top:1px solid rgba(255,255,255,0.3);
 }
 
 /* Mobile input improvements */
-@media (max-width: 640px) {
+@media (max-width: 811px) {
   .player-name {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--border-medium);
@@ -924,7 +668,7 @@ border-top:1px solid rgba(255,255,255,0.3);
 }
 
 /* Mobile select improvements */
-@media (max-width: 640px) {
+@media (max-width: 811px) {
   .tag-select {
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid var(--border-medium);
@@ -947,7 +691,7 @@ border-top:1px solid rgba(255,255,255,0.3);
 }
 
 /* Mobile checkbox improvements */
-@media (max-width: 640px) {
+@media (max-width: 811px) {
   .status-checkboxes {
     background: rgba(255, 255, 255, 0.02);
     padding: 0.5rem;
@@ -1018,7 +762,7 @@ border-top:1px solid rgba(255,255,255,0.3);
 }
 
 /* Mobile stats section improvements */
-@media (max-width: 640px) {
+@media (max-width: 811px) {
   .stats-section {
     background: rgba(0, 0, 0, 0.2);
     border-radius: var(--radius-md);
@@ -1173,7 +917,7 @@ border-top:1px solid rgba(255,255,255,0.3);
 }
 
 /* Mobile gradient for dice tray */
-@media (max-width: 640px) {
+@media (max-width: 811px) {
   .dice-tray {
     background: linear-gradient(180deg, rgba(40, 40, 55, 0.95) 0%, rgba(30, 30, 42, 0.95) 100%);
     border: 1px solid var(--border-medium);
@@ -1202,7 +946,6 @@ border-top:1px solid rgba(255,255,255,0.3);
   align-items: center;
 }
 
-
 .results-display:empty::before {
   content: '{ results }';
   color: var(--text-muted);
@@ -1230,7 +973,7 @@ border-top:1px solid rgba(255,255,255,0.3);
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  padding-bottom: 0.35rem;
+  padding-bottom: 0.25rem;
 }
 
 .dice-btn {
@@ -1316,20 +1059,18 @@ border-top:1px solid rgba(255,255,255,0.3);
   cursor: not-allowed;
 }
 
-/* Enemy Grid - adaptive columns based on available space */
+/* Enemy Grid - 6 columns, 3 rows max = 18 enemies */
 .enemy-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 260px));
+  grid-template-columns: repeat(6, 1fr);
   gap: 0.75rem;
-  justify-content: center;
   max-height: none;
 }
 
-/* Enemy cards - flexible sizing with max-width cap */
+/* Fixed size enemy cards - NO stretching */
 .enemy-card {
   width: 100%;
-  max-width: 260px;
-  aspect-ratio: 5 / 7;
+  aspect-ratio: 2/3;
   perspective: 1000px;
   min-width: 0;
 }
@@ -1473,7 +1214,7 @@ border-top:1px solid rgba(255,255,255,0.3);
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;  /* Changed from auto - let text scale instead */
+  overflow-y: auto;
   margin: 0.25rem 0;
   padding: 0.35rem;
   background: rgba(0, 0, 0, 0.2);
@@ -1481,8 +1222,7 @@ border-top:1px solid rgba(255,255,255,0.3);
 }
 
 .enemy-effect-preview {
-  font-size: clamp(0.7rem, 0.9vw, 1.1rem);  /* Fluid scaling */
-  line-height: 1.35;
+  font-size: 0.75rem;
   color: var(--text-secondary);
   line-height: 1.4;
   margin-bottom: 0.4rem;
@@ -1496,8 +1236,9 @@ border-top:1px solid rgba(255,255,255,0.3);
 }
 
 .enemy-flavour-preview {
-  font-size: clamp(0.65rem, 0.85vw, 1rem);  /* Fluid scaling */
-  line-height: 1.35;
+  font-size: 0.5rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
   margin-top: auto;
   font-style: italic;
 }
@@ -1543,8 +1284,6 @@ border-top:1px solid rgba(255,255,255,0.3);
   justify-content: center;
   gap: 0.2rem;
   margin-top: 0.1rem;
-  flex-wrap: nowrap;  /* Prevent button compression */
-  flex-shrink: 0;
 }
 
 .enemy-stat-btn {
@@ -1577,7 +1316,6 @@ border-top:1px solid rgba(255,255,255,0.3);
   min-width: 20px;
   text-align: center;
   color: var(--text-primary);
-  flex-shrink: 0;  /* Prevent value from shrinking */
 }
 
 .enemy-actions-row {
@@ -1586,7 +1324,6 @@ border-top:1px solid rgba(255,255,255,0.3);
   gap: 0.2rem;
   margin-top: auto;
   padding-top: 0.2rem;
-  flex-wrap: nowrap;  /* Prevent button compression */
 }
 
 .enemy-flip-btn {
@@ -1596,9 +1333,9 @@ border-top:1px solid rgba(255,255,255,0.3);
   background: rgba(255, 255, 255, 0.03);
   color: var(--text-secondary);
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 0.5rem;
   font-weight: 600;
-  padding: 0.4rem 0.3rem;
+  padding: 0.2rem 0.2rem;
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
@@ -1620,7 +1357,7 @@ border-top:1px solid rgba(255,255,255,0.3);
   background: rgba(239, 68, 68, 0.1);
   color: rgba(239, 68, 68, 0.4);
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-align: center;
   cursor: not-allowed;
@@ -1884,7 +1621,7 @@ border-top:1px solid rgba(255,255,255,0.3);
 }
 
 /* Mobile gradient for enemy section */
-@media (max-width: 640px) {
+@media (max-width: 811px) {
   .enemy-section {
     background: linear-gradient(145deg, var(--bg-card) 0%, rgba(45, 45, 58, 0.9) 100%);
     border: 1px solid var(--border-medium);
@@ -2175,37 +1912,32 @@ border-top:1px solid rgba(255,255,255,0.3);
   color: var(--accent-info);
 }
 
-/* ========================================
-   MOBILE LAYOUT (max-width: 640px)
-   ========================================
-   BREAKPOINT OR VALUES ADJUST:
-   - 811px: Change to different width threshold
-   - 1fr: Change to 2fr or 3fr for multiple columns
-   - font-size: Adjust text size for mobile
-   ======================================== */
-@media (max-width: 640px) {
+/* ==========================
+   MOBILE ENEMY CARD FIX (at end to override everything)
+========================== */
+@media (max-width: 811px) {
 
-  /* --- ENEMY CARDS --- */
+  /* Enemy cards - 1 per row, full width */
   .enemy-grid {
-    grid-template-columns: 1fr !important;  /* 1 card per row - change to 2fr for 2 columns */
-    gap: 0.6rem;                           /* Space between enemy cards */
+    grid-template-columns: 1fr !important;
+    gap: 0.6rem;
   }
 
   .enemy-card {
     width: 100%;
     max-width: 100%;
-    aspect-ratio: 5 / 7;                   /* Card shape ratio - matches real cards */
+    aspect-ratio: 2 / 3;
   }
 
-  /* --- PLAYER STAT BUTTONS (prevent clipping) --- */
+  /* Prevent player stat buttons from clipping */
   .player-card {
-    overflow: visible !important;           /* Allow buttons to extend beyond card */
-    padding-right: 0.6rem;                  /* Extra padding on right */
+    overflow: visible !important;
+    padding-right: 0.6rem;
   }
 
   .stat-controls {
     flex-wrap: nowrap;
-    flex-shrink: 0;                        /* Prevent button squeezing */
+    flex-shrink: 0;
   }
 
   .stat-value {
@@ -2215,24 +1947,6 @@ border-top:1px solid rgba(255,255,255,0.3);
 
   .stat-btn {
     flex-shrink: 0;
-  }
-
-  /* Enemy card text - larger for mobile readability */
-  .enemy-effect-preview {
-    font-size: 1rem !important;
-  }
-
-  .enemy-flavour-preview {
-    font-size: 1rem !important;
-  }
-
-  .enemy-flip-btn {
-    font-size: 1rem !important;
-    padding: 0.4rem 0.3rem;
-  }
-
-  .enemy-kill-btn {
-    font-size: 1rem !important;
   }
 }
 </style>
@@ -2245,15 +1959,11 @@ border-top:1px solid rgba(255,255,255,0.3);
       <button class="host-btn" onclick="resetAll()">HOST (RESET)</button>
     </div>
     <div class="header-center">
-      <!-- VILLAIN CARD BUTTON -->
-      <button id="villainCardBtn" class="villain-btn" disabled>CARD</button>
-      
-      <!-- VILLAIN DROPDOWN -->
-      <select class="villain-input" id="villainName" onchange="villainChanged(); saveState();">
+      <select class="villain-input" id="villainName" onchange="saveState()">
         <option value=""><Villain></option>
-        <!-- NOTE: Byron vey and Byornn are combined into "Byron vey Byornn" -->
         <option value="Angelo Adair">Angelo Adair</option>
-        <option value="Byron vey Byornn">Byron vey Byornn</option>
+        <option value="Byron vey">Byron vey</option>
+        <option value="Byornn">Byornn</option>
         <option value="Ceng Zhangyi">Ceng Zhangyi</option>
         <option value="Daisuke Daioh">Daisuke Daioh</option>
         <option value="Elizabeth Einsborough">Elizabeth Einsborough</option>
@@ -2273,9 +1983,6 @@ border-top:1px solid rgba(255,255,255,0.3);
         <option value="Vincent">Vincent</option>
         <option value="Taeonora">Taeonora</option>
       </select>
-      
-      <!-- VILLAIN STORY BUTTON -->
-      <button id="villainStoryBtn" class="villain-btn" disabled>STORY</button>
     </div>
     <div class="header-right">
       <button class="act-btn" id="actBtn" onclick="cycleAct()">ACT 0</button>
@@ -2413,39 +2120,21 @@ border-top:1px solid rgba(255,255,255,0.3);
 
 <script>
 // ==========================
-// ========================================
-// GAME STATE - MAIN DATA STRUCTURE
-// ========================================
-/* 
-   USE THIS OBJECT TO:
-   - Add new player stats (e.g., add 'armour: 0')
-   - Add new enemy properties
-   - Change default values
-   
-   DATA PERSISTS IN: localStorage
-*/
+// STATE MANAGEMENT
+// ==========================
 let gameState = {
-  villain: '',        /* Current villain name */
-  act: 0,             /* Act number (0-4) */
-  players: [],        /* Array of player objects */
-  enemies: [],        /* Array of enemy objects */
-  diceResults: []     /* Recent dice roll results */
+  villain: '',
+  act: 0,
+  players: [],
+  enemies: [],
+  diceResults: []
 };
 
-/* --- ACT DISPLAY LABELS --- */
-/* Change these to customize act display text */
 const actStages = ['0', 'I', 'II', 'III', 'Finale'];
 
-// ========================================
-// WEBP MAPPING (card images)
-// ========================================
-/*
-   USE TO:
-   - Add enemy name and card image number
-   - Card images stored at: cards/fronts/{number}.webp
-   
-   FORMAT: "Enemy Name": imageNumber
-*/
+// ==========================
+// WEBP MAPPING (from CSV)
+// ==========================
 const webpMapping = {
   "Knights I": 230,
   "Knights II": 232,
@@ -2468,18 +2157,9 @@ const webpMapping = {
   "Alluring Maiden": 258
 };
 
-// ========================================
+// ==========================
 // TERM DICTIONARY (for Details view)
-// ========================================
-/*
-   CHANGE THESE DEFINITIONS TO:
-   - Add new game terms
-   - Change existing definitions
-   - Add/remove terms from enemy effect text
-   
-   USAGE: When enemy effect text contains these words,
-   clicking "Details" shows their definitions
-*/
+// ==========================
 const termDictionary = {
   "ARMOUR": "Passive damage reduction. Armour X reduces all incoming damage by X amount.",
   "SHIELD": "Provides temporary protection that can absorb damage from attacks, acting as temporary HP.",
@@ -2512,44 +2192,24 @@ const termDictionary = {
   "Swift": "In almost all cases, cannot miss."
 };
 
-
-
 // ==========================
 // INITIALIZATION
 // ==========================
-
-// Run villain validation on page load
-window.addEventListener('DOMContentLoaded', () => {
-  villainChanged();
-});
-
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
   renderPlayers();
-  setupDeleteButtons();  // ← this does not work
+  setupDeleteButtons();
   renderEnemies();
   updateAddEnemyButton();
   updateActButton();
-  
-  // Initialize villain buttons based on any saved villain
-  villainChanged();
   
   // Set up notepad
   document.getElementById('notepadText').value = gameState.notepad || '';
 });
 
 // ==========================
-// ========================================
 // PLAYER MANAGEMENT
-// ========================================
-/*
-   PLAYER STATS - DEFAULT VALUES HERE:
-   - madness: default 0, max 50
-   - life: default 1, max 50
-   - soul: default 0, max 50
-   - coins: default 0, max 99
-   - favour/dread/blessed/curse: boolean flags
-*/
+// ==========================
 function createPlayer(id) {
   return {
     id: id,
@@ -2593,8 +2253,7 @@ function renderPlayers() {
         <div class="player-name-section">
           <input type="text" class="player-name" value="${player.name}" 
             placeholder="Player ${index + 1} Name" 
-            onchange="updatePlayer(${index}, 'name', this.value)"
-            onkeydown="if(event.key === 'Enter') { event.preventDefault(); this.blur(); }">
+            onchange="updatePlayer(${index}, 'name', this.value)">
           <select class="tag-select artefact-select" onchange="updatePlayer(${index}, 'artefact', this.value)">
             <option value="">Choose artefact</option>
             <option value="The Darkflame" ${player.artefact === 'The Darkflame' ? 'selected' : ''}>The Darkflame</option>
@@ -2911,421 +2570,8 @@ function updateActButton() {
 }
 
 // ==========================
-// VILLAIN CARD & STORY SYSTEM
-// ========================================
-
-/* ==========================
-   VILLIAN DATABASE
-   Data from CSV - story text placeholders for ACT-based content
-========================== */
-const villainDatabase = {
-  "Angelo Adair": { 
-    card: "020.webp", 
-    type: "Hume", 
-    subtype: "Distillery Baron",
-    power: 1, 
-    life: 10, 
-    flavour: "I am the architect. Every step I take brings us closer to godhood.", 
-    effects: "Soulgem scientist; maniac. <br>{flag} Cannot negotiate. <br>{flag} Cannot befriend. <br>{flag} Cannot use soulgems; gain infamy for each soulgem in possession.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Byron vey Byornn": { 
-    card: "021.webp", 
-    type: "Topazian Hume", 
-    subtype: "Commander",
-    power: 2, 
-    life: 11, 
-    flavour: "We will have peace, order, justice in my lifetime. I'll raise that sun myself.", 
-    effects: "Commander of mageknight legion. Delusions of grandeur. Paranoid. <br>{flag} Knights inflict dread, gain favour. <br>{flag} Lose {w} for each night phase.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Ceng Zhangyi": { 
-    card: "022.webp", 
-    type: "Jadian Hume", 
-    subtype: "Artifice Scholar",
-    power: 3, 
-    life: 12, 
-    flavour: "Technology is our salvation. The answers, the truth of it all.", 
-    effects: "Martial arts. Jade Empire supremacist. <br>{flag} Actions cost {u}{u}{u} out of combat. <br>{flag} Gain {B} for each equipment when entering the night.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Daisuke Daioh": { 
-    card: "023.webp", 
-    type: "Jadian Hume", 
-    subtype: "Artificer",
-    power: 4, 
-    life: 13, 
-    flavour: "Find something that makes you powerful and stick to it.", 
-    effects: "Seasoned veteran of anti-rebellion battles; protects the status-quo. <br>{flag} Copy all equipment. <br>{flag} Bounty on all players.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Elizabeth Einsborough": { 
-    card: "024.webp", 
-    type: "Topazian Hume", 
-    subtype: "Royal Politician",
-    power: 3, 
-    life: 14, 
-    flavour: "Ha! My time is worth more than yours, I guarantee it; pay up or get out.", 
-    effects: "Financier of academies; trafficker. <br>{flag} Players cannot negotiate nor trade. <br>{flag} Spells can miss. <br>{flag} Revealing events increases infamy; increase prices by infamy.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Fal": { 
-    card: "025.webp", 
-    type: "Rubian Hume", 
-    subtype: "Shaman",
-    power: 5, 
-    life: 18, 
-    flavour: "I'll carve you, make you mine forever. Stop squirming, little doll.", 
-    effects: "Alchemist. Hedonist. Mysterious. May use moon, blood, mist magicks. <br>{flag} Affect dreams and nightmares. <br>{flag} Change consumables at camps. <br>{flag} Reroll once during the night.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Gary Gigantes": { 
-    card: "026.webp", 
-    type: "Opalian Anim", 
-    subtype: "Smuggler",
-    power: 5, 
-    life: 15, 
-    flavour: "I've got an empire of my own to keep afloat. You understand, don't you?", 
-    effects: "Drug baron. Ruthless, cunning. <br>{flag} Resolve when consuming items. <br>{flag} Negotiations increase infamy. <br>{flag} Revealing any adventure or discovery triggers a trap.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Hyunjin Halvela": { 
-    card: "027.webp", 
-    type: "Topazian Hume", 
-    subtype: "Bountyhunter",
-    power: 5, 
-    life: 16, 
-    flavour: "Nothing personal. Hush.", 
-    effects: "Expert improviser; legendary killer. <br>{flag} Can evade any attack. <br>{flag} May ambush once per day. <br>{flag} Effects with {dur} twice as deadly.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Isaac Ivanson": { 
-    card: "028.webp", 
-    type: "Kyth Hume", 
-    subtype: "Moonworm Mage",
-    power: 5, 
-    life: 17, 
-    flavour: "If you knew what I knew, you'd be me!", 
-    effects: "Longest surviving worm host. Insane. <br>{flag} At dusk, summons random Kyth. <br>{flag} Must enter the night. <br>{flag} Cannot gain loot during the night.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "JJ The Beast": { 
-    card: "029.webp", 
-    type: "Topazian Hume", 
-    subtype: "Boss",
-    power: 9, 
-    life: 20, 
-    flavour: "Bizarre? Golden.", 
-    effects: "Power increases as health decreases. <br>{flag} Each hit triggers strike, pierce, crush. <br>{flag} Lose empower after combat. <br>{flag} If revealed card is not a story, fight, or quest: lose coins and {u}.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Kleo": { 
-    card: "030.webp", 
-    type: "Anim", 
-    subtype: "Politician",
-    power: 3, 
-    life: 18, 
-    flavour: "I play their games so they fall into mine.", 
-    effects: "Master manipulator. <br>{flag} Negate damage based on relationship hearts. <br>{flag} Occasionally influence negotiations. <br>{flag} Once per day, deal true damage based on relationship hearts.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Li": { 
-    card: "031.webp", 
-    type: "Crimson Anim", 
-    subtype: "Fanatic",
-    power: 8, 
-    life: 20, 
-    flavour: "By my hand, it shall be done; the Crimson King wills it so.", 
-    effects: "Fanatic to the Crimson Cause. Expert in devilarms; firearms. <br>{flag} When acting, must resolve. <br>{flag} Gain dread when using light spells.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Maelle": { 
-    card: "032.webp", 
-    type: "Crimson Hume", 
-    subtype: "Commander",
-    power: 15, 
-    life: 20, 
-    flavour: "We rise, we go, we paint the world anew. That is the Crimson Cause!", 
-    effects: "Commander of a Crimson Faction. Expert in devilarms; firearms. *Draconic*. <br>{flag} Double infamy every dawn. <br>{flag} At dawn, suffer damage equal to Light spells or {B}.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Neville Schwarz": { 
-    card: "033.webp", 
-    type: "Crimson Anim", 
-    subtype: "Fanatic",
-    power: 10, 
-    life: 20, 
-    flavour: "We must snuff out the blinding light, before it is too late.", 
-    effects: "Usurper for the Crimson Cause. <br>{flag} Occasionally inflict toxic. <br>{flag} Buddies always have fear. <br>{flag} Hallucinate illusory copies for each status effect or curse.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Olum Farhoud": { 
-    card: "034.webp", 
-    type: "Topazian Hume", 
-    subtype: "Herald",
-    power: 7, 
-    life: 20, 
-    flavour: "Extend. Consume. Extinguish.", 
-    effects: "Wanders the lands, aligning sub-religions to one religion. Adept in lightning and fire magicks. <br>{flag} At the end of a cycle, lose {g} for each different card subtype revealed.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Paarth Lomedi": { 
-    card: "035.webp", 
-    type: "Crimson Anim", 
-    subtype: "Politician",
-    power: 9, 
-    life: 20, 
-    flavour: "The people and places marching with us? Dried grasses ready to ignite.", 
-    effects: "Politician for the Crimson Cause. <br>{flag} Once per day, deal true damage per blessing or curse; renew ability whenever anything is sacrificed.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Qing": { 
-    card: "036.webp", 
-    type: "Anim", 
-    subtype: "Spy",
-    power: "X", 
-    life: 20, 
-    flavour: "Information is the deadliest! Knives and poison are second at best...", 
-    effects: "***Extremespeed; apex momentum.*** Can be swooned or persuaded. <br>{flag} Once per day, deal 1 true damage then inflict status ailments according to hearts. <br>{flag} If afflicted by only one ailment, set {dur} to 1 and inflict all at once when {dur} ends instead.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Reeve Basilisk": { 
-    card: "037.webp", 
-    type: "Topazian Hume", 
-    subtype: "Lord",
-    power: "X", 
-    life: 20, 
-    flavour: "Order, and prosperity. I will hammer you down, your corpses build our future.", 
-    effects: "Seasoned veteran of the old war. <br>{flag} During combat, stun *once*. <br>{flag} During combat, blind *once*. <br>{flag} Negate damage *once* per combat.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Vincent": { 
-    card: "038.webp", 
-    type: "Moonlake Hume", 
-    subtype: "Gallant Fencer",
-    power: "X", 
-    life: 20, 
-    flavour: "As you see, we think quite differently.", 
-    effects: "Summons and empowers Kyth. <br>{flag} Increased risk of infection in day and night. <br>{flag} Wormridden things inflict terror. <br>{flag} Whenever you don't complete the night, sustain {B} damage.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  },
-  "Taeonora": { 
-    card: "039.webp", 
-    type: "Outlander", 
-    subtype: "Pariah",
-    power: 20, 
-    life: 20, 
-    flavour: "One who knows nothing can understand nothing.", 
-    effects: "Hails from beyond the ocean. Intentions unknown. Overwhelmingly powerful aura; resolve all actions near Taeonora. <br>{flag} Whenever you reveal, increase infamy. <br>{flag} Lose half infamy *and all hearts* on death.", 
-    story: { 0: "TBD", 1: "TBD", 2: "TBD", 3: "TBD", finale: "TBD" } 
-  }
-};
-
-/* Enable/disable CARD and STORY buttons based on villain selection */
-function villainChanged() {
-  const name = document.getElementById('villainName').value;
-  const valid = name !== "" && villainDatabase[name];
-  
-  document.getElementById('villainCardBtn').disabled = !valid;
-  document.getElementById('villainStoryBtn').disabled = !valid;
-}
-
-/* Get current act from the act button */
-function getCurrentAct() {
-  const actBtn = document.getElementById('actBtn');
-  const actText = actBtn.textContent.trim();
-  
-  if (actText.includes('0') || actText === 'ACT 0') return 0;
-  if (actText.includes('I') || actText === 'ACT I') return 1;
-  if (actText.includes('II') || actText === 'ACT II') return 2;
-  if (actText.includes('III') || actText === 'ACT III') return 3;
-  if (actText.includes('Finale') || actText === 'ACT Finale') return 'finale';
-  
-  return 0;
-}
-
-/* ==========================
-   VILLAIN CARD & STORY SYSTEM
-   Wrapped in DOMContentLoaded to ensure elements exist
-========================== */
-document.addEventListener('DOMContentLoaded', function() {
-  
-  /* Get overlay elements */
-  const villainCardOverlay = document.getElementById('villainCardOverlay');
-  const villainCardImage = document.getElementById('villainCardImage');
-  const villainStoryOverlay = document.getElementById('villainStoryOverlay');
-  
-  /* Close card overlay function */
-  function closeVillainCard() {
-    villainCardOverlay.classList.add('hidden');
-  }
-  
-  /* CARD button: Show villain card image overlay */
-  document.getElementById('villainCardBtn').addEventListener('click', function() {
-    const name = document.getElementById('villainName').value;
-    const villain = villainDatabase[name];
-    
-    if (!villain) return;
-    
-    // Use relative path for local compatibility
-    villainCardImage.src = `cards/fronts/${villain.card}`;
-    villainCardOverlay.classList.remove('hidden');
-  });
-  
-  /* Close card overlay when clicking on overlay OR image */
-  villainCardOverlay.addEventListener('click', function() {
-    closeVillainCard();
-  });
-  
-  villainCardImage.addEventListener('click', function() {
-    closeVillainCard();
-  });
-  
-  /* STORY button: Show villain story overlay */
-  document.getElementById('villainStoryBtn').addEventListener('click', function() {
-    const name = document.getElementById('villainName').value;
-    const villain = villainDatabase[name];
-    
-    if (!villain) return;
-    
-    const act = getCurrentAct();
-    
-    // Set the title
-    document.getElementById('storyTitle').textContent = name;
-    
-    // Create type/subtype display
-    const typeHtml = `<div class="villain-type"><em>${villain.type || ''} — ${villain.subtype || ''}</em></div>`;
-    
-    // Flavour text
-    const flavourHtml = villain.flavour ? 
-      `<div class="villain-flavour"><em>"${villain.flavour}"</em></div>` : 
-      '<div class="villain-flavour"><em>No flavour text available</em></div>';
-    
-    // Create stats with power/life adjustment buttons - side by side with gap
-    const statsHtml = `
-      <div class="villain-stats" id="storyStats">
-        <div class="villain-stat-control">
-          <b>Power:</b>
-          <button class="villain-stat-btn" onclick="updateVillainStat('power', -1)">−</button>
-          <span class="villain-stat-value">${villain.power}</span>
-          <button class="villain-stat-btn" onclick="updateVillainStat('power', 1)">+</button>
-        </div>
-        <div class="villain-stat-control">
-          <b>Life:</b>
-          <button class="villain-stat-btn" onclick="updateVillainStat('life', -1)">−</button>
-          <span class="villain-stat-value">${villain.life}</span>
-          <button class="villain-stat-btn" onclick="updateVillainStat('life', 1)">+</button>
-        </div>
-      </div>
-    `;
-    
-    // Effects with icon conversion
-    const effectsHtml = `<div class="villain-effects">${convertTextToRichText(villain.effects || 'No effects')}</div>`;
-    
-    // Story text for current act
-    const storyText = villain.story && (villain.story[act] || villain.story[0]) ? 
-      villain.story[act] || villain.story[0] : 
-      'No story available for this act.';
-    
-    // Clear and rebuild the story panel content in the correct order
-    const storyPanel = document.querySelector('#villainStoryOverlay .story-panel');
-    
-    // Keep the close button
-    const closeBtnHTML = `<button id="storyCloseBtn">&times;</button>`;
-    
-    // Set the complete HTML with proper order
-    storyPanel.innerHTML = `
-      ${closeBtnHTML}
-      <h2 id="storyTitle">${name}</h2>
-      ${typeHtml}
-      ${flavourHtml}
-      ${statsHtml}
-      ${effectsHtml}
-      <hr class="story-divider">
-      <div class="villain-story" id="storyText">${storyText}</div>
-    `;
-    
-    // Re-attach close button handler
-    document.getElementById('storyCloseBtn').addEventListener('click', function() {
-      villainStoryOverlay.classList.add('hidden');
-    });
-    
-    // Show the overlay
-    villainStoryOverlay.classList.remove('hidden');
-  });
-  
-  /* Close story overlay */
-  document.getElementById('storyCloseBtn').addEventListener('click', function() {
-    villainStoryOverlay.classList.add('hidden');
-  });
-  
-  /* Close story overlay when clicking outside */
-  villainStoryOverlay.addEventListener('click', function(e) {
-    if (e.target === this) {
-      this.classList.add('hidden');
-    }
-  });
-  
-  /* Allow ESC key to close both overlays */
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      closeVillainCard();
-      villainStoryOverlay.classList.add('hidden');
-    }
-  });
-  
-});
-
-/* Update villain power or life */
-function updateVillainStat(stat, delta) {
-  const name = document.getElementById('villainName').value;
-  const villain = villainDatabase[name];
-  
-  if (!villain) return;
-  
-  // Handle X power (cannot be modified)
-  if (villain.power === 'X' && stat === 'power') {
-    return;
-  }
-  
-  // Update the stat
-  if (typeof villain[stat] === 'number') {
-    villain[stat] += delta;
-    if (villain[stat] < 0) villain[stat] = 0;
-  }
-  
-  // Update the display in the story overlay
-  const storyStats = document.getElementById('storyStats');
-  if (storyStats) {
-    storyStats.innerHTML = `
-      <div class="villain-stat-control">
-        <b>Power:</b>
-        <button class="villain-stat-btn" onclick="updateVillainStat('power', -1)">−</button>
-        <span class="villain-stat-value">${villain.power}</span>
-        <button class="villain-stat-btn" onclick="updateVillainStat('power', 1)">+</button>
-      </div>
-      <div class="villain-stat-control">
-        <b>Life:</b>
-        <button class="villain-stat-btn" onclick="updateVillainStat('life', -1)">−</button>
-        <span class="villain-stat-value">${villain.life}</span>
-        <button class="villain-stat-btn" onclick="updateVillainStat('life', 1)">+</button>
-      </div>
-    `;
-  }
-}
-
+// DICE ROLLING
 // ==========================
-// ========================================
-// DICE ROLLING SYSTEM
-// ========================================
-/*
-   DICE BUTTONS - IN HTML:
-   - Change dice types (d6, d8, d10, d12, d20)
-   - Add/remove dice buttons
-   - Button format: onclick="rollDice(count, sides)"
-   
-   Example: rollDice(2, 6) = roll 2d6
-*/
 function rollDice(count, sides) {
   let total = 0;
   let rolls = [];
@@ -3369,19 +2615,8 @@ function addDiceResult(text) {
   let selectionPool = availableColors.length > 0 ? availableColors : colorPool;
   const randomColor = selectionPool[Math.floor(Math.random() * selectionPool.length)];
   
-  // Truncate long results for mobile
-  const isMobile = window.innerWidth <= 640;
-  let displayText = text;
-  if (isMobile && text.length > 15) {
-    // Format: "2d6:3+5[8]" becomes "2d6[8]"
-    const match = text.match(/(\d*d\d+).*?\[(\d+)\]/);
-    if (match) {
-      displayText = `${match[1]}[${match[2]}]`;
-    }
-  }
-  
   // Store result with its color
-  gameState.diceResults.push({ text: displayText, originalText: text, color: randomColor });
+  gameState.diceResults.push({ text: text, color: randomColor });
   
   // Keep only the last 6 results
   if (gameState.diceResults.length > 6) {
@@ -3392,25 +2627,15 @@ function addDiceResult(text) {
   saveState();
 }
 
-// Update renderDiceResults to handle mobile truncation
 function renderDiceResults() {
   const display = document.getElementById('resultsDisplay');
-  const isMobile = window.innerWidth <= 640;
   
   const html = gameState.diceResults.map((result) => {
-    const textToShow = isMobile && result.originalText ? 
-      (result.originalText.length > 12 ? result.originalText.replace(/(\d*d\d+).*?\[(\d+)\]/, '$1[$2]') : result.originalText) : 
-      result.text;
-    return `<span style="color: ${result.color}; margin-right: 0.5rem;">${textToShow}</span>`;
+    return `<span style="color: ${result.color}; margin-right: 0.5rem;">${result.text}</span>`;
   }).join('');
   
   display.innerHTML = html;
 }
-
-// Add resize listener to update formatting when rotating device
-window.addEventListener('resize', () => {
-  renderDiceResults();
-});
 
 function clearResults() {
   gameState.diceResults = [];
@@ -3481,19 +2706,6 @@ const enemyWebpMap = {
   "Construct — Ruined": "359",
   "Construct — Sentinel": "363"
 };
-
-/* ========================================
-   ENEMY DATABASE
-   ========================================
-   USE TO:
-   - Add new enemies with: name, aliases, type, subtype, defaultLife, defaultPower, flavour, effect
-   - aliases: search keywords (lowercase)
-   - defaultLife/Power: starting stats
-   - flavour: description text
-   - effect: game rules (use {icon} for icons, e.g., {armour}, {mshield})
-   
-   FORMAT: {icon} = display icon, UPPERCASE word = show in Details dictionary
-*/
 
 const enemyDatabase = [
   {
@@ -4267,19 +3479,6 @@ function moveSuggestionSelection(enemyId, direction) {
   items[newIndex].scrollIntoView({ block: 'nearest' });
 }
 
-// ========================================
-// ENEMY MANAGEMENT
-// ========================================
-/*
-   ENEMY PROPERTIES:
-   - name: enemy name (triggers database search on match)
-   - type/subtype: enemy classification
-   - life/power: current stats
-   - flavourText/effectText: displayed text
-   - cardImage: path to card image (auto-populated from webpMapping)
-   - flipped: boolean for card flip state
-   - flippedContent: 'flavour', 'effect', 'card', or 'details'
-*/
 function createEnemy(id) {
   return {
     id: id,
@@ -4431,18 +3630,7 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// ========================================
-// ICON REPLACEMENT SYSTEM
-// ========================================
-/*
-   REWRITE THESE ICONS TO:
-   - Change icon image paths (e.g., .svg to .png)
-   - Add new icon shortcuts
-   - Change icon file locations
-   
-   USAGE: {shortcut} in enemy effect text becomes icon image
-   Example: {armour} becomes armor icon image
-*/
+// Convert text placeholders to rich icon format
 function convertTextToRichText(text) {
   if (!text) return '';
   
@@ -4459,8 +3647,7 @@ function convertTextToRichText(text) {
     '{u}': "<img src='../icons/stamina1.png' class='desc-icon' alt='stamina' />",
     '{mast}': "<img src='../icons/mastery4.png' class='desc-icon' alt='mastery' />",
     '{g}': "<img src='../icons/life1.png' class='desc-icon' alt='life' />",
-    '{w}': "<img src='../icons/mana1.png' class='desc-icon' alt='mana' />",
-    '{flag}': "<img src='../icons/flying-flag.svg' class='desc-icon' alt='flag' />"
+    '{w}': "<img src='../icons/mana1.png' class='desc-icon' alt='mana' />"
   };
   
   let result = text;
@@ -4750,9 +3937,6 @@ function loadState() {
       
       document.getElementById('villainName').value = gameState.villain || '';
       
-      // Initialize villain buttons based on current selection
-      villainChanged();
-      
       // Restore enemy visibility
       if (gameState.enemyVisible) {
         document.getElementById('enemyBtn').classList.add('open');
@@ -4762,8 +3946,6 @@ function loadState() {
       // Restore dice results
       renderDiceResults();
       renderEnemies();
-      renderPlayers();  // This already exists
-      setupDeleteButtons();  // ← ADD THIS LINE HERE
       updateAddEnemyButton();
     } catch (e) {
       console.error('Failed to load state:', e);
@@ -4775,8 +3957,6 @@ function loadState() {
       ];
       gameState.enemies = [];
       gameState.enemyVisible = false;
-      renderPlayers();
-      setupDeleteButtons();  // ← AND HERE TOO
     }
   } else {
     // Default state with 3 players
@@ -4786,8 +3966,6 @@ function loadState() {
       createPlayer(3)
     ];
     gameState.enemies = [];
-    renderPlayers();
-    setupDeleteButtons();  // ← AND HERE
   }
 }
 
@@ -4814,38 +3992,13 @@ function resetAll() {
     document.getElementById('enemySection').classList.remove('visible');
     
     renderPlayers();
-    setupDeleteButtons();  // ← ADD THIS LINE HERE
     renderEnemies();
     updateAddEnemyButton();
     updateActButton();
     renderDiceResults();
-    
-    // Re-evaluate villain button state
-    villainChanged();
-    
     saveState();
   }
 }
 </script>
-
-<!-- ==========================
-   VILLAIN CARD & STORY OVERLAYS
-========================== -->
-<!-- Villain Card Overlay -->
-<div id="villainCardOverlay" class="overlay hidden">
-  <img id="villainCardImage" alt="Villain Card">
-</div>
-
-<!-- Villain Story Overlay -->
-<div id="villainStoryOverlay" class="overlay hidden">
-  <div class="story-panel">
-    <button id="storyCloseBtn">&times;</button>
-    <h2 id="storyTitle"></h2>
-    <div class="story-stats" id="storyStats"></div>
-    <div class="story-effects" id="storyEffects"></div>
-    <hr>
-    <div class="story-text" id="storyText"></div>
-  </div>
-</div>
 </body>
 </html>
