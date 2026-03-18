@@ -48,164 +48,13 @@
   --radius-md: 10px;  /* Medium elements */
   --radius-lg: 14px;  /* Large elements */
   --radius-xl: 20px;  /* Extra large elements */
-}
-
-/* Mobile-specific variables for better differentiation */
-@media (max-width: 640px) {
-  :root {
-    --bg-card: #252530;
-    --bg-elevated: #2d2d38;
-    --glass-bg: rgba(35, 35, 45, 0.85);
-    --glass-border: rgba(255, 255, 255, 0.15);
-    --border-subtle: rgba(255, 255, 255, 0.12);
-    --border-medium: rgba(255, 255, 255, 0.2);
-  }
   
-  /* Player card mobile - full width, no overflow */
-  .player-card {
-    padding: 0.5rem;
-    margin: 0.25rem 0;
-    width: 100%;
-    box-sizing: border-box;
-    overflow: visible;
-  }
-  
-  .player-name-input {
-    font-size: 0.8rem;
-    padding: 0.2rem 0.3rem;
-    width: 100%;
-  }
-  
-  .player-checkboxes {
-    gap: 0.2rem;
-    flex-wrap: wrap;
-  }
-  
-  .player-checkbox-label {
-    font-size: 0.6rem;
-    padding: 0.1rem 0.2rem;
-  }
-  
-  .player-artefact,
-  .player-iris {
-    font-size: 0.65rem;
-    padding: 0.15rem;
-  }
-  
-  .stats-section {
-    padding: 0.35rem;
-    margin-top: 0.35rem;
-  }
-  
-  .stat-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.1rem;
-    margin-bottom: 0.15rem;
-    min-width: 0;
-    overflow: visible;
-  }
-  
-  .stat-label {
-    min-width: 45px;
-    font-size: 0.65rem;
-    margin-right: 0.1rem;
-    text-align: right;
-    flex-shrink: 0;
-  }
-  
-  .stat-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.1rem;
-    flex-shrink: 0;
-  }
-  
-  .stat-btn {
-    width: 18px !important;
-    height: 18px !important;
-    min-width: 18px;
-    padding: 0 !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .stat-btn svg {
-    width: 0.7rem !important;
-    height: 0.7rem !important;
-  }
-  
-  .stat-value {
-    font-size: 0.7rem;
-    min-width: 16px;
-    text-align: center;
-    padding: 0 0.1rem;
-  }
-  
-  /* Enemy card mobile - single column, full width */
-  .enemy-grid {
-    grid-template-columns: 1fr !important;
-    gap: 0.5rem;
-    width: 100%;
-  }
-  
-  .enemy-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    aspect-ratio: auto;
-    min-height: 220px;
-  }
-  
-  .enemy-effect-preview {
-    font-size: 1rem;
-    max-height: 80px;
-    overflow-y: auto;
-    padding-right: 0.2rem;
-  }
-  
-  .enemy-flavour-preview {
-    font-size: 1rem;
-    max-height: 50px;
-    overflow-y: auto;
-  }
-  
-  .enemy-title {
-    font-size: 1rem;
-  }
-  
-  .enemy-type {
-    font-size: 0.6rem;
-  }
-  
-  .enemy-stat-btn {
-    width: 20px;
-    height: 20px;
-    font-size: 1rem;
-  }
-  
-  .enemy-stat-value {
-    font-size: 0.85rem;
-    min-width: 20px;
-  }
-  
-  .enemy-stats {
-    gap: 0.3rem;
-    flex-wrap: wrap;
-  }
-  
-  .enemy-details-content {
-    font-size: 0.8rem;
-  }
-  
-  .enemy-term-name {
-    font-size: 0.85rem;
-  }
-  
-  .enemy-term-definition {
-    font-size: 0.75rem;
-  }
+  /* --- SPACING SYSTEM --- */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
 }
 
 /* ==========================
@@ -277,15 +126,12 @@ h1, h2, h3, h4 {
   padding: 0rem 1.5rem;
   border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   box-shadow: var(--shadow-md);
+  flex-wrap: nowrap;
+  gap: 0.4rem;
 }
 
-/* Mobile gradient for header */
-@media (max-width: 640px) {
-  .header {
-    background: linear-gradient(180deg, rgba(35, 35, 48, 0.95) 0%, rgba(28, 28, 38, 0.95) 100%);
-    border: 1px solid var(--border-medium);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  }
+#villainName {
+  max-width: 240px;
 }
 
 .header-left {
@@ -295,9 +141,12 @@ h1, h2, h3, h4 {
 }
 
 .header-center {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   justify-content: center;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .header-right {
@@ -337,7 +186,8 @@ h1, h2, h3, h4 {
   font-weight: 600;
   text-align: center;
   padding: 0.4rem 0.75rem;
-  min-width: 180px;
+  min-width: 0;
+  width: clamp(90px, 30vw, 180px);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -448,49 +298,23 @@ h1, h2, h3, h4 {
 }
 
 /* Villain power/life controls in story panel */
-.villain-stat-control {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.villain-stat-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 1px solid var(--border-medium);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-primary);
-  font-size: 1.2rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-}
-
-.villain-stat-btn:hover {
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-}
-
 .villain-type {
-font-style: italic;
-opacity:0.85;
-margin-bottom:6px;
+  font-style: italic;
+  opacity: 0.85;
+  margin-bottom: 6px;
 }
 
 .villain-flavour {
-font-style: italic;
-opacity:0.9;
-margin-top:10px;
+  font-style: italic;
+  opacity: 0.9;
+  margin-top: 10px;
 }
 
 .villain-effect {
-margin-top:10px;
+  margin-top: 10px;
 }
 
-/* Add to your CSS - monospace font for stat values */
+/* Villain stat values */
 .villain-stat-value {
   font-family: 'JetBrains Mono', 'Consolas', 'Monaco', 'Courier New', monospace;
   font-size: 1.2rem;
@@ -504,6 +328,7 @@ margin-top:10px;
 /* Update villain stat controls for better alignment */
 .villain-stats {
   display: flex;
+  flex-wrap: wrap;
   gap: 40px;
   margin: 15px 0;
   padding: 12px;
@@ -550,9 +375,9 @@ margin-top:10px;
 }
 
 .story-divider {
-margin:18px 0;
-border:none;
-border-top:1px solid rgba(255,255,255,0.3);
+  margin: 18px 0;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .story-stats b {
@@ -608,8 +433,8 @@ border-top:1px solid rgba(255,255,255,0.3);
   padding: 0rem 1rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
-  width: 80px;
+  transition: all 0.25s ease;
+  width: 8.5rem;
   flex-shrink: 0;
 }
 
@@ -656,15 +481,6 @@ border-top:1px solid rgba(255,255,255,0.3);
   gap: 1rem;
 }
 
-/* Mobile gradient background for main content */
-@media (max-width: 640px) {
-  .main-content {
-    background: linear-gradient(180deg, rgba(20, 20, 28, 0.3) 0%, transparent 100%);
-    border-radius: var(--radius-lg);
-    margin: 0 0.5rem;
-  }
-}
-
 /* ==========================
    PLAYERS GRID
 ========================== */
@@ -693,14 +509,15 @@ border-top:1px solid rgba(255,255,255,0.3);
   .players-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .villain-stats {
+    flex-direction: column;  /* 1 per row */
+    gap: 12px;
+    align-items: flex-start;
+  }
+
 }
 
-/* Narrow: 1 column (default) */
-@media (max-width: 640px) {
-  .players-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
 
 /* ==========================
    PLAYER CARD
@@ -720,14 +537,6 @@ border-top:1px solid rgba(255,255,255,0.3);
   position: relative;
 }
 
-/* Mobile gradient overlay for better section differentiation */
-@media (max-width: 640px) {
-  .player-card {
-    background: linear-gradient(145deg, var(--bg-card) 0%, rgba(45, 45, 58, 0.9) 100%);
-    border: 1px solid var(--border-medium);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
-}
 
 .player-card:hover {
   transform: translateY(-1px);
@@ -874,17 +683,6 @@ border-top:1px solid rgba(255,255,255,0.3);
   transition: border-color 0.2s ease;
 }
 
-/* Mobile input improvements */
-@media (max-width: 640px) {
-  .player-name {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--border-medium);
-    border-radius: var(--radius-sm);
-    padding: 0.4rem 0.5rem;
-    border-bottom: 2px solid var(--border-subtle);
-  }
-}
-
 .player-name:focus {
   outline: none;
   border-bottom-color: var(--accent-primary);
@@ -923,16 +721,6 @@ border-top:1px solid rgba(255,255,255,0.3);
   max-width: 100%;
 }
 
-/* Mobile select improvements */
-@media (max-width: 640px) {
-  .tag-select {
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid var(--border-medium);
-    padding: 0.4rem 0.5rem;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
-  }
-}
-
 .tag-select:focus {
   outline: none;
   border-color: var(--accent-primary);
@@ -944,16 +732,6 @@ border-top:1px solid rgba(255,255,255,0.3);
   gap: 0.5rem;
   min-width: 0;
   padding-top: 0.1rem;
-}
-
-/* Mobile checkbox improvements */
-@media (max-width: 640px) {
-  .status-checkboxes {
-    background: rgba(255, 255, 255, 0.02);
-    padding: 0.5rem;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-subtle);
-  }
 }
 
 .status-checkbox {
@@ -1015,17 +793,6 @@ border-top:1px solid rgba(255,255,255,0.3);
   gap: 0.5rem 0.5rem;
   min-width: 0;
   overflow: hidden;
-}
-
-/* Mobile stats section improvements */
-@media (max-width: 640px) {
-  .stats-section {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: var(--radius-md);
-    padding: 0.75rem;
-    margin-top: 0.75rem;
-    border-top: 1px solid var(--border-subtle);
-  }
 }
 
 .stat-row {
@@ -1108,8 +875,10 @@ border-top:1px solid rgba(255,255,255,0.3);
   font-size: 1rem;
   font-weight: 500;
   min-width: 32px;
+  max-width: 32px;
+  width: 32px;
   text-align: center;
-  color: var(--text-primary);
+  overflow: hidden;
 }
 
 .stat-value.madness {
@@ -1172,15 +941,6 @@ border-top:1px solid rgba(255,255,255,0.3);
   box-shadow: var(--shadow-md);
 }
 
-/* Mobile gradient for dice tray */
-@media (max-width: 640px) {
-  .dice-tray {
-    background: linear-gradient(180deg, rgba(40, 40, 55, 0.95) 0%, rgba(30, 30, 42, 0.95) 100%);
-    border: 1px solid var(--border-medium);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  }
-}
-
 .dice-header {
   display: flex;
   justify-content: space-between;
@@ -1192,20 +952,29 @@ border-top:1px solid rgba(255,255,255,0.3);
   flex: 1;
   text-align: left;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 1rem;
+  font-size: clamp(0.8rem, 3vw, 1rem);
   color: var(--accent-success);
-  height: 2rem;
-  overflow: hidden;
-  white-space: nowrap;
+  min-height: 2rem;
+  overflow-y: auto;
   padding: 0.1rem 1rem;
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  max-width: 100%;
+  width:100%;
+  overflow:hidden;  
 }
 
 
 .results-display:empty::before {
   content: '{ results }';
   color: var(--text-muted);
+}
+
+.results-display span {
+  white-space: nowrap;
+  font-size: clamp(0.8rem, 3vw, 1rem);
+  flex: 0 0 auto;
 }
 
 .clear-btn {
@@ -1319,9 +1088,9 @@ border-top:1px solid rgba(255,255,255,0.3);
 /* Enemy Grid - adaptive columns based on available space */
 .enemy-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 260px));
-  gap: 0.75rem;
-  justify-content: center;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.25rem;
+  /*justify-content: center;*/
   max-height: none;
 }
 
@@ -1332,6 +1101,9 @@ border-top:1px solid rgba(255,255,255,0.3);
   aspect-ratio: 5 / 7;
   perspective: 1000px;
   min-width: 0;
+  display:flex;
+  flex-direction:column;
+  height:auto;
 }
 
 .enemy-card-inner {
@@ -1487,6 +1259,20 @@ border-top:1px solid rgba(255,255,255,0.3);
   line-height: 1.4;
   margin-bottom: 0.4rem;
   font-weight: 500;
+  /*max-height: 120px;*/
+  overflow-y: auto;
+  padding-right: 6px;
+  flex: 1;
+}
+
+/* Custom scrollbar for effect text */
+.enemy-effect-preview::-webkit-scrollbar {
+  width: 6px;
+}
+
+.enemy-effect-preview::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
 }
 
 .enemy-effect-preview::before {
@@ -1500,6 +1286,19 @@ border-top:1px solid rgba(255,255,255,0.3);
   line-height: 1.35;
   margin-top: auto;
   font-style: italic;
+  max-height: 80px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Custom scrollbar for flavour text */
+.enemy-flavour-preview::-webkit-scrollbar {
+  width: 5px;
+}
+
+.enemy-flavour-preview::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 3px;
 }
 
 .enemy-flavour-preview::before {
@@ -1883,15 +1682,6 @@ border-top:1px solid rgba(255,255,255,0.3);
   display: none;
 }
 
-/* Mobile gradient for enemy section */
-@media (max-width: 640px) {
-  .enemy-section {
-    background: linear-gradient(145deg, var(--bg-card) 0%, rgba(45, 45, 58, 0.9) 100%);
-    border: 1px solid var(--border-medium);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
-}
-
 .enemy-section.visible {
   display: block;
   animation: slideDown 0.3s ease;
@@ -2175,66 +1965,303 @@ border-top:1px solid rgba(255,255,255,0.3);
   color: var(--accent-info);
 }
 
-/* ========================================
-   MOBILE LAYOUT (max-width: 640px)
-   ========================================
-   BREAKPOINT OR VALUES ADJUST:
-   - 811px: Change to different width threshold
-   - 1fr: Change to 2fr or 3fr for multiple columns
-   - font-size: Adjust text size for mobile
-   ======================================== */
+/* Mobile-specific variables for better differentiation */
 @media (max-width: 640px) {
 
-  /* --- ENEMY CARDS --- */
-  .enemy-grid {
-    grid-template-columns: 1fr !important;  /* 1 card per row - change to 2fr for 2 columns */
-    gap: 0.6rem;                           /* Space between enemy cards */
+  /* --- CSS variable overrides --- */
+  :root {
+    --bg-card: #252530;
+    --bg-elevated: #2d2d38;
+    --glass-bg: rgba(35, 35, 45, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --border-subtle: rgba(255, 255, 255, 0.12);
+    --border-medium: rgba(255, 255, 255, 0.2);
   }
 
-  .enemy-card {
-    width: 100%;
-    max-width: 100%;
-    aspect-ratio: 5 / 7;                   /* Card shape ratio - matches real cards */
+  /* --- Layout --- */
+  .header {
+    background: linear-gradient(180deg, rgba(35, 35, 48, 0.95) 0%, rgba(28, 28, 38, 0.95) 100%);
+    border: 1px solid var(--border-medium);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    flex-wrap: nowrap;
+    gap: 0.125rem;
+    padding: 0.125rem 0.25rem;
+    align-items: center;
   }
 
-  /* --- PLAYER STAT BUTTONS (prevent clipping) --- */
+  .header-left, .header-right {
+    flex-shrink: 0;            /* never shrink the side sections */
+    gap: 0.2rem;
+  }
+
+  .header-center {
+    flex: 1 1 0;               /* take up remaining space */
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    flex-wrap: nowrap;
+  }
+
+  .main-content {
+    background: linear-gradient(180deg, rgba(20, 20, 28, 0.3) 0%, transparent 100%);
+    border-radius: var(--radius-lg);
+    margin: 0 0.5rem;
+  }
+
+  .players-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* --- Player card --- */
   .player-card {
-    overflow: visible !important;           /* Allow buttons to extend beyond card */
-    padding-right: 0.6rem;                  /* Extra padding on right */
+    background: linear-gradient(145deg, var(--bg-card) 0%, rgba(45, 45, 58, 0.9) 100%);
+    border: 1px solid var(--border-medium);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    padding: 0.5rem;
+    padding-right: 0.6rem;
+    margin: 0.25rem 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: visible !important;
+  }
+
+  .player-name {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-sm);
+    padding: 0.4rem 0.5rem;
+    border-bottom: 2px solid var(--border-subtle);
+  }
+
+  .player-name-input {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.3rem;
+    width: 100%;
+  }
+
+  .player-checkboxes {
+    gap: 0.2rem;
+    flex-wrap: wrap;
+  }
+
+  .player-checkbox-label {
+    font-size: 0.6rem;
+    padding: 0.1rem 0.2rem;
+  }
+
+  .player-artefact,
+  .player-iris {
+    font-size: 0.65rem;
+    padding: 0.15rem;
+  }
+
+  /* --- Player inputs --- */
+  .tag-select {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-medium);
+    padding: 0.4rem 0.5rem;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  .status-checkboxes {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+  }
+
+  /* --- Player stats --- */
+  .stats-section {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0.75rem;
+    margin-top: 0.75rem;
+    border-top: 1px solid var(--border-subtle);
+    gap: 0.6rem 0.5rem;
+  }
+
+  .stat-row {
+    justify-content: flex-start; 
+    gap: 0.125rem;
+    margin-bottom: 0;
+  }
+
+  .stat-row--right {justify-content: flex-end;}
+
+  .stat-label {
+    font-size: 0.85rem;
+    min-width: 60px;
+    margin-right: 0.5rem;
+    text-align: right;
+    flex-shrink: 0;
   }
 
   .stat-controls {
-    flex-wrap: nowrap;
-    flex-shrink: 0;                        /* Prevent button squeezing */
-  }
-
-  .stat-value {
-    min-width: 24px;
+    gap: 0.35rem;
     flex-shrink: 0;
+    flex-wrap: nowrap;
   }
 
   .stat-btn {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px;
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+    color: rgba(255, 255, 255, 0.75) !important;
+  }
+  .stat-btn:hover {color: #ffffff !important;}
+
+
+  .stat-btn svg {
+    width: 0.85rem !important;
+    height: 0.85rem !important;
   }
 
-  /* Enemy card text - larger for mobile readability */
+  .stat-value {
+    font-size: 0.9rem;
+    min-width: 28px;
+    max-width: 28px;
+    width: 28px;
+    text-align: center;
+    padding: 0;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  /* --- Dice tray --- */
+  .dice-tray {
+    background: linear-gradient(180deg, rgba(40, 40, 55, 0.95) 0%, rgba(30, 30, 42, 0.95) 100%);
+    border: 1px solid var(--border-medium);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  /* --- Enemy section --- */
+  .enemy-section {
+    background: linear-gradient(145deg, var(--bg-card) 0%, rgba(45, 45, 58, 0.9) 100%);
+    border: 1px solid var(--border-medium);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .enemy-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .enemy-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    aspect-ratio: 5 / 7;
+  }
+
   .enemy-effect-preview {
-    font-size: 1rem !important;
+    font-size: 1rem;
+    overflow-y: auto;
+    padding-right: 0.2rem;
   }
 
   .enemy-flavour-preview {
-    font-size: 1rem !important;
+    font-size: 1rem;
+    max-height: 50px;
+    overflow-y: auto;
+  }
+
+  .enemy-title {
+    font-size: 1rem;
+  }
+
+  .enemy-type {
+    font-size: 0.6rem;
+  }
+
+  .enemy-stat-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 1rem;
+  }
+
+  .enemy-stat-value {
+    font-size: 0.85rem;
+    min-width: 20px;
+  }
+
+  .enemy-stats {
+    gap: 0.3rem;
+    flex-wrap: wrap;
   }
 
   .enemy-flip-btn {
-    font-size: 1rem !important;
+    font-size: 1rem;
     padding: 0.4rem 0.3rem;
   }
 
   .enemy-kill-btn {
-    font-size: 1rem !important;
+    font-size: 1rem;
   }
+
+  .enemy-details-content {
+    font-size: 0.8rem;
+  }
+
+  .enemy-term-name {
+    font-size: 0.85rem;
+  }
+
+  .enemy-term-definition {
+    font-size: 0.75rem;
+  }
+
+  .villain-input {
+    width: 0;    /* let flex decide the width */
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: 0.7rem;
+    padding: 0.25rem 0.2rem;
+  }
+
+  .villain-btn {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.2rem;
+    flex-shrink: 0;
+  }
+
+  .villain-stats {
+    flex-direction: column;  /* 1 per row */
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .host-btn {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.2rem;
+  }
+
+  .act-btn {
+    font-size: 0.75rem;
+    padding: 0.125rem 0.125rem;
+    width: 5rem;
+    min-width: 5rem;
+    max-width: 5rem;
+  }
+
+  .book-btn {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .book-btn svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
 }
+
 </style>
 </head>
 <body>
@@ -2242,7 +2269,7 @@ border-top:1px solid rgba(255,255,255,0.3);
   <!-- Header Section -->
   <header class="header">
     <div class="header-left">
-      <button class="host-btn" onclick="resetAll()">HOST (RESET)</button>
+      <button class="host-btn" onclick="resetAll()">RESET</button>
     </div>
     <div class="header-center">
       <!-- VILLAIN CARD BUTTON -->
@@ -2412,7 +2439,6 @@ border-top:1px solid rgba(255,255,255,0.3);
 </div>
 
 <script>
-// ==========================
 // ========================================
 // GAME STATE - MAIN DATA STRUCTURE
 // ========================================
@@ -2429,7 +2455,8 @@ let gameState = {
   act: 0,             /* Act number (0-4) */
   players: [],        /* Array of player objects */
   enemies: [],        /* Array of enemy objects */
-  diceResults: []     /* Recent dice roll results */
+  diceResults: [],     /* Recent dice roll results */
+  villainStats: {}
 };
 
 /* --- ACT DISPLAY LABELS --- */
@@ -2707,7 +2734,7 @@ function renderPlayers() {
             </button>
           </div>
         </div>
-        <div class="stat-row">
+        <div class="stat-row stat-row--right">
           <span class="stat-label">Life:</span>
           <div class="stat-controls">
             <button class="stat-btn minus" onclick="updateStat(${index}, 'life', -1)">
@@ -2735,7 +2762,7 @@ function renderPlayers() {
             </button>
           </div>
         </div>
-        <div class="stat-row">
+        <div class="stat-row stat-row--right">
           <span class="stat-label">Coins:</span>
           <div class="stat-controls">
             <button class="stat-btn minus" onclick="updateStat(${index}, 'coins', -1)">
@@ -2876,10 +2903,20 @@ function updatePlayer(index, field, value) {
   saveState();
 }
 
+const STAT_MAX = {
+  madness: 50,
+  life: 50,
+  soul: 12,
+  coins: 99
+};
+
 function updateStat(index, stat, delta) {
   gameState.players[index][stat] += delta;
   if (gameState.players[index][stat] < 0) {
     gameState.players[index][stat] = 0;
+  }
+  if (STAT_MAX[stat] !== undefined && gameState.players[index][stat] > STAT_MAX[stat]) {
+    gameState.players[index][stat] = STAT_MAX[stat];
   }
   
   // Track madness changes for the report
@@ -3202,18 +3239,22 @@ document.addEventListener('DOMContentLoaded', function() {
       '<div class="villain-flavour"><em>No flavour text available</em></div>';
     
     // Create stats with power/life adjustment buttons - side by side with gap
+    const saved = gameState.villainStats?.[name] || {};
+    const displayPower = saved.power ?? villain.power;
+    const displayLife  = saved.life  ?? villain.life;
+
     const statsHtml = `
       <div class="villain-stats" id="storyStats">
         <div class="villain-stat-control">
           <b>Power:</b>
           <button class="villain-stat-btn" onclick="updateVillainStat('power', -1)">−</button>
-          <span class="villain-stat-value">${villain.power}</span>
+          <span class="villain-stat-value">${displayPower}</span>
           <button class="villain-stat-btn" onclick="updateVillainStat('power', 1)">+</button>
         </div>
         <div class="villain-stat-control">
           <b>Life:</b>
           <button class="villain-stat-btn" onclick="updateVillainStat('life', -1)">−</button>
-          <span class="villain-stat-value">${villain.life}</span>
+          <span class="villain-stat-value">${displayLife}</span>
           <button class="villain-stat-btn" onclick="updateVillainStat('life', 1)">+</button>
         </div>
       </div>
@@ -3254,10 +3295,6 @@ document.addEventListener('DOMContentLoaded', function() {
     villainStoryOverlay.classList.remove('hidden');
   });
   
-  /* Close story overlay */
-  document.getElementById('storyCloseBtn').addEventListener('click', function() {
-    villainStoryOverlay.classList.add('hidden');
-  });
   
   /* Close story overlay when clicking outside */
   villainStoryOverlay.addEventListener('click', function(e) {
@@ -3280,34 +3317,44 @@ document.addEventListener('DOMContentLoaded', function() {
 function updateVillainStat(stat, delta) {
   const name = document.getElementById('villainName').value;
   const villain = villainDatabase[name];
-  
   if (!villain) return;
-  
-  // Handle X power (cannot be modified)
-  if (villain.power === 'X' && stat === 'power') {
-    return;
+
+  // Can't modify X power
+  if (villain.power === 'X' && stat === 'power') return;
+
+  // Make sure we have a saved entry for this villain
+  if (!gameState.villainStats[name]) {
+    gameState.villainStats[name] = {
+      power: villain.power,
+      life: villain.life
+    };
   }
-  
-  // Update the stat
-  if (typeof villain[stat] === 'number') {
-    villain[stat] += delta;
-    if (villain[stat] < 0) villain[stat] = 0;
+
+  // Update in gameState, not in the database
+  const current = gameState.villainStats[name][stat];
+  if (typeof current === 'number') {
+    gameState.villainStats[name][stat] = Math.max(0, current + delta);
   }
-  
-  // Update the display in the story overlay
+
+  // Save immediately so reload preserves it
+  saveState();
+
+  // Refresh the display
   const storyStats = document.getElementById('storyStats');
   if (storyStats) {
+    const p = gameState.villainStats[name].power;
+    const l = gameState.villainStats[name].life;
     storyStats.innerHTML = `
       <div class="villain-stat-control">
         <b>Power:</b>
         <button class="villain-stat-btn" onclick="updateVillainStat('power', -1)">−</button>
-        <span class="villain-stat-value">${villain.power}</span>
+        <span class="villain-stat-value">${p}</span>
         <button class="villain-stat-btn" onclick="updateVillainStat('power', 1)">+</button>
       </div>
       <div class="villain-stat-control">
         <b>Life:</b>
         <button class="villain-stat-btn" onclick="updateVillainStat('life', -1)">−</button>
-        <span class="villain-stat-value">${villain.life}</span>
+        <span class="villain-stat-value">${l}</span>
         <button class="villain-stat-btn" onclick="updateVillainStat('life', 1)">+</button>
       </div>
     `;
@@ -3598,7 +3645,7 @@ const enemyDatabase = [
   },
   {
     name: "Kyth — Critters",
-    aliases: ['kyth', 'critters', 'kc', 'kythcritters'],
+    aliases: ['kyth', 'critters', 'kcr', 'kythcritters'],
     type: "Creature",
     subtype: "Wormridden Beast",
     defaultLife: 3,
@@ -3654,7 +3701,7 @@ const enemyDatabase = [
     defaultLife: 12,
     defaultPower: 12,
     flavour: "Eyes are a window to the soul, and hers burn a wicked green. Friend or—?",
-    effect: `<br>Armour {armour}2 <br>Shield {mshield}8 <br>{d} 7: Close-Quarters Combat. <br>{p2} Empower, +1 to all stats when shield is zero.`
+    effect: `<br>Armour {armour}2 & Shield {mshield}8 <br>{d} 7: Close-Quarters Combat. <br>{p2} Empower, +1 to all stats when shield is zero.`
   },
   {
     name: "Dreck the Slain",
@@ -4298,7 +4345,7 @@ function createEnemy(id) {
 
 function addEnemy() {
   // Max 18 enemies
-  if (gameState.enemies.length >= 18) {
+  if (gameState.enemies.length >= 20) {
     return;
   }
   
@@ -4577,7 +4624,7 @@ function killEnemy(enemyId) {
 function updateAddEnemyButton() {
   const btn = document.getElementById('addEnemyBtn');
   if (btn) {
-    btn.disabled = gameState.enemies.length >= 18;
+    btn.disabled = gameState.enemies.length >= 20;
   }
 }
 
@@ -4591,13 +4638,18 @@ function showMadnessReport(playerIndex) {
   // Find players with most and least madness
   const madnessValues = gameState.players.map(p => p.madness);
   const maxMadness = Math.max(...madnessValues);
-  const minMadness = Math.min(...madnessValues.filter(m => m > 0));
-  
+
+  const nonZeroMadness = madnessValues.filter(m => m > 0);
+  const minMadness = nonZeroMadness.length > 0 ? Math.min(...nonZeroMadness) : 0;
+
   const hasMost = player.madness === maxMadness;
-  const hasLeast = player.madness === minMadness || (minMadness === Infinity && player.madness === 0);
+  const hasLeast = player.madness === minMadness;
   const madnessIncreased = player.madness > player.previousMadness;
   const madnessDecreased = player.madness < player.previousMadness;
-  const lifeLow = player.life <= Math.floor(player.life / 2);
+  // const lifeLow = player.life <= Math.floor(player.maxLife / 2);
+  // TODO: lifeLow requires maxLife from the player's page.
+  // Re-enable once server sync is set up and player.maxLife is available.
+  const lifeLow = false;
   
   // Find target player (most innocent looking - lowest madness)
   let targetPlayer = otherPlayers.find(p => p.madness === minMadness) || otherPlayers[0];
@@ -4731,6 +4783,11 @@ function loadState() {
       const parsed = JSON.parse(saved);
       gameState = { ...gameState, ...parsed };
       
+      // Ensure villainStats exists (backwards compatibility)
+      if (!gameState.villainStats) {
+        gameState.villainStats = {};
+      }
+
       // Ensure enemies array exists
       if (!gameState.enemies) {
         gameState.enemies = [];
@@ -4805,7 +4862,8 @@ function resetAll() {
       enemies: [],
       enemyVisible: false,
       diceResults: [],
-      notepad: ''
+      notepad: '',
+      villainStats: {}
     };
     
     document.getElementById('villainName').value = '';
