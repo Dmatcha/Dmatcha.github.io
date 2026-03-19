@@ -666,7 +666,8 @@
   #coinOverlay.visible { display: block; }
 
   .coin-content {
-    max-width: 28rem;
+    max-width: 50%;
+    min-width: 26rem;
     margin: 0 auto;
   }
 
@@ -884,10 +885,10 @@
     padding: 3.75rem 1rem 1.25rem;
   }
   #mindOverlay.visible { display: block; }
-  .mind-content { max-width: 50rem; margin: 0 auto; }
+  .mind-content { max-width: 67%; min-width: 26rem; margin: 0 auto; }
   .mind-title {
     text-align: center;
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
     color: var(--mind-bright-purple);
@@ -1177,6 +1178,33 @@
     font-weight: 600;
   }
 
+  /* Madness whisper box — crimson outlined, scarlet glow */
+  .madness-whisper-box {
+    background: rgba(20, 0, 0, 0.4);
+    border: 2px solid #DC143C;
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    line-height: 1.8;
+    color: #ffb3b3;
+    font-size: 0.95rem;
+    margin-top: 1.25rem;
+    box-shadow: 0 0 0.75rem rgba(220, 20, 60, 0.35), inset 0 0 1.5rem rgba(220, 20, 60, 0.05);
+    display: none;
+    font-style: italic;
+    letter-spacing: 0.01em;
+  }
+  .madness-whisper-box.visible {
+    display: block;
+  }
+  .madness-whisper-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(220, 20, 60, 0.7);
+    margin-bottom: 0.5rem;
+  }
+
 #inventoryBtn {
   position: fixed;
   top: 0.6rem;
@@ -1235,7 +1263,8 @@
   }
 
   .relationship-content {
-    max-width: 41.25rem;
+    max-width: 60%;
+    min-width: 26rem;
     margin: 0 auto;
   }
 
@@ -2493,7 +2522,7 @@
   <!-- Character Overlay -->
   <div id="characterOverlay">
     <div class="character-content">
-      <div class="character-title" id="traitsTitle">Player's Traits</div>
+      <div class="character-title" id="traitsTitle">Player's Constellation</div>
       
       <!-- Traits Selection Grid -->
       <div class="traits-grid" id="traitsGrid">
@@ -2548,6 +2577,12 @@
       
       <!-- Traits Description (hidden initially) -->
       <div class="traits-description" id="traitsDescription" style="display: none;"></div>
+
+      <!-- Madness Whisper (hidden until host sends) -->
+      <div class="madness-whisper-box" id="madnessWhisperBox">
+        <div class="madness-whisper-label">The Madness...</div>
+        <div id="madnessWhisperText"></div>
+      </div>
     </div>
   </div>
 
@@ -2703,6 +2738,10 @@
 
 <script>
 /* ========= MODERN TOUCH INTERACTION MANAGER ========= */
+
+// Session state — declared at top level so all code can reference safely
+let activeSessionCode = null;
+let activePlayerSlot = null;
 
 /**
  * Simplified Press-and-Hold Manager
@@ -3016,6 +3055,9 @@ function updateBottomStats() {
   document.getElementById('levelValue').textContent = level;
   document.getElementById('tingeValue').textContent = tinge;
   document.getElementById('arcaneValue').textContent = arcane;
+
+  // Push level to host notebook
+  pushPlayerMetaToFirebase();
 }
 
 /* ========= Stat Bonus Tables ========= */
@@ -3848,7 +3890,7 @@ const traitsDescriptions = {
 
 function updateTraitsTitle() {
   const name = playerNameInput.value.trim() || 'Player';
-  traitsTitle.textContent = `${name}'s Traits`;
+  traitsTitle.textContent = `${name}'s Constellation`;
 }
 
 function generateTraitsDescription() {
@@ -3965,6 +4007,9 @@ traitsLockBtn.addEventListener('click', () => {
   // Show description
   traitsDescription.innerHTML = description;
   traitsDescription.style.display = 'block';
+
+  // Push traits notes to host notebook
+  pushPlayerMetaToFirebase();
 });
 
 // Check if traits are already locked and show description
@@ -7653,9 +7698,6 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 document.addEventListener('DOMContentLoaded', restorePlayerSession);
 
-let activeSessionCode = null;
-let activePlayerSlot = null;  // e.g. "player0"
-
 // Force code input to uppercase only
 document.getElementById('joinCodeInput').addEventListener('input', function() {
   this.value = this.value.toUpperCase().replace(/[^A-Z2-9]/g, '');
@@ -7808,6 +7850,9 @@ function waitForAcceptance(code, name, artefact, iris) {
 
     // Start bidirectional sync
     startPlayerSync(code, mySlotKey);
+
+    // Push current level and traits to host immediately on connect
+    setTimeout(pushPlayerMetaToFirebase, 500);
   });
 }
 
@@ -7856,6 +7901,20 @@ function startPlayerSync(code, slotKey) {
   // Listen for host coin grants
   listenForCoinGrants(code, slotKey);
 
+  // Listen for host madness whispers
+  slotRef.child('madnessWhisper').on('value', (snap) => {
+    const text = snap.val();
+    const box  = document.getElementById('madnessWhisperBox');
+    const textEl = document.getElementById('madnessWhisperText');
+    if (text && text.trim()) {
+      textEl.textContent = text.trim();
+      box.classList.add('visible');
+    } else {
+      box.classList.remove('visible');
+      textEl.textContent = '';
+    }
+  });
+
   // Listen for host-driven artefact/iris overrides
   slotRef.child('artefact').on('value', (snap) => {
     if (snap.val() === null) return;
@@ -7891,7 +7950,56 @@ function startPlayerSync(code, slotKey) {
   };
 }
 
-// Restore session after page refresh
+// Push level + traits notes to Firebase for the host notebook
+function pushPlayerMetaToFirebase() {
+  if (!activeSessionCode || !activePlayerSlot) return;
+  const level = calculateLevel();
+
+  // Build abbreviated traits notes if locked
+  let traitsNotes = '';
+  if (typeof characterOptions !== 'undefined' && characterOptions.locked) {
+    const name = playerNameInput.value.trim() || 'Player';
+    const TRAIT_NOTES = {
+      // Innate
+      studious:     () => `Innately studious.`,
+      insight:      () => `Innately insightful.`,
+      wayfinding:   () => `Innate sense of direction.`,
+      revelry:      () => `Innately given to revelry.`,
+      // Proficiency
+      magicks:      () => `Proficient with magicks.`,
+      weapons:      () => `Proficient with weapons.`,
+      archery:      () => `Proficient with archery.`,
+      hands:        () => `Proficient with hands.`,
+      // Interest
+      animalist:    () => `An interest in animals.`,
+      naturalist:   () => `A naturalist by interest.`,
+      chemist:      () => `An interest in chemistry.`,
+      avarist:      () => `An interest in wealth and trade.`,
+      // Fear
+      beasts:       () => `Fears beasts.`,
+      insects:      () => `Fears insects.`,
+      abominations: () => `Fears abominations.`,
+      spirits:      () => `Fears spirits.`,
+      // Hate
+      authority:    () => `Despises authority.`,
+      aggression:   () => `Cannot cope with aggression.`,
+      sickness:     () => `Averse to sickness and disease.`,
+      religion:     () => `Despises religion.`,
+    };
+    traitsOrder.forEach(row => {
+      const val = characterOptions[row];
+      if (val && TRAIT_NOTES[val]) traitsNotes += TRAIT_NOTES[val]() + ' ';
+    });
+    traitsNotes = traitsNotes.trim();
+  }
+
+  db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`).update({
+    level,
+    traitsNotes
+  });
+}
+
+
 async function restorePlayerSession() {
   const savedCode = localStorage.getItem('playerSessionCode');
   const savedSlot = localStorage.getItem('playerSessionSlot');
