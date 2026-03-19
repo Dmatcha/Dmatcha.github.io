@@ -7770,6 +7770,32 @@ function startPlayerSync(code, slotKey) {
     }
   });
 
+  // Listen for host ending the session
+  db.ref(`sessions/${code}/ended`).on('value', (snap) => {
+    if (!snap.val()) return;
+    // Session has been ended by host — unlock and reset join UI
+    activeSessionCode = null;
+    activePlayerSlot = null;
+    localStorage.removeItem('playerSessionCode');
+    localStorage.removeItem('playerSessionSlot');
+
+    // Unlock artefact/iris so player can re-enter for new session
+    document.querySelectorAll('.inventory-item[data-slot="artefact"], .inventory-item[data-slot="iris"]').forEach(card => {
+      card.classList.remove('session-locked');
+      const input = card.querySelector('.inv-name');
+      if (input) input.removeAttribute('readonly');
+      const badge = card.querySelector('.session-lock-badge');
+      if (badge) badge.remove();
+    });
+
+    // Reset join UI
+    setJoinStatus('info', 'Session ended by host.');
+    const joinBtn = document.getElementById('joinBtn');
+    const joinInput = document.getElementById('joinCodeInput');
+    if (joinBtn)  { joinBtn.textContent = 'JOIN'; joinBtn.disabled = false; }
+    if (joinInput){ joinInput.value = ''; joinInput.disabled = false; }
+  });
+
   // Listen for host coin grants
   listenForCoinGrants(code, slotKey);
 

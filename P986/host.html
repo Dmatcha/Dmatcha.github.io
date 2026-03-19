@@ -2015,9 +2015,9 @@ h1, h2, h3, h4 {
 
 .notepad-content {
   background: var(--bg-card);
-  border: 1px solid var(--glass-border);
+  border: 2px solid var(--glass-border);
   border-radius: var(--radius-xl);
-  padding: 2rem;
+  padding: 1rem;
   width: 90vw;
   height: 80vh;
   max-height: 80vh;
@@ -2025,6 +2025,12 @@ h1, h2, h3, h4 {
   flex-direction: column;
   box-shadow: var(--shadow-lg);
   position: relative;
+}
+
+@media (max-width: 30rem) {
+  .notepad-content {
+    padding: 1rem;
+  }
 }
 
 .notepad-close {
@@ -2489,28 +2495,93 @@ h1, h2, h3, h4 {
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--accent-secondary);
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
   cursor: pointer;
-  padding: 0.3rem 0.75rem;
+  padding: 0.25rem 0.75rem;
   border: 1px solid var(--accent-primary);
   border-radius: var(--radius-sm);
   background: rgba(139, 92, 246, 0.1);
   transition: all 0.2s ease;
   user-select: none;
+  /* Lock width so COPY!/code swap doesn't reflow neighbours */
+  min-width: 6rem;
+  text-align: center;
+  display: inline-block;
 }
 
 .session-code:hover {
   background: rgba(139, 92, 246, 0.25);
 }
 
-.session-code.copied {
+.session-code.COPY {
   color: var(--accent-success);
   border-color: var(--accent-success);
   background: rgba(16, 185, 129, 0.1);
 }
 
+#sessionControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.end-session-btn {
+  appearance: none;
+  border: 1px solid var(--accent-danger);
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.25rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.end-session-btn:hover {
+  background: rgba(239, 68, 68, 0.28);
+  color: #fff;
+  border-color: #f87171;
+}
+.end-session-btn .end-label-full  { display: inline; }
+.end-session-btn .end-label-short { display: none; }
+@media (max-width: 30rem) {
+  .end-session-btn .end-label-full  { display: none; }
+  .end-session-btn .end-label-short { display: inline; }
+  .end-session-btn { padding: 0.35rem 0.125rem; }
+  .session-code    { padding: 0.3rem 0.125rem; min-width: 4.5rem; }
+  .session-btn     { padding: 0.35rem 0.125rem; }
+}
+/* Session saved toast */
+#hostToast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(1rem);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--accent-success);
+  color: #6ee7b7;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 9999;
+  white-space: nowrap;
+}
+#hostToast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 </style>
-</head>
 <body>
 <div class="app-container">
   <!-- Header Section -->
@@ -2632,6 +2703,7 @@ h1, h2, h3, h4 {
         <span id="notepadTitleText">Game Notes</span>
       </h2>
       <!-- Session button / code display -->
+      <div id="endSessionSlot"></div>
       <div id="sessionControl">
         <button class="session-btn" id="hostSessionBtn" onclick="startHostSession()">HOST SESSION</button>
       </div>
@@ -5129,7 +5201,9 @@ function resetAll() {
       activeSessionCode = null;
     }
 
-    // ← ADD 3: reset session UI back to button
+    // reset session UI back to button
+    const endSlot = document.getElementById('endSessionSlot');
+    if (endSlot) endSlot.innerHTML = '';
     const container = document.getElementById('sessionControl');
     if (container) {
       container.innerHTML = `<button class="session-btn" id="hostSessionBtn" onclick="startHostSession()">HOST SESSION</button>`;
@@ -5240,6 +5314,70 @@ async function restoreHostSession() {
   }
 }
 
+function showToast(message, duration = 3000) {
+  const toast = document.getElementById('hostToast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.add('visible');
+  setTimeout(() => toast.classList.remove('visible'), duration);
+}
+
+// End session: sync all player data, signal players, delete room, reset host UI
+async function endSession() {
+  if (!activeSessionCode) return;
+  if (!confirm('End the session? All players will be disconnected.')) return;
+
+  const code = activeSessionCode;
+
+  try {
+    // 1. Final fetch of all player data from Firebase → merge into gameState
+    const snap = await db.ref(`sessions/${code}/players`).get();
+    if (snap.exists()) {
+      const players = snap.val();
+      Object.entries(players).forEach(([slotKey, data]) => {
+        const idx = parseInt(slotKey.replace('player', ''), 10);
+        if (isNaN(idx) || !gameState.players[idx]) return;
+        const p = gameState.players[idx];
+        if (data.currentLife !== undefined) p.life    = data.currentLife;
+        if (data.maxLife    !== undefined) p.maxLife  = data.maxLife;
+        if (data.madness    !== undefined) p.madness  = data.madness;
+        if (data.soul       !== undefined) p.soul     = data.soul;
+        if (data.coins      !== undefined && typeof data.coins === 'object') p.coinPurse = data.coins;
+        if (data.artefact   !== undefined) p.artefact = data.artefact;
+        if (data.iris       !== undefined) p.iris     = data.iris;
+      });
+      saveState();
+      renderPlayers();
+    }
+
+    // 2. Write 'ended' signal so players can react, then delete the session
+    await db.ref(`sessions/${code}/ended`).set(true);
+
+    // Brief pause so connected players can pick up the signal before deletion
+    await new Promise(resolve => setTimeout(resolve, 1200));
+
+    // 3. Delete the session node from Firebase
+    await db.ref(`sessions/${code}`).remove();
+
+  } catch (err) {
+    console.error('Error ending session:', err);
+  }
+
+  // 4. Reset host state
+  activeSessionCode = null;
+  localStorage.removeItem('hostSessionCode');
+
+  const endSlot = document.getElementById('endSessionSlot');
+  if (endSlot) endSlot.innerHTML = '';
+
+  const container = document.getElementById('sessionControl');
+  if (container) {
+    container.innerHTML = `<button class="session-btn" id="hostSessionBtn" onclick="startHostSession()">HOST SESSION</button>`;
+  }
+
+  showToast('✓ Session saved & ended');
+}
+
 // Host clicks HOST SESSION
 async function startHostSession() {
   const btn = document.getElementById('hostSessionBtn');
@@ -5274,24 +5412,34 @@ async function startHostSession() {
   }
 }
 
-// Replace button with clickable code display
+// Replace button with clickable code display + end session button in separate slots
 function showSessionCode(code) {
-  const container = document.getElementById('sessionControl');
-  container.innerHTML = `
+  document.getElementById('endSessionSlot').innerHTML = `
+    <button class="end-session-btn" onclick="endSession()" title="End session and disconnect all players">
+      <span class="end-label-full">End Session</span>
+      <span class="end-label-short">END</span>
+    </button>`;
+
+  document.getElementById('sessionControl').innerHTML = `
     <span class="session-code" id="sessionCodeDisplay" onclick="copySessionCode()"
-      title="Click to copy">${code}</span>
-  `;
+      title="Click to copy">${code}</span>`;
+
+  // Lock width immediately after render so COPY! swap never causes reflow
+  requestAnimationFrame(() => {
+    const el = document.getElementById('sessionCodeDisplay');
+    if (el) el.style.width = el.offsetWidth + 'px';
+  });
 }
 
-// Copy code to clipboard with COPIED! feedback
+// Copy code to clipboard with COPY! feedback
 function copySessionCode() {
   const el = document.getElementById('sessionCodeDisplay');
   navigator.clipboard.writeText(activeSessionCode).then(() => {
-    el.textContent = 'COPIED!';
-    el.classList.add('copied');
+    el.textContent = 'COPY!';
+    el.classList.add('COPY');
     setTimeout(() => {
       el.textContent = activeSessionCode;
-      el.classList.remove('copied');
+      el.classList.remove('COPY');
     }, 1500);
   });
 }
@@ -5667,5 +5815,6 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="story-text" id="storyText"></div>
   </div>
 </div>
+<div id="hostToast"></div>
 </body>
 </html>
