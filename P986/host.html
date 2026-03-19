@@ -899,6 +899,9 @@ h1, h2, h3, h4 {
 
 .stat-value.coins {
   color: #FFD700;
+  min-width: 4ch;
+  max-width: 4ch;
+  width: 4ch;
 }
 
 /* ==========================
@@ -992,7 +995,7 @@ h1, h2, h3, h4 {
 .bestow-coin-icon.silver { background: linear-gradient(160deg,#E8E8E8,#9E9E9E); color:#2a2a2a; }
 .bestow-coin-icon.alloy  { background: linear-gradient(160deg,#b87333,#7a4a1e); color:#f0d0a0; }
 .bestow-coin-icon.old    { background: linear-gradient(160deg,#a3c9a8,#4a7c59); color:#0d2e18; }
-.bestow-coin-icon.li     { background: linear-gradient(160deg,#e8c4ff,#8b3fa8); color:#1a0028; }
+.bestow-coin-icon.li     { background: linear-gradient(160deg,#e8d5b7,#9e7c3a); color:#2a1800; }
 
 .bestow-coin-label {
   flex: 1;
@@ -3238,7 +3241,7 @@ const STAT_MAX = {
   madness: 50,
   life: 50,
   soul: 12,
-  coins: 99
+  coins: 1024
 };
 
 function updateStat(index, stat, delta) {
@@ -5637,7 +5640,7 @@ function closeBestowOverlay() {
 }
 
 function adjustBestowAmount(coin, dir) {
-  bestowAmounts[coin] = Math.max(0, (bestowAmounts[coin] || 0) + dir);
+  bestowAmounts[coin] = Math.max(0, Math.min(99, (bestowAmounts[coin] || 0) + dir));
   const el = document.getElementById(`bestowAmt-${coin}`);
   if (el) {
     el.textContent = bestowAmounts[coin];
@@ -5780,8 +5783,31 @@ document.addEventListener('DOMContentLoaded', () => {
     <!-- Li (mystery - always shown to host) -->
     <hr class="bestow-divider">
     <div class="bestow-row">
-      <div class="bestow-coin-icon li">Li</div>
-      <div class="bestow-coin-label">Li<br><span class="bestow-coin-sub">Rare · Kingdom coin</span></div>
+      <div class="bestow-coin-icon li">
+        <svg viewBox="0 0 20 34" width="0.75rem" height="1.25rem" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="kobGoldH" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#f5d97a"/>
+              <stop offset="50%" stop-color="#c8933a"/>
+              <stop offset="100%" stop-color="#a06820"/>
+            </linearGradient>
+          </defs>
+          <rect x="1.5" y="0.5" width="17" height="33" rx="7" ry="7" fill="url(#kobGoldH)" stroke="#7a4e10" stroke-width="1.2"/>
+          <line x1="3.5" y1="5"  x2="16.5" y2="5"  stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="7"  x2="17"   y2="7"  stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="9"  x2="17"   y2="9"  stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="11" x2="17"   y2="11" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="13" x2="17"   y2="13" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="21" x2="17"   y2="21" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="23" x2="17"   y2="23" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="25" x2="17"   y2="25" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="27" x2="17"   y2="27" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3.5" y1="29" x2="16.5" y2="29" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <ellipse cx="10" cy="17" rx="4" ry="5.5" fill="none" stroke="#7a4e10" stroke-width="0.9" opacity="0.75"/>
+          <ellipse cx="10" cy="17" rx="2" ry="3"   fill="none" stroke="#9e6010" stroke-width="0.5" opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="bestow-coin-label">Li<br><span class="bestow-coin-sub">Forbidden outside its homeland.</span></div>
       <div class="bestow-adj-group">
         <button class="bestow-adj-btn" data-coin="mystery" data-dir="-1">−</button>
         <span class="bestow-amount zero" id="bestowAmt-mystery">0</span>

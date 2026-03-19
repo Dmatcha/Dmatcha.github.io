@@ -2420,10 +2420,36 @@
       <div id="coinRow-mystery" style="display:none;">
         <hr class="coin-divider">
         <div class="coin-row">
-          <div class="coin-icon" id="mysteryIcon" style="background:linear-gradient(160deg,#e8d5b7,#9e7c3a);color:#2a1800;">?</div>
+          <div class="coin-icon" id="mysteryIcon" style="background:linear-gradient(160deg,#e8d5b7,#9e7c3a);color:#2a1800;">
+            <svg viewBox="0 0 20 34" width="0.75rem" height="1.25rem" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="kobGold" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#f5d97a"/>
+                  <stop offset="50%" stop-color="#c8933a"/>
+                  <stop offset="100%" stop-color="#a06820"/>
+                </linearGradient>
+              </defs>
+              <!-- Koban body: tall rounded rectangle -->
+              <rect x="1.5" y="0.5" width="17" height="33" rx="7" ry="7" fill="url(#kobGold)" stroke="#7a4e10" stroke-width="1.2"/>
+              <!-- Horizontal ridges across face -->
+              <line x1="3.5" y1="5"  x2="16.5" y2="5"  stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="7"  x2="17"   y2="7"  stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="9"  x2="17"   y2="9"  stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="11" x2="17"   y2="11" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="13" x2="17"   y2="13" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="21" x2="17"   y2="21" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="23" x2="17"   y2="23" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="25" x2="17"   y2="25" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="27" x2="17"   y2="27" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3.5" y1="29" x2="16.5" y2="29" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <!-- Central oval stamp -->
+              <ellipse cx="10" cy="17" rx="4" ry="5.5" fill="none" stroke="#7a4e10" stroke-width="0.9" opacity="0.75"/>
+              <ellipse cx="10" cy="17" rx="2" ry="3"   fill="none" stroke="#9e6010" stroke-width="0.5" opacity="0.5"/>
+            </svg>
+          </div>
           <div class="coin-label-group">
-            <div class="coin-label" id="mysteryLabel">???</div>
-            <div class="coin-sublabel">A rare coin</div>
+            <div class="coin-label" id="mysteryLabel">Li</div>
+            <div class="coin-sublabel">Possession and exchange is forbidden outside its kingdom of origin.</div>
           </div>
           <div class="coin-balance" id="coinBal-mystery">0</div>
           <div class="coin-spend-group">
@@ -7428,11 +7454,18 @@ function renderCoinUI() {
   coinSpendBtn.disabled = !anyPending;
 }
 
+const COIN_PER_TYPE_MAX = 999;  // max of each coin type
+const COIN_TOTAL_MAX   = 1024; // max total coins across all types
+
 // Adjust pending amount for a coin
 function adjustPending(coin, dir) {
   const balances = loadCoinBalances();
   const bal = balances[coin] || 0;
   const current = coinPending[coin] || 0;
+  const totalPending = COIN_KEYS.reduce((s, c) => s + (coinPending[c] || 0), 0);
+  const totalBalance = COIN_KEYS.reduce((s, c) => s + (balances[c] || 0), 0);
+
+  // Can't spend more than balance, can't spend more than total owned
   coinPending[coin] = Math.max(0, Math.min(bal, current + dir));
   renderCoinUI();
 }
@@ -7499,13 +7532,25 @@ function listenForCoinGrants(code, slotKey) {
     const incoming = snap.val();
     if (!incoming || typeof incoming !== 'object') return;
 
-    // Always overwrite local with whatever the host has written — source of truth is Firebase
+    // Apply incoming values, capping each coin at COIN_PER_TYPE_MAX
     const local = loadCoinBalances();
     COIN_KEYS.forEach(coin => {
       if (incoming[coin] !== undefined) {
-        local[coin] = incoming[coin];
+        local[coin] = Math.min(incoming[coin], COIN_PER_TYPE_MAX);
       }
     });
+
+    // Enforce total cap — trim from lowest-value coins first (alloy → silver → gold → old → mystery)
+    const trimOrder = ['alloy', 'silver', 'gold', 'old', 'mystery'];
+    let total = COIN_KEYS.reduce((s, c) => s + (local[c] || 0), 0);
+    for (const coin of trimOrder) {
+      if (total <= COIN_TOTAL_MAX) break;
+      const excess = total - COIN_TOTAL_MAX;
+      const removed = Math.min(local[coin] || 0, excess);
+      local[coin] = (local[coin] || 0) - removed;
+      total -= removed;
+    }
+
     saveCoinBalances(local);
 
     // Reveal mystery coin row if balance > 0
@@ -7531,8 +7576,20 @@ function syncCoinsFromFirebase(callback) {
     if (incoming && typeof incoming === 'object') {
       const local = loadCoinBalances();
       COIN_KEYS.forEach(coin => {
-        if (incoming[coin] !== undefined) local[coin] = incoming[coin];
+        if (incoming[coin] !== undefined) {
+          local[coin] = Math.min(incoming[coin], COIN_PER_TYPE_MAX);
+        }
       });
+      // Enforce total cap
+      let total = COIN_KEYS.reduce((s, c) => s + (local[c] || 0), 0);
+      const trimOrder = ['alloy', 'silver', 'gold', 'old', 'mystery'];
+      for (const coin of trimOrder) {
+        if (total <= COIN_TOTAL_MAX) break;
+        const excess = total - COIN_TOTAL_MAX;
+        const removed = Math.min(local[coin] || 0, excess);
+        local[coin] = (local[coin] || 0) - removed;
+        total -= removed;
+      }
       saveCoinBalances(local);
       if ((local.mystery || 0) > 0) {
         document.getElementById('coinRow-mystery').style.display = 'block';
@@ -7540,7 +7597,7 @@ function syncCoinsFromFirebase(callback) {
     }
     if (callback) callback();
   }).catch(() => {
-    if (callback) callback(); // Still open overlay on network error
+    if (callback) callback();
   });
 }
 
