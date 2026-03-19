@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
 /* ===========================================
    CSS VARIABLES
@@ -896,6 +899,187 @@ h1, h2, h3, h4 {
 
 .stat-value.coins {
   color: #FFD700;
+}
+
+/* ==========================
+   COIN BESTOW SYSTEM
+========================== */
+.coin-crown-btn {
+  appearance: none;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: rgba(212, 175, 55, 0.07);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+.coin-crown-btn:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #FFD700;
+  filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+}
+.coin-crown-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Bestow Overlay */
+#bestowOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 8, 12, 0.88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+#bestowOverlay.hidden { display: none; }
+
+.bestow-panel {
+  background: #18181e;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 16px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 22rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+}
+
+.bestow-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #FFD700;
+  text-align: center;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.04em;
+}
+.bestow-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.bestow-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+.bestow-coin-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.3);
+}
+.bestow-coin-icon.gold   { background: linear-gradient(160deg,#FFD700,#B8860B); color:#3d2a00; }
+.bestow-coin-icon.silver { background: linear-gradient(160deg,#E8E8E8,#9E9E9E); color:#2a2a2a; }
+.bestow-coin-icon.alloy  { background: linear-gradient(160deg,#b87333,#7a4a1e); color:#f0d0a0; }
+.bestow-coin-icon.old    { background: linear-gradient(160deg,#a3c9a8,#4a7c59); color:#0d2e18; }
+.bestow-coin-icon.li     { background: linear-gradient(160deg,#e8c4ff,#8b3fa8); color:#1a0028; }
+
+.bestow-coin-label {
+  flex: 1;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+.bestow-coin-sub {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.bestow-adj-group {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.bestow-adj-btn {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border-medium);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s ease;
+  line-height: 1;
+}
+.bestow-adj-btn:hover { background: rgba(255,255,255,0.12); }
+.bestow-amount {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #FFD700;
+  min-width: 1.5rem;
+  text-align: center;
+}
+.bestow-amount.zero { color: var(--text-muted); }
+
+.bestow-divider {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  margin: 1rem 0 0.75rem;
+}
+
+.bestow-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+.bestow-cancel-btn {
+  flex: 1;
+  padding: 0.6rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-medium);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.bestow-cancel-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+
+.bestow-confirm-btn {
+  flex: 2;
+  padding: 0.6rem;
+  background: rgba(212, 175, 55, 0.18);
+  border: 1px solid #D4AF37;
+  border-radius: 8px;
+  color: #FFD700;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.05em;
+}
+.bestow-confirm-btn:hover:not(:disabled) {
+  background: rgba(212, 175, 55, 0.32);
+  box-shadow: 0 0 10px rgba(255,215,0,0.25);
+}
+.bestow-confirm-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 /* ==========================
@@ -2267,6 +2451,64 @@ h1, h2, h3, h4 {
 
 }
 
+/* ==========================
+   SESSION SYSTEM
+========================== */
+.notepad-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-right: 3rem;
+}
+
+.session-btn {
+  appearance: none;
+  border: 1px solid var(--accent-primary);
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--accent-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.session-btn:hover {
+  background: var(--accent-primary);
+  color: #fff;
+}
+
+.session-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-secondary);
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--accent-primary);
+  border-radius: var(--radius-sm);
+  background: rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.session-code:hover {
+  background: rgba(139, 92, 246, 0.25);
+}
+
+.session-code.copied {
+  color: var(--accent-success);
+  border-color: var(--accent-success);
+  background: rgba(16, 185, 129, 0.1);
+}
+
 </style>
 </head>
 <body>
@@ -2380,14 +2622,20 @@ h1, h2, h3, h4 {
 <div class="notepad-overlay" id="notepadOverlay" onclick="closeNotepadOnOverlay(event)">
   <div class="notepad-content">
     <button class="notepad-close" onclick="closeNotepad()">&times;</button>
-    <h2 class="notepad-title" id="notepadTitle">
-      <svg class="notepad-title-icon" viewBox="0 0 508 508" version="1.1" xmlns="http://www.w3.org/2000/svg" width="2.5rem" height="2.5rem">
-        <g id="SVGRepo_bgCarrier" stroke-width="0"/>
-        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
-        <g id="SVGRepo_iconCarrier"> <circle style="fill:#9ce0f7;" cx="254" cy="254" r="254"/> <path style="fill:#9f6a2d;" d="M89.2,447.2c44.4,38,102,60.8,164.8,60.8s120.4-22.8,164.8-60.8H89.2z"/> <path style="fill:#FFFFFF;" d="M283.2,212c-14,6.8-28.4,14.8-42,23.6c10.8-3.2,21.2-5.6,32-8c-17.2,26-36.8,51.2-59.6,74 c-13.2-29.2-15.2-66.4-5.6-102.4c5.2,10.4,10.8,20.4,16.8,30c-4.4-16.4-7.6-33.6-9.6-50.8l0,0c4.8-12,10.8-23.6,18-34.8 c0.4,11.6,1.2,22.8,2.8,34c2-18,6-35.6,10.8-53.2c7.2-8.4,15.2-16.4,23.6-23.2c-1.2,12.4-1.6,24.8-1.2,36.8 c4.4-16,9.6-32,16-48c20-13.2,41.6-21.6,62.8-24c-5.6,20.8-12.8,40.8-20.8,60.4c-13.6,7.2-26.8,15.6-39.6,24.4 c11.2-4,22-7.2,33.2-9.6c-4,8.4-8,17.2-12,25.2l0,0c-12.8,8.8-25.6,18.8-38,29.6c9.6-4.4,18.8-8.4,28.4-12 c-1.6,2.8-3.2,5.6-4.8,8.8C291.2,199.2,287.2,205.6,283.2,212z"/> <path style="fill:#7d7f82;" d="M335.2,76.8c-8,7.2-19.6,17.6-32,31.6c-12.4,13.6-25.6,30.8-38,50c-6,9.6-12,20-17.6,30.8 s-10.4,21.6-15.2,33.2c-4.4,11.2-8.4,22.8-12,34.4c-3.6,11.6-6.4,23.2-8.4,34.4c-4,19.6-6,38.8-7.2,55.6c0,2.8,1.6,5.2,4,6.4 l0,0c1.6-18,4.4-38.8,9.6-60.4c2.4-11.2,5.6-22.4,9.2-33.6c3.6-11.2,7.6-22.4,12-33.6c4.4-11.2,9.2-22,14.8-32.8 c5.2-10.4,10.8-20.8,16.8-30.4c11.6-19.2,24-36.4,35.6-50.8c11.6-14,22-25.6,29.6-33.2s12-12,12-12 C348.4,66,343.2,69.6,335.2,76.8z"/> <path style="fill:#324A5E;" d="M260.8,328h-89.2c-28,12.4-47.2,35.6-47.2,62.4c0,20.8,11.6,39.6,30,52.8c3.6,2.4,8,4,12,4h99.2 c4.4,0,8.4-1.6,12-4c18.4-13.2,30-32,30-52.8C308,363.6,288.8,340,260.8,328z"/> <rect x="171.6" y="312.4" style="fill:#2B3B4E;" width="89.2" height="15.6"/> <path style="fill:#324A5E;" d="M265.2,312.4h-98.4c-1.2,0-2-0.8-2-2V294c0-1.2,0.8-2,2-2h98.4c1.2,0,2,0.8,2,2v16.8 C267.2,311.6,266.4,312.4,265.2,312.4z"/> </g>
-      </svg>
-      <span id="notepadTitleText">Game Notes</span>
-    </h2>
+    <div class="notepad-title-row">
+      <h2 class="notepad-title" id="notepadTitle" style="margin-bottom:0;">
+        <svg class="notepad-title-icon" viewBox="0 0 508 508" version="1.1" xmlns="http://www.w3.org/2000/svg" width="2.5rem" height="2.5rem">
+          <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+          <g id="SVGRepo_iconCarrier"> <circle style="fill:#9ce0f7;" cx="254" cy="254" r="254"/> <path style="fill:#9f6a2d;" d="M89.2,447.2c44.4,38,102,60.8,164.8,60.8s120.4-22.8,164.8-60.8H89.2z"/> <path style="fill:#FFFFFF;" d="M283.2,212c-14,6.8-28.4,14.8-42,23.6c10.8-3.2,21.2-5.6,32-8c-17.2,26-36.8,51.2-59.6,74 c-13.2-29.2-15.2-66.4-5.6-102.4c5.2,10.4,10.8,20.4,16.8,30c-4.4-16.4-7.6-33.6-9.6-50.8l0,0c4.8-12,10.8-23.6,18-34.8 c0.4,11.6,1.2,22.8,2.8,34c2-18,6-35.6,10.8-53.2c7.2-8.4,15.2-16.4,23.6-23.2c-1.2,12.4-1.6,24.8-1.2,36.8 c4.4-16,9.6-32,16-48c20-13.2,41.6-21.6,62.8-24c-5.6,20.8-12.8,40.8-20.8,60.4c-13.6,7.2-26.8,15.6-39.6,24.4 c11.2-4,22-7.2,33.2-9.6c-4,8.4-8,17.2-12,25.2l0,0c-12.8,8.8-25.6,18.8-38,29.6c9.6-4.4,18.8-8.4,28.4-12 c-1.6,2.8-3.2,5.6-4.8,8.8C291.2,199.2,287.2,205.6,283.2,212z"/> <path style="fill:#7d7f82;" d="M335.2,76.8c-8,7.2-19.6,17.6-32,31.6c-12.4,13.6-25.6,30.8-38,50c-6,9.6-12,20-17.6,30.8 s-10.4,21.6-15.2,33.2c-4.4,11.2-8.4,22.8-12,34.4c-3.6,11.6-6.4,23.2-8.4,34.4c-4,19.6-6,38.8-7.2,55.6c0,2.8,1.6,5.2,4,6.4 l0,0c1.6-18,4.4-38.8,9.6-60.4c2.4-11.2,5.6-22.4,9.2-33.6c3.6-11.2,7.6-22.4,12-33.6c4.4-11.2,9.2-22,14.8-32.8 c5.2-10.4,10.8-20.8,16.8-30.4c11.6-19.2,24-36.4,35.6-50.8c11.6-14,22-25.6,29.6-33.2s12-12,12-12 C348.4,66,343.2,69.6,335.2,76.8z"/> <path style="fill:#324A5E;" d="M260.8,328h-89.2c-28,12.4-47.2,35.6-47.2,62.4c0,20.8,11.6,39.6,30,52.8c3.6,2.4,8,4,12,4h99.2 c4.4,0,8.4-1.6,12-4c18.4-13.2,30-32,30-52.8C308,363.6,288.8,340,260.8,328z"/> <rect x="171.6" y="312.4" style="fill:#2B3B4E;" width="89.2" height="15.6"/> <path style="fill:#324A5E;" d="M265.2,312.4h-98.4c-1.2,0-2-0.8-2-2V294c0-1.2,0.8-2,2-2h98.4c1.2,0,2,0.8,2,2v16.8 C267.2,311.6,266.4,312.4,265.2,312.4z"/> </g>
+        </svg>
+        <span id="notepadTitleText">Game Notes</span>
+      </h2>
+      <!-- Session button / code display -->
+      <div id="sessionControl">
+        <button class="session-btn" id="hostSessionBtn" onclick="startHostSession()">HOST SESSION</button>
+      </div>
+    </div>
     <textarea class="notepad-textarea" id="notepadText" placeholder="Write your notes here..." oninput="saveNotepad()"></textarea>
   </div>
 </div>
@@ -2770,11 +3018,11 @@ function renderPlayers() {
         <div class="stat-row stat-row--right">
           <span class="stat-label">Coins:</span>
           <div class="stat-controls">
-            <button class="stat-btn minus" onclick="updateStat(${index}, 'coins', -1)">
-              <svg fill="currentColor" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="1.25rem" height="1.25rem"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>minus-round</title> <path d="M0 16q0 3.264 1.28 6.208t3.392 5.12 5.12 3.424 6.208 1.248 6.208-1.248 5.12-3.424 3.392-5.12 1.28-6.208-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM8 16q0 0.832 0.576 1.44t1.44 0.576h12q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-12q-0.832 0-1.44 0.576t-0.576 1.408z"></path> </g></svg>
+            <button class="coin-crown-btn" onclick="openBestowOverlay(${index})" title="Bestow specific coins">
+              <img src="../icons/crown-coin.svg" alt="Bestow coins" />
             </button>
-            <span class="stat-value coins">${player.coins}</span>
-            <button class="stat-btn plus" onclick="updateStat(${index}, 'coins', 1)">
+            <span class="stat-value coins">${getCoinTotal(player)}</span>
+            <button class="stat-btn plus coin-plus-btn" onclick="giveRandomCoin(${index})" title="Give a random coin">
               <svg fill="currentColor" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="1.25rem" height="1.25rem">
                 <path d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-20q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v20q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM8 16q0 0.832 0.576 1.44t1.44 0.576h4v4q0 0.832 0.576 1.408t1.408 0.576 1.408-0.576 0.608-1.408v-4h4q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-4v-4q0-0.832-0.608-1.408t-1.408-0.608-1.408 0.608-0.576 1.408v4h-4q-0.832 0-1.44 0.576t-0.576 1.408z"/>
               </svg>
@@ -2906,6 +3154,12 @@ function confirmDelete(btn) {
 function updatePlayer(index, field, value) {
   gameState.players[index][field] = value;
   saveState();
+
+  // Push artefact/iris overrides to the player's Firebase slot
+  if ((field === 'artefact' || field === 'iris') && activeSessionCode && value) {
+    const slot = `player${index}`;
+    db.ref(`sessions/${activeSessionCode}/players/${slot}/${field}`).set(value);
+  }
 }
 
 const STAT_MAX = {
@@ -2920,15 +3174,26 @@ function updateStat(index, stat, delta) {
   if (gameState.players[index][stat] < 0) {
     gameState.players[index][stat] = 0;
   }
-  if (STAT_MAX[stat] !== undefined && gameState.players[index][stat] > STAT_MAX[stat]) {
-    gameState.players[index][stat] = STAT_MAX[stat];
+
+  // For life, use player's synced maxLife if available, otherwise fall back to STAT_MAX
+  const effectiveMax = (stat === 'life' && gameState.players[index].maxLife)
+    ? gameState.players[index].maxLife
+    : STAT_MAX[stat];
+
+  if (effectiveMax !== undefined && gameState.players[index][stat] > effectiveMax) {
+    gameState.players[index][stat] = effectiveMax;
   }
-  
+
   // Track madness changes for the report
   if (stat === 'madness') {
     gameState.players[index].previousMadness = gameState.players[index].madness - delta;
   }
-  
+
+  // Sync life changes back to player page via Firebase
+  if (stat === 'life') {
+    pushHostLifeUpdateToFirebase(index, gameState.players[index].life);
+  }
+
   renderPlayers();
   saveState();
 }
@@ -4824,8 +5089,8 @@ function loadState() {
       // Restore dice results
       renderDiceResults();
       renderEnemies();
-      renderPlayers();  // This already exists
-      setupDeleteButtons();  // ← ADD THIS LINE HERE
+      renderPlayers();  
+      setupDeleteButtons();  
       updateAddEnemyButton();
     } catch (e) {
       console.error('Failed to load state:', e);
@@ -4838,7 +5103,7 @@ function loadState() {
       gameState.enemies = [];
       gameState.enemyVisible = false;
       renderPlayers();
-      setupDeleteButtons();  // ← AND HERE TOO
+      setupDeleteButtons();  
     }
   } else {
     // Default state with 3 players
@@ -4849,13 +5114,27 @@ function loadState() {
     ];
     gameState.enemies = [];
     renderPlayers();
-    setupDeleteButtons();  // ← AND HERE
+    setupDeleteButtons();  
   }
+  restoreHostSession();
 }
 
 function resetAll() {
   if (confirm('Are you sure you want to reset all game state? This cannot be undone.')) {
     localStorage.removeItem('hostTrackerState');
+    localStorage.removeItem('hostSessionCode');
+
+    if (activeSessionCode) {
+      db.ref(`sessions/${activeSessionCode}`).remove();
+      activeSessionCode = null;
+    }
+
+    // ← ADD 3: reset session UI back to button
+    const container = document.getElementById('sessionControl');
+    if (container) {
+      container.innerHTML = `<button class="session-btn" id="hostSessionBtn" onclick="startHostSession()">HOST SESSION</button>`;
+    }
+    
     gameState = {
       villain: '',
       act: 0,
@@ -4889,7 +5168,485 @@ function resetAll() {
     saveState();
   }
 }
+
+
+// ==========================
+// FIREBASE CONFIG
+// ==========================
+// Paste your Firebase config here after creating your project
+const firebaseConfig = {
+  apiKey: "AIzaSyAtbq0awljUBBA7Oy7NgjH4tEd9NM-95Mg",
+  authDomain: "p986-online.firebaseapp.com",
+  databaseURL: "https://p986-online-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "p986-online",
+  storageBucket: "p986-online.firebasestorage.app",
+  messagingSenderId: "782380134937",
+  appId: "1:782380134937:web:68bd687556b526b948b088"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ==========================
+// SESSION SYSTEM
+// ==========================
+const SESSION_TTL_MS = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
+let activeSessionCode = null;
+let sessionListeners = {}; // track Firebase listeners for cleanup
+
+// Generate a unique 4-character alphanumeric code
+async function generateUniqueCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code, exists;
+  do {
+    code = Array.from({length: 4}, () =>
+      chars[Math.floor(Math.random() * chars.length)]).join('');
+    const snap = await db.ref(`sessions/${code}`).get();
+    exists = snap.exists();
+  } while (exists);
+  return code;
+}
+
+// Restore session after page refresh
+async function restoreHostSession() {
+  const savedCode = localStorage.getItem('hostSessionCode');
+  if (!savedCode) return;
+
+  try {
+    const snap = await db.ref(`sessions/${savedCode}`).get();
+    if (!snap.exists()) {
+      // Session gone from Firebase — clean up
+      localStorage.removeItem('hostSessionCode');
+      return;
+    }
+
+    const session = snap.val();
+    if (session.expiresAt && Date.now() > session.expiresAt) {
+      // Expired — clean up
+      await db.ref(`sessions/${savedCode}`).remove();
+      localStorage.removeItem('hostSessionCode');
+      return;
+    }
+
+    // Valid session — reconnect
+    activeSessionCode = savedCode;
+    showSessionCode(savedCode);
+    listenForPlayerJoins(savedCode);
+    listenForPlayerStatUpdates(savedCode);
+
+  } catch (err) {
+    console.error('Failed to restore session:', err);
+    localStorage.removeItem('hostSessionCode');
+  }
+}
+
+// Host clicks HOST SESSION
+async function startHostSession() {
+  const btn = document.getElementById('hostSessionBtn');
+  btn.disabled = true;
+  btn.textContent = 'STARTING...';
+
+  try {
+    const code = await generateUniqueCode();
+    activeSessionCode = code;
+    localStorage.setItem('hostSessionCode', code);
+
+    // Write full gameState + expiry to Firebase
+    await db.ref(`sessions/${code}`).set({
+      createdAt: Date.now(),
+      expiresAt: Date.now() + SESSION_TTL_MS,
+      gameState: JSON.parse(JSON.stringify(gameState)) // deep copy
+    });
+
+    // Show the code in place of the button
+    showSessionCode(code);
+
+    // Start listening for player join requests
+    listenForPlayerJoins(code);
+
+    // Start listening for player stat updates
+    listenForPlayerStatUpdates(code);
+
+  } catch (err) {
+    console.error('Failed to start session:', err);
+    btn.disabled = false;
+    btn.textContent = 'HOST SESSION';
+  }
+}
+
+// Replace button with clickable code display
+function showSessionCode(code) {
+  const container = document.getElementById('sessionControl');
+  container.innerHTML = `
+    <span class="session-code" id="sessionCodeDisplay" onclick="copySessionCode()"
+      title="Click to copy">${code}</span>
+  `;
+}
+
+// Copy code to clipboard with COPIED! feedback
+function copySessionCode() {
+  const el = document.getElementById('sessionCodeDisplay');
+  navigator.clipboard.writeText(activeSessionCode).then(() => {
+    el.textContent = 'COPIED!';
+    el.classList.add('copied');
+    setTimeout(() => {
+      el.textContent = activeSessionCode;
+      el.classList.remove('copied');
+    }, 1500);
+  });
+}
+
+// Listen for players writing their join request under sessions/{code}/joining/
+function listenForPlayerJoins(code) {
+  db.ref(`sessions/${code}/joining`).on('child_added', async (snap) => {
+    const request = snap.val();
+    const requestKey = snap.key;
+    console.log('Join request received:', request);
+    if (!request) return;
+
+    const { name, artefact, iris } = request;
+
+    // Find matching player slot
+    let matchIndex = -1;
+
+    // Rule 1: exact name match
+    matchIndex = gameState.players.findIndex(p =>
+      p.name && p.name.trim().toLowerCase() === name.trim().toLowerCase()
+    );
+
+    // Rule 2: artefact + iris match (replace)
+    if (matchIndex === -1) {
+      matchIndex = gameState.players.findIndex(p =>
+        p.artefact && p.iris &&
+        p.artefact.trim().toLowerCase() === artefact.trim().toLowerCase() &&
+        p.iris.trim().toLowerCase() === iris.trim().toLowerCase()
+      );
+    }
+
+    // Rule 3: find first empty slot, or add new if none available
+    if (matchIndex === -1) {
+      matchIndex = gameState.players.findIndex(p => !p.name || p.name.trim() === '');
+      if (matchIndex === -1) {
+        gameState.players.push(createPlayer(gameState.players.length + 1));
+        matchIndex = gameState.players.length - 1;
+      }
+    }
+
+    // Overwrite player slot with host's saved data, keep new name/artefact/iris
+    gameState.players[matchIndex].name = name;
+    gameState.players[matchIndex].artefact = artefact;
+    gameState.players[matchIndex].iris = iris;
+
+    // Assign slot index so player knows their path
+    const playerSlot = `player${matchIndex}`;
+
+    // Write acceptance back to Firebase
+    await db.ref(`sessions/${code}/players/${playerSlot}`).set({
+      name,
+      artefact,
+      iris,
+      currentLife: gameState.players[matchIndex].life,
+      maxLife: gameState.players[matchIndex].life,
+      madness: gameState.players[matchIndex].madness,
+      soul: gameState.players[matchIndex].soul,
+      coins: gameState.players[matchIndex].coins
+    });
+
+    // Remove the join request
+    await db.ref(`sessions/${code}/joining/${requestKey}`).remove();
+
+    renderPlayers();
+    setupDeleteButtons();
+    saveState();
+  });
+}
+
+// Listen for player stat changes pushed from player pages
+function listenForPlayerStatUpdates(code) {
+  db.ref(`sessions/${code}/players`).on('child_changed', (snap) => {
+    const data = snap.val();
+    if (!data) return;
+
+    const slotIndex = parseInt(snap.key.replace('player', ''), 10);
+    if (isNaN(slotIndex) || !gameState.players[slotIndex]) return;
+
+    // Update host's gameState with player's live stats
+    gameState.players[slotIndex].life = data.currentLife ?? gameState.players[slotIndex].life;
+    gameState.players[slotIndex].maxLife = data.maxLife ?? gameState.players[slotIndex].maxLife;
+    gameState.players[slotIndex].madness = data.madness ?? gameState.players[slotIndex].madness;
+    gameState.players[slotIndex].soul = data.soul ?? gameState.players[slotIndex].soul;
+    // coins from Firebase is now a purse object — store in coinPurse, not coins
+    if (data.coins !== undefined) {
+      if (typeof data.coins === 'object') {
+        gameState.players[slotIndex].coinPurse = data.coins;
+      } else {
+        gameState.players[slotIndex].coins = data.coins;
+      }
+    }
+
+    renderPlayers();
+    saveState();
+  });
+}
+
+// ==========================
+// COIN BESTOW SYSTEM
+// ==========================
+
+// Returns the numeric coin total for display, regardless of storage format
+function getCoinTotal(player) {
+  if (!player) return 0;
+  // If coinPurse exists, sum it
+  if (player.coinPurse && typeof player.coinPurse === 'object') {
+    return Object.values(player.coinPurse).reduce((s, v) => s + (Number(v) || 0), 0);
+  }
+  // Legacy: coins is already a number
+  return typeof player.coins === 'number' ? player.coins : 0;
+}
+
+
+const RANDOM_COIN_TABLE = [
+  { type: 'gold',   weight: 10 },
+  { type: 'silver', weight: 35 },
+  { type: 'alloy',  weight: 40 },
+  { type: 'old',    weight: 15 },
+];
+
+function rollRandomCoin() {
+  const total = RANDOM_COIN_TABLE.reduce((s, c) => s + c.weight, 0);
+  let roll = Math.random() * total;
+  for (const entry of RANDOM_COIN_TABLE) {
+    roll -= entry.weight;
+    if (roll <= 0) return entry.type;
+  }
+  return 'alloy'; // fallback
+}
+
+function giveRandomCoin(playerIndex) {
+  const coinType = rollRandomCoin();
+  const player = gameState.players[playerIndex];
+
+  // Initialise coinPurse if missing
+  if (!player.coinPurse) player.coinPurse = { gold:0, silver:0, alloy:0, old:0, mystery:0 };
+  player.coinPurse[coinType] = (player.coinPurse[coinType] || 0) + 1;
+  player.coins = (player.coins || 0) + 1; // keep legacy total in sync
+
+  renderPlayers();
+  saveState();
+  pushCoinUpdateToFirebase(playerIndex);
+
+  // Server log
+  if (activeSessionCode) {
+    const coinNames = { gold:'Gold', silver:'Silver', alloy:'Alloy', old:'Old Coin' };
+    const playerName = gameState.players[playerIndex]?.name || `Player ${playerIndex + 1}`;
+    db.ref(`sessions/${activeSessionCode}/log`).push({
+      type: 'coinBestow',
+      summary: `Host bestowed 1 ${coinNames[coinType]} to ${playerName}`,
+      player: playerName,
+      coins: { [coinType]: 1 },
+      timestamp: Date.now()
+    });
+  }
+
+  // Brief visual feedback — target the coins + button specifically
+  const cards = document.querySelectorAll('.player-card');
+  if (cards[playerIndex]) {
+    const btn = cards[playerIndex].querySelector('.coin-plus-btn');
+    if (btn) {
+      btn.title = `+1 ${coinNames[coinType]}!`;
+      btn.style.borderColor = '#FFD700';
+      setTimeout(() => { btn.title = 'Give a random coin'; btn.style.borderColor = ''; }, 1500);
+    }
+  }
+}
+
+// Bestow overlay state
+let bestowTargetIndex = null;
+let bestowAmounts = { gold:0, silver:0, alloy:0, old:0, mystery:0 };
+const BESTOW_COIN_KEYS = ['gold','silver','alloy','old','mystery'];
+
+function openBestowOverlay(playerIndex) {
+  bestowTargetIndex = playerIndex;
+  bestowAmounts = { gold:0, silver:0, alloy:0, old:0, mystery:0 };
+
+  const player = gameState.players[playerIndex];
+  document.getElementById('bestowSubtitle').textContent =
+    `Bestow coins to ${player.name || `Player ${playerIndex + 1}`}`;
+
+  // Reset all amount displays
+  BESTOW_COIN_KEYS.forEach(coin => {
+    const el = document.getElementById(`bestowAmt-${coin}`);
+    if (el) { el.textContent = '0'; el.classList.add('zero'); }
+  });
+  document.getElementById('bestowConfirmBtn').disabled = true;
+
+  document.getElementById('bestowOverlay').classList.remove('hidden');
+}
+
+function closeBestowOverlay() {
+  bestowTargetIndex = null;
+  document.getElementById('bestowOverlay').classList.add('hidden');
+}
+
+function adjustBestowAmount(coin, dir) {
+  bestowAmounts[coin] = Math.max(0, (bestowAmounts[coin] || 0) + dir);
+  const el = document.getElementById(`bestowAmt-${coin}`);
+  if (el) {
+    el.textContent = bestowAmounts[coin];
+    el.classList.toggle('zero', bestowAmounts[coin] === 0);
+  }
+  const anyPositive = BESTOW_COIN_KEYS.some(c => bestowAmounts[c] > 0);
+  document.getElementById('bestowConfirmBtn').disabled = !anyPositive;
+}
+
+function confirmBestow() {
+  if (bestowTargetIndex === null) return;
+  const player = gameState.players[bestowTargetIndex];
+
+  // Always initialise coinPurse with all keys before adding
+  if (!player.coinPurse || typeof player.coinPurse !== 'object') {
+    player.coinPurse = { gold:0, silver:0, alloy:0, old:0, mystery:0 };
+  }
+  BESTOW_COIN_KEYS.forEach(coin => {
+    if (player.coinPurse[coin] === undefined) player.coinPurse[coin] = 0;
+  });
+
+  let totalGiven = 0;
+  BESTOW_COIN_KEYS.forEach(coin => {
+    const amt = bestowAmounts[coin] || 0;
+    if (amt > 0) {
+      player.coinPurse[coin] += amt;
+      totalGiven += amt;
+    }
+  });
+
+  if (typeof player.coins !== 'number') player.coins = 0;
+  player.coins += totalGiven;
+
+  const targetIndex = bestowTargetIndex; // capture before closing clears it
+  closeBestowOverlay();
+  renderPlayers();
+  saveState();
+  pushCoinUpdateToFirebase(targetIndex);
+
+  // Server log
+  if (activeSessionCode) {
+    const coinNames = { gold:'Gold', silver:'Silver', alloy:'Alloy', old:'Old Coin', mystery:'Li' };
+    const parts = BESTOW_COIN_KEYS
+      .filter(c => (bestowAmounts[c] || 0) > 0)
+      .map(c => `${bestowAmounts[c]} ${coinNames[c]}`);
+    if (parts.length > 0) {
+      const playerName = gameState.players[targetIndex]?.name || `Player ${targetIndex + 1}`;
+      db.ref(`sessions/${activeSessionCode}/log`).push({
+        type: 'coinBestow',
+        summary: `Host bestowed ${parts.join(', ')} to ${playerName}`,
+        player: playerName,
+        coins: { ...bestowAmounts },
+        timestamp: Date.now()
+      });
+    }
+  }
+} // end confirmBestow
+
+function pushCoinUpdateToFirebase(playerIndex) {
+  if (!activeSessionCode) return;
+  const player = gameState.players[playerIndex];
+  const slot = `player${playerIndex}`;
+  const purse = player.coinPurse || { gold:0, silver:0, alloy:0, old:0, mystery:0 };
+  db.ref(`sessions/${activeSessionCode}/players/${slot}/coins`).set(purse);
+}
+
+// Call this from updateStat() to push host life changes back to player page
+function pushHostLifeUpdateToFirebase(playerIndex, newLife) {
+  if (!activeSessionCode) return;
+  const slot = `player${playerIndex}`;
+  db.ref(`sessions/${activeSessionCode}/players/${slot}/currentLife`).set(newLife);
+}
+
+
+// Wire up bestow overlay buttons
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('bestowCancelBtn').addEventListener('click', closeBestowOverlay);
+  document.getElementById('bestowConfirmBtn').addEventListener('click', confirmBestow);
+
+  document.querySelectorAll('.bestow-adj-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      adjustBestowAmount(btn.dataset.coin, parseInt(btn.dataset.dir, 10));
+    });
+  });
+
+  // Close on backdrop click
+  document.getElementById('bestowOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('bestowOverlay')) closeBestowOverlay();
+  });
+});
+
 </script>
+
+<!-- Bestow Coins Overlay -->
+<div id="bestowOverlay" class="hidden">
+  <div class="bestow-panel">
+    <div class="bestow-title">Bestow Coins</div>
+    <div class="bestow-subtitle" id="bestowSubtitle">Choose coins to give</div>
+
+    <!-- Gold -->
+    <div class="bestow-row">
+      <div class="bestow-coin-icon gold">G</div>
+      <div class="bestow-coin-label">Gold<br><span class="bestow-coin-sub">Highest value</span></div>
+      <div class="bestow-adj-group">
+        <button class="bestow-adj-btn" data-coin="gold" data-dir="-1">−</button>
+        <span class="bestow-amount zero" id="bestowAmt-gold">0</span>
+        <button class="bestow-adj-btn" data-coin="gold" data-dir="1">+</button>
+      </div>
+    </div>
+    <!-- Silver -->
+    <div class="bestow-row">
+      <div class="bestow-coin-icon silver">S</div>
+      <div class="bestow-coin-label">Silver<br><span class="bestow-coin-sub">10 Silver = 1 Gold</span></div>
+      <div class="bestow-adj-group">
+        <button class="bestow-adj-btn" data-coin="silver" data-dir="-1">−</button>
+        <span class="bestow-amount zero" id="bestowAmt-silver">0</span>
+        <button class="bestow-adj-btn" data-coin="silver" data-dir="1">+</button>
+      </div>
+    </div>
+    <!-- Alloy -->
+    <div class="bestow-row">
+      <div class="bestow-coin-icon alloy">A</div>
+      <div class="bestow-coin-label">Alloy<br><span class="bestow-coin-sub">10 Alloy = 1 Silver</span></div>
+      <div class="bestow-adj-group">
+        <button class="bestow-adj-btn" data-coin="alloy" data-dir="-1">−</button>
+        <span class="bestow-amount zero" id="bestowAmt-alloy">0</span>
+        <button class="bestow-adj-btn" data-coin="alloy" data-dir="1">+</button>
+      </div>
+    </div>
+    <!-- Old Coin -->
+    <div class="bestow-row">
+      <div class="bestow-coin-icon old">✦</div>
+      <div class="bestow-coin-label">Old Coin<br><span class="bestow-coin-sub">Value varies by merchant</span></div>
+      <div class="bestow-adj-group">
+        <button class="bestow-adj-btn" data-coin="old" data-dir="-1">−</button>
+        <span class="bestow-amount zero" id="bestowAmt-old">0</span>
+        <button class="bestow-adj-btn" data-coin="old" data-dir="1">+</button>
+      </div>
+    </div>
+    <!-- Li (mystery - always shown to host) -->
+    <hr class="bestow-divider">
+    <div class="bestow-row">
+      <div class="bestow-coin-icon li">Li</div>
+      <div class="bestow-coin-label">Li<br><span class="bestow-coin-sub">Rare · Kingdom coin</span></div>
+      <div class="bestow-adj-group">
+        <button class="bestow-adj-btn" data-coin="mystery" data-dir="-1">−</button>
+        <span class="bestow-amount zero" id="bestowAmt-mystery">0</span>
+        <button class="bestow-adj-btn" data-coin="mystery" data-dir="1">+</button>
+      </div>
+    </div>
+
+    <div class="bestow-actions">
+      <button class="bestow-cancel-btn" id="bestowCancelBtn">Cancel</button>
+      <button class="bestow-confirm-btn" id="bestowConfirmBtn" disabled>✦ Bestow</button>
+    </div>
+  </div>
+</div>
 
 <!-- ==========================
    VILLAIN CARD & STORY OVERLAYS

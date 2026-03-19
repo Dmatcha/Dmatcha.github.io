@@ -7,9 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
 /* ===========================================
    CSS VARIABLES
@@ -2270,64 +2267,6 @@ h1, h2, h3, h4 {
 
 }
 
-/* ==========================
-   SESSION SYSTEM
-========================== */
-.notepad-title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-  padding-right: 3rem;
-}
-
-.session-btn {
-  appearance: none;
-  border: 1px solid var(--accent-primary);
-  background: rgba(139, 92, 246, 0.15);
-  color: var(--accent-secondary);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 0.35rem 0.75rem;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  flex-shrink: 0;
-}
-
-.session-btn:hover {
-  background: var(--accent-primary);
-  color: #fff;
-}
-
-.session-code {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--accent-secondary);
-  letter-spacing: 0.2em;
-  cursor: pointer;
-  padding: 0.3rem 0.75rem;
-  border: 1px solid var(--accent-primary);
-  border-radius: var(--radius-sm);
-  background: rgba(139, 92, 246, 0.1);
-  transition: all 0.2s ease;
-  user-select: none;
-}
-
-.session-code:hover {
-  background: rgba(139, 92, 246, 0.25);
-}
-
-.session-code.copied {
-  color: var(--accent-success);
-  border-color: var(--accent-success);
-  background: rgba(16, 185, 129, 0.1);
-}
-
 </style>
 </head>
 <body>
@@ -2441,20 +2380,14 @@ h1, h2, h3, h4 {
 <div class="notepad-overlay" id="notepadOverlay" onclick="closeNotepadOnOverlay(event)">
   <div class="notepad-content">
     <button class="notepad-close" onclick="closeNotepad()">&times;</button>
-    <div class="notepad-title-row">
-      <h2 class="notepad-title" id="notepadTitle" style="margin-bottom:0;">
-        <svg class="notepad-title-icon" viewBox="0 0 508 508" version="1.1" xmlns="http://www.w3.org/2000/svg" width="2.5rem" height="2.5rem">
-          <g id="SVGRepo_bgCarrier" stroke-width="0"/>
-          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
-          <g id="SVGRepo_iconCarrier"> <circle style="fill:#9ce0f7;" cx="254" cy="254" r="254"/> <path style="fill:#9f6a2d;" d="M89.2,447.2c44.4,38,102,60.8,164.8,60.8s120.4-22.8,164.8-60.8H89.2z"/> <path style="fill:#FFFFFF;" d="M283.2,212c-14,6.8-28.4,14.8-42,23.6c10.8-3.2,21.2-5.6,32-8c-17.2,26-36.8,51.2-59.6,74 c-13.2-29.2-15.2-66.4-5.6-102.4c5.2,10.4,10.8,20.4,16.8,30c-4.4-16.4-7.6-33.6-9.6-50.8l0,0c4.8-12,10.8-23.6,18-34.8 c0.4,11.6,1.2,22.8,2.8,34c2-18,6-35.6,10.8-53.2c7.2-8.4,15.2-16.4,23.6-23.2c-1.2,12.4-1.6,24.8-1.2,36.8 c4.4-16,9.6-32,16-48c20-13.2,41.6-21.6,62.8-24c-5.6,20.8-12.8,40.8-20.8,60.4c-13.6,7.2-26.8,15.6-39.6,24.4 c11.2-4,22-7.2,33.2-9.6c-4,8.4-8,17.2-12,25.2l0,0c-12.8,8.8-25.6,18.8-38,29.6c9.6-4.4,18.8-8.4,28.4-12 c-1.6,2.8-3.2,5.6-4.8,8.8C291.2,199.2,287.2,205.6,283.2,212z"/> <path style="fill:#7d7f82;" d="M335.2,76.8c-8,7.2-19.6,17.6-32,31.6c-12.4,13.6-25.6,30.8-38,50c-6,9.6-12,20-17.6,30.8 s-10.4,21.6-15.2,33.2c-4.4,11.2-8.4,22.8-12,34.4c-3.6,11.6-6.4,23.2-8.4,34.4c-4,19.6-6,38.8-7.2,55.6c0,2.8,1.6,5.2,4,6.4 l0,0c1.6-18,4.4-38.8,9.6-60.4c2.4-11.2,5.6-22.4,9.2-33.6c3.6-11.2,7.6-22.4,12-33.6c4.4-11.2,9.2-22,14.8-32.8 c5.2-10.4,10.8-20.8,16.8-30.4c11.6-19.2,24-36.4,35.6-50.8c11.6-14,22-25.6,29.6-33.2s12-12,12-12 C348.4,66,343.2,69.6,335.2,76.8z"/> <path style="fill:#324A5E;" d="M260.8,328h-89.2c-28,12.4-47.2,35.6-47.2,62.4c0,20.8,11.6,39.6,30,52.8c3.6,2.4,8,4,12,4h99.2 c4.4,0,8.4-1.6,12-4c18.4-13.2,30-32,30-52.8C308,363.6,288.8,340,260.8,328z"/> <rect x="171.6" y="312.4" style="fill:#2B3B4E;" width="89.2" height="15.6"/> <path style="fill:#324A5E;" d="M265.2,312.4h-98.4c-1.2,0-2-0.8-2-2V294c0-1.2,0.8-2,2-2h98.4c1.2,0,2,0.8,2,2v16.8 C267.2,311.6,266.4,312.4,265.2,312.4z"/> </g>
-        </svg>
-        <span id="notepadTitleText">Game Notes</span>
-      </h2>
-      <!-- Session button / code display -->
-      <div id="sessionControl">
-        <button class="session-btn" id="hostSessionBtn" onclick="startHostSession()">HOST SESSION</button>
-      </div>
-    </div>
+    <h2 class="notepad-title" id="notepadTitle">
+      <svg class="notepad-title-icon" viewBox="0 0 508 508" version="1.1" xmlns="http://www.w3.org/2000/svg" width="2.5rem" height="2.5rem">
+        <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+        <g id="SVGRepo_iconCarrier"> <circle style="fill:#9ce0f7;" cx="254" cy="254" r="254"/> <path style="fill:#9f6a2d;" d="M89.2,447.2c44.4,38,102,60.8,164.8,60.8s120.4-22.8,164.8-60.8H89.2z"/> <path style="fill:#FFFFFF;" d="M283.2,212c-14,6.8-28.4,14.8-42,23.6c10.8-3.2,21.2-5.6,32-8c-17.2,26-36.8,51.2-59.6,74 c-13.2-29.2-15.2-66.4-5.6-102.4c5.2,10.4,10.8,20.4,16.8,30c-4.4-16.4-7.6-33.6-9.6-50.8l0,0c4.8-12,10.8-23.6,18-34.8 c0.4,11.6,1.2,22.8,2.8,34c2-18,6-35.6,10.8-53.2c7.2-8.4,15.2-16.4,23.6-23.2c-1.2,12.4-1.6,24.8-1.2,36.8 c4.4-16,9.6-32,16-48c20-13.2,41.6-21.6,62.8-24c-5.6,20.8-12.8,40.8-20.8,60.4c-13.6,7.2-26.8,15.6-39.6,24.4 c11.2-4,22-7.2,33.2-9.6c-4,8.4-8,17.2-12,25.2l0,0c-12.8,8.8-25.6,18.8-38,29.6c9.6-4.4,18.8-8.4,28.4-12 c-1.6,2.8-3.2,5.6-4.8,8.8C291.2,199.2,287.2,205.6,283.2,212z"/> <path style="fill:#7d7f82;" d="M335.2,76.8c-8,7.2-19.6,17.6-32,31.6c-12.4,13.6-25.6,30.8-38,50c-6,9.6-12,20-17.6,30.8 s-10.4,21.6-15.2,33.2c-4.4,11.2-8.4,22.8-12,34.4c-3.6,11.6-6.4,23.2-8.4,34.4c-4,19.6-6,38.8-7.2,55.6c0,2.8,1.6,5.2,4,6.4 l0,0c1.6-18,4.4-38.8,9.6-60.4c2.4-11.2,5.6-22.4,9.2-33.6c3.6-11.2,7.6-22.4,12-33.6c4.4-11.2,9.2-22,14.8-32.8 c5.2-10.4,10.8-20.8,16.8-30.4c11.6-19.2,24-36.4,35.6-50.8c11.6-14,22-25.6,29.6-33.2s12-12,12-12 C348.4,66,343.2,69.6,335.2,76.8z"/> <path style="fill:#324A5E;" d="M260.8,328h-89.2c-28,12.4-47.2,35.6-47.2,62.4c0,20.8,11.6,39.6,30,52.8c3.6,2.4,8,4,12,4h99.2 c4.4,0,8.4-1.6,12-4c18.4-13.2,30-32,30-52.8C308,363.6,288.8,340,260.8,328z"/> <rect x="171.6" y="312.4" style="fill:#2B3B4E;" width="89.2" height="15.6"/> <path style="fill:#324A5E;" d="M265.2,312.4h-98.4c-1.2,0-2-0.8-2-2V294c0-1.2,0.8-2,2-2h98.4c1.2,0,2,0.8,2,2v16.8 C267.2,311.6,266.4,312.4,265.2,312.4z"/> </g>
+      </svg>
+      <span id="notepadTitleText">Game Notes</span>
+    </h2>
     <textarea class="notepad-textarea" id="notepadText" placeholder="Write your notes here..." oninput="saveNotepad()"></textarea>
   </div>
 </div>
@@ -2987,26 +2920,15 @@ function updateStat(index, stat, delta) {
   if (gameState.players[index][stat] < 0) {
     gameState.players[index][stat] = 0;
   }
-
-  // For life, use player's synced maxLife if available, otherwise fall back to STAT_MAX
-  const effectiveMax = (stat === 'life' && gameState.players[index].maxLife)
-    ? gameState.players[index].maxLife
-    : STAT_MAX[stat];
-
-  if (effectiveMax !== undefined && gameState.players[index][stat] > effectiveMax) {
-    gameState.players[index][stat] = effectiveMax;
+  if (STAT_MAX[stat] !== undefined && gameState.players[index][stat] > STAT_MAX[stat]) {
+    gameState.players[index][stat] = STAT_MAX[stat];
   }
-
+  
   // Track madness changes for the report
   if (stat === 'madness') {
     gameState.players[index].previousMadness = gameState.players[index].madness - delta;
   }
-
-  // Sync life changes back to player page via Firebase
-  if (stat === 'life') {
-    pushHostLifeUpdateToFirebase(index, gameState.players[index].life);
-  }
-
+  
   renderPlayers();
   saveState();
 }
@@ -4902,8 +4824,8 @@ function loadState() {
       // Restore dice results
       renderDiceResults();
       renderEnemies();
-      renderPlayers();  
-      setupDeleteButtons();  
+      renderPlayers();  // This already exists
+      setupDeleteButtons();  // ← ADD THIS LINE HERE
       updateAddEnemyButton();
     } catch (e) {
       console.error('Failed to load state:', e);
@@ -4916,7 +4838,7 @@ function loadState() {
       gameState.enemies = [];
       gameState.enemyVisible = false;
       renderPlayers();
-      setupDeleteButtons();  
+      setupDeleteButtons();  // ← AND HERE TOO
     }
   } else {
     // Default state with 3 players
@@ -4927,27 +4849,13 @@ function loadState() {
     ];
     gameState.enemies = [];
     renderPlayers();
-    setupDeleteButtons();  
+    setupDeleteButtons();  // ← AND HERE
   }
-  restoreHostSession();
 }
 
 function resetAll() {
   if (confirm('Are you sure you want to reset all game state? This cannot be undone.')) {
     localStorage.removeItem('hostTrackerState');
-    localStorage.removeItem('hostSessionCode');
-
-    if (activeSessionCode) {
-      db.ref(`sessions/${activeSessionCode}`).remove();
-      activeSessionCode = null;
-    }
-
-    // ← ADD 3: reset session UI back to button
-    const container = document.getElementById('sessionControl');
-    if (container) {
-      container.innerHTML = `<button class="session-btn" id="hostSessionBtn" onclick="startHostSession()">HOST SESSION</button>`;
-    }
-    
     gameState = {
       villain: '',
       act: 0,
@@ -4981,227 +4889,6 @@ function resetAll() {
     saveState();
   }
 }
-
-
-// ==========================
-// FIREBASE CONFIG
-// ==========================
-// Paste your Firebase config here after creating your project
-const firebaseConfig = {
-  apiKey: "AIzaSyAtbq0awljUBBA7Oy7NgjH4tEd9NM-95Mg",
-  authDomain: "p986-online.firebaseapp.com",
-  databaseURL: "https://p986-online-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "p986-online",
-  storageBucket: "p986-online.firebasestorage.app",
-  messagingSenderId: "782380134937",
-  appId: "1:782380134937:web:68bd687556b526b948b088"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// ==========================
-// SESSION SYSTEM
-// ==========================
-const SESSION_TTL_MS = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
-let activeSessionCode = null;
-let sessionListeners = {}; // track Firebase listeners for cleanup
-
-// Generate a unique 4-character alphanumeric code
-async function generateUniqueCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code, exists;
-  do {
-    code = Array.from({length: 4}, () =>
-      chars[Math.floor(Math.random() * chars.length)]).join('');
-    const snap = await db.ref(`sessions/${code}`).get();
-    exists = snap.exists();
-  } while (exists);
-  return code;
-}
-
-// Restore session after page refresh
-async function restoreHostSession() {
-  const savedCode = localStorage.getItem('hostSessionCode');
-  if (!savedCode) return;
-
-  try {
-    const snap = await db.ref(`sessions/${savedCode}`).get();
-    if (!snap.exists()) {
-      // Session gone from Firebase — clean up
-      localStorage.removeItem('hostSessionCode');
-      return;
-    }
-
-    const session = snap.val();
-    if (session.expiresAt && Date.now() > session.expiresAt) {
-      // Expired — clean up
-      await db.ref(`sessions/${savedCode}`).remove();
-      localStorage.removeItem('hostSessionCode');
-      return;
-    }
-
-    // Valid session — reconnect
-    activeSessionCode = savedCode;
-    showSessionCode(savedCode);
-    listenForPlayerJoins(savedCode);
-    listenForPlayerStatUpdates(savedCode);
-
-  } catch (err) {
-    console.error('Failed to restore session:', err);
-    localStorage.removeItem('hostSessionCode');
-  }
-}
-
-// Host clicks HOST SESSION
-async function startHostSession() {
-  const btn = document.getElementById('hostSessionBtn');
-  btn.disabled = true;
-  btn.textContent = 'STARTING...';
-
-  try {
-    const code = await generateUniqueCode();
-    activeSessionCode = code;
-    localStorage.setItem('hostSessionCode', code);
-
-    // Write full gameState + expiry to Firebase
-    await db.ref(`sessions/${code}`).set({
-      createdAt: Date.now(),
-      expiresAt: Date.now() + SESSION_TTL_MS,
-      gameState: JSON.parse(JSON.stringify(gameState)) // deep copy
-    });
-
-    // Show the code in place of the button
-    showSessionCode(code);
-
-    // Start listening for player join requests
-    listenForPlayerJoins(code);
-
-    // Start listening for player stat updates
-    listenForPlayerStatUpdates(code);
-
-  } catch (err) {
-    console.error('Failed to start session:', err);
-    btn.disabled = false;
-    btn.textContent = 'HOST SESSION';
-  }
-}
-
-// Replace button with clickable code display
-function showSessionCode(code) {
-  const container = document.getElementById('sessionControl');
-  container.innerHTML = `
-    <span class="session-code" id="sessionCodeDisplay" onclick="copySessionCode()"
-      title="Click to copy">${code}</span>
-  `;
-}
-
-// Copy code to clipboard with COPIED! feedback
-function copySessionCode() {
-  const el = document.getElementById('sessionCodeDisplay');
-  navigator.clipboard.writeText(activeSessionCode).then(() => {
-    el.textContent = 'COPIED!';
-    el.classList.add('copied');
-    setTimeout(() => {
-      el.textContent = activeSessionCode;
-      el.classList.remove('copied');
-    }, 1500);
-  });
-}
-
-// Listen for players writing their join request under sessions/{code}/joining/
-function listenForPlayerJoins(code) {
-  db.ref(`sessions/${code}/joining`).on('child_added', async (snap) => {
-    const request = snap.val();
-    const requestKey = snap.key;
-    console.log('Join request received:', request);
-    if (!request) return;
-
-    const { name, artefact, iris } = request;
-
-    // Find matching player slot
-    let matchIndex = -1;
-
-    // Rule 1: exact name match
-    matchIndex = gameState.players.findIndex(p =>
-      p.name && p.name.trim().toLowerCase() === name.trim().toLowerCase()
-    );
-
-    // Rule 2: artefact + iris match (replace)
-    if (matchIndex === -1) {
-      matchIndex = gameState.players.findIndex(p =>
-        p.artefact && p.iris &&
-        p.artefact.trim().toLowerCase() === artefact.trim().toLowerCase() &&
-        p.iris.trim().toLowerCase() === iris.trim().toLowerCase()
-      );
-    }
-
-    // Rule 3: find first empty slot, or add new if none available
-    if (matchIndex === -1) {
-      matchIndex = gameState.players.findIndex(p => !p.name || p.name.trim() === '');
-      if (matchIndex === -1) {
-        gameState.players.push(createPlayer(gameState.players.length + 1));
-        matchIndex = gameState.players.length - 1;
-      }
-    }
-
-    // Overwrite player slot with host's saved data, keep new name/artefact/iris
-    gameState.players[matchIndex].name = name;
-    gameState.players[matchIndex].artefact = artefact;
-    gameState.players[matchIndex].iris = iris;
-
-    // Assign slot index so player knows their path
-    const playerSlot = `player${matchIndex}`;
-
-    // Write acceptance back to Firebase
-    await db.ref(`sessions/${code}/players/${playerSlot}`).set({
-      name,
-      artefact,
-      iris,
-      currentLife: gameState.players[matchIndex].life,
-      maxLife: gameState.players[matchIndex].life,
-      madness: gameState.players[matchIndex].madness,
-      soul: gameState.players[matchIndex].soul,
-      coins: gameState.players[matchIndex].coins
-    });
-
-    // Remove the join request
-    await db.ref(`sessions/${code}/joining/${requestKey}`).remove();
-
-    renderPlayers();
-    setupDeleteButtons();
-    saveState();
-  });
-}
-
-// Listen for player stat changes pushed from player pages
-function listenForPlayerStatUpdates(code) {
-  db.ref(`sessions/${code}/players`).on('child_changed', (snap) => {
-    const data = snap.val();
-    if (!data) return;
-
-    const slotIndex = parseInt(snap.key.replace('player', ''), 10);
-    if (isNaN(slotIndex) || !gameState.players[slotIndex]) return;
-
-    // Update host's gameState with player's live stats
-    gameState.players[slotIndex].life = data.currentLife ?? gameState.players[slotIndex].life;
-    gameState.players[slotIndex].maxLife = data.maxLife ?? gameState.players[slotIndex].maxLife;
-    gameState.players[slotIndex].madness = data.madness ?? gameState.players[slotIndex].madness;
-    gameState.players[slotIndex].soul = data.soul ?? gameState.players[slotIndex].soul;
-    gameState.players[slotIndex].coins = data.coins ?? gameState.players[slotIndex].coins;
-
-    renderPlayers();
-    saveState();
-  });
-}
-
-// Call this from updateStat() to push host life changes back to player page
-function pushHostLifeUpdateToFirebase(playerIndex, newLife) {
-  if (!activeSessionCode) return;
-  const slot = `player${playerIndex}`;
-  db.ref(`sessions/${activeSessionCode}/players/${slot}/currentLife`).set(newLife);
-}
-
 </script>
 
 <!-- ==========================
