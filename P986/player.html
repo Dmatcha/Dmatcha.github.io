@@ -4185,11 +4185,43 @@ function createNpcCard(npc, index) {
     }
   });
 
+// Official NPC card fronts mapping
+const NPC_CARD_FRONTS = {
+  "Hitomi":           "cards/fronts/000.webp",
+  "Tsubasa":          "cards/fronts/001.webp",
+  "Tress Bien":       "cards/fronts/002.webp",
+  "Dante Alimor":     "cards/fronts/003.webp",
+  "Evelynn":          "cards/fronts/004.webp",
+  "Flare vey Byornn": "cards/fronts/005.webp",
+  "Guy":              "cards/fronts/006.webp",
+  "Hector Havel":     "cards/fronts/007.webp",
+  "Jiu-lin Fan":      "cards/fronts/008.webp",
+  "Shang Tian":       "cards/fronts/009.webp",
+  "Marco":            "cards/fronts/010.webp",
+  "Lumiere":          "cards/fronts/011.webp",
+  "Anjali":           "cards/fronts/012.webp",
+  "Chinara Ekine":    "cards/fronts/013.webp",
+  "Ohm":              "cards/fronts/014.webp",
+  "Jon Quixote":      "cards/fronts/015.webp",
+  "Naya":             "cards/fronts/016.webp",
+  "Million Redgate":  "cards/fronts/017.webp",
+  "Captain Thiffany": "cards/fronts/018.webp",
+  "The Courier":      "cards/fronts/019.webp",
+  "Kleo Petra":       "cards/fronts/030.webp",
+  "Paarthi Lomedi":   "cards/fronts/035.webp",
+  "Qing Xi":          "cards/fronts/036.webp",
+  "Reeve S Basilisk": "cards/fronts/037.webp",
+  "Vincent Pererez":  "cards/fronts/038.webp",
+  "Taeonora 9C":      "cards/fronts/039.webp"
+};
+
   imageDiv.addEventListener('click', (e) => {
-    // If NPC already has an image, zoom it
+    // If NPC already has an image, zoom the card front if available, else the portrait
     const existingImg = imageDiv.querySelector('img');
     if (existingImg?.src) {
-      openZoom(existingImg.src, npcs[index].name || 'Character');
+      const npcName = npcs[index].name || '';
+      const cardSrc = NPC_CARD_FRONTS[npcName];
+      openZoom(cardSrc || existingImg.src, npcName || 'Character');
       return;
     }
     // Allow upload only
