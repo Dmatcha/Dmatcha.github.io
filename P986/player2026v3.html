@@ -2051,33 +2051,6 @@
     font-feature-settings: "tnum";
   }
 
-  /* Blink levelValue border when ability points are available */
-  @keyframes levelBlink {
-    0%, 100% { border-color: rgba(230, 227, 200, 0.25); box-shadow: none; }
-    50% { border-color: #ffffff; box-shadow: 0 0 6px rgba(255,255,255,0.6); }
-  }
-  #levelValue.has-points {
-    animation: levelBlink 1s ease-in-out infinite;
-  }
-
-  /* Ability point gate — attrs disabled when no points available */
-  .attr.attr-disabled {
-    opacity: 0.35;
-    pointer-events: none;
-    cursor: default;
-    filter: grayscale(0.4);
-  }
-
-  /* Dead state: life shows -1, player page dims attrs */
-  body.player-dead .attr:not(.luck) {
-    opacity: 0.35;
-    pointer-events: none;
-  }
-  body.player-dead #levelValue {
-    color: #DC143C;
-    border-color: rgba(220,20,60,0.5);
-  }
-
   /* ===== ACCESSIBILITY & PERFORMANCE ===== */
 
   /* Respect user's motion preferences */
@@ -3074,17 +3047,17 @@ function calculateArcane() {
 }
 
 function updateBottomStats() {
-  // Level is HOST-controlled — display what host set, not derived from attributes
-  const level = Number(loadState('playerLevel', 1));
+  const level = calculateLevel();
   const tinge = calculateTinge();
   const arcane = calculateArcane();
   
+  console.log('Bottom Stats Update - Level:', level, 'Tinge:', tinge, 'Arcane:', arcane);
   document.getElementById('levelValue').textContent = level;
   document.getElementById('tingeValue').textContent = tinge;
   document.getElementById('arcaneValue').textContent = arcane;
 
-  // Recalculate ability point gate whenever stats change
-  updateAbilityPoints();
+  // Push level to host notebook
+  pushPlayerMetaToFirebase();
 }
 
 /* ========= Stat Bonus Tables ========= */
@@ -3642,10 +3615,6 @@ updateLuckDisplay();
 
     function incrementAttribute() {
       if (lockout) return;
-      // Double-gate: check both the data attribute and the available count
-      if (card.dataset.noPoints === 'true') return;
-      if (window._abilityPointsAvailable <= 0) return;
-
       valNum = (valNum + 1) % 10;
       val.textContent = String(valNum);
       saveState(name, valNum);
@@ -3654,8 +3623,6 @@ updateLuckDisplay();
         updateAllBars();
         updateBottomStats();
       }
-
-      updateAbilityPoints();
 
       card.classList.add('pulse');
       setTimeout(()=> card.classList.remove('pulse'), 420);
@@ -4485,7 +4452,6 @@ renderNpcs();
 updateAddButtonVisibility();
 
 updateBottomStats();
-updateAbilityPoints();
 
 window.addEventListener('beforeunload', () => {
   iconManager.cleanup();
@@ -7925,6 +7891,19 @@ function waitForAcceptance(code, name, artefact, iris) {
 function startPlayerSync(code, slotKey) {
   const slotRef = db.ref(`sessions/${code}/players/${slotKey}`);
 
+  // Listen for host-driven life changes → update player page
+  slotRef.child('currentLife').on('value', (snap) => {
+    if (snap.val() === null) return;
+    const hostLife = snap.val();
+    const localLife = Number(loadState('life', 1));
+
+    // Only update if host changed it (avoid infinite loop)
+    if (hostLife !== localLife) {
+      saveState('life', hostLife);
+      if (barUpdateFunctions['life']) barUpdateFunctions['life']();
+    }
+  });
+
   // Listen for host ending the session
   db.ref(`sessions/${code}/ended`).on('value', (snap) => {
     if (!snap.val()) return;
@@ -7953,46 +7932,6 @@ function startPlayerSync(code, slotKey) {
 
   // Listen for host coin grants
   listenForCoinGrants(code, slotKey);
-
-  // Listen for level updates from host
-  slotRef.child('level').on('value', (snap) => {
-    if (snap.val() === null) return;
-    const newLevel = snap.val();
-    saveState('playerLevel', newLevel);
-    updateAbilityPoints();
-    updateBottomStats();
-  });
-
-  // Listen for soul (secret — used for ability point calc only)
-  slotRef.child('soul').on('value', (snap) => {
-    if (snap.val() === null) return;
-    saveState('playerSoul', snap.val());
-    updateAbilityPoints();
-  });
-
-  // Listen for death state from host
-  slotRef.child('dead').on('value', (snap) => {
-    if (!snap.val()) return;
-    handlePlayerDeath();
-  });
-
-  // Listen for life — detect revival (life goes from <=0 to 1)
-  slotRef.child('currentLife').on('value', (snap) => {
-    if (snap.val() === null) return;
-    const hostLife = snap.val();
-    const localLife = Number(loadState('life', 1));
-
-    if (hostLife !== localLife) {
-      // Revival: was dead (life <= 0), now alive (life >= 1)
-      const wasDead = localLife <= 0;
-      const nowAlive = hostLife >= 1;
-      if (wasDead && nowAlive) {
-        handlePlayerRevival();
-      }
-      saveState('life', hostLife);
-      if (barUpdateFunctions['life']) barUpdateFunctions['life']();
-    }
-  });
 
   // Listen for host madness whispers
   slotRef.child('madnessWhisper').on('value', (snap) => {
@@ -8043,115 +7982,10 @@ function startPlayerSync(code, slotKey) {
   };
 }
 
-// ==========================
-// DEATH, REVIVAL & ABILITY POINTS
-// ==========================
-
-function handlePlayerDeath() {
-  // Set life to -1
-  saveState('life', -1);
-  if (barUpdateFunctions['life']) barUpdateFunctions['life']();
-
-  // Reset all stats to 0 (keep artefact & iris in inventory — slots 0 & 1)
-  ['Endurance','Potency','Mastery','Strength','Skill'].forEach(attr => {
-    saveState(attr, 0);
-  });
-  // Update attr display
-  document.querySelectorAll('.attr[data-name]').forEach(card => {
-    const name = card.dataset.name;
-    if (['Endurance','Potency','Mastery','Strength','Skill'].includes(name)) {
-      const val = card.querySelector('.attr-val');
-      if (val) val.textContent = '0';
-    }
-  });
-
-  // Reset bars (mana, energy, stamina, etc.) to 0
-  ['mana','energy','stamina','coalesce'].forEach(key => {
-    saveState(key, 0);
-    if (barUpdateFunctions[key]) barUpdateFunctions[key]();
-  });
-
-  // Reset relationships — clear all NPC hearts except keep official NPC records
-  npcs.forEach((npc, i) => {
-    npc.hearts = [0,0,0,0,0];
-    npc.status = '';
-  });
-  saveState('npcs', npcs);
-  renderRelationships();
-
-  // Reset traits (constellation)
-  characterOptions.innate = '';
-  characterOptions.proficiency = '';
-  characterOptions.interest = '';
-  characterOptions.fear = '';
-  characterOptions.hate = '';
-  characterOptions.locked = false;
-  saveState('characterOptions', characterOptions);
-  checkTraitsLocked();
-
-  // Clear inventory items except artefact (slot 0) and iris (slot 1)
-  // and any legendary spells tied to artefact
-  inventory = inventory.filter((item, idx) => idx === 0 || idx === 1 || item.legendary);
-  saveState('inventory', inventory);
-  renderInventory();
-
-  // Clear spells except legendary ones
-  if (typeof spellSlots !== 'undefined') {
-    const legendarySpells = spellSlots.filter(s => s && s.legendary);
-    spellSlots = [...legendarySpells, ...Array(Math.max(0, spellSlots.length - legendarySpells.length)).fill(null)];
-    saveState('spellSlots', spellSlots);
-    if (typeof renderSpells === 'function') renderSpells();
-  }
-
-  // Set level to 1 (attrs already wiped to 0 above, spent resets naturally via attribute sum)
-  saveState('playerLevel', 1);
-  updateBottomStats();
-  updateAbilityPoints();
-
-  // Mark body as dead
-  document.body.classList.add('player-dead');
-}
-
-function handlePlayerRevival() {
-  document.body.classList.remove('player-dead');
-  // Clear dead flag in Firebase
-  if (activeSessionCode && activePlayerSlot) {
-    db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/dead`).set(false);
-  }
-  updateAbilityPoints();
-}
-
-function updateAbilityPoints() {
-  const MaxAbilityPoints = Number(loadState('playerLevel', 1)) + Number(loadState('playerSoul', 0));
-
-  const SpentAbilityPoints = ['Endurance', 'Strength', 'Skill', 'Potency', 'Mastery']
-    .reduce((sum, attr) => sum + (Number(loadState(attr, 0)) || 0), 0);
-
-  const available = Math.max(0, MaxAbilityPoints - SpentAbilityPoints);
-
-  window._abilityPointsAvailable = available;
-
-  const levelEl = document.getElementById('levelValue');
-  if (levelEl) levelEl.classList.toggle('has-points', available > 0);
-
-  setAttrsDisabled(available <= 0);
-}
-
-function setAttrsDisabled(disabled) {
-  document.querySelectorAll('.attr:not(.luck)').forEach(card => {
-    card.classList.toggle('attr-disabled', disabled);
-    // Also set data attribute since touchManager bypasses pointer-events CSS
-    if (disabled) {
-      card.dataset.noPoints = 'true';
-    } else {
-      delete card.dataset.noPoints;
-    }
-  });
-}
-
 // Push level + traits notes to Firebase for the host notebook
 function pushPlayerMetaToFirebase() {
   if (!activeSessionCode || !activePlayerSlot) return;
+  const level = calculateLevel();
 
   // Build abbreviated traits notes if locked
   let traitsNotes = '';
@@ -8191,19 +8025,14 @@ function pushPlayerMetaToFirebase() {
     traitsNotes = traitsNotes.trim();
   }
 
-  // Only push traitsNotes — level is HOST-owned, player never writes it
   db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`).update({
+    level,
     traitsNotes
   });
 }
 
 
 async function restorePlayerSession() {
-  // Restore dead visual state if life was -1
-  if (Number(loadState('life', 1)) < 0) {
-    document.body.classList.add('player-dead');
-  }
-
   const savedCode = localStorage.getItem('playerSessionCode');
   const savedSlot = localStorage.getItem('playerSessionSlot');
   if (!savedCode || !savedSlot) return;
