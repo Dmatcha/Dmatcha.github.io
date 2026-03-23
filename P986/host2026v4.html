@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
 /* ===========================================
    CSS VARIABLES
@@ -499,14 +502,14 @@ h1, h2, h3, h4 {
 }
 
 /* Wide: 3 columns */
-@media (min-width: 1024px) {
+@media (min-width: 1201px) {
   .players-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 /* Half-wide: 2 columns */
-@media (min-width: 812px) and (max-width: 1023px) {
+@media (min-width: 812px) and (max-width: 1200px) {
   .players-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -646,6 +649,7 @@ h1, h2, h3, h4 {
   display: flex;
   justify-content: flex-start;
   width: 100%;
+  gap: 0.5rem;
 }
 
 .player-memobook-btn {
@@ -655,10 +659,10 @@ h1, h2, h3, h4 {
   color: var(--text-secondary);
   font-family: inherit;
   font-size: 0.75rem;
-  padding: 0.1rem 0rem;
+  /*padding: 0.1rem 0rem;*/
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.35s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -669,6 +673,61 @@ h1, h2, h3, h4 {
 .player-memobook-btn:hover {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
+}
+
+.player-levelup-btn {
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 1.75rem;
+  margin: 0rem 0.25rem;
+  flex-shrink: 0;
+}
+.levelup-svg-wrap {
+  width: 2.5rem;
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: opacity 1s ease;
+}
+.levelup-svg-wrap svg {
+  width: 2.5rem;
+  height: 1.75rem;
+}
+@keyframes levelupPulse {
+  0%   { transform: scale(1);    opacity: 1; }
+  40%  { transform: scale(1.35); opacity: 1; }
+  100% { transform: scale(1);    opacity: 1; }
+}
+.player-levelup-btn.pulse .levelup-svg-wrap {
+  animation: levelupPulse 0.35s ease forwards;
+}
+
+@keyframes levelupPulseAll {
+  0%   { transform: scale(1);    opacity: 1; }
+  15%  { transform: scale(1.4);  opacity: 1; }
+  70%  { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1);    opacity: 0; }
+}
+.player-levelup-btn.pulse-all .levelup-svg-wrap {
+  animation: levelupPulseAll 2s ease forwards;
+}
+
+/* Death flash animation on player card */
+@keyframes deathFlash {
+  0%,100% { box-shadow: none; }
+  50% { box-shadow: 0 0 24px rgba(220,20,60,0.8); }
+}
+.player-card.dying {
+  animation: deathFlash 0.5s ease 2;
 }
 
 .player-name {
@@ -836,7 +895,7 @@ h1, h2, h3, h4 {
 .stat-controls {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.25rem;
   min-width: 0;
 }
 
@@ -896,6 +955,187 @@ h1, h2, h3, h4 {
 
 .stat-value.coins {
   color: #FFD700;
+}
+
+/* ==========================
+   COIN BESTOW SYSTEM
+========================== */
+.coin-crown-btn {
+  appearance: none;
+  border: none;
+  background: rgba(212, 175, 55, 0.07);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+.coin-crown-btn:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: #FFD700;
+  filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+}
+.coin-crown-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Bestow Overlay */
+#bestowOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 8, 12, 0.88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+#bestowOverlay.hidden { display: none; }
+
+.bestow-panel {
+  background: #18181e;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 16px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 22rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+}
+
+.bestow-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #FFD700;
+  text-align: center;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.04em;
+}
+.bestow-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.bestow-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+.bestow-coin-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.3);
+}
+.bestow-coin-icon.gold   { background: linear-gradient(160deg,#FFD700,#B8860B); color:#3d2a00; }
+.bestow-coin-icon.silver { background: linear-gradient(160deg,#E8E8E8,#9E9E9E); color:#2a2a2a; }
+.bestow-coin-icon.alloy  { background: linear-gradient(160deg,#b87333,#7a4a1e); color:#f0d0a0; }
+.bestow-coin-icon.old    { background: linear-gradient(160deg,#a3c9a8,#4a7c59); color:#0d2e18; }
+.bestow-coin-icon.li     { background: linear-gradient(160deg,#e8d5b7,#9e7c3a); color:#2a1800; }
+
+.bestow-coin-label {
+  flex: 1;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+.bestow-coin-sub {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.bestow-adj-group {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.bestow-adj-btn {
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border-medium);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s ease;
+  line-height: 1;
+}
+.bestow-adj-btn:hover { background: rgba(255,255,255,0.12); }
+.bestow-amount {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #FFD700;
+  min-width: 1.5rem;
+  text-align: center;
+}
+.bestow-amount.zero { color: var(--text-muted); }
+
+.bestow-divider {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  margin: 1rem 0 0.75rem;
+}
+
+.bestow-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+.bestow-cancel-btn {
+  flex: 1;
+  padding: 0.6rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-medium);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.bestow-cancel-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
+
+.bestow-confirm-btn {
+  flex: 2;
+  padding: 0.6rem;
+  background: rgba(212, 175, 55, 0.18);
+  border: 1px solid #D4AF37;
+  border-radius: 8px;
+  color: #FFD700;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.05em;
+}
+.bestow-confirm-btn:hover:not(:disabled) {
+  background: rgba(212, 175, 55, 0.32);
+  box-shadow: 0 0 10px rgba(255,215,0,0.25);
+}
+.bestow-confirm-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 /* ==========================
@@ -1805,6 +2045,65 @@ h1, h2, h3, h4 {
   font-weight: 600;
 }
 
+.madness-text[contenteditable="true"] {
+  outline: none;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem;
+  background: rgba(239, 68, 68, 0.05);
+  cursor: text;
+}
+
+.madness-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+  gap: 0.75rem;
+}
+
+.madness-btn {
+  appearance: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-sm);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.madness-rewrite-btn {
+  border: 1px solid var(--border-medium);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+}
+.madness-rewrite-btn:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--text-primary);
+}
+.madness-rewrite-btn.active {
+  border-color: var(--accent-danger);
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+.madness-whisper-btn {
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  background: rgba(139, 92, 246, 0.1);
+  color: var(--accent-secondary);
+}
+.madness-whisper-btn:hover {
+  background: rgba(139, 92, 246, 0.25);
+  color: #fff;
+}
+.madness-whisper-btn.sent {
+  border-color: var(--accent-success);
+  background: rgba(16, 185, 129, 0.12);
+  color: #6ee7b7;
+}
+
 /* ==========================
    NOTEPAD OVERLAY
 ========================== */
@@ -1831,9 +2130,9 @@ h1, h2, h3, h4 {
 
 .notepad-content {
   background: var(--bg-card);
-  border: 1px solid var(--glass-border);
+  border: 2px solid var(--glass-border);
   border-radius: var(--radius-xl);
-  padding: 2rem;
+  padding: 1rem;
   width: 90vw;
   height: 80vh;
   max-height: 80vh;
@@ -1841,6 +2140,12 @@ h1, h2, h3, h4 {
   flex-direction: column;
   box-shadow: var(--shadow-lg);
   position: relative;
+}
+
+@media (max-width: 30rem) {
+  .notepad-content {
+    padding: 1rem;
+  }
 }
 
 .notepad-close {
@@ -2267,8 +2572,131 @@ h1, h2, h3, h4 {
 
 }
 
+/* ==========================
+   SESSION SYSTEM
+========================== */
+.notepad-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-right: 3rem;
+}
+
+.session-btn {
+  appearance: none;
+  border: 1px solid var(--accent-primary);
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--accent-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.session-btn:hover {
+  background: var(--accent-primary);
+  color: #fff;
+}
+
+.session-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-secondary);
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--accent-primary);
+  border-radius: var(--radius-sm);
+  background: rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+  user-select: none;
+  /* Lock width so COPY!/code swap doesn't reflow neighbours */
+  min-width: 6rem;
+  text-align: center;
+  display: inline-block;
+}
+
+.session-code:hover {
+  background: rgba(139, 92, 246, 0.25);
+}
+
+.session-code.COPY {
+  color: var(--accent-success);
+  border-color: var(--accent-success);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+#sessionControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.end-session-btn {
+  appearance: none;
+  border: 1px solid var(--accent-danger);
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.25rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.end-session-btn:hover {
+  background: rgba(239, 68, 68, 0.28);
+  color: #fff;
+  border-color: #f87171;
+}
+.end-session-btn .end-label-full  { display: inline; }
+.end-session-btn .end-label-short { display: none; }
+@media (max-width: 30rem) {
+  .end-session-btn .end-label-full  { display: none; }
+  .end-session-btn .end-label-short { display: inline; }
+  .end-session-btn { padding: 0.35rem 0.125rem; }
+  .session-code    { padding: 0.3rem 0.125rem; min-width: 4.5rem; }
+  .session-btn     { padding: 0.35rem 0.125rem; }
+}
+/* Session saved toast */
+#hostToast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(1rem);
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--accent-success);
+  color: #6ee7b7;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 9999;
+  white-space: nowrap;
+}
+#hostToast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 </style>
-</head>
 <body>
 <div class="app-container">
   <!-- Header Section -->
@@ -2371,8 +2799,12 @@ h1, h2, h3, h4 {
 <div class="madness-overlay" id="madnessOverlay" onclick="closeMadnessOnOverlay(event)">
   <div class="madness-content">
     <button class="madness-close" onclick="closeMadness()">&times;</button>
-    <h2 class="madness-title">Madness Report</h2>
+    <h2 class="madness-title">Madness</h2>
     <div class="madness-text" id="madnessText"></div>
+    <div class="madness-actions">
+      <button class="madness-btn madness-rewrite-btn" id="madnessRewriteBtn" onclick="toggleMadnessRewrite()">Rewrite</button>
+      <button class="madness-btn madness-whisper-btn" id="madnessWhisperBtn" onclick="whisperMadness()">Whisper</button>
+    </div>
   </div>
 </div>
 
@@ -2380,14 +2812,21 @@ h1, h2, h3, h4 {
 <div class="notepad-overlay" id="notepadOverlay" onclick="closeNotepadOnOverlay(event)">
   <div class="notepad-content">
     <button class="notepad-close" onclick="closeNotepad()">&times;</button>
-    <h2 class="notepad-title" id="notepadTitle">
-      <svg class="notepad-title-icon" viewBox="0 0 508 508" version="1.1" xmlns="http://www.w3.org/2000/svg" width="2.5rem" height="2.5rem">
-        <g id="SVGRepo_bgCarrier" stroke-width="0"/>
-        <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
-        <g id="SVGRepo_iconCarrier"> <circle style="fill:#9ce0f7;" cx="254" cy="254" r="254"/> <path style="fill:#9f6a2d;" d="M89.2,447.2c44.4,38,102,60.8,164.8,60.8s120.4-22.8,164.8-60.8H89.2z"/> <path style="fill:#FFFFFF;" d="M283.2,212c-14,6.8-28.4,14.8-42,23.6c10.8-3.2,21.2-5.6,32-8c-17.2,26-36.8,51.2-59.6,74 c-13.2-29.2-15.2-66.4-5.6-102.4c5.2,10.4,10.8,20.4,16.8,30c-4.4-16.4-7.6-33.6-9.6-50.8l0,0c4.8-12,10.8-23.6,18-34.8 c0.4,11.6,1.2,22.8,2.8,34c2-18,6-35.6,10.8-53.2c7.2-8.4,15.2-16.4,23.6-23.2c-1.2,12.4-1.6,24.8-1.2,36.8 c4.4-16,9.6-32,16-48c20-13.2,41.6-21.6,62.8-24c-5.6,20.8-12.8,40.8-20.8,60.4c-13.6,7.2-26.8,15.6-39.6,24.4 c11.2-4,22-7.2,33.2-9.6c-4,8.4-8,17.2-12,25.2l0,0c-12.8,8.8-25.6,18.8-38,29.6c9.6-4.4,18.8-8.4,28.4-12 c-1.6,2.8-3.2,5.6-4.8,8.8C291.2,199.2,287.2,205.6,283.2,212z"/> <path style="fill:#7d7f82;" d="M335.2,76.8c-8,7.2-19.6,17.6-32,31.6c-12.4,13.6-25.6,30.8-38,50c-6,9.6-12,20-17.6,30.8 s-10.4,21.6-15.2,33.2c-4.4,11.2-8.4,22.8-12,34.4c-3.6,11.6-6.4,23.2-8.4,34.4c-4,19.6-6,38.8-7.2,55.6c0,2.8,1.6,5.2,4,6.4 l0,0c1.6-18,4.4-38.8,9.6-60.4c2.4-11.2,5.6-22.4,9.2-33.6c3.6-11.2,7.6-22.4,12-33.6c4.4-11.2,9.2-22,14.8-32.8 c5.2-10.4,10.8-20.8,16.8-30.4c11.6-19.2,24-36.4,35.6-50.8c11.6-14,22-25.6,29.6-33.2s12-12,12-12 C348.4,66,343.2,69.6,335.2,76.8z"/> <path style="fill:#324A5E;" d="M260.8,328h-89.2c-28,12.4-47.2,35.6-47.2,62.4c0,20.8,11.6,39.6,30,52.8c3.6,2.4,8,4,12,4h99.2 c4.4,0,8.4-1.6,12-4c18.4-13.2,30-32,30-52.8C308,363.6,288.8,340,260.8,328z"/> <rect x="171.6" y="312.4" style="fill:#2B3B4E;" width="89.2" height="15.6"/> <path style="fill:#324A5E;" d="M265.2,312.4h-98.4c-1.2,0-2-0.8-2-2V294c0-1.2,0.8-2,2-2h98.4c1.2,0,2,0.8,2,2v16.8 C267.2,311.6,266.4,312.4,265.2,312.4z"/> </g>
-      </svg>
-      <span id="notepadTitleText">Game Notes</span>
-    </h2>
+    <div class="notepad-title-row">
+      <h2 class="notepad-title" id="notepadTitle" style="margin-bottom:0;">
+        <svg class="notepad-title-icon" viewBox="0 0 508 508" version="1.1" xmlns="http://www.w3.org/2000/svg" width="2.5rem" height="2.5rem">
+          <g id="SVGRepo_bgCarrier" stroke-width="0"/>
+          <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
+          <g id="SVGRepo_iconCarrier"> <circle style="fill:#9ce0f7;" cx="254" cy="254" r="254"/> <path style="fill:#9f6a2d;" d="M89.2,447.2c44.4,38,102,60.8,164.8,60.8s120.4-22.8,164.8-60.8H89.2z"/> <path style="fill:#FFFFFF;" d="M283.2,212c-14,6.8-28.4,14.8-42,23.6c10.8-3.2,21.2-5.6,32-8c-17.2,26-36.8,51.2-59.6,74 c-13.2-29.2-15.2-66.4-5.6-102.4c5.2,10.4,10.8,20.4,16.8,30c-4.4-16.4-7.6-33.6-9.6-50.8l0,0c4.8-12,10.8-23.6,18-34.8 c0.4,11.6,1.2,22.8,2.8,34c2-18,6-35.6,10.8-53.2c7.2-8.4,15.2-16.4,23.6-23.2c-1.2,12.4-1.6,24.8-1.2,36.8 c4.4-16,9.6-32,16-48c20-13.2,41.6-21.6,62.8-24c-5.6,20.8-12.8,40.8-20.8,60.4c-13.6,7.2-26.8,15.6-39.6,24.4 c11.2-4,22-7.2,33.2-9.6c-4,8.4-8,17.2-12,25.2l0,0c-12.8,8.8-25.6,18.8-38,29.6c9.6-4.4,18.8-8.4,28.4-12 c-1.6,2.8-3.2,5.6-4.8,8.8C291.2,199.2,287.2,205.6,283.2,212z"/> <path style="fill:#7d7f82;" d="M335.2,76.8c-8,7.2-19.6,17.6-32,31.6c-12.4,13.6-25.6,30.8-38,50c-6,9.6-12,20-17.6,30.8 s-10.4,21.6-15.2,33.2c-4.4,11.2-8.4,22.8-12,34.4c-3.6,11.6-6.4,23.2-8.4,34.4c-4,19.6-6,38.8-7.2,55.6c0,2.8,1.6,5.2,4,6.4 l0,0c1.6-18,4.4-38.8,9.6-60.4c2.4-11.2,5.6-22.4,9.2-33.6c3.6-11.2,7.6-22.4,12-33.6c4.4-11.2,9.2-22,14.8-32.8 c5.2-10.4,10.8-20.8,16.8-30.4c11.6-19.2,24-36.4,35.6-50.8c11.6-14,22-25.6,29.6-33.2s12-12,12-12 C348.4,66,343.2,69.6,335.2,76.8z"/> <path style="fill:#324A5E;" d="M260.8,328h-89.2c-28,12.4-47.2,35.6-47.2,62.4c0,20.8,11.6,39.6,30,52.8c3.6,2.4,8,4,12,4h99.2 c4.4,0,8.4-1.6,12-4c18.4-13.2,30-32,30-52.8C308,363.6,288.8,340,260.8,328z"/> <rect x="171.6" y="312.4" style="fill:#2B3B4E;" width="89.2" height="15.6"/> <path style="fill:#324A5E;" d="M265.2,312.4h-98.4c-1.2,0-2-0.8-2-2V294c0-1.2,0.8-2,2-2h98.4c1.2,0,2,0.8,2,2v16.8 C267.2,311.6,266.4,312.4,265.2,312.4z"/> </g>
+        </svg>
+        <span id="notepadTitleText">Game Notes</span>
+      </h2>
+      <!-- Session button / code display -->
+      <div id="endSessionSlot"></div>
+      <div id="sessionControl">
+        <button class="session-btn" id="hostSessionBtn" onclick="startHostSession()">HOST SESSION</button>
+      </div>
+    </div>
     <textarea class="notepad-textarea" id="notepadText" placeholder="Write your notes here..." oninput="saveNotepad()"></textarea>
   </div>
 </div>
@@ -2596,6 +3035,8 @@ function createPlayer(id) {
     life: 1,
     soul: 0,
     coins: 0,
+    level: 1,
+    coinPurse: { gold:0, silver:0, alloy:0, old:0, mystery:0 },
     previousMadness: 0,
     notes: ''
   };
@@ -2656,6 +3097,17 @@ function renderPlayers() {
         </div>
         <div class="player-right-section">
           <div class="player-card-header">
+            <button class="player-levelup-btn" 
+              id="levelupBtn${index}"
+              title="click: this player, hold: all players"
+              onmousedown="startLevelUpHold(${index}, this)"
+              onmouseup="endLevelUpHold(${index}, this)"
+              onmouseleave="cancelLevelUpHold(${index}, this)"
+              ontouchstart="startLevelUpHold(${index}, this)"
+              ontouchend="endLevelUpHold(${index}, this)"
+              ontouchcancel="cancelLevelUpHold(${index}, this)">
+              <div id="levelupImg${index}" class="levelup-svg-wrap"></div>
+            </button>
             <button class="player-memobook-btn" onclick="togglePlayerNotepad(${index})" title="Player Notes">
         <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
           <path d="M879.3 794.4H144.7c-17.7 0-32.1-14.4-32.1-32.1V261.6c0-17.7 14.4-32.1 32.1-32.1h734.5c17.7 0 32.1 14.4 32.1 32.1v500.7c0 17.8-14.3 32.1-32 32.1z" fill="#a05a40"/>
@@ -2767,14 +3219,15 @@ function renderPlayers() {
             </button>
           </div>
         </div>
+        <!-- Coins: full-width row spanning both columns -->
         <div class="stat-row stat-row--right">
           <span class="stat-label">Coins:</span>
           <div class="stat-controls">
-            <button class="stat-btn minus" onclick="updateStat(${index}, 'coins', -1)">
-              <svg fill="currentColor" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="1.25rem" height="1.25rem"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <title>minus-round</title> <path d="M0 16q0 3.264 1.28 6.208t3.392 5.12 5.12 3.424 6.208 1.248 6.208-1.248 5.12-3.424 3.392-5.12 1.28-6.208-1.28-6.208-3.392-5.12-5.088-3.392-6.24-1.28q-3.264 0-6.208 1.28t-5.12 3.392-3.392 5.12-1.28 6.208zM4 16q0-3.264 1.6-6.016t4.384-4.352 6.016-1.632 6.016 1.632 4.384 4.352 1.6 6.016-1.6 6.048-4.384 4.352-6.016 1.6-6.016-1.6-4.384-4.352-1.6-6.048zM8 16q0 0.832 0.576 1.44t1.44 0.576h12q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-12q-0.832 0-1.44 0.576t-0.576 1.408z"></path> </g></svg>
+            <button class="coin-crown-btn" onclick="openBestowOverlay(${index})" title="Bestow specific coins">
+              <img src="../icons/crown-coin.svg" alt="Bestow coins" />
             </button>
-            <span class="stat-value coins">${player.coins}</span>
-            <button class="stat-btn plus" onclick="updateStat(${index}, 'coins', 1)">
+            <span class="stat-value coins">${getCoinTotal(player)}</span>
+            <button class="stat-btn plus coin-plus-btn" onclick="giveRandomCoin(${index})" title="Give a random coin">
               <svg fill="currentColor" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" width="1.25rem" height="1.25rem">
                 <path d="M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-20q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v20q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM8 16q0 0.832 0.576 1.44t1.44 0.576h4v4q0 0.832 0.576 1.408t1.408 0.576 1.408-0.576 0.608-1.408v-4h4q0.8 0 1.408-0.576t0.576-1.44-0.576-1.408-1.408-0.576h-4v-4q0-0.832-0.608-1.408t-1.408-0.608-1.408 0.608-0.576 1.408v4h-4q-0.832 0-1.44 0.576t-0.576 1.408z"/>
               </svg>
@@ -2787,6 +3240,8 @@ function renderPlayers() {
   });
   
   updateMadnessLinks();
+  // Initialise inline SVG for all level-up buttons
+  setTimeout(() => gameState.players.forEach((_, i) => setLevelupImg(i, 0)), 0);
 }
 
 function getArrowText(placeholder) {
@@ -2906,31 +3361,273 @@ function confirmDelete(btn) {
 function updatePlayer(index, field, value) {
   gameState.players[index][field] = value;
   saveState();
+
+  // Push artefact/iris overrides to the player's Firebase slot
+  if ((field === 'artefact' || field === 'iris') && activeSessionCode && value) {
+    const slot = `player${index}`;
+    db.ref(`sessions/${activeSessionCode}/players/${slot}/${field}`).set(value);
+  }
 }
 
 const STAT_MAX = {
   madness: 50,
   life: 50,
   soul: 12,
-  coins: 99
+  coins: 1024
 };
 
 function updateStat(index, stat, delta) {
-  gameState.players[index][stat] += delta;
-  if (gameState.players[index][stat] < 0) {
-    gameState.players[index][stat] = 0;
+  const player = gameState.players[index];
+
+  // Death check: decrementing life when already at 0
+  if (stat === 'life' && delta < 0 && player.life <= 0) {
+    const name = player.name || `Player ${index + 1}`;
+    if (confirm(`Is ${name} dead?`)) {
+      killPlayer(index);
+    }
+    return;
   }
-  if (STAT_MAX[stat] !== undefined && gameState.players[index][stat] > STAT_MAX[stat]) {
-    gameState.players[index][stat] = STAT_MAX[stat];
+
+  player[stat] += delta;
+  if (player[stat] < 0) {
+    player[stat] = 0;
   }
-  
+
+  // For life, use player's synced maxLife if available, otherwise fall back to STAT_MAX
+  const effectiveMax = (stat === 'life' && player.maxLife)
+    ? player.maxLife
+    : STAT_MAX[stat];
+
+  if (effectiveMax !== undefined && player[stat] > effectiveMax) {
+    player[stat] = effectiveMax;
+  }
+
   // Track madness changes for the report
   if (stat === 'madness') {
-    gameState.players[index].previousMadness = gameState.players[index].madness - delta;
+    player.previousMadness = player.madness - delta;
   }
-  
+
+  // Sync life changes back to player page via Firebase
+  if (stat === 'life') {
+    pushHostLifeUpdateToFirebase(index, player.life);
+  }
+
+  // Sync soul to player page (for ability point calculation)
+  if (stat === 'soul' && activeSessionCode) {
+    const slot = `player${index}`;
+    db.ref(`sessions/${activeSessionCode}/players/${slot}/soul`).set(player.soul);
+  }
+
   renderPlayers();
   saveState();
+}
+
+// ==========================
+// DEATH & LEVEL SYSTEM
+// ==========================
+
+function killPlayer(index) {
+  if (!activeSessionCode) return;
+  const player = gameState.players[index];
+  const name = player.name || `Player ${index + 1}`;
+  const slot = `player${index}`;
+
+  // Flash the card
+  const cards = document.querySelectorAll('.player-card');
+  if (cards[index]) {
+    cards[index].classList.add('dying');
+    setTimeout(() => cards[index].classList.remove('dying'), 1100);
+  }
+
+  // Soul gain chance: 100% - (10 * currentSoul), floor 0%
+  const soulChance = Math.max(0, 1 - (player.soul * 0.1));
+  if (Math.random() < soulChance) {
+    player.soul = Math.min(player.soul + 1, 10);
+  }
+
+  // Reset level to 1
+  player.level = 1;
+
+  // Reset life to -1 (dead state — revived when life reaches 1)
+  player.life = -1;
+  player.madness = 0;
+
+  // Push death state to Firebase — player page resets itself on receiving this
+  db.ref(`sessions/${activeSessionCode}/players/${slot}`).update({
+    currentLife: -1,
+    maxLife: player.maxLife || 1,
+    level: 1,
+    soul: player.soul,
+    dead: true
+  });
+
+  // Log it
+  db.ref(`sessions/${activeSessionCode}/log`).push({
+    type: 'playerDeath',
+    player: name,
+    summary: `${name} has died. Soul: ${player.soul}.`,
+    timestamp: Date.now()
+  });
+
+  renderPlayers();
+  saveState();
+  showToast(`${name} has died. Soul → ${player.soul}.`);
+}
+
+// Level-up press-and-hold state
+const levelUpHoldTimers = {};
+const LEVELUP_HOLD_MS = 2000;
+
+// Build an inline SVG string for the upgrade button, with unique filter IDs per player slot
+function buildUpgradeSVG(frame, idx) {
+  const uid = `u${idx}`;
+  const shadowY = `rgba(248,231,28,1)`;
+  const shadowO = `rgba(245,166,35,1)`;
+  const shadowW = `rgba(255,255,255,1)`;
+
+  // chevrons top→bottom: fill-opacity and glow colour per frame
+  const frames = [
+    { fo: [0.02, 0.02, 0.03, 0.05], fc: [shadowY, shadowY, shadowY, shadowO] }, // 0 ghost
+    { fo: [0.02, 0.02, 0.03, 1],    fc: [shadowY, shadowY, shadowY, shadowO] }, // 1 bottom lit
+    { fo: [0.02, 0.02, 1,    1],    fc: [shadowY, shadowY, shadowO, shadowO] }, // 2
+    { fo: [0.02, 1,    1,    1],    fc: [shadowY, shadowO, shadowO, shadowO] }, // 3
+    { fo: [1,    1,    1,    1],    fc: [shadowO, shadowO, shadowO, shadowO] }, // 4 full
+    { fo: [1,    1,    1,    1],    fc: [shadowW, shadowW, shadowW, shadowW] }, // 5 flash
+  ];
+
+  const f = frames[Math.min(frame, 5)];
+  const def = (id, color, std) =>
+    `<filter id="${uid}-${id}" height="300%" width="300%" x="-100%" y="-100%">
+      <feFlood flood-color="${color}" result="flood"/>
+      <feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"/>
+      <feGaussianBlur in="composite" stdDeviation="${std}" result="blur"/>
+      <feOffset dx="0" dy="0" result="offset"/>
+      <feComposite in="SourceGraphic" in2="offset" operator="over"/>
+    </filter>`;
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <defs>
+      <clipPath id="${uid}-clip"><circle cx="256" cy="256" r="256"/></clipPath>
+      ${def('fa', f.fc[0], 12)}${def('fb', f.fc[1], 12)}${def('fc', f.fc[2], 12)}${def('fd', f.fc[3], 15)}
+    </defs>
+    <g clip-path="url(#${uid}-clip)">
+      <path d="M256 29.816L25 183.816L25 290.184L256 136.184L487 290.184L487 183.816Z"
+        fill="#f8e71c" fill-opacity="${f.fo[0]}" stroke="#fff" stroke-width="6" filter="url(#${uid}-fa)"/>
+      <path d="M256 157.859L105 259.783L105 350.066L256 248.141L407 350.066L407 259.783Z"
+        fill="#f8e71c" fill-opacity="${f.fo[1]}" stroke="#fff" stroke-width="6" filter="url(#${uid}-fb)"/>
+      <path d="M256 269.859L169 328.584L169 396.184L256 338.184L343 396.184L343 328.584Z"
+        fill="#f8e71c" fill-opacity="${f.fo[2]}" stroke="#fff" stroke-width="7" filter="url(#${uid}-fc)"/>
+      <path d="M256 359.816L169 417.816L169 482.184L256 424.184L343 482.184L343 417.816Z"
+        fill="#f8e71c" fill-opacity="${f.fo[3]}" stroke="#fff" stroke-width="7" filter="url(#${uid}-fd)"/>
+    </g>
+  </svg>`;
+}
+
+function setLevelupImg(index, frame) {
+  const wrap = document.getElementById(`levelupImg${index}`);
+  if (wrap) wrap.innerHTML = buildUpgradeSVG(frame, index);
+}
+
+function startLevelUpHold(index, btn) {
+  const stepMs = LEVELUP_HOLD_MS / 4; // 500ms per step: frames 0→1→2→3→4
+  const timers = [];
+  for (let i = 0; i <= 4; i++) {
+    timers.push(setTimeout(() => setLevelupImg(index, i), i * stepMs));
+  }
+
+  const holdTimer = setTimeout(() => {
+    levelUpHoldTimers[index] = null; // consumed
+
+    // Force frame 4, wait 500ms so it's visible, then prompt
+    setLevelupImg(index, 4);
+    setTimeout(() => {
+      const names = gameState.players.map((p, i) => p.name || `Player ${i+1}`).join(', ');
+      const confirmed = confirm(`Level up ALL players?\n(${names})`);
+
+      if (confirmed) {
+        levelUpAllPlayers(btn);
+      } else {
+        // Cancelled — fade the held button back to frame 0
+        const wrap = document.getElementById(`levelupImg${index}`);
+        if (wrap) wrap.style.opacity = '0';
+        setTimeout(() => {
+          setLevelupImg(index, 0);
+          if (wrap) wrap.style.opacity = '1';
+        }, 600);
+      }
+    }, 500);
+  }, LEVELUP_HOLD_MS);
+
+  // Fix 3: store btn reference in state so all animation ops use the correct element
+  levelUpHoldTimers[index] = { btn, stepTimers: timers, holdTimer };
+}
+
+// Fix 2: animate only the source button, not all buttons
+function levelUpAllPlayers(sourceBtn) {
+  // Level up all first (triggers re-render)
+  gameState.players.forEach((_, i) => doLevelUp(i));
+  showToast('All players levelled up!');
+
+  // After re-render settles, set frame 5 and pulse on all buttons
+  setTimeout(() => {
+    gameState.players.forEach((_, i) => {
+      setLevelupImg(i, 5);
+      const btn = document.getElementById(`levelupBtn${i}`);
+      if (btn) btn.classList.add('pulse');
+    });
+    setTimeout(() => {
+      gameState.players.forEach((_, i) => {
+        const btn = document.getElementById(`levelupBtn${i}`);
+        if (btn) btn.classList.remove('pulse');
+        setLevelupImg(i, 0);
+      });
+    }, 350);
+  }, 50);
+}
+
+function endLevelUpHold(index, btn) {
+  const state = levelUpHoldTimers[index];
+  if (!state) return; // consumed by hold completion
+  state.stepTimers.forEach(t => clearTimeout(t));
+  clearTimeout(state.holdTimer);
+  delete levelUpHoldTimers[index];
+
+  // Quick click: flash frame 5, pulse, confirm single player
+  setLevelupImg(index, 5);
+  btn.classList.add('pulse');
+  setTimeout(() => {
+    btn.classList.remove('pulse');
+    setLevelupImg(index, 0);
+    const player = gameState.players[index];
+    const name = player.name || `Player ${index + 1}`;
+    if (confirm(`Level up ${name}?`)) {
+      doLevelUp(index);
+      showToast(`${name} is now Level ${player.level}!`);
+    }
+  }, 350);
+}
+
+function cancelLevelUpHold(index, btn) {
+  const state = levelUpHoldTimers[index];
+  if (!state) return;
+  state.stepTimers.forEach(t => clearTimeout(t));
+  clearTimeout(state.holdTimer);
+  delete levelUpHoldTimers[index];
+  const wrap = document.getElementById(`levelupImg${index}`);
+  if (wrap) wrap.style.opacity = '1';
+  setLevelupImg(index, 0);
+}
+
+function doLevelUp(index) {
+  const player = gameState.players[index];
+  player.level = (player.level || 1) + 1;
+  renderPlayers();
+  saveState();
+
+  if (activeSessionCode) {
+    const slot = `player${index}`;
+    db.ref(`sessions/${activeSessionCode}/players/${slot}/level`).set(player.level);
+  }
 }
 
 function updateMadnessLinks() {
@@ -4636,7 +5333,10 @@ function updateAddEnemyButton() {
 // ==========================
 // MADNESS REPORT
 // ==========================
+let currentMadnessPlayerIndex = -1;
+
 function showMadnessReport(playerIndex) {
+  currentMadnessPlayerIndex = playerIndex;
   const player = gameState.players[playerIndex];
   const otherPlayers = gameState.players.filter((p, i) => i !== playerIndex);
   
@@ -4672,6 +5372,10 @@ function showMadnessReport(playerIndex) {
   });
   
   document.getElementById('madnessText').innerHTML = madnessText;
+  document.getElementById('madnessText').removeAttribute('contenteditable');
+  document.getElementById('madnessRewriteBtn').classList.remove('active');
+  document.getElementById('madnessWhisperBtn').classList.remove('sent');
+  document.getElementById('madnessWhisperBtn').textContent = 'Whisper';
   document.getElementById('madnessOverlay').classList.add('visible');
 }
 
@@ -4713,6 +5417,10 @@ function generateMadnessText(params) {
 }
 
 function closeMadness() {
+  // Lock editing if open
+  const textEl = document.getElementById('madnessText');
+  textEl.removeAttribute('contenteditable');
+  document.getElementById('madnessRewriteBtn').classList.remove('active');
   document.getElementById('madnessOverlay').classList.remove('visible');
 }
 
@@ -4720,6 +5428,56 @@ function closeMadnessOnOverlay(event) {
   if (event.target === document.getElementById('madnessOverlay')) {
     closeMadness();
   }
+}
+
+function toggleMadnessRewrite() {
+  const textEl = document.getElementById('madnessText');
+  const btn    = document.getElementById('madnessRewriteBtn');
+  const isEditing = textEl.getAttribute('contenteditable') === 'true';
+
+  if (isEditing) {
+    // Lock it
+    textEl.removeAttribute('contenteditable');
+    btn.classList.remove('active');
+    btn.textContent = 'Rewrite';
+  } else {
+    // Make editable
+    textEl.setAttribute('contenteditable', 'true');
+    btn.classList.add('active');
+    btn.textContent = 'Lock';
+    textEl.focus();
+    // Move cursor to end
+    const range = document.createRange();
+    range.selectNodeContents(textEl);
+    range.collapse(false);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+  }
+}
+
+function whisperMadness() {
+  if (currentMadnessPlayerIndex < 0 || !activeSessionCode) return;
+
+  // Lock editing first if open
+  const textEl = document.getElementById('madnessText');
+  textEl.removeAttribute('contenteditable');
+  document.getElementById('madnessRewriteBtn').classList.remove('active');
+  document.getElementById('madnessRewriteBtn').textContent = 'Rewrite';
+
+  const whisperText = textEl.innerText.trim();
+  if (!whisperText) return;
+
+  const slot = `player${currentMadnessPlayerIndex}`;
+  db.ref(`sessions/${activeSessionCode}/players/${slot}/madnessWhisper`).set(whisperText);
+
+  // Visual feedback
+  const btn = document.getElementById('madnessWhisperBtn');
+  btn.textContent = 'Sent ✓';
+  btn.classList.add('sent');
+  setTimeout(() => {
+    btn.textContent = 'Whisper';
+    btn.classList.remove('sent');
+  }, 2000);
 }
 
 // ==========================
@@ -4824,8 +5582,8 @@ function loadState() {
       // Restore dice results
       renderDiceResults();
       renderEnemies();
-      renderPlayers();  // This already exists
-      setupDeleteButtons();  // ← ADD THIS LINE HERE
+      renderPlayers();  
+      setupDeleteButtons();  
       updateAddEnemyButton();
     } catch (e) {
       console.error('Failed to load state:', e);
@@ -4838,7 +5596,7 @@ function loadState() {
       gameState.enemies = [];
       gameState.enemyVisible = false;
       renderPlayers();
-      setupDeleteButtons();  // ← AND HERE TOO
+      setupDeleteButtons();  
     }
   } else {
     // Default state with 3 players
@@ -4849,13 +5607,29 @@ function loadState() {
     ];
     gameState.enemies = [];
     renderPlayers();
-    setupDeleteButtons();  // ← AND HERE
+    setupDeleteButtons();  
   }
+  restoreHostSession();
 }
 
 function resetAll() {
   if (confirm('Are you sure you want to reset all game state? This cannot be undone.')) {
     localStorage.removeItem('hostTrackerState');
+    localStorage.removeItem('hostSessionCode');
+
+    if (activeSessionCode) {
+      db.ref(`sessions/${activeSessionCode}`).remove();
+      activeSessionCode = null;
+    }
+
+    // reset session UI back to button
+    const endSlot = document.getElementById('endSessionSlot');
+    if (endSlot) endSlot.innerHTML = '';
+    const container = document.getElementById('sessionControl');
+    if (container) {
+      container.innerHTML = `<button class="session-btn" id="hostSessionBtn" onclick="startHostSession()">HOST SESSION</button>`;
+    }
+    
     gameState = {
       villain: '',
       act: 0,
@@ -4889,7 +5663,630 @@ function resetAll() {
     saveState();
   }
 }
+
+
+// ==========================
+// FIREBASE CONFIG
+// ==========================
+// Paste your Firebase config here after creating your project
+const firebaseConfig = {
+  apiKey: "AIzaSyAtbq0awljUBBA7Oy7NgjH4tEd9NM-95Mg",
+  authDomain: "p986-online.firebaseapp.com",
+  databaseURL: "https://p986-online-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "p986-online",
+  storageBucket: "p986-online.firebasestorage.app",
+  messagingSenderId: "782380134937",
+  appId: "1:782380134937:web:68bd687556b526b948b088"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ==========================
+// SESSION SYSTEM
+// ==========================
+const SESSION_TTL_MS = 48 * 60 * 60 * 1000; // 48 hours in milliseconds
+let activeSessionCode = null;
+let sessionListeners = {}; // track Firebase listeners for cleanup
+
+// Generate a unique 4-character alphanumeric code
+async function generateUniqueCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code, exists;
+  do {
+    code = Array.from({length: 4}, () =>
+      chars[Math.floor(Math.random() * chars.length)]).join('');
+    const snap = await db.ref(`sessions/${code}`).get();
+    exists = snap.exists();
+  } while (exists);
+  return code;
+}
+
+// Restore session after page refresh
+async function restoreHostSession() {
+  const savedCode = localStorage.getItem('hostSessionCode');
+  if (!savedCode) return;
+
+  try {
+    const snap = await db.ref(`sessions/${savedCode}`).get();
+    if (!snap.exists()) {
+      // Session gone from Firebase — clean up
+      localStorage.removeItem('hostSessionCode');
+      return;
+    }
+
+    const session = snap.val();
+    if (session.expiresAt && Date.now() > session.expiresAt) {
+      // Expired — clean up
+      await db.ref(`sessions/${savedCode}`).remove();
+      localStorage.removeItem('hostSessionCode');
+      return;
+    }
+
+    // Valid session — reconnect
+    activeSessionCode = savedCode;
+    showSessionCode(savedCode);
+    listenForPlayerJoins(savedCode);
+    listenForPlayerStatUpdates(savedCode);
+
+  } catch (err) {
+    console.error('Failed to restore session:', err);
+    localStorage.removeItem('hostSessionCode');
+  }
+}
+
+function showToast(message, duration = 3000) {
+  const toast = document.getElementById('hostToast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.add('visible');
+  setTimeout(() => toast.classList.remove('visible'), duration);
+}
+
+// End session: sync all player data, signal players, delete room, reset host UI
+async function endSession() {
+  if (!activeSessionCode) return;
+  if (!confirm('End the session? All players will be disconnected.')) return;
+
+  const code = activeSessionCode;
+
+  try {
+    // 1. Final fetch of all player data from Firebase → merge into gameState
+    const snap = await db.ref(`sessions/${code}/players`).get();
+    if (snap.exists()) {
+      const players = snap.val();
+      Object.entries(players).forEach(([slotKey, data]) => {
+        const idx = parseInt(slotKey.replace('player', ''), 10);
+        if (isNaN(idx) || !gameState.players[idx]) return;
+        const p = gameState.players[idx];
+        if (data.currentLife !== undefined) p.life    = data.currentLife;
+        if (data.maxLife    !== undefined) p.maxLife  = data.maxLife;
+        if (data.madness    !== undefined) p.madness  = data.madness;
+        if (data.soul       !== undefined) p.soul     = data.soul;
+        if (data.coins      !== undefined && typeof data.coins === 'object') p.coinPurse = data.coins;
+        if (data.artefact   !== undefined) p.artefact = data.artefact;
+        if (data.iris       !== undefined) p.iris     = data.iris;
+      });
+      saveState();
+      renderPlayers();
+    }
+
+    // 2. Write 'ended' signal so players can react, then delete the session
+    await db.ref(`sessions/${code}/ended`).set(true);
+
+    // Brief pause so connected players can pick up the signal before deletion
+    await new Promise(resolve => setTimeout(resolve, 1200));
+
+    // 3. Delete the session node from Firebase
+    await db.ref(`sessions/${code}`).remove();
+
+  } catch (err) {
+    console.error('Error ending session:', err);
+  }
+
+  // 4. Reset host state
+  activeSessionCode = null;
+  localStorage.removeItem('hostSessionCode');
+
+  const endSlot = document.getElementById('endSessionSlot');
+  if (endSlot) endSlot.innerHTML = '';
+
+  const container = document.getElementById('sessionControl');
+  if (container) {
+    container.innerHTML = `<button class="session-btn" id="hostSessionBtn" onclick="startHostSession()">HOST SESSION</button>`;
+  }
+
+  showToast('✓ Session saved & ended');
+}
+
+// Host clicks HOST SESSION
+async function startHostSession() {
+  const btn = document.getElementById('hostSessionBtn');
+  btn.disabled = true;
+  btn.textContent = 'STARTING...';
+
+  try {
+    const code = await generateUniqueCode();
+    activeSessionCode = code;
+    localStorage.setItem('hostSessionCode', code);
+
+    // Write full gameState + expiry to Firebase
+    await db.ref(`sessions/${code}`).set({
+      createdAt: Date.now(),
+      expiresAt: Date.now() + SESSION_TTL_MS,
+      gameState: JSON.parse(JSON.stringify(gameState)) // deep copy
+    });
+
+    // Show the code in place of the button
+    showSessionCode(code);
+
+    // Start listening for player join requests
+    listenForPlayerJoins(code);
+
+    // Start listening for player stat updates
+    listenForPlayerStatUpdates(code);
+
+  } catch (err) {
+    console.error('Failed to start session:', err);
+    btn.disabled = false;
+    btn.textContent = 'HOST SESSION';
+  }
+}
+
+// Replace button with clickable code display + end session button in separate slots
+function showSessionCode(code) {
+  document.getElementById('endSessionSlot').innerHTML = `
+    <button class="end-session-btn" onclick="endSession()" title="End session and disconnect all players">
+      <span class="end-label-full">End Session</span>
+      <span class="end-label-short">END</span>
+    </button>`;
+
+  document.getElementById('sessionControl').innerHTML = `
+    <span class="session-code" id="sessionCodeDisplay" onclick="copySessionCode()"
+      title="Click to copy">${code}</span>`;
+
+  // Lock width immediately after render so COPY! swap never causes reflow
+  requestAnimationFrame(() => {
+    const el = document.getElementById('sessionCodeDisplay');
+    if (el) el.style.width = el.offsetWidth + 'px';
+  });
+}
+
+// Copy code to clipboard with COPY! feedback
+function copySessionCode() {
+  const el = document.getElementById('sessionCodeDisplay');
+  navigator.clipboard.writeText(activeSessionCode).then(() => {
+    el.textContent = 'COPY!';
+    el.classList.add('COPY');
+    setTimeout(() => {
+      el.textContent = activeSessionCode;
+      el.classList.remove('COPY');
+    }, 1500);
+  });
+}
+
+// Listen for players writing their join request under sessions/{code}/joining/
+function listenForPlayerJoins(code) {
+  db.ref(`sessions/${code}/joining`).on('child_added', async (snap) => {
+    const request = snap.val();
+    const requestKey = snap.key;
+    console.log('Join request received:', request);
+    if (!request) return;
+
+    const { name, artefact, iris } = request;
+
+    // Find matching player slot
+    let matchIndex = -1;
+
+    // Rule 1: exact name match
+    matchIndex = gameState.players.findIndex(p =>
+      p.name && p.name.trim().toLowerCase() === name.trim().toLowerCase()
+    );
+
+    // Rule 2: artefact + iris match (replace)
+    if (matchIndex === -1) {
+      matchIndex = gameState.players.findIndex(p =>
+        p.artefact && p.iris &&
+        p.artefact.trim().toLowerCase() === artefact.trim().toLowerCase() &&
+        p.iris.trim().toLowerCase() === iris.trim().toLowerCase()
+      );
+    }
+
+    // Rule 3: find first empty slot, or add new if none available
+    if (matchIndex === -1) {
+      matchIndex = gameState.players.findIndex(p => !p.name || p.name.trim() === '');
+      if (matchIndex === -1) {
+        gameState.players.push(createPlayer(gameState.players.length + 1));
+        matchIndex = gameState.players.length - 1;
+      }
+    }
+
+    // Overwrite player slot with host's saved data, keep new name/artefact/iris
+    gameState.players[matchIndex].name = name;
+    gameState.players[matchIndex].artefact = artefact;
+    gameState.players[matchIndex].iris = iris;
+
+    // Assign slot index so player knows their path
+    const playerSlot = `player${matchIndex}`;
+
+    // Write acceptance back to Firebase
+    await db.ref(`sessions/${code}/players/${playerSlot}`).set({
+      name,
+      artefact,
+      iris,
+      currentLife: gameState.players[matchIndex].life,
+      maxLife: gameState.players[matchIndex].life,
+      madness: gameState.players[matchIndex].madness,
+      soul: gameState.players[matchIndex].soul,
+      coins: gameState.players[matchIndex].coins
+    });
+
+    // Remove the join request
+    await db.ref(`sessions/${code}/joining/${requestKey}`).remove();
+
+    renderPlayers();
+    setupDeleteButtons();
+    saveState();
+  });
+}
+
+// Listen for player stat changes pushed from player pages
+function listenForPlayerStatUpdates(code) {
+  db.ref(`sessions/${code}/players`).on('child_changed', (snap) => {
+    const data = snap.val();
+    if (!data) return;
+
+    const slotIndex = parseInt(snap.key.replace('player', ''), 10);
+    if (isNaN(slotIndex) || !gameState.players[slotIndex]) return;
+
+    // Update host's gameState with player's live stats
+    gameState.players[slotIndex].life = data.currentLife ?? gameState.players[slotIndex].life;
+    gameState.players[slotIndex].maxLife = data.maxLife ?? gameState.players[slotIndex].maxLife;
+    gameState.players[slotIndex].madness = data.madness ?? gameState.players[slotIndex].madness;
+    gameState.players[slotIndex].soul = data.soul ?? gameState.players[slotIndex].soul;
+    // coins from Firebase is now a purse object — store in coinPurse, not coins
+    if (data.coins !== undefined) {
+      if (typeof data.coins === 'object') {
+        gameState.players[slotIndex].coinPurse = data.coins;
+      } else {
+        gameState.players[slotIndex].coins = data.coins;
+      }
+    }
+
+    // Update level and traits notes
+    if (data.level !== undefined) {
+      gameState.players[slotIndex].level = data.level;
+    }
+    if (data.traitsNotes !== undefined) {
+      gameState.players[slotIndex].traitsNotes = data.traitsNotes;
+    }
+
+    // Inject auto-header into player notebook if level or traits changed
+    if (data.level !== undefined || data.traitsNotes !== undefined) {
+      injectPlayerNotebookHeader(slotIndex);
+    }
+
+    renderPlayers();
+    saveState();
+  });
+}
+
+// Auto-generate the first lines of a player's notebook from synced data.
+// Wraps them in a sentinel block so we can replace it without touching
+// anything the host has typed below it.
+const NOTEBOOK_HEADER_START = '--- [auto] ---\n';
+const NOTEBOOK_HEADER_END   = '\n--- [/auto] ---\n';
+
+function injectPlayerNotebookHeader(slotIndex) {
+  const player = gameState.players[slotIndex];
+  const level       = player.level       ?? 1;
+  const traitsNotes = player.traitsNotes ?? '';
+
+  let headerLines = `Level ${level}.`;
+  if (traitsNotes) headerLines += `\n${traitsNotes}`;
+
+  const autoBlock = NOTEBOOK_HEADER_START + headerLines + NOTEBOOK_HEADER_END;
+
+  const existing = player.notes || '';
+  let body = existing;
+
+  // Strip old auto-block if present
+  const startIdx = existing.indexOf(NOTEBOOK_HEADER_START);
+  const endIdx   = existing.indexOf(NOTEBOOK_HEADER_END);
+  if (startIdx !== -1 && endIdx !== -1) {
+    body = existing.slice(endIdx + NOTEBOOK_HEADER_END.length);
+  }
+
+  player.notes = autoBlock + body;
+  saveState();
+
+  // If this player's notepad is currently open, refresh it live
+  if (typeof currentPlayerIndex !== 'undefined' && currentPlayerIndex === slotIndex) {
+    document.getElementById('playerNotepadText').value = player.notes;
+  }
+}
+
+// ==========================
+// COIN BESTOW SYSTEM
+// ==========================
+
+// Returns the numeric coin total for display, regardless of storage format
+function getCoinTotal(player) {
+  if (!player) return 0;
+  // If coinPurse exists, sum it
+  if (player.coinPurse && typeof player.coinPurse === 'object') {
+    return Object.values(player.coinPurse).reduce((s, v) => s + (Number(v) || 0), 0);
+  }
+  // Legacy: coins is already a number
+  return typeof player.coins === 'number' ? player.coins : 0;
+}
+
+
+const RANDOM_COIN_TABLE = [
+  { type: 'gold',   weight: 10 },
+  { type: 'silver', weight: 35 },
+  { type: 'alloy',  weight: 40 },
+  { type: 'old',    weight: 15 },
+];
+
+function rollRandomCoin() {
+  const total = RANDOM_COIN_TABLE.reduce((s, c) => s + c.weight, 0);
+  let roll = Math.random() * total;
+  for (const entry of RANDOM_COIN_TABLE) {
+    roll -= entry.weight;
+    if (roll <= 0) return entry.type;
+  }
+  return 'alloy'; // fallback
+}
+
+function giveRandomCoin(playerIndex) {
+  const coinType = rollRandomCoin();
+  const player = gameState.players[playerIndex];
+
+  // Initialise coinPurse if missing
+  if (!player.coinPurse) player.coinPurse = { gold:0, silver:0, alloy:0, old:0, mystery:0 };
+  player.coinPurse[coinType] = (player.coinPurse[coinType] || 0) + 1;
+  player.coins = (player.coins || 0) + 1; // keep legacy total in sync
+
+  renderPlayers();
+  saveState();
+  pushCoinUpdateToFirebase(playerIndex);
+
+  // Server log
+  if (activeSessionCode) {
+    const coinNames = { gold:'Gold', silver:'Silver', alloy:'Alloy', old:'Old Coin' };
+    const playerName = gameState.players[playerIndex]?.name || `Player ${playerIndex + 1}`;
+    db.ref(`sessions/${activeSessionCode}/log`).push({
+      type: 'coinBestow',
+      summary: `Host bestowed 1 ${coinNames[coinType]} to ${playerName}`,
+      player: playerName,
+      coins: { [coinType]: 1 },
+      timestamp: Date.now()
+    });
+  }
+
+  // Brief visual feedback — target the coins + button specifically
+  const cards = document.querySelectorAll('.player-card');
+  if (cards[playerIndex]) {
+    const btn = cards[playerIndex].querySelector('.coin-plus-btn');
+    if (btn) {
+      btn.title = `+1 ${coinNames[coinType]}!`;
+      btn.style.borderColor = '#FFD700';
+      setTimeout(() => { btn.title = 'Give a random coin'; btn.style.borderColor = ''; }, 1500);
+    }
+  }
+}
+
+// Bestow overlay state
+let bestowTargetIndex = null;
+let bestowAmounts = { gold:0, silver:0, alloy:0, old:0, mystery:0 };
+const BESTOW_COIN_KEYS = ['gold','silver','alloy','old','mystery'];
+
+function openBestowOverlay(playerIndex) {
+  bestowTargetIndex = playerIndex;
+  bestowAmounts = { gold:0, silver:0, alloy:0, old:0, mystery:0 };
+
+  const player = gameState.players[playerIndex];
+  document.getElementById('bestowSubtitle').textContent =
+    `Bestow coins to ${player.name || `Player ${playerIndex + 1}`}`;
+
+  // Reset all amount displays
+  BESTOW_COIN_KEYS.forEach(coin => {
+    const el = document.getElementById(`bestowAmt-${coin}`);
+    if (el) { el.textContent = '0'; el.classList.add('zero'); }
+  });
+  document.getElementById('bestowConfirmBtn').disabled = true;
+
+  document.getElementById('bestowOverlay').classList.remove('hidden');
+}
+
+function closeBestowOverlay() {
+  bestowTargetIndex = null;
+  document.getElementById('bestowOverlay').classList.add('hidden');
+}
+
+function adjustBestowAmount(coin, dir) {
+  bestowAmounts[coin] = Math.max(0, Math.min(99, (bestowAmounts[coin] || 0) + dir));
+  const el = document.getElementById(`bestowAmt-${coin}`);
+  if (el) {
+    el.textContent = bestowAmounts[coin];
+    el.classList.toggle('zero', bestowAmounts[coin] === 0);
+  }
+  const anyPositive = BESTOW_COIN_KEYS.some(c => bestowAmounts[c] > 0);
+  document.getElementById('bestowConfirmBtn').disabled = !anyPositive;
+}
+
+function confirmBestow() {
+  if (bestowTargetIndex === null) return;
+  const player = gameState.players[bestowTargetIndex];
+
+  // Always initialise coinPurse with all keys before adding
+  if (!player.coinPurse || typeof player.coinPurse !== 'object') {
+    player.coinPurse = { gold:0, silver:0, alloy:0, old:0, mystery:0 };
+  }
+  BESTOW_COIN_KEYS.forEach(coin => {
+    if (player.coinPurse[coin] === undefined) player.coinPurse[coin] = 0;
+  });
+
+  let totalGiven = 0;
+  BESTOW_COIN_KEYS.forEach(coin => {
+    const amt = bestowAmounts[coin] || 0;
+    if (amt > 0) {
+      player.coinPurse[coin] += amt;
+      totalGiven += amt;
+    }
+  });
+
+  if (typeof player.coins !== 'number') player.coins = 0;
+  player.coins += totalGiven;
+
+  const targetIndex = bestowTargetIndex; // capture before closing clears it
+  closeBestowOverlay();
+  renderPlayers();
+  saveState();
+  pushCoinUpdateToFirebase(targetIndex);
+
+  // Server log
+  if (activeSessionCode) {
+    const coinNames = { gold:'Gold', silver:'Silver', alloy:'Alloy', old:'Old Coin', mystery:'Li' };
+    const parts = BESTOW_COIN_KEYS
+      .filter(c => (bestowAmounts[c] || 0) > 0)
+      .map(c => `${bestowAmounts[c]} ${coinNames[c]}`);
+    if (parts.length > 0) {
+      const playerName = gameState.players[targetIndex]?.name || `Player ${targetIndex + 1}`;
+      db.ref(`sessions/${activeSessionCode}/log`).push({
+        type: 'coinBestow',
+        summary: `Host bestowed ${parts.join(', ')} to ${playerName}`,
+        player: playerName,
+        coins: { ...bestowAmounts },
+        timestamp: Date.now()
+      });
+    }
+  }
+} // end confirmBestow
+
+function pushCoinUpdateToFirebase(playerIndex) {
+  if (!activeSessionCode) return;
+  const player = gameState.players[playerIndex];
+  const slot = `player${playerIndex}`;
+  const purse = player.coinPurse || { gold:0, silver:0, alloy:0, old:0, mystery:0 };
+  db.ref(`sessions/${activeSessionCode}/players/${slot}/coins`).set(purse);
+}
+
+// Call this from updateStat() to push host life changes back to player page
+function pushHostLifeUpdateToFirebase(playerIndex, newLife) {
+  if (!activeSessionCode) return;
+  const slot = `player${playerIndex}`;
+  db.ref(`sessions/${activeSessionCode}/players/${slot}/currentLife`).set(newLife);
+}
+
+
+// Wire up bestow overlay buttons
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('bestowCancelBtn').addEventListener('click', closeBestowOverlay);
+  document.getElementById('bestowConfirmBtn').addEventListener('click', confirmBestow);
+
+  document.querySelectorAll('.bestow-adj-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      adjustBestowAmount(btn.dataset.coin, parseInt(btn.dataset.dir, 10));
+    });
+  });
+
+  // Close on backdrop click
+  document.getElementById('bestowOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('bestowOverlay')) closeBestowOverlay();
+  });
+});
+
 </script>
+
+<!-- Bestow Coins Overlay -->
+<div id="bestowOverlay" class="hidden">
+  <div class="bestow-panel">
+    <div class="bestow-title">Bestow Coins</div>
+    <div class="bestow-subtitle" id="bestowSubtitle">Choose coins to give</div>
+
+    <!-- Gold -->
+    <div class="bestow-row">
+      <div class="bestow-coin-icon gold">G</div>
+      <div class="bestow-coin-label">Gold<br><span class="bestow-coin-sub">Highest value</span></div>
+      <div class="bestow-adj-group">
+        <button class="bestow-adj-btn" data-coin="gold" data-dir="-1">−</button>
+        <span class="bestow-amount zero" id="bestowAmt-gold">0</span>
+        <button class="bestow-adj-btn" data-coin="gold" data-dir="1">+</button>
+      </div>
+    </div>
+    <!-- Silver -->
+    <div class="bestow-row">
+      <div class="bestow-coin-icon silver">S</div>
+      <div class="bestow-coin-label">Silver<br><span class="bestow-coin-sub">10 Silver = 1 Gold</span></div>
+      <div class="bestow-adj-group">
+        <button class="bestow-adj-btn" data-coin="silver" data-dir="-1">−</button>
+        <span class="bestow-amount zero" id="bestowAmt-silver">0</span>
+        <button class="bestow-adj-btn" data-coin="silver" data-dir="1">+</button>
+      </div>
+    </div>
+    <!-- Alloy -->
+    <div class="bestow-row">
+      <div class="bestow-coin-icon alloy">A</div>
+      <div class="bestow-coin-label">Alloy<br><span class="bestow-coin-sub">10 Alloy = 1 Silver</span></div>
+      <div class="bestow-adj-group">
+        <button class="bestow-adj-btn" data-coin="alloy" data-dir="-1">−</button>
+        <span class="bestow-amount zero" id="bestowAmt-alloy">0</span>
+        <button class="bestow-adj-btn" data-coin="alloy" data-dir="1">+</button>
+      </div>
+    </div>
+    <!-- Old Coin -->
+    <div class="bestow-row">
+      <div class="bestow-coin-icon old">✦</div>
+      <div class="bestow-coin-label">Old Coin<br><span class="bestow-coin-sub">Value varies by merchant</span></div>
+      <div class="bestow-adj-group">
+        <button class="bestow-adj-btn" data-coin="old" data-dir="-1">−</button>
+        <span class="bestow-amount zero" id="bestowAmt-old">0</span>
+        <button class="bestow-adj-btn" data-coin="old" data-dir="1">+</button>
+      </div>
+    </div>
+    <!-- Li (mystery - always shown to host) -->
+    <hr class="bestow-divider">
+    <div class="bestow-row">
+      <div class="bestow-coin-icon li">
+        <svg viewBox="0 0 20 34" width="0.75rem" height="1.25rem" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="kobGoldH" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#f5d97a"/>
+              <stop offset="50%" stop-color="#c8933a"/>
+              <stop offset="100%" stop-color="#a06820"/>
+            </linearGradient>
+          </defs>
+          <rect x="1.5" y="0.5" width="17" height="33" rx="7" ry="7" fill="url(#kobGoldH)" stroke="#7a4e10" stroke-width="1.2"/>
+          <line x1="3.5" y1="5"  x2="16.5" y2="5"  stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="7"  x2="17"   y2="7"  stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="9"  x2="17"   y2="9"  stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="11" x2="17"   y2="11" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="13" x2="17"   y2="13" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="21" x2="17"   y2="21" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="23" x2="17"   y2="23" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="25" x2="17"   y2="25" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3"   y1="27" x2="17"   y2="27" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <line x1="3.5" y1="29" x2="16.5" y2="29" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+          <ellipse cx="10" cy="17" rx="4" ry="5.5" fill="none" stroke="#7a4e10" stroke-width="0.9" opacity="0.75"/>
+          <ellipse cx="10" cy="17" rx="2" ry="3"   fill="none" stroke="#9e6010" stroke-width="0.5" opacity="0.5"/>
+        </svg>
+      </div>
+      <div class="bestow-coin-label">Li<br><span class="bestow-coin-sub">Rare · Kingdom coin</span></div>
+      <div class="bestow-adj-group">
+        <button class="bestow-adj-btn" data-coin="mystery" data-dir="-1">−</button>
+        <span class="bestow-amount zero" id="bestowAmt-mystery">0</span>
+        <button class="bestow-adj-btn" data-coin="mystery" data-dir="1">+</button>
+      </div>
+    </div>
+
+    <div class="bestow-actions">
+      <button class="bestow-cancel-btn" id="bestowCancelBtn">Cancel</button>
+      <button class="bestow-confirm-btn" id="bestowConfirmBtn" disabled>✦ Bestow</button>
+    </div>
+  </div>
+</div>
 
 <!-- ==========================
    VILLAIN CARD & STORY OVERLAYS
@@ -4910,5 +6307,6 @@ function resetAll() {
     <div class="story-text" id="storyText"></div>
   </div>
 </div>
+<div id="hostToast"></div>
 </body>
 </html>
