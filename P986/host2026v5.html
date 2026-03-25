@@ -649,6 +649,7 @@ h1, h2, h3, h4 {
   display: flex;
   justify-content: flex-start;
   width: 100%;
+  gap: 0.5rem;
 }
 
 .player-memobook-btn {
@@ -658,10 +659,10 @@ h1, h2, h3, h4 {
   color: var(--text-secondary);
   font-family: inherit;
   font-size: 0.75rem;
-  padding: 0.1rem 0rem;
+  /*padding: 0.1rem 0rem;*/
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.35s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -672,6 +673,61 @@ h1, h2, h3, h4 {
 .player-memobook-btn:hover {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
+}
+
+.player-levelup-btn {
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 1.75rem;
+  margin: 0rem 0.25rem;
+  flex-shrink: 0;
+}
+.levelup-svg-wrap {
+  width: 2.5rem;
+  height: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: opacity 1s ease;
+}
+.levelup-svg-wrap svg {
+  width: 2.5rem;
+  height: 1.75rem;
+}
+@keyframes levelupPulse {
+  0%   { transform: scale(1);    opacity: 1; }
+  40%  { transform: scale(1.35); opacity: 1; }
+  100% { transform: scale(1);    opacity: 1; }
+}
+.player-levelup-btn.pulse .levelup-svg-wrap {
+  animation: levelupPulse 0.35s ease forwards;
+}
+
+@keyframes levelupPulseAll {
+  0%   { transform: scale(1);    opacity: 1; }
+  15%  { transform: scale(1.4);  opacity: 1; }
+  70%  { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1);    opacity: 0; }
+}
+.player-levelup-btn.pulse-all .levelup-svg-wrap {
+  animation: levelupPulseAll 2s ease forwards;
+}
+
+/* Death flash animation on player card */
+@keyframes deathFlash {
+  0%,100% { box-shadow: none; }
+  50% { box-shadow: 0 0 24px rgba(220,20,60,0.8); }
+}
+.player-card.dying {
+  animation: deathFlash 0.5s ease 2;
 }
 
 .player-name {
@@ -2979,6 +3035,8 @@ function createPlayer(id) {
     life: 1,
     soul: 0,
     coins: 0,
+    level: 1,
+    coinPurse: { gold:0, silver:0, alloy:0, old:0, mystery:0 },
     previousMadness: 0,
     notes: ''
   };
@@ -3039,6 +3097,17 @@ function renderPlayers() {
         </div>
         <div class="player-right-section">
           <div class="player-card-header">
+            <button class="player-levelup-btn" 
+              id="levelupBtn${index}"
+              title="click: this player, hold: all players"
+              onmousedown="startLevelUpHold(${index}, this)"
+              onmouseup="endLevelUpHold(${index}, this)"
+              onmouseleave="cancelLevelUpHold(${index}, this)"
+              ontouchstart="startLevelUpHold(${index}, this)"
+              ontouchend="endLevelUpHold(${index}, this)"
+              ontouchcancel="cancelLevelUpHold(${index}, this)">
+              <div id="levelupImg${index}" class="levelup-svg-wrap"></div>
+            </button>
             <button class="player-memobook-btn" onclick="togglePlayerNotepad(${index})" title="Player Notes">
         <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
           <path d="M879.3 794.4H144.7c-17.7 0-32.1-14.4-32.1-32.1V261.6c0-17.7 14.4-32.1 32.1-32.1h734.5c17.7 0 32.1 14.4 32.1 32.1v500.7c0 17.8-14.3 32.1-32 32.1z" fill="#a05a40"/>
@@ -3171,6 +3240,8 @@ function renderPlayers() {
   });
   
   updateMadnessLinks();
+  // Initialise inline SVG for all level-up buttons
+  setTimeout(() => gameState.players.forEach((_, i) => setLevelupImg(i, 0)), 0);
 }
 
 function getArrowText(placeholder) {
@@ -3306,32 +3377,258 @@ const STAT_MAX = {
 };
 
 function updateStat(index, stat, delta) {
-  gameState.players[index][stat] += delta;
-  if (gameState.players[index][stat] < 0) {
-    gameState.players[index][stat] = 0;
+  const player = gameState.players[index];
+
+  // Death check: decrementing life when already at 0
+  if (stat === 'life' && delta < 0 && player.life <= 0) {
+    const name = player.name || `Player ${index + 1}`;
+    if (confirm(`Is ${name} dead?`)) {
+      killPlayer(index);
+    }
+    return;
+  }
+
+  player[stat] += delta;
+  if (player[stat] < 0) {
+    player[stat] = 0;
   }
 
   // For life, use player's synced maxLife if available, otherwise fall back to STAT_MAX
-  const effectiveMax = (stat === 'life' && gameState.players[index].maxLife)
-    ? gameState.players[index].maxLife
+  const effectiveMax = (stat === 'life' && player.maxLife)
+    ? player.maxLife
     : STAT_MAX[stat];
 
-  if (effectiveMax !== undefined && gameState.players[index][stat] > effectiveMax) {
-    gameState.players[index][stat] = effectiveMax;
+  if (effectiveMax !== undefined && player[stat] > effectiveMax) {
+    player[stat] = effectiveMax;
   }
 
   // Track madness changes for the report
   if (stat === 'madness') {
-    gameState.players[index].previousMadness = gameState.players[index].madness - delta;
+    player.previousMadness = player.madness - delta;
   }
 
   // Sync life changes back to player page via Firebase
   if (stat === 'life') {
-    pushHostLifeUpdateToFirebase(index, gameState.players[index].life);
+    pushHostLifeUpdateToFirebase(index, player.life);
+  }
+
+  // Sync soul to player page (for ability point calculation)
+  if (stat === 'soul' && activeSessionCode) {
+    const slot = `player${index}`;
+    db.ref(`sessions/${activeSessionCode}/players/${slot}/soul`).set(player.soul);
   }
 
   renderPlayers();
   saveState();
+}
+
+// ==========================
+// DEATH & LEVEL SYSTEM
+// ==========================
+
+function killPlayer(index) {
+  if (!activeSessionCode) return;
+  const player = gameState.players[index];
+  const name = player.name || `Player ${index + 1}`;
+  const slot = `player${index}`;
+
+  // Flash the card
+  const cards = document.querySelectorAll('.player-card');
+  if (cards[index]) {
+    cards[index].classList.add('dying');
+    setTimeout(() => cards[index].classList.remove('dying'), 1100);
+  }
+
+  // Soul gain chance: 100% - (10 * currentSoul), floor 0%
+  const soulChance = Math.max(0, 1 - (player.soul * 0.1));
+  if (Math.random() < soulChance) {
+    player.soul = Math.min(player.soul + 1, 10);
+  }
+
+  // Reset level to 1
+  player.level = 1;
+
+  // Reset life to -1 (dead state — revived when life reaches 1)
+  player.life = -1;
+  player.madness = 0;
+
+  // Push death state to Firebase — player page resets itself on receiving this
+  db.ref(`sessions/${activeSessionCode}/players/${slot}`).update({
+    currentLife: -1,
+    maxLife: player.maxLife || 1,
+    level: 1,
+    soul: player.soul,
+    dead: true
+  });
+
+  // Log it
+  db.ref(`sessions/${activeSessionCode}/log`).push({
+    type: 'playerDeath',
+    player: name,
+    summary: `${name} has died. Soul: ${player.soul}.`,
+    timestamp: Date.now()
+  });
+
+  renderPlayers();
+  saveState();
+  showToast(`${name} has died. Soul → ${player.soul}.`);
+}
+
+// Level-up press-and-hold state
+const levelUpHoldTimers = {};
+const LEVELUP_HOLD_MS = 2000;
+
+// Build an inline SVG string for the upgrade button, with unique filter IDs per player slot
+function buildUpgradeSVG(frame, idx) {
+  const uid = `u${idx}`;
+  const shadowY = `rgba(248,231,28,1)`;
+  const shadowO = `rgba(245,166,35,1)`;
+  const shadowW = `rgba(255,255,255,1)`;
+
+  // chevrons top→bottom: fill-opacity and glow colour per frame
+  const frames = [
+    { fo: [0.02, 0.02, 0.03, 0.05], fc: [shadowY, shadowY, shadowY, shadowO] }, // 0 ghost
+    { fo: [0.02, 0.02, 0.03, 1],    fc: [shadowY, shadowY, shadowY, shadowO] }, // 1 bottom lit
+    { fo: [0.02, 0.02, 1,    1],    fc: [shadowY, shadowY, shadowO, shadowO] }, // 2
+    { fo: [0.02, 1,    1,    1],    fc: [shadowY, shadowO, shadowO, shadowO] }, // 3
+    { fo: [1,    1,    1,    1],    fc: [shadowO, shadowO, shadowO, shadowO] }, // 4 full
+    { fo: [1,    1,    1,    1],    fc: [shadowW, shadowW, shadowW, shadowW] }, // 5 flash
+  ];
+
+  const f = frames[Math.min(frame, 5)];
+  const def = (id, color, std) =>
+    `<filter id="${uid}-${id}" height="300%" width="300%" x="-100%" y="-100%">
+      <feFlood flood-color="${color}" result="flood"/>
+      <feComposite in="flood" in2="SourceGraphic" operator="atop" result="composite"/>
+      <feGaussianBlur in="composite" stdDeviation="${std}" result="blur"/>
+      <feOffset dx="0" dy="0" result="offset"/>
+      <feComposite in="SourceGraphic" in2="offset" operator="over"/>
+    </filter>`;
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <defs>
+      <clipPath id="${uid}-clip"><circle cx="256" cy="256" r="256"/></clipPath>
+      ${def('fa', f.fc[0], 12)}${def('fb', f.fc[1], 12)}${def('fc', f.fc[2], 12)}${def('fd', f.fc[3], 15)}
+    </defs>
+    <g clip-path="url(#${uid}-clip)">
+      <path d="M256 29.816L25 183.816L25 290.184L256 136.184L487 290.184L487 183.816Z"
+        fill="#f8e71c" fill-opacity="${f.fo[0]}" stroke="#fff" stroke-width="6" filter="url(#${uid}-fa)"/>
+      <path d="M256 157.859L105 259.783L105 350.066L256 248.141L407 350.066L407 259.783Z"
+        fill="#f8e71c" fill-opacity="${f.fo[1]}" stroke="#fff" stroke-width="6" filter="url(#${uid}-fb)"/>
+      <path d="M256 269.859L169 328.584L169 396.184L256 338.184L343 396.184L343 328.584Z"
+        fill="#f8e71c" fill-opacity="${f.fo[2]}" stroke="#fff" stroke-width="7" filter="url(#${uid}-fc)"/>
+      <path d="M256 359.816L169 417.816L169 482.184L256 424.184L343 482.184L343 417.816Z"
+        fill="#f8e71c" fill-opacity="${f.fo[3]}" stroke="#fff" stroke-width="7" filter="url(#${uid}-fd)"/>
+    </g>
+  </svg>`;
+}
+
+function setLevelupImg(index, frame) {
+  const wrap = document.getElementById(`levelupImg${index}`);
+  if (wrap) wrap.innerHTML = buildUpgradeSVG(frame, index);
+}
+
+function startLevelUpHold(index, btn) {
+  const stepMs = LEVELUP_HOLD_MS / 4; // 500ms per step: frames 0→1→2→3→4
+  const timers = [];
+  for (let i = 0; i <= 4; i++) {
+    timers.push(setTimeout(() => setLevelupImg(index, i), i * stepMs));
+  }
+
+  const holdTimer = setTimeout(() => {
+    levelUpHoldTimers[index] = null; // consumed
+
+    // Force frame 4, wait 500ms so it's visible, then prompt
+    setLevelupImg(index, 4);
+    setTimeout(() => {
+      const names = gameState.players.map((p, i) => p.name || `Player ${i+1}`).join(', ');
+      const confirmed = confirm(`Level up ALL players?\n(${names})`);
+
+      if (confirmed) {
+        levelUpAllPlayers(btn);
+      } else {
+        // Cancelled — fade the held button back to frame 0
+        const wrap = document.getElementById(`levelupImg${index}`);
+        if (wrap) wrap.style.opacity = '0';
+        setTimeout(() => {
+          setLevelupImg(index, 0);
+          if (wrap) wrap.style.opacity = '1';
+        }, 600);
+      }
+    }, 500);
+  }, LEVELUP_HOLD_MS);
+
+  // Fix 3: store btn reference in state so all animation ops use the correct element
+  levelUpHoldTimers[index] = { btn, stepTimers: timers, holdTimer };
+}
+
+// Fix 2: animate only the source button, not all buttons
+function levelUpAllPlayers(sourceBtn) {
+  // Level up all first (triggers re-render)
+  gameState.players.forEach((_, i) => doLevelUp(i));
+  showToast('All players levelled up!');
+
+  // After re-render settles, set frame 5 and pulse on all buttons
+  setTimeout(() => {
+    gameState.players.forEach((_, i) => {
+      setLevelupImg(i, 5);
+      const btn = document.getElementById(`levelupBtn${i}`);
+      if (btn) btn.classList.add('pulse');
+    });
+    setTimeout(() => {
+      gameState.players.forEach((_, i) => {
+        const btn = document.getElementById(`levelupBtn${i}`);
+        if (btn) btn.classList.remove('pulse');
+        setLevelupImg(i, 0);
+      });
+    }, 350);
+  }, 50);
+}
+
+function endLevelUpHold(index, btn) {
+  const state = levelUpHoldTimers[index];
+  if (!state) return; // consumed by hold completion
+  state.stepTimers.forEach(t => clearTimeout(t));
+  clearTimeout(state.holdTimer);
+  delete levelUpHoldTimers[index];
+
+  // Quick click: flash frame 5, pulse, confirm single player
+  setLevelupImg(index, 5);
+  btn.classList.add('pulse');
+  setTimeout(() => {
+    btn.classList.remove('pulse');
+    setLevelupImg(index, 0);
+    const player = gameState.players[index];
+    const name = player.name || `Player ${index + 1}`;
+    if (confirm(`Level up ${name}?`)) {
+      doLevelUp(index);
+      showToast(`${name} is now Level ${player.level}!`);
+    }
+  }, 350);
+}
+
+function cancelLevelUpHold(index, btn) {
+  const state = levelUpHoldTimers[index];
+  if (!state) return;
+  state.stepTimers.forEach(t => clearTimeout(t));
+  clearTimeout(state.holdTimer);
+  delete levelUpHoldTimers[index];
+  const wrap = document.getElementById(`levelupImg${index}`);
+  if (wrap) wrap.style.opacity = '1';
+  setLevelupImg(index, 0);
+}
+
+function doLevelUp(index) {
+  const player = gameState.players[index];
+  player.level = (player.level || 1) + 1;
+  appendPlayerLog(index, `Level up → Level ${player.level}`);
+  renderPlayers();
+  saveState();
+
+  if (activeSessionCode) {
+    const slot = `player${index}`;
+    db.ref(`sessions/${activeSessionCode}/players/${slot}/level`).set(player.level);
+  }
 }
 
 function updateMadnessLinks() {
@@ -5213,7 +5510,10 @@ function togglePlayerNotepad(playerIndex) {
   currentPlayerIndex = playerIndex;
   const player = gameState.players[playerIndex];
   document.getElementById('playerNotepadTitleText').textContent = `${player.name || 'Player ' + (playerIndex + 1)} Notes`;
-  document.getElementById('playerNotepadText').value = player.notes || '';
+
+  // Regenerate the srvr block fresh every time the notepad is opened
+  const notes = buildPlayerNotes(playerIndex);
+  document.getElementById('playerNotepadText').value = notes;
   document.getElementById('playerNotepadOverlay').classList.add('visible');
 }
 
@@ -5230,7 +5530,12 @@ function closePlayerNotepadOnOverlay(event) {
 
 function savePlayerNotepad() {
   if (currentPlayerIndex >= 0 && gameState.players[currentPlayerIndex]) {
-    gameState.players[currentPlayerIndex].notes = document.getElementById('playerNotepadText').value;
+    const raw = document.getElementById('playerNotepadText').value;
+    const memoSep = '-----memo-----';
+    const sepIdx = raw.indexOf(memoSep);
+    // Only save what the host wrote below -----memo-----
+    const memoBody = sepIdx !== -1 ? raw.slice(sepIdx + memoSep.length) : raw;
+    gameState.players[currentPlayerIndex].memoBody = memoBody;
     saveState();
   }
 }
@@ -5643,70 +5948,120 @@ function listenForPlayerStatUpdates(code) {
     const slotIndex = parseInt(snap.key.replace('player', ''), 10);
     if (isNaN(slotIndex) || !gameState.players[slotIndex]) return;
 
-    // Update host's gameState with player's live stats
-    gameState.players[slotIndex].life = data.currentLife ?? gameState.players[slotIndex].life;
-    gameState.players[slotIndex].maxLife = data.maxLife ?? gameState.players[slotIndex].maxLife;
-    gameState.players[slotIndex].madness = data.madness ?? gameState.players[slotIndex].madness;
-    gameState.players[slotIndex].soul = data.soul ?? gameState.players[slotIndex].soul;
-    // coins from Firebase is now a purse object — store in coinPurse, not coins
+    const p = gameState.players[slotIndex];
+    const name = p.name || `Player ${slotIndex + 1}`;
+
+    // Update life
+    p.life    = data.currentLife ?? p.life;
+    p.maxLife = data.maxLife     ?? p.maxLife;
+    p.madness = data.madness     ?? p.madness;
+    p.soul    = data.soul        ?? p.soul;
+
+    // Coins
     if (data.coins !== undefined) {
       if (typeof data.coins === 'object') {
-        gameState.players[slotIndex].coinPurse = data.coins;
+        // Log coin spend if coinLog entry present
+        if (data.coinLog) {
+          appendPlayerLog(slotIndex, `Coins — ${data.coinLog}`);
+          // Clear the coinLog field so it doesn't re-trigger
+          db.ref(`sessions/${code}/players/${snap.key}/coinLog`).remove();
+        }
+        p.coinPurse = data.coins;
       } else {
-        gameState.players[slotIndex].coins = data.coins;
+        p.coins = data.coins;
       }
     }
 
-    // Update level and traits notes
-    if (data.level !== undefined) {
-      gameState.players[slotIndex].level = data.level;
-    }
-    if (data.traitsNotes !== undefined) {
-      gameState.players[slotIndex].traitsNotes = data.traitsNotes;
+    // Attribute values — detect changes and log them
+    const attrKeys = ['Endurance', 'Strength', 'Skill', 'Potency', 'Mastery'];
+    attrKeys.forEach(attr => {
+      const key = attr.toLowerCase();
+      if (data[key] !== undefined && data[key] !== p[attr]) {
+        const oldVal = p[attr] || 0;
+        const newVal = data[key];
+        if (newVal > oldVal) {
+          appendPlayerLog(slotIndex, `${attr} ${oldVal} → ${newVal}`);
+        }
+        p[attr] = newVal;
+      }
+    });
+
+    // Luck
+    if (data.luck !== undefined) p.luck = data.luck;
+
+    // Equipment items from player inventory
+    if (data.equipment !== undefined) {
+      p.equipment = data.equipment || [];
     }
 
-    // Inject auto-header into player notebook if level or traits changed
-    if (data.level !== undefined || data.traitsNotes !== undefined) {
-      injectPlayerNotebookHeader(slotIndex);
-    }
+    // Traits notes
+    if (data.traitsNotes !== undefined) p.traitsNotes = data.traitsNotes;
 
     renderPlayers();
     saveState();
   });
 }
 
-// Auto-generate the first lines of a player's notebook from synced data.
-// Wraps them in a sentinel block so we can replace it without touching
-// anything the host has typed below it.
-const NOTEBOOK_HEADER_START = '--- [auto] ---\n';
-const NOTEBOOK_HEADER_END   = '\n--- [/auto] ---\n';
-
-function injectPlayerNotebookHeader(slotIndex) {
+// Build the full notepad content for a player:
+// -----srvr----- (auto-generated, rebuilt on open)
+// [stats, traits, log]
+// -----memo----- (host freetext below here, persisted separately)
+function buildPlayerNotes(slotIndex) {
   const player = gameState.players[slotIndex];
-  const level       = player.level       ?? 1;
+  const level       = player.level ?? 1;
+  const soul        = player.soul  ?? 0;
   const traitsNotes = player.traitsNotes ?? '';
 
-  let headerLines = `Level ${level}.`;
-  if (traitsNotes) headerLines += `\n${traitsNotes}`;
+  // Unspent ability points
+  const attrs = { Endurance: player.Endurance||0, Strength: player.Strength||0,
+                  Skill: player.Skill||0, Potency: player.Potency||0, Mastery: player.Mastery||0 };
+  const spent = Object.values(attrs).reduce((s, v) => s + v, 0);
+  const maxPoints = level + soul;
+  const unspent = Math.max(0, maxPoints - spent);
 
-  const autoBlock = NOTEBOOK_HEADER_START + headerLines + NOTEBOOK_HEADER_END;
+  // Stats line
+  const unspentLabel = unspent > 0 ? ` (${unspent} unspent)` : '';
+  let srvr = `-----srvr-----\n`;
+  srvr += `Level ${level}${unspentLabel}\n`;
+  srvr += `EN:${attrs.Endurance}  PO:${attrs.Potency}  MA:${attrs.Mastery}  ST:${attrs.Strength}  SK:${attrs.Skill}`;
+  const luck = player.luck !== undefined ? `  Luck:${player.luck}` : '';
+  srvr += luck + '\n';
 
-  const existing = player.notes || '';
-  let body = existing;
+  // Traits if locked
+  if (traitsNotes) srvr += `${traitsNotes}\n`;
 
-  // Strip old auto-block if present
-  const startIdx = existing.indexOf(NOTEBOOK_HEADER_START);
-  const endIdx   = existing.indexOf(NOTEBOOK_HEADER_END);
-  if (startIdx !== -1 && endIdx !== -1) {
-    body = existing.slice(endIdx + NOTEBOOK_HEADER_END.length);
+  // Equipment items
+  const equipment = player.equipment || [];
+  if (equipment.length > 0) {
+    srvr += `\nEquipment:\n`;
+    equipment.forEach(item => { srvr += `  · ${item.name} (${item.type})\n`; });
   }
 
-  player.notes = autoBlock + body;
-  saveState();
+  // Server log entries (attr changes, coin spends)
+  const log = player.srvLog || [];
+  if (log.length > 0) {
+    srvr += `\n`;
+    log.forEach(entry => { srvr += `${entry}\n`; });
+  }
 
-  // If this player's notepad is currently open, refresh it live
+  srvr += `-----memo-----`;
+
+  // Host freetext below the separator
+  const memoBody = player.memoBody || '';
+  return srvr + memoBody;
+}
+
+function appendPlayerLog(slotIndex, message) {
+  const player = gameState.players[slotIndex];
+  if (!player) return;
+  if (!player.srvLog) player.srvLog = [];
+  const now = new Date();
+  const ts = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+  player.srvLog.push(`[${ts}] ${message}`);
+  saveState();
+  // Refresh notepad if open for this player
   if (typeof currentPlayerIndex !== 'undefined' && currentPlayerIndex === slotIndex) {
-    document.getElementById('playerNotepadText').value = player.notes;
+    document.getElementById('playerNotepadText').value = buildPlayerNotes(slotIndex);
   }
 }
 

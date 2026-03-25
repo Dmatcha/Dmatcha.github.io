@@ -14,6 +14,7 @@
     --z-buttons:    2100;
     --z-reset:      2090;
     --z-lightbox:   2200;
+    --z-bottom:     2300;
     
     /* Base font size for rem calculations */
     font-size: 1rem;
@@ -661,7 +662,7 @@
     z-index: var(--z-overlay);
     display: none;
     overflow-y: auto;
-    padding: 3.75rem 1rem 1.25rem;
+    padding: 3.75rem 1rem 4rem;
   }
   #coinOverlay.visible { display: block; }
 
@@ -882,7 +883,7 @@
     z-index: var(--z-overlay);
     display: none;
     overflow-y: auto;
-    padding: 3.75rem 1rem 1.25rem;
+    padding: 3.75rem 1rem 4rem;
   }
   #mindOverlay.visible { display: block; }
   .mind-content { max-width: 67%; min-width: 26rem; margin: 0 auto; }
@@ -999,7 +1000,7 @@
     z-index: var(--z-overlay);
     display: none;
     overflow-y: auto;
-    padding: 3.75rem 1rem 1.25rem;
+    padding: 3.75rem 1rem 4rem;
   }
   #characterOverlay.visible {
     display: block;
@@ -1256,7 +1257,7 @@
     z-index: var(--z-overlay);
     display: none;
     overflow-y: auto;
-    padding: 3.75rem 1rem 1.25rem;
+    padding: 3.75rem 1rem 4rem;
   }
   #relationshipOverlay.visible {
     display: block;
@@ -1642,7 +1643,7 @@
     backdrop-filter: blur(0.5rem);
     z-index: var(--z-overlay);
     display: none;
-    padding: 3.75rem 1rem 1.25rem;
+    padding: 3.75rem 1rem 4rem;
     overflow-y: auto;
   }
 
@@ -2025,9 +2026,7 @@
     text-align: center;
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     border-top: 0.0625rem solid rgba(255, 255, 255, 0.1);
-    z-index: 1;
-  }
-  #bottomStats span {
+    z-index: var(--z-bottom);
     display: inline-block;
     margin: 0.0625rem 0.125rem;
     font-weight: bold;
@@ -2049,6 +2048,31 @@
     border: 0.125rem solid rgba(230, 227, 200, 0.25);
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
+  }
+
+  /* Blink levelValue border when ability points are available */
+  @keyframes levelBlink {
+    0%, 100% { border-color: rgba(230, 227, 200, 0.25); box-shadow: none; }
+    50% { border-color: #ffffff; box-shadow: 0 0 6px rgba(255,255,255,0.6); }
+  }
+  #levelValue.has-points {
+    animation: levelBlink 1s ease-in-out infinite;
+  }
+
+  /* Ability point gate — attrs disabled when no points available */
+  .attr.attr-disabled {
+    pointer-events: none;
+    cursor: default;
+  }
+
+  /* Dead state: life shows -1, player page dims attrs */
+  body.player-dead .attr:not(.luck) {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  body.player-dead #levelValue {
+    color: #DC143C;
+    border-color: rgba(220,20,60,0.5);
   }
 
   /* ===== ACCESSIBILITY & PERFORMANCE ===== */
@@ -2165,8 +2189,6 @@
       transform: scale(1.06);
     }
   }
-<!-- Add this CSS to your existing styles -->
-<style>
   /* Image Zoom System - Simplified */
   .spell-image {
     cursor: pointer;
@@ -2366,7 +2388,6 @@
 .join-status.error { color: #ff8fa3; }
 .join-status.success { color: #5fd08f; }
 .join-status.info { color: rgba(255, 255, 255, 0.5); }
-</style>
 </style>
 </head>
 <body>
@@ -3047,17 +3068,17 @@ function calculateArcane() {
 }
 
 function updateBottomStats() {
-  const level = calculateLevel();
+  // Level is HOST-controlled — display what host set, not derived from attributes
+  const level = Number(loadState('playerLevel', 1));
   const tinge = calculateTinge();
   const arcane = calculateArcane();
   
-  console.log('Bottom Stats Update - Level:', level, 'Tinge:', tinge, 'Arcane:', arcane);
   document.getElementById('levelValue').textContent = level;
   document.getElementById('tingeValue').textContent = tinge;
   document.getElementById('arcaneValue').textContent = arcane;
 
-  // Push level to host notebook
-  pushPlayerMetaToFirebase();
+  // Recalculate ability point gate whenever stats change
+  updateAbilityPoints();
 }
 
 /* ========= Stat Bonus Tables ========= */
@@ -3615,14 +3636,25 @@ updateLuckDisplay();
 
     function incrementAttribute() {
       if (lockout) return;
+      if (card.dataset.noPoints === 'true') return;
+      if (window._abilityPointsAvailable <= 0) return;
+
       valNum = (valNum + 1) % 10;
       val.textContent = String(valNum);
       saveState(name, valNum);
+
+      // Push attr value to Firebase for host logging
+      if (activeSessionCode && activePlayerSlot) {
+        db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`)
+          .update({ [name.toLowerCase()]: valNum });
+      }
 
       if (limitAffectingAttrs.includes(name)) {
         updateAllBars();
         updateBottomStats();
       }
+
+      updateAbilityPoints();
 
       card.classList.add('pulse');
       setTimeout(()=> card.classList.remove('pulse'), 420);
@@ -4452,6 +4484,7 @@ renderNpcs();
 updateAddButtonVisibility();
 
 updateBottomStats();
+updateAbilityPoints();
 
 window.addEventListener('beforeunload', () => {
   iconManager.cleanup();
@@ -4805,20 +4838,20 @@ Resist burn and freeze.`,
       type: "Artefact — Equipment",
       description: `Equip: Requires strength 4 or higher.
 Pay one stamina: Deal damage based on strength and stun a target, striking with devastating force. You may freely target walls, floors, etcetera.
-Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 3: Socket a soulgem.`,
+Mastery 3: Socket a soulgem.`,
       image: "cards/fronts/129.webp"
     },
     "Arcanite Slingshot": {
       type: "Artefact — Arcane Equipment",
       description: `Pay one energy: Shoot a pebble of arcane energy. Activate arcane objects.
-Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 3: Deal 1 true damage.`,
+Mastery 3: Deal 1 true damage.`,
       image: "cards/fronts/130.webp"
     },
     "Arcane Gemsetting Tool": {
       type: "Artefact — Arcane Equipment",
       description: `Pay two stamina, two energy, and 1 of any resource:
-Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 2: Install a soulgem.
-Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 5: Remove a soulgem.
+Mastery 2: Install a soulgem.
+Mastery 5: Remove a soulgem.
 Arcane 20: Carve a soulgem socket.`,
       image: "cards/fronts/131.webp"
     },
@@ -4843,13 +4876,13 @@ Requires Strength for the recoil. Physically striking with this weapon can activ
     },
     "Moontooth": {
       type: "Artefact — Arcane Equipment",
-      description: `Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 4: Swings blast seawater. The amount is equal to the user's mastery and strength combined (in litres).
+      description: `Mastery 4: Swings blast seawater. The amount is equal to the user's mastery and strength combined (in litres).
 Strength 6: All strikes push targets away. Force is incredible, forcing foes back a minimum of three meters. Maximum pushback is porportional to strength.`,
       image: "cards/fronts/135.webp"
     },
     "Saphir": {
       type: "Artefact — Arcane Equipment",
-      description: `Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 2: Strikes gain quick and pierce. 
+      description: `Mastery 2: Strikes gain quick and pierce. 
 Skill 3: Strikes gain triplestrike. Each single attack hits three times.`,
       image: "cards/fronts/136.webp"
     },
@@ -4895,13 +4928,13 @@ Items gain indestructible.`,
     "Strand-Type Cuff Device": {
       type: "Artefact — Arcane Equipment",
       description: `Pay three energy: Switch places with another bearer, you both gain 1 shield. (Absorb 1 damage; occasionally, nullify mundane damage instead)
-Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 2: Awaken soulgem.`,
+Mastery 2: Awaken soulgem.`,
       image: "cards/fronts/143.webp"
     },
     "Strand-Type Choker Device": {
       type: "Artefact — Arcane Equipment",
       description: `Pay one energy: Gain favour momentarily.
-Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 3: Socket a soulgem.`,
+Mastery 3: Socket a soulgem.`,
       image: "cards/fronts/145.webp"
     },
     "Catscratch Medallion": {
@@ -7589,7 +7622,10 @@ coinSpendBtn.addEventListener('click', () => {
   // Push to Firebase if in a session
   if (activeSessionCode && activePlayerSlot) {
     const playerName = loadState('playerName', 'Player');
-    db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/coins`).set(balances);
+    db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`).update({
+      coins: balances,
+      coinLog: summary   // host reads this, logs it, then clears it
+    });
     db.ref(`sessions/${activeSessionCode}/log`).push({
       type: 'coinSpend',
       player: playerName,
@@ -7891,19 +7927,6 @@ function waitForAcceptance(code, name, artefact, iris) {
 function startPlayerSync(code, slotKey) {
   const slotRef = db.ref(`sessions/${code}/players/${slotKey}`);
 
-  // Listen for host-driven life changes → update player page
-  slotRef.child('currentLife').on('value', (snap) => {
-    if (snap.val() === null) return;
-    const hostLife = snap.val();
-    const localLife = Number(loadState('life', 1));
-
-    // Only update if host changed it (avoid infinite loop)
-    if (hostLife !== localLife) {
-      saveState('life', hostLife);
-      if (barUpdateFunctions['life']) barUpdateFunctions['life']();
-    }
-  });
-
   // Listen for host ending the session
   db.ref(`sessions/${code}/ended`).on('value', (snap) => {
     if (!snap.val()) return;
@@ -7932,6 +7955,46 @@ function startPlayerSync(code, slotKey) {
 
   // Listen for host coin grants
   listenForCoinGrants(code, slotKey);
+
+  // Listen for level updates from host
+  slotRef.child('level').on('value', (snap) => {
+    if (snap.val() === null) return;
+    const newLevel = snap.val();
+    saveState('playerLevel', newLevel);
+    updateAbilityPoints();
+    updateBottomStats();
+  });
+
+  // Listen for soul (secret — used for ability point calc only)
+  slotRef.child('soul').on('value', (snap) => {
+    if (snap.val() === null) return;
+    saveState('playerSoul', snap.val());
+    updateAbilityPoints();
+  });
+
+  // Listen for death state from host
+  slotRef.child('dead').on('value', (snap) => {
+    if (!snap.val()) return;
+    handlePlayerDeath();
+  });
+
+  // Listen for life — detect revival (life goes from <=0 to 1)
+  slotRef.child('currentLife').on('value', (snap) => {
+    if (snap.val() === null) return;
+    const hostLife = snap.val();
+    const localLife = Number(loadState('life', 1));
+
+    if (hostLife !== localLife) {
+      // Revival: was dead (life <= 0), now alive (life >= 1)
+      const wasDead = localLife <= 0;
+      const nowAlive = hostLife >= 1;
+      if (wasDead && nowAlive) {
+        handlePlayerRevival();
+      }
+      saveState('life', hostLife);
+      if (barUpdateFunctions['life']) barUpdateFunctions['life']();
+    }
+  });
 
   // Listen for host madness whispers
   slotRef.child('madnessWhisper').on('value', (snap) => {
@@ -7982,10 +8045,115 @@ function startPlayerSync(code, slotKey) {
   };
 }
 
+// ==========================
+// DEATH, REVIVAL & ABILITY POINTS
+// ==========================
+
+function handlePlayerDeath() {
+  // Set life to -1
+  saveState('life', -1);
+  if (barUpdateFunctions['life']) barUpdateFunctions['life']();
+
+  // Reset all stats to 0 (keep artefact & iris in inventory — slots 0 & 1)
+  ['Endurance','Potency','Mastery','Strength','Skill'].forEach(attr => {
+    saveState(attr, 0);
+  });
+  // Update attr display
+  document.querySelectorAll('.attr[data-name]').forEach(card => {
+    const name = card.dataset.name;
+    if (['Endurance','Potency','Mastery','Strength','Skill'].includes(name)) {
+      const val = card.querySelector('.attr-val');
+      if (val) val.textContent = '0';
+    }
+  });
+
+  // Reset bars (mana, energy, stamina, etc.) to 0
+  ['mana','energy','stamina','coalesce'].forEach(key => {
+    saveState(key, 0);
+    if (barUpdateFunctions[key]) barUpdateFunctions[key]();
+  });
+
+  // Reset relationships — clear all NPC hearts except keep official NPC records
+  npcs.forEach((npc, i) => {
+    npc.hearts = [0,0,0,0,0];
+    npc.status = '';
+  });
+  saveState('npcs', npcs);
+  renderRelationships();
+
+  // Reset traits (constellation)
+  characterOptions.innate = '';
+  characterOptions.proficiency = '';
+  characterOptions.interest = '';
+  characterOptions.fear = '';
+  characterOptions.hate = '';
+  characterOptions.locked = false;
+  saveState('characterOptions', characterOptions);
+  checkTraitsLocked();
+
+  // Clear inventory items except artefact (slot 0) and iris (slot 1)
+  // and any legendary spells tied to artefact
+  inventory = inventory.filter((item, idx) => idx === 0 || idx === 1 || item.legendary);
+  saveState('inventory', inventory);
+  renderInventory();
+
+  // Clear spells except legendary ones
+  if (typeof spellSlots !== 'undefined') {
+    const legendarySpells = spellSlots.filter(s => s && s.legendary);
+    spellSlots = [...legendarySpells, ...Array(Math.max(0, spellSlots.length - legendarySpells.length)).fill(null)];
+    saveState('spellSlots', spellSlots);
+    if (typeof renderSpells === 'function') renderSpells();
+  }
+
+  // Set level to 1 (attrs already wiped to 0 above, spent resets naturally via attribute sum)
+  saveState('playerLevel', 1);
+  updateBottomStats();
+  updateAbilityPoints();
+
+  // Mark body as dead
+  document.body.classList.add('player-dead');
+}
+
+function handlePlayerRevival() {
+  document.body.classList.remove('player-dead');
+  // Clear dead flag in Firebase
+  if (activeSessionCode && activePlayerSlot) {
+    db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/dead`).set(false);
+  }
+  updateAbilityPoints();
+}
+
+function updateAbilityPoints() {
+  const MaxAbilityPoints = Number(loadState('playerLevel', 1)) + Number(loadState('playerSoul', 0));
+
+  const SpentAbilityPoints = ['Endurance', 'Strength', 'Skill', 'Potency', 'Mastery']
+    .reduce((sum, attr) => sum + (Number(loadState(attr, 0)) || 0), 0);
+
+  const available = Math.max(0, MaxAbilityPoints - SpentAbilityPoints);
+
+  window._abilityPointsAvailable = available;
+
+  const levelEl = document.getElementById('levelValue');
+  if (levelEl) levelEl.classList.toggle('has-points', available > 0);
+
+  setAttrsDisabled(available <= 0);
+}
+
+function setAttrsDisabled(disabled) {
+  document.querySelectorAll('.attr:not(.luck)').forEach(card => {
+    card.classList.toggle('attr-disabled', disabled);
+    // Also set data attribute since touchManager bypasses pointer-events CSS
+    if (disabled) {
+      card.dataset.noPoints = 'true';
+    } else {
+      delete card.dataset.noPoints;
+    }
+  });
+}
+
 // Push level + traits notes to Firebase for the host notebook
 function pushPlayerMetaToFirebase() {
   if (!activeSessionCode || !activePlayerSlot) return;
-  const level = calculateLevel();
 
   // Build abbreviated traits notes if locked
   let traitsNotes = '';
@@ -8025,14 +8193,19 @@ function pushPlayerMetaToFirebase() {
     traitsNotes = traitsNotes.trim();
   }
 
+  // Only push traitsNotes — level is HOST-owned, player never writes it
   db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`).update({
-    level,
     traitsNotes
   });
 }
 
 
 async function restorePlayerSession() {
+  // Restore dead visual state if life was -1
+  if (Number(loadState('life', 1)) < 0) {
+    document.body.classList.add('player-dead');
+  }
+
   const savedCode = localStorage.getItem('playerSessionCode');
   const savedSlot = localStorage.getItem('playerSessionSlot');
   if (!savedCode || !savedSlot) return;
