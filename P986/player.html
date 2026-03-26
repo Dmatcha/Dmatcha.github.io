@@ -2336,7 +2336,7 @@
 .buddy-info { flex:1; display:flex; flex-direction:column; gap:0.4rem; justify-content:center; padding:0.25rem 0; }
 .buddy-type { font-size:0.82rem; color:var(--muted); padding-left:0.25rem; }
 .buddy-name { font-size:1.15rem; font-weight:700; color:#fff; padding-left:0.25rem; }
-.buddy-empty-hint { color:rgba(255,255,255,0.3); font-size:0.9rem; align-self:center; margin:auto; }
+.buddy-empty-hint { color:rgba(255,255,255,0.3); font-size: 2rem; font-weight: 600; align-self:center; margin:auto; }
 .buddy-clear-btn {
   position:absolute; top:0.5rem; right:0.5rem;
   width:1.5rem; height:1.5rem;
@@ -2919,7 +2919,7 @@
 <!-- Buddy Picker Overlay -->
 <div id="buddyPickerOverlay">
   <div class="buddy-picker-content">
-    <div class="buddy-picker-title">Choose a Companion</div>
+    <div class="buddy-picker-title">Choose a Buddy!</div>
     <div class="buddy-picker-grid" id="buddyPickerGrid"></div>
     <button class="buddy-picker-close" onclick="closeBuddyPicker()">Cancel</button>
   </div>
@@ -8499,6 +8499,10 @@ function renderBuddySlot() {
     // Existing clear button logic
     slot.querySelector('.buddy-clear-btn').addEventListener('click', e => {
       e.stopPropagation();
+
+      const confirmRelease = confirm(`Release ${buddy.name}?`);
+      if (!confirmRelease) return;
+
       buddy = null;
       saveState('buddy', null);
       renderBuddySlot();
@@ -8506,7 +8510,7 @@ function renderBuddySlot() {
 
   } else {
     slot.className = 'buddy-slot';
-    slot.innerHTML = `<div class="buddy-empty-hint">+ Add Companion</div>`;
+    slot.innerHTML = `<div class="buddy-empty-hint">+ Add Buddy</div>`;
     slot.onclick = openBuddyPicker;
   }
 }
