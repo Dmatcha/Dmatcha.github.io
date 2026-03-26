@@ -5989,11 +5989,6 @@ function listenForPlayerStatUpdates(code) {
     // Luck
     if (data.luck !== undefined) p.luck = data.luck;
 
-    // Equipment items from player inventory
-    if (data.equipment !== undefined) {
-      p.equipment = data.equipment || [];
-    }
-
     // Traits notes
     if (data.traitsNotes !== undefined) p.traitsNotes = data.traitsNotes;
 
@@ -6029,13 +6024,6 @@ function buildPlayerNotes(slotIndex) {
 
   // Traits if locked
   if (traitsNotes) srvr += `${traitsNotes}\n`;
-
-  // Equipment items
-  const equipment = player.equipment || [];
-  if (equipment.length > 0) {
-    srvr += `\nEquipment:\n`;
-    equipment.forEach(item => { srvr += `  · ${item.name} (${item.type})\n`; });
-  }
 
   // Server log entries (attr changes, coin spends)
   const log = player.srvLog || [];
