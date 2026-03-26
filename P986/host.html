@@ -2242,7 +2242,7 @@ h1, h2, h3, h4 {
   
   .dice-buttons {
     justify-content: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
     padding-bottom: 0.75rem;
     padding-left: 0.35rem;
   }
@@ -6311,12 +6311,12 @@ document.addEventListener('DOMContentLoaded', () => {
 <div id="bestowOverlay" class="hidden">
   <div class="bestow-panel">
     <div class="bestow-title">Bestow Coins</div>
-    <div class="bestow-subtitle" id="bestowSubtitle">Choose coins to give</div>
+    <div class="bestow-subtitle" id="bestowSubtitle">Give coins to player</div>
 
     <!-- Gold -->
     <div class="bestow-row">
       <div class="bestow-coin-icon gold">G</div>
-      <div class="bestow-coin-label">Gold<br><span class="bestow-coin-sub">Highest value</span></div>
+      <div class="bestow-coin-label">Gold<br><span class="bestow-coin-sub">Often the highest valued coin.</span></div>
       <div class="bestow-adj-group">
         <button class="bestow-adj-btn" data-coin="gold" data-dir="-1">−</button>
         <span class="bestow-amount zero" id="bestowAmt-gold">0</span>
@@ -6326,7 +6326,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <!-- Silver -->
     <div class="bestow-row">
       <div class="bestow-coin-icon silver">S</div>
-      <div class="bestow-coin-label">Silver<br><span class="bestow-coin-sub">10 Silver = 1 Gold</span></div>
+      <div class="bestow-coin-label">Silver<br><span class="bestow-coin-sub">Intermediary value.</span></div>
       <div class="bestow-adj-group">
         <button class="bestow-adj-btn" data-coin="silver" data-dir="-1">−</button>
         <span class="bestow-amount zero" id="bestowAmt-silver">0</span>
@@ -6336,7 +6336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <!-- Alloy -->
     <div class="bestow-row">
       <div class="bestow-coin-icon alloy">A</div>
-      <div class="bestow-coin-label">Alloy<br><span class="bestow-coin-sub">10 Alloy = 1 Silver</span></div>
+      <div class="bestow-coin-label">Alloy<br><span class="bestow-coin-sub">Often least valued coin.</span></div>
       <div class="bestow-adj-group">
         <button class="bestow-adj-btn" data-coin="alloy" data-dir="-1">−</button>
         <span class="bestow-amount zero" id="bestowAmt-alloy">0</span>
@@ -6346,7 +6346,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <!-- Old Coin -->
     <div class="bestow-row">
       <div class="bestow-coin-icon old">✦</div>
-      <div class="bestow-coin-label">Old Coin<br><span class="bestow-coin-sub">Value varies by merchant</span></div>
+      <div class="bestow-coin-label">Old Coin<br><span class="bestow-coin-sub">Value varies by merchant, remnant of the fallen Jade Empire.</span></div>
       <div class="bestow-adj-group">
         <button class="bestow-adj-btn" data-coin="old" data-dir="-1">−</button>
         <span class="bestow-amount zero" id="bestowAmt-old">0</span>
@@ -6380,7 +6380,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <ellipse cx="10" cy="17" rx="2" ry="3"   fill="none" stroke="#9e6010" stroke-width="0.5" opacity="0.5"/>
         </svg>
       </div>
-      <div class="bestow-coin-label">Li<br><span class="bestow-coin-sub">Rare · Kingdom coin</span></div>
+      <div class="bestow-coin-label">Li<br><span class="bestow-coin-sub">Possession and use is forbidden outside its country of origin.</span></div>
       <div class="bestow-adj-group">
         <button class="bestow-adj-btn" data-coin="mystery" data-dir="-1">−</button>
         <span class="bestow-amount zero" id="bestowAmt-mystery">0</span>
