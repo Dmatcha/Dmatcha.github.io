@@ -2431,7 +2431,7 @@
 .join-session-divider {
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  margin: 1rem 0 1rem;
+  margin: 0.5rem 0rem 0.5rem;
 }
 
 .join-session-area {
@@ -2512,6 +2512,24 @@
 .join-status.error { color: #ff8fa3; }
 .join-status.success { color: #5fd08f; }
 .join-status.info { color: rgba(255, 255, 255, 0.5); }
+
+#coinBtn,
+#starBtn,
+#mindBtn,
+#inventoryBtn,
+#heartBtn {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  background: rgba(20, 20, 30, 0.5);
+
+  border-radius: 12px;
+  border: 0px solid rgba(255, 255, 255, 0.25);
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  color: white;
+} 
+
 </style>
 </head>
 <body>
@@ -2878,7 +2896,8 @@
     <!-- JOIN SESSION — main page -->
     <hr class="join-session-divider">
     <div class="join-session-area">
-      <span class="join-session-label">Join Host Session</span>
+    <div class="join-status info" id="joinStatus">Enter the 4-character code from your Host</div>
+      <span class="join-session-label">Join Session</span>
       <input
         class="join-code-input"
         id="joinCodeInput"
@@ -2888,7 +2907,6 @@
         spellcheck="false"
       />
       <button class="join-btn" id="joinBtn" onclick="attemptJoinSession()">JOIN</button>
-      <div class="join-status info" id="joinStatus">Enter the 4-character code from your Host</div>
     </div>
   </div>
   <!-- Bottom Stats Bar -->
@@ -3875,7 +3893,7 @@ const relationshipTitle = document.getElementById('relationshipTitle');
 
 function updateRelationshipTitle() {
   const name = playerNameInput.value.trim() || 'Player';
-  relationshipTitle.textContent = `${name}'s Relationships`;
+  relationshipTitle.textContent = `${name}'s Bonds`;
 }
 
 updateRelationshipTitle();
