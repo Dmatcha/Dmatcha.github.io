@@ -8729,7 +8729,7 @@ function isLuckUnlocked() {
   const artefacts = loadState('artefacts', []);
   if (artefacts.some(a => a.name === 'The Coin')) return true;
 
-  const qualifyingNpcs = ['Jon Quixote','Marco','Hitomi','Tress Bien'];
+  const qualifyingNpcs = ['Jon Quixote','Marco','Hitomi','Tress Bien', 'Captain Thiffany', 'The Courier'];
 
   return npcs.some(npc =>
     qualifyingNpcs.includes(npc.name) &&
