@@ -3805,8 +3805,21 @@ function activateLuck(){
 
 card.setAttribute('tabindex','0');
 
-// 2025 Enhancement: Use same press-and-hold mechanism as other attributes
+// // 2025 Enhancement: Use same press-and-hold mechanism as other attributes
+// const activateLuckWithHold = () => {
+//   activateLuck();
+// };
+
 const activateLuckWithHold = () => {
+  if (!luckCostCheck()) {
+    const luckCard = document.querySelector('.attr.luck');
+    if (luckCard) {
+      luckCard.style.opacity = '0.4';
+      setTimeout(() => luckCard.style.opacity = '', 600);
+    }
+    return;
+  }
+
   activateLuck();
 };
 
@@ -8713,11 +8726,15 @@ applyArtefactEffects();
 // LUCK GATING
 // ==========================
 function isLuckUnlocked() {
-  if (getArtefactName() === 'The Coin') return true;
+  const artefacts = loadState('artefacts', []);
+  if (artefacts.some(a => a.name === 'The Coin')) return true;
+
   const qualifyingNpcs = ['Jon Quixote','Marco','Hitomi','Tress Bien'];
+
   return npcs.some(npc =>
     qualifyingNpcs.includes(npc.name) &&
-    npc.hearts && npc.hearts.filter(h => h > 0).length >= 4
+    npc.hearts &&
+    npc.hearts.filter(h => h === 1).length >= 4
   );
 }
 
