@@ -1239,7 +1239,7 @@ h1, h2, h3, h4 {
 .dice-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 1rem;
   padding-bottom: 0.75rem;
   padding-left: 0.5rem;
 }
@@ -2242,7 +2242,7 @@ h1, h2, h3, h4 {
   
   .dice-buttons {
     justify-content: center;
-    gap: 0.35rem;
+    gap: 0.4rem;
     padding-bottom: 0.75rem;
     padding-left: 0.35rem;
   }
@@ -3069,7 +3069,7 @@ function renderPlayers() {
             onchange="updatePlayer(${index}, 'name', this.value)"
             onkeydown="if(event.key === 'Enter') { event.preventDefault(); this.blur(); }">
           <select class="tag-select artefact-select" onchange="updatePlayer(${index}, 'artefact', this.value)">
-            <option value="">Choose artefact</option>
+            <option value="">CHOOSE Artefact</option>
             <option value="The Darkflame" ${player.artefact === 'The Darkflame' ? 'selected' : ''}>The Darkflame</option>
             <option value="The Wintergrace" ${player.artefact === 'The Wintergrace' ? 'selected' : ''}>The Wintergrace</option>
             <option value="The Bronze Ring of Smiles" ${player.artefact === 'The Bronze Ring of Smiles' ? 'selected' : ''}>The Bronze Ring of Smiles</option>
@@ -3082,7 +3082,7 @@ function renderPlayers() {
             <option value="The Coin" ${player.artefact === 'The Coin' ? 'selected' : ''}>The Coin</option>
           </select>
           <select class="tag-select iris-select" onchange="updatePlayer(${index}, 'iris', this.value)">
-            <option value="">Choose Iris</option>
+            <option value="">CHOOSE Iris</option>
             <option value="Steady Sky Blue" ${player.iris === 'Steady Sky Blue' ? 'selected' : ''}>Steady Sky Blue</option>
             <option value="Bravely Bold Gold" ${player.iris === 'Bravely Bold Gold' ? 'selected' : ''}>Bravely Bold Gold</option>
             <option value="Radiant Emerald Green" ${player.iris === 'Radiant Emerald Green' ? 'selected' : ''}>Radiant Emerald Green</option>
