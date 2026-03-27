@@ -1576,36 +1576,48 @@
         
         Object.assign(gameState, {
           cycle: 1, 
-          slot: 0, 
-          isNight: false, 
-          nightStep: 0, 
+          slot: 0,          // ✅ THIS is what controls Dawn
+          isNight: false,
+          nightStep: 0,
           phaseMode: null
         });
         
-        // Reset grid card assignments and hide card tray
+        // Reset systems
         ProgressMapManager.resetCardAssignments();
         CardTrayManager.hide();
         
         UIManager.cleanupTransientButtons();
+
         elements.checkboxesDiv.innerHTML = `
           <div class="checkbox" id="actCheckbox" role="checkbox" aria-checked="false">ACT</div>
           <div class="checkbox" id="mapCheckbox" role="checkbox" aria-checked="false">REVEAL</div>
         `;
+
         elements.actCheckbox = document.getElementById('actCheckbox');
         elements.mapCheckbox = document.getElementById('mapCheckbox');
+
         UIManager.attachCheckboxListeners();
+
         elements.actCheckbox.classList.remove('checked');
         elements.actCheckbox.setAttribute('aria-checked', 'false');
+
         elements.mapCheckbox.classList.remove('checked');
         elements.mapCheckbox.setAttribute('aria-checked', 'false');
+
         elements.checkboxesDiv.style.display = 'none';
+
         elements.dayLabel.textContent = "DAWN of Cycle 1";
         elements.slotLabel.textContent = "[0]";
         elements.textArea.innerHTML = "All players gain <strong>one level!</strong> <br>All players regain all <strong>light mana!</strong>";
+
         elements.mainButton.textContent = "CONTINUE";
         elements.mainButton.disabled = false;
         elements.mainButton.style.display = 'block';
+
         ThemeManager.setTheme('day');
+
+        // 🔥 THIS is the missing line
+        ProgressMapManager.update();  // ✅ re-sync UI with state
       }
     }
 
