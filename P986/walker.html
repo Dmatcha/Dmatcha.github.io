@@ -17,9 +17,11 @@
     :root {
       --bg-primary: #1C1C30;
       --text-primary: #ffffff;
-      --container-width: 60vw;
-      --container-max-width: 520px;
-      --container-height: 80vh;
+      --container-width: 65vw;
+      /*--container-max-width: 520px;*/
+      /*--container-width: 67%;*/
+      --container-min-width: 25rem;
+      --container-height: 95vh;
       --border-radius: 16px;
       --transition-smooth: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       --transition-fast: all 0.2s ease-out;
@@ -67,10 +69,11 @@
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       background: var(--bg-primary);
       color: var(--text-primary);
-      display: grid;
-      place-items: center;
-      min-height: 100vh;
-      overflow: hidden;
+/*      min-height: 99vh;
+      min-width: 28rem;*/
+      height: 100vh;
+      width: 100%;
+      overflow-x: hidden;
       line-height: 1.6;
       font-optical-sizing: auto;
       -webkit-font-smoothing: antialiased;
@@ -111,12 +114,15 @@
         min-width: 100%;
         min-height: 100%;
       }
+      .reset-btn { position: fixed; top: 0.125rem; left: 0.125rem; padding: 0.125rem}
     }
 
     /* Modern container with CSS Grid */
     .game-container {
       width: var(--container-width);
-      max-width: var(--container-max-width);
+      /*max-width: var(--container-max-width);*/
+      max-width: 90%;
+      min-width: 25rem;
       height: var(--container-height);
       border-radius: var(--border-radius);
       padding: 1rem;
@@ -124,8 +130,8 @@
       text-align: center;
       position: relative;
       display: grid;
-      grid-template-rows: auto 1fr auto;
-      gap: 1rem;
+      grid-template-rows: auto 1fr auto auto auto;
+      gap: 0.75rem;
       transition: var(--transition-smooth);
       z-index: 1;
     }
@@ -312,6 +318,7 @@
         max-width: none;
         min-width: 300px;
       }
+      .reset-btn { position: fixed; top: 0.125rem; left: 0.125rem; padding: 0.125rem}
     }
 
     /* Modern pool styling with CSS Grid and black outlines for readability */
@@ -350,6 +357,230 @@
                    -1px 0 0 #000, 1px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000;
     }
 
+    /* Three-column page layout */
+    .page-layout {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 2fr auto;
+      height: 100%;
+      width: 100%;
+      min-width: 28rem;
+      min-height: 100vh;
+      align-items: center;
+    }
+
+    /* Left column — empty spacer */
+    .col-left {
+      /* intentionally empty */
+    }
+
+    /* Middle column — game container */
+    .col-middle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem 0;
+    }
+
+    /* Right column — progress map, top-aligned */
+    .col-right {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-top: 1rem;
+      padding-left: 0.5rem;
+      min-width: max-content;
+      overflow: visible;
+    }
+
+    /* ─── Progress Map Grid ─── */
+    /*
+      New layout (from screenshot, top to bottom, 3 cols):
+        Row 0:  [12]  [13]  [DAWN]
+        Row 1:  [11]  [14]  [1]
+        Row 2:  [10]  [15]  [2]
+        Row 3:  [9]   [16]  [3]
+        Row 4:  [8]   [17]  [4]
+        Row 5:  [7]   [6]   [5]
+    */
+    .progress-map {
+      display: grid;
+      grid-template-columns: repeat(3, 75px);
+      gap: 0.125rem;
+      padding: 0.125rem;
+      background: rgba(0,0,0,0.45);
+      border-radius: 0.5rem;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.08);
+      width: min-content;
+    }
+
+    .map-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 75px;
+      height: calc(75px * 5 / 7);
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: default;
+      user-select: none;
+    }
+
+    /* Day slots: yellow */
+    .map-cell.day-slot {
+      background: rgba(255, 215, 0, 0.15);
+      color: rgba(255, 215, 0, 0.55);
+      border: 1px solid rgba(255, 215, 0, 0.25);
+    }
+
+    /* Night slots: purple */
+    .map-cell.night-slot {
+      background: rgba(138, 100, 255, 0.15);
+      color: rgba(180, 140, 255, 0.55);
+      border: 1px solid rgba(138, 100, 255, 0.25);
+    }
+
+    /* Dawn slot: orange */
+    .map-cell.dawn-slot {
+      background: rgba(255, 140, 60, 0.15);
+      color: rgba(255, 180, 80, 0.55);
+      border: 1px solid rgba(255, 140, 60, 0.25);
+      font-size: 0.5rem;
+      letter-spacing: 0.03em;
+    }
+
+    /* Active (current) slot */
+    .map-cell.active {
+      transform: scale(1.08);
+      box-shadow: 0 0 14px currentColor;
+    }
+    .map-cell.day-slot.active {
+      background: rgba(255, 215, 0, 0.92);
+      color: #1a1a00;
+      border-color: #ffd700;
+    }
+    .map-cell.night-slot.active {
+      background: rgba(138, 100, 255, 0.92);
+      color: #fff;
+      border-color: #8a64ff;
+    }
+    .map-cell.dawn-slot.active {
+      background: rgba(255, 140, 60, 0.92);
+      color: #1a0800;
+      border-color: #ff8c3c;
+    }
+
+    /* Completed slot */
+    .map-cell.day-slot.done {
+      background: rgba(255, 215, 0, 0.28);
+      color: rgba(255, 215, 0, 0.65);
+      opacity: 0.6;
+    }
+    .map-cell.night-slot.done {
+      background: rgba(138, 100, 255, 0.28);
+      color: rgba(180, 140, 255, 0.65);
+      opacity: 0.6;
+    }
+    .map-cell.dawn-slot.done {
+      background: rgba(255, 140, 60, 0.28);
+      color: rgba(255, 180, 80, 0.65);
+      opacity: 0.6;
+    }
+
+    /* ─── Narrow viewport: single-column map ─── */
+    /* Grid switches to single column when there isn't room for 3 cols */
+    @media (max-width: 55rem) {
+      /* Single column: DAWN at top (order 0), 17 at bottom (order 17) */
+      .progress-map {
+        grid-template-columns: 1fr;
+        width: min-content;
+      }
+      .map-cell {
+        width: 2rem;
+        height: calc(2rem * 5 / 7);
+        font-size: 1rem;
+        order: var(--single-order);
+      }
+    }
+
+    /* ─── Card Tray — sits below game-container ─── */
+    .card-tray {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .card-tray.visible {
+      display: flex;
+    }
+
+    /* 7:5 aspect ratio cards */
+    .card-icon {
+      /* width drives size; height = width * 5/7 */
+      width: 100px;
+      height: calc(100px * 5 / 7);
+      object-fit: cover;
+      border-radius: 6px;
+      opacity: 0.8;
+      transform: scale(0.8);
+      filter: saturate(0);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+      user-select: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .card-icon.revealed {
+      opacity: 1;
+      transform: scale(1.0);
+      filter: saturate(1);
+    }
+
+    .card-icon.clickable {
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .card-icon.clickable:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 14px rgba(255,255,255,0.5);
+    }
+
+    .card-icon.selected {
+      outline: 3px solid #fff;
+      outline-offset: 2px;
+    }
+
+    /* Map cell with assigned card image */
+    .map-cell {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-cell .cell-card-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 5px;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .map-cell .cell-card-img.visible {
+      opacity: 1;
+    }
+
+    .map-cell.has-card .cell-label {
+      opacity: 0;
+    }
+
     /* Modern accessibility improvements */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -382,24 +613,48 @@
 
   <button class="reset-btn" onclick="resetGame()" aria-label="Reset game">RESET</button>
 
-  <!-- Main Game Container with Semantic HTML5 -->
-  <main class="game-container day-theme" role="main" aria-labelledby="game-title">
-    <header class="game-header">
-      <h1 class="day-label" id="dayLabel" aria-live="polite">DAWN of Cycle 1</h1>
-      <span class="slot-label" id="slotLabel" aria-live="polite">[0]</span>
-    </header>
+  <!-- Three-column page layout -->
+  <div class="page-layout">
 
-    <section class="text-area" id="textArea" aria-live="polite" aria-atomic="true">
-      ZERODAWN <br>YOU SHOULD NOT SEE THIS!
-    </section>
-  
-    <div id="checkboxes" style="display:none;" role="group" aria-label="Game actions">
-      <div class="checkbox" id="actCheckbox" role="checkbox" aria-checked="false">ACT</div>
-      <div class="checkbox" id="mapCheckbox" role="checkbox" aria-checked="false">REVEAL</div>
+    <!-- Left spacer -->
+    <div class="col-left" aria-hidden="true"></div>
+
+    <!-- Middle: game container -->
+    <div class="col-middle">
+      <main class="game-container day-theme" role="main" aria-labelledby="game-title">
+        <header class="game-header">
+          <h1 class="day-label" id="dayLabel" aria-live="polite">DAWN of Cycle 1</h1>
+          <span class="slot-label" id="slotLabel" aria-live="polite">[0]</span>
+        </header>
+
+        <section class="text-area" id="textArea" aria-live="polite" aria-atomic="true">
+          ZERODAWN <br>YOU SHOULD NOT SEE THIS!
+        </section>
+
+        <!-- Card Tray — below text-area, above checkboxes -->
+        <div class="card-tray" id="cardTray" aria-label="Card backs">
+          <img class="card-icon" id="cardA" src="maps/BACK-A.png" alt="Card A" />
+          <img class="card-icon" id="cardB" src="maps/BACK-B.png" alt="Card B" />
+          <img class="card-icon" id="cardC" src="maps/BACK-C.png" alt="Card C" />
+        </div>
+      
+        <div id="checkboxes" style="display:none;" role="group" aria-label="Game actions">
+          <div class="checkbox" id="actCheckbox" role="checkbox" aria-checked="false">ACT</div>
+          <div class="checkbox" id="mapCheckbox" role="checkbox" aria-checked="false">REVEAL</div>
+        </div>
+      
+        <button class="btn btn--next" id="mainButton" aria-label="Continue game">CONTINUE</button>
+      </main>
     </div>
-  
-    <button class="btn btn--next" id="mainButton" aria-label="Continue game">CONTINUE</button>
-  </main>
+
+    <!-- Right: progress map -->
+    <div class="col-right">
+      <nav class="progress-map" id="progressMap" aria-label="Slot progress map">
+        <!-- Cells injected by JS -->
+      </nav>
+    </div>
+
+  </div>
 
   <script>
     // Modern JavaScript with ES2025+ features
@@ -427,7 +682,12 @@
       mainButton: document.getElementById('mainButton'),
       checkboxesDiv: document.getElementById('checkboxes'),
       actCheckbox: document.getElementById('actCheckbox'),
-      mapCheckbox: document.getElementById('mapCheckbox')
+      mapCheckbox: document.getElementById('mapCheckbox'),
+      cardTray: document.getElementById('cardTray'),
+      cardA: document.getElementById('cardA'),
+      cardB: document.getElementById('cardB'),
+      cardC: document.getElementById('cardC'),
+      progressMap: document.getElementById('progressMap')
     };
 
     // NEW: State Manager for automatic state persistence
@@ -442,6 +702,7 @@
             isNight: gameState.isNight,
             nightStep: gameState.nightStep,
             phaseMode: gameState.phaseMode,
+            cardAssignments: ProgressMapManager.cardAssignments,
             timestamp: Date.now()
           };
           localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stateToSave));
@@ -467,6 +728,9 @@
             gameState.isNight = parsedState.isNight;
             gameState.nightStep = parsedState.nightStep || 0;
             gameState.phaseMode = parsedState.phaseMode || null;
+            if (parsedState.cardAssignments) {
+              ProgressMapManager.cardAssignments = parsedState.cardAssignments;
+            }
             
             return true;
           }
@@ -788,6 +1052,203 @@
       }
     }
 
+    // ─── Progress Map Manager ───────────────────────────────────────────
+    class ProgressMapManager {
+      /*
+        New grid layout (3 cols, 6 rows), left-to-right, top-to-bottom:
+          Row 0:  [12]  [13]  [DAWN]
+          Row 1:  [11]  [14]  [1]
+          Row 2:  [10]  [15]  [2]
+          Row 3:  [9]   [16]  [3]
+          Row 4:  [8]   [17]  [4]
+          Row 5:  [7]   [6]   [5]
+        Single-column fallback order (narrow screens): DAWN,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17
+      */
+      static GRID = [
+        // Row 0
+        { slot: 12,     type: 'night-slot', label: '12',   singleOrder: 12 },
+        { slot: 13,     type: 'night-slot', label: '13',   singleOrder: 13 },
+        { slot: 'dawn', type: 'dawn-slot',  label: 'DAWN', singleOrder: 0  },
+        // Row 1
+        { slot: 11,     type: 'day-slot',   label: '11',   singleOrder: 11 },
+        { slot: 14,     type: 'night-slot', label: '14',   singleOrder: 14 },
+        { slot: 1,      type: 'day-slot',   label: '1',    singleOrder: 1  },
+        // Row 2
+        { slot: 10,     type: 'day-slot',   label: '10',   singleOrder: 10 },
+        { slot: 15,     type: 'night-slot', label: '15',   singleOrder: 15 },
+        { slot: 2,      type: 'day-slot',   label: '2',    singleOrder: 2  },
+        // Row 3
+        { slot: 9,      type: 'day-slot',   label: '9',    singleOrder: 9  },
+        { slot: 16,     type: 'night-slot', label: '16',   singleOrder: 16 },
+        { slot: 3,      type: 'day-slot',   label: '3',    singleOrder: 3  },
+        // Row 4
+        { slot: 8,      type: 'day-slot',   label: '8',    singleOrder: 8  },
+        { slot: 17,     type: 'night-slot', label: '17',   singleOrder: 17 },
+        { slot: 4,      type: 'day-slot',   label: '4',    singleOrder: 4  },
+        // Row 5
+        { slot: 7,      type: 'day-slot',   label: '7',    singleOrder: 7  },
+        { slot: 6,      type: 'day-slot',   label: '6',    singleOrder: 6  },
+        { slot: 5,      type: 'day-slot',   label: '5',    singleOrder: 5  },
+      ];
+
+      static build() {
+        const map = elements.progressMap;
+        map.innerHTML = '';
+        this.GRID.forEach(({ slot, type, label, singleOrder }) => {
+          const cell = document.createElement('div');
+          cell.className = `map-cell ${type}`;
+          cell.dataset.slot = slot;
+          cell.style.setProperty('--single-order', singleOrder);
+
+          // Label span (hidden when card assigned)
+          const lbl = document.createElement('span');
+          lbl.className = 'cell-label';
+          lbl.textContent = label;
+          cell.appendChild(lbl);
+
+          // Card image overlay (hidden until assigned)
+          const img = document.createElement('img');
+          img.className = 'cell-card-img';
+          img.alt = '';
+          cell.appendChild(img);
+
+          map.appendChild(cell);
+        });
+      }
+
+      // Map of slot -> card src, persisted across slots until Dawn
+      static cardAssignments = {};
+
+      static assignCard(slot, src) {
+        this.cardAssignments[slot] = src;
+        this._applyCellImage(slot, src);
+        StateManager.saveState();
+      }
+
+      static resetCardAssignments() {
+        this.cardAssignments = {};
+        document.querySelectorAll('.map-cell').forEach(cell => {
+          this._clearCellImage(cell);
+        });
+      }
+
+      static _applyCellImage(slot, src) {
+        const cell = document.querySelector(`.map-cell[data-slot="${slot}"]`);
+        if (!cell) return;
+        const img = cell.querySelector('.cell-card-img');
+        img.src = src;
+        img.classList.add('visible');
+        cell.classList.add('has-card');
+      }
+
+      static _clearCellImage(cell) {
+        const img = cell.querySelector('.cell-card-img');
+        if (img) { img.src = ''; img.classList.remove('visible'); }
+        cell.classList.remove('has-card');
+      }
+
+      static _restoreCellImages() {
+        Object.entries(this.cardAssignments).forEach(([slot, src]) => {
+          this._applyCellImage(slot, src);
+        });
+      }
+
+      static update() {
+        const currentSlot = this._effectiveSlot();
+
+        document.querySelectorAll('.map-cell').forEach(cell => {
+          const rawSlot = cell.dataset.slot;
+          const cellSlot = rawSlot === 'dawn' ? 'dawn' : parseInt(rawSlot);
+          cell.classList.remove('active', 'done');
+
+          if (cellSlot === 'dawn') {
+            if (gameState.slot === 0) cell.classList.add('active');
+            return;
+          }
+
+          if (cellSlot === currentSlot) {
+            cell.classList.add('active');
+          } else if (this._isDone(cellSlot, currentSlot)) {
+            cell.classList.add('done');
+          }
+        });
+
+        this._restoreCellImages();
+      }
+
+      static _effectiveSlot() {
+        if (gameState.slot === 0) return 0; // Dawn
+        if (gameState.isNight) return 12 + gameState.nightStep;
+        return gameState.slot;
+      }
+
+      static _isDone(cellSlot, currentSlot) {
+        if (cellSlot >= 1 && cellSlot <= 11) {
+          if (!gameState.isNight) return cellSlot < currentSlot;
+          return true;
+        }
+        if (cellSlot >= 12 && cellSlot <= 17) {
+          if (gameState.isNight) return cellSlot < currentSlot;
+          return false;
+        }
+        return false;
+      }
+    }
+
+    // ─── Card Tray Manager ──────────────────────────────────────────────
+    class CardTrayManager {
+      static show() {
+        elements.cardTray.classList.add('visible');
+        this.reset();
+      }
+
+      static hide() {
+        elements.cardTray.classList.remove('visible');
+        this.reset();
+      }
+
+      static reset() {
+        [elements.cardA, elements.cardB, elements.cardC].forEach(card => {
+          card.classList.remove('revealed', 'clickable', 'selected');
+          card.onclick = null;
+        });
+      }
+
+      static reveal() {
+        const cards = [elements.cardA, elements.cardB, elements.cardC];
+        cards.forEach((card, i) => {
+          setTimeout(() => {
+            card.classList.add('revealed');
+            card.classList.add('clickable');
+            card.onclick = () => this._onCardClick(card);
+          }, i * 80);
+        });
+      }
+
+      static _onCardClick(clicked) {
+        const slot = ProgressMapManager._effectiveSlot();
+        if (!slot || slot === 0) return;
+
+        // Visual: mark selected, deselect others
+        [elements.cardA, elements.cardB, elements.cardC].forEach(c => {
+          c.classList.toggle('selected', c === clicked);
+        });
+
+        // Assign the card image to the active map cell
+        ProgressMapManager.assignCard(slot, clicked.src);
+
+        // Re-check if Next Player can now be enabled
+        UIManager.enableMainIfBothChecked();
+      }
+
+      // Called whenever a slot is a day/night slot (1–17)
+      static isSlotEligible() {
+        if (gameState.slot === 0) return false;
+        if (gameState.phaseMode) return false;
+        return true;
+      }
+    }
+
     // Modern UI Manager with better state management
     class UIManager {
       static update() {
@@ -803,6 +1264,9 @@
           elements.mainButton.textContent = 'CONTINUE';
           elements.mainButton.disabled = false;
           gameState.phaseMode = null;
+          CardTrayManager.hide();
+          ProgressMapManager.resetCardAssignments();
+          ProgressMapManager.update();
           return;
         }
 
@@ -821,6 +1285,8 @@
           elements.mainButton.disabled = true;
           elements.mainButton.style.display = 'block';
           gameState.phaseMode = null;
+          CardTrayManager.show();
+          ProgressMapManager.update();
           return;
         }
 
@@ -839,6 +1305,8 @@
           elements.mainButton.disabled = true;
           elements.mainButton.style.display = 'block';
           gameState.phaseMode = null;
+          CardTrayManager.show();
+          ProgressMapManager.update();
           return;
         }
       }
@@ -854,7 +1322,9 @@
         }
         const bothChecked = elements.actCheckbox.classList.contains('checked') && 
                            elements.mapCheckbox.classList.contains('checked');
-        elements.mainButton.disabled = !bothChecked;
+        const cardSelected = [elements.cardA, elements.cardB, elements.cardC]
+                           .some(c => c.classList.contains('selected'));
+        elements.mainButton.disabled = !(bothChecked && cardSelected);
       }
 
       static restoreStableCheckboxes() {
@@ -894,6 +1364,13 @@
         checkbox.setAttribute('aria-checked', isChecked.toString());
         UIManager.enableMainIfBothChecked();
         
+        // Reveal cards when REVEAL checkbox is checked
+        if (checkbox.id === 'mapCheckbox' && isChecked) {
+          CardTrayManager.reveal();
+        } else if (checkbox.id === 'mapCheckbox' && !isChecked) {
+          CardTrayManager.reset();
+        }
+        
         // NEW: Save state whenever checkbox state changes
         StateManager.saveState();
       }
@@ -919,6 +1396,7 @@
         elements.checkboxesDiv.style.display = 'none';
         elements.mainButton.style.display = 'none';
         elements.textArea.innerHTML = "<strong>DUSK: </strong><br>Choose to proceed to DAWN... <br>...or enter the NIGHT.";
+        CardTrayManager.hide();
 
         const dawnBtn = document.createElement('button');
         dawnBtn.className = 'btn btn--dawn';
@@ -966,6 +1444,7 @@
         elements.checkboxesDiv.style.display = 'none';
         elements.mainButton.style.display = 'none';
         elements.textArea.innerHTML = "Choose your next action wisely...";
+        CardTrayManager.hide();
 
         const endBtn = document.createElement('button');
         endBtn.className = 'btn btn--interstitial';
@@ -1014,6 +1493,7 @@
         elements.dayLabel.textContent = `The Deep Of The ${UIManager.ordinal(gameState.cycle)} Night`;
         elements.slotLabel.textContent = "[17]";
         elements.textArea.innerHTML = "Congratulations, you have survived the night...";
+        CardTrayManager.hide();
 
         elements.checkboxesDiv.innerHTML = '';
         const lootBtn = document.createElement('div');
@@ -1091,7 +1571,7 @@
       static resetGame() {
         if (!confirm("Are you sure you want to reset all game data?")) return;
         
-        // NEW: Clear saved state first
+        // Clear saved state
         StateManager.clearState();
         
         Object.assign(gameState, {
@@ -1101,6 +1581,10 @@
           nightStep: 0, 
           phaseMode: null
         });
+        
+        // Reset grid card assignments and hide card tray
+        ProgressMapManager.resetCardAssignments();
+        CardTrayManager.hide();
         
         UIManager.cleanupTransientButtons();
         elements.checkboxesDiv.innerHTML = `
@@ -1137,6 +1621,9 @@
 
     // Modern initialization with state loading
     function initializeGame() {
+      // Build the progress map grid
+      ProgressMapManager.build();
+      
       // NEW: Try to load saved state first
       const hasSavedState = StateManager.hasSavedState();
       if (hasSavedState) {
