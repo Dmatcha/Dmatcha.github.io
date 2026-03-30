@@ -289,7 +289,7 @@
       padding: 0.5rem;
       background: #ff4d4d;
       border: none;
-      border-radius: 1rem;
+      border-radius: 0.125rem;
       cursor: pointer;
       color: var(--text-primary);
       font-weight: 600;
@@ -311,13 +311,8 @@
       }
     }
 
-    /* Fallback for browsers without container queries */
+    /* narrow window change */
     @media (max-width: 600px) {
-      .game-container {
-        width: 92vw;
-        max-width: none;
-        min-width: 300px;
-      }
       .reset-btn { position: fixed; top: 0.125rem; left: 0.125rem; padding: 0.125rem}
     }
 
@@ -362,7 +357,7 @@
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: 1fr 2fr auto;
+      grid-template-columns: 1fr 2fr 1fr;
       height: 100%;
       width: 100%;
       min-width: 28rem;
@@ -383,14 +378,13 @@
       padding: 1rem 0;
     }
 
-    /* Right column — progress map, top-aligned */
+    /* Right column — progress map, centered */
     .col-right {
       display: flex;
       justify-content: center;
       align-items: center;
       padding-top: 1rem;
-      padding-left: 0.5rem;
-      min-width: max-content;
+      min-width: 1.5rem;
       overflow: visible;
     }
 
