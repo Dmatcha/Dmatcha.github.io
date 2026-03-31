@@ -8,6 +8,14 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
   :root{
+    /* Z-index scale — single source of truth */
+    --z-content:    1;
+    --z-overlay:    2050;
+    --z-buttons:    2100;
+    --z-reset:      2090;
+    --z-lightbox:   2200;
+    --z-bottom:     2300;
+    
     /* Base font size for rem calculations */
     font-size: 1rem;
     
@@ -45,10 +53,12 @@
     --flash-color: #ffffff; /* White flash */
   }
 
-  html,body{height:100%;margin:0;}
+  html,body{margin:0;}
   body{
     margin:0;
-    min-height:100%;
+    min-height:90vh;
+    min-width: 28rem;
+    padding-bottom: 3.5rem; /* clears the fixed #bottomStats bar */
     font-family: "Inter", "Segoe UI", Arial, sans-serif;
     background: linear-gradient(180deg,#0f0f12 0%, #141417 60%);
     color:#e9eef6;
@@ -73,7 +83,7 @@
     border: 0;
     outline:0;
     padding:0.3rem 0.3rem;
-    margin-top:1.5rem;
+    margin-top:4.5rem;
     margin-bottom:0.5rem;
   }
   #playerName::placeholder{ color: rgba(255,255,255,0.35); }
@@ -467,7 +477,7 @@
     .bar-card{ padding:0.35rem; }
     .bar-controls{ padding-right: 0.5rem; }
     .attributes{ gap:1rem; margin-top:2rem; grid-template-columns: repeat(3, 1fr); }
-      #playerName{ margin-top:2.0rem; margin-bottom:0.2rem; }
+      #playerName{ margin-top:4.5rem; margin-bottom:0.2rem; }
     .attr {
       min-height: 1rem;
       min-width: 1rem;
@@ -507,7 +517,7 @@
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    z-index: 1000;
+    z-index: var(--z-reset);
     transition: background 0.25s;
   }
   #resetBtn:hover { background: #ff4d4d; }
@@ -523,7 +533,7 @@
     border: 0.1875rem solid white;
     border-radius: 0.5rem;
     cursor: pointer;
-    z-index: 1001;
+    z-index: var(--z-buttons);
     transition: all 0.4s ease;
     display: flex;
     align-items: center;
@@ -565,7 +575,7 @@
     border: 0.1875rem solid white;
     border-radius: 0.5rem;
     cursor: pointer;
-    z-index: 1001;
+    z-index: var(--z-buttons);
     transition: all 0.4s ease;
     display: flex;
     align-items: center;
@@ -593,6 +603,235 @@
     cursor: not-allowed;
   }
 
+  /* Coinpurse Button - Gold themed, far left of overlay buttons */
+  #coinBtn {
+    position: fixed;
+    top: 0.6rem;
+    right: 17.6rem;
+    width: 3rem;
+    height: 3rem;
+    background: transparent;
+    border: 0.1875rem solid white;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    z-index: var(--z-buttons);
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem;
+    overflow: hidden;
+  }
+  #coinBtn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    transition: transform 0.2s ease;
+  }
+  #coinBtn:hover img {
+    transform: scale(1.08);
+  }
+  #coinBtn.active {
+    background: #2e1a00;
+    border-color: #FFD700;
+    box-shadow: 0 0 0.6rem rgba(255, 215, 0, 0.4);
+  }
+  #coinBtn.active img {
+    transform: scale(1.05);
+  }
+  #coinBtn:hover:not(.active) {
+    border-color: rgba(255,255,255,0.7);
+    box-shadow: 0 0 0.4rem rgba(255,255,255,0.15);
+  }
+
+  #coinBtn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  /* Coinpurse Overlay */
+  #coinOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 15, 18, 0.88);
+    backdrop-filter: blur(0.5rem);
+    -webkit-backdrop-filter: blur(0.5rem);
+    z-index: var(--z-overlay);
+    display: none;
+    overflow-y: auto;
+    padding: 3.75rem 1rem 4rem;
+  }
+  #coinOverlay.visible { display: block; }
+
+  .coin-content {
+    max-width: 55%;
+    min-width: 26rem;
+    margin: 0 auto;
+  }
+
+  .coin-title {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    color: #D4AF37;
+    letter-spacing: 0.04em;
+  }
+
+  .coin-hint {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .coin-row {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.03);
+    border-radius: 0.875rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.6rem;
+    gap: 0.75rem;
+    border: 0.0625rem solid rgba(255,255,255,0.07);
+    transition: border-color 0.2s ease;
+  }
+  .coin-row:hover { border-color: rgba(212,175,55,0.2); }
+
+  .coin-icon {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    box-shadow: 0 0.125rem 0.375rem rgba(0,0,0,0.5), inset 0 -0.0625rem 0 rgba(0,0,0,0.2);
+  }
+  .coin-icon.gold    { background: linear-gradient(160deg, #FFD700, #B8860B); color: #3d2a00; }
+  .coin-icon.silver  { background: linear-gradient(160deg, #E8E8E8, #9E9E9E); color: #2a2a2a; }
+  .coin-icon.alloy   { background: linear-gradient(160deg, #b87333, #7a4a1e); color: #f0d0a0; }
+  .coin-icon.old     { background: linear-gradient(160deg, #a3c9a8, #4a7c59); color: #0d2e18; }
+
+  .coin-label-group {
+    flex: 1;
+    min-width: 0;
+  }
+  .coin-label {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #f1f5fb;
+    line-height: 1.2;
+  }
+  .coin-sublabel {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.1rem;
+  }
+
+  .coin-balance {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #fff;
+    min-width: 3rem;
+    text-align: center;
+  }
+  .coin-balance.empty { color: rgba(255,255,255,0.3); }
+
+  .coin-spend-group {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .coin-adj-btn {
+    width: 1.6rem;
+    height: 1.6rem;
+    background: rgba(255,255,255,0.08);
+    border: none;
+    border-radius: 0.35rem;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease;
+    line-height: 1;
+  }
+  .coin-adj-btn:hover { background: rgba(255,255,255,0.18); }
+  .coin-adj-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+
+  .coin-pending {
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #ff9f43;
+    min-width: 1.6rem;
+    text-align: center;
+  }
+  .coin-pending.zero { color: rgba(255,255,255,0.25); }
+
+  .coin-spend-btn {
+    display: block;
+    width: 100%;
+    margin-top: 1.25rem;
+    padding: 0.875rem;
+    background: rgba(212, 175, 55, 0.15);
+    border: 0.125rem solid #D4AF37;
+    border-radius: 0.75rem;
+    color: #D4AF37;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    letter-spacing: 0.05em;
+  }
+  .coin-spend-btn:hover:not(:disabled) {
+    background: rgba(212, 175, 55, 0.3);
+    transform: translateY(-1px);
+  }
+  .coin-spend-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .coin-log {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(76, 175, 80, 0.08);
+    border: 0.0625rem solid rgba(76, 175, 80, 0.3);
+    border-radius: 0.625rem;
+    font-size: 0.88rem;
+    color: #81c784;
+    text-align: center;
+    display: none;
+  }
+  .coin-log.visible { display: block; }
+
+  .coin-divider {
+    border: none;
+    border-top: 0.0625rem solid rgba(255,255,255,0.07);
+    margin: 1.25rem 0 1rem;
+  }
+
+  .coin-section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.6rem;
+  }
+
   /* Mind Button - Purple themed */
   #mindBtn {
     position: fixed;
@@ -604,7 +843,7 @@
     border: 0.1875rem solid var(--mind-bright-purple);
     border-radius: 0.5rem;
     cursor: pointer;
-    z-index: 1001;
+    z-index: var(--z-buttons);
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
@@ -641,16 +880,16 @@
     background: rgba(15, 15, 18, 0.85);
     backdrop-filter: blur(0.5rem);
     -webkit-backdrop-filter: blur(0.5rem);
-    z-index: 999;
+    z-index: var(--z-overlay);
     display: none;
     overflow-y: auto;
-    padding: 3.75rem 1rem 1.25rem;
+    padding: 3.75rem 1rem 4rem;
   }
   #mindOverlay.visible { display: block; }
-  .mind-content { max-width: 50rem; margin: 0 auto; }
+  .mind-content { max-width: 67%; min-width: 26rem; margin: 0 auto; }
   .mind-title {
     text-align: center;
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
     color: var(--mind-bright-purple);
@@ -758,10 +997,10 @@
     background: rgba(15, 15, 18, 0.85);
     backdrop-filter: blur(0.5rem);
     -webkit-backdrop-filter: blur(0.5rem);
-    z-index: 999;
+    z-index: var(--z-overlay);
     display: none;
     overflow-y: auto;
-    padding: 3.75rem 1rem 1.25rem;
+    padding: 3.75rem 1rem 4rem;
   }
   #characterOverlay.visible {
     display: block;
@@ -769,6 +1008,7 @@
 
   .character-content {
     max-width: 41.25rem;
+    min-width: 26rem;
     margin: 0 auto;
   }
 
@@ -940,6 +1180,33 @@
     font-weight: 600;
   }
 
+  /* Madness whisper box — crimson outlined, scarlet glow */
+  .madness-whisper-box {
+    background: rgba(20, 0, 0, 0.4);
+    border: 2px solid #DC143C;
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    line-height: 1.8;
+    color: #ffb3b3;
+    font-size: 0.95rem;
+    margin-top: 1.25rem;
+    box-shadow: 0 0 0.75rem rgba(220, 20, 60, 0.35), inset 0 0 1.5rem rgba(220, 20, 60, 0.05);
+    display: none;
+    font-style: italic;
+    letter-spacing: 0.01em;
+  }
+  .madness-whisper-box.visible {
+    display: block;
+  }
+  .madness-whisper-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(220, 20, 60, 0.7);
+    margin-bottom: 0.5rem;
+  }
+
 #inventoryBtn {
   position: fixed;
   top: 0.6rem;
@@ -950,7 +1217,7 @@
   border: 0.1875rem solid white;
   border-radius: 0.5rem;
   cursor: pointer;
-  z-index: 1001;
+  z-index: var(--z-buttons);
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
@@ -988,17 +1255,18 @@
     background: rgba(15, 15, 18, 0.85);
     backdrop-filter: blur(0.5rem);
     -webkit-backdrop-filter: blur(0.5rem);
-    z-index: 999;
+    z-index: var(--z-overlay);
     display: none;
     overflow-y: auto;
-    padding: 3.75rem 1rem 1.25rem;
+    padding: 3.75rem 0.125rem 4rem;
   }
   #relationshipOverlay.visible {
     display: block;
   }
 
   .relationship-content {
-    max-width: 41.25rem;
+    max-width: 85%;
+    min-width: 26rem;
     margin: 0 auto;
   }
 
@@ -1374,9 +1642,9 @@
     inset: 0;
     background: rgba(15,15,18,0.85);
     backdrop-filter: blur(0.5rem);
-    z-index: 999;
+    z-index: var(--z-overlay);
     display: none;
-    padding: 3.75rem 1rem 1.25rem;
+    padding: 3.75rem 1rem 4rem;
     overflow-y: auto;
   }
 
@@ -1444,6 +1712,51 @@
   height: 10.6rem;
   /* 2025 Enhancement: Maintain aspect ratio for item images (1218x1698) */
   object-fit: cover;
+}
+
+/* Empty artefact/iris slots are clickable for random selection */
+.inventory-item[data-slot="artefact"] .inv-image:not(.has-image),
+.inventory-item[data-slot="iris"] .inv-image:not(.has-image) {
+  cursor: pointer;
+}
+.inventory-item[data-slot="artefact"] .inv-image:not(.has-image):hover,
+.inventory-item[data-slot="iris"] .inv-image:not(.has-image):hover {
+  border-color: rgba(212, 175, 55, 0.6);
+  background: rgba(212, 175, 55, 0.08);
+}
+.inventory-item[data-slot="artefact"] .inv-image:not(.has-image):hover svg,
+.inventory-item[data-slot="iris"] .inv-image:not(.has-image):hover svg {
+  stroke: rgba(212, 175, 55, 0.7);
+}
+
+/* Locked artefact/iris slots — connected to session */
+.inventory-item.session-locked .inv-name {
+  opacity: 0.75;
+  cursor: default;
+}
+.inventory-item.session-locked .inv-delete-btn {
+  display: none !important;
+}
+.inventory-item.session-locked .inv-confirm-btn {
+  display: none !important;
+}
+.inventory-item.session-locked .inv-consume-btn {
+  display: none !important;
+}
+.inventory-item.session-locked .inv-image:not(.has-image) {
+  cursor: default;
+  pointer-events: none;
+}
+.inventory-item.session-locked .inv-image:not(.has-image):hover {
+  border-color: rgba(155, 89, 182, 0.3);
+  background: transparent;
+}
+.session-lock-badge {
+  font-size: 0.65rem;
+  color: rgba(155, 89, 182, 0.7);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 0.15rem;
 }
 
 /* Ensure item inv-image container matches the new size */
@@ -1516,7 +1829,7 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.9);
-  z-index: 2000;
+  z-index: var(--z-lightbox);
   display: none;
   align-items: center;
   justify-content: center;
@@ -1547,7 +1860,7 @@
   left: 50%;
   transform: translateX(-50%);
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
+  font-size: 1rem;
   pointer-events: none;
 }
 
@@ -1631,6 +1944,44 @@
   fill: none;
 }
 
+/* Consume button — appears in place of confirm btn for consumable items */
+.inventory-item .inv-consume-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  height: 1.5rem;
+  padding: 0 0.5rem;
+  background: rgba(255, 140, 0, 0.18);
+  border: 0.0625rem solid rgba(255, 140, 0, 0.5);
+  border-radius: 0.25rem;
+  color: #ffb347;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.inventory-item .inv-consume-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.inventory-item .inv-consume-btn:hover {
+  background: rgba(255, 140, 0, 0.35);
+  border-color: rgba(255, 140, 0, 0.8);
+}
+.consume-label-short { display: none; }
+.consume-label-full  { display: inline; }
+@media (max-width: 30rem) {
+  .consume-label-short { display: inline; }
+  .consume-label-full  { display: none; }
+}
+
 .inventory-item .inv-delete-btn {
   position: absolute;
   bottom: 0.5rem;
@@ -1671,12 +2022,14 @@
     bottom: 0;
     left: 0;
     right: 0;
+    width: 100%;
     background: rgba(18, 18, 18, 0.95);
     padding: 0.5rem 0.25rem;
     text-align: center;
     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
     border-top: 0.0625rem solid rgba(255, 255, 255, 0.1);
-    z-index: 1;
+    z-index: var(--z-bottom);
+    box-sizing: border-box;
   }
   #bottomStats span {
     display: inline-block;
@@ -1700,6 +2053,31 @@
     border: 0.125rem solid rgba(230, 227, 200, 0.25);
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
+  }
+
+  /* Blink levelValue border when ability points are available */
+  @keyframes levelBlink {
+    0%, 100% { border-color: rgba(230, 227, 200, 0.25); box-shadow: none; }
+    50% { border-color: #ffffff; box-shadow: 0 0 6px rgba(255,255,255,0.6); }
+  }
+  #levelValue.has-points {
+    animation: levelBlink 1s ease-in-out infinite;
+  }
+
+  /* Ability point gate — attrs disabled when no points available */
+  .attr.attr-disabled {
+    pointer-events: none;
+    cursor: default;
+  }
+
+  /* Dead state: life shows -1, player page dims attrs */
+  body.player-dead .attr:not(.luck) {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+  body.player-dead #levelValue {
+    color: #DC143C;
+    border-color: rgba(220,20,60,0.5);
   }
 
   /* ===== ACCESSIBILITY & PERFORMANCE ===== */
@@ -1816,8 +2194,6 @@
       transform: scale(1.06);
     }
   }
-<!-- Add this CSS to your existing styles -->
-<style>
   /* Image Zoom System - Simplified */
   .spell-image {
     cursor: pointer;
@@ -1838,7 +2214,7 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.95);
-    z-index: 2000;
+    z-index: var(--z-lightbox);
     display: none;
     align-items: center;
     justify-content: center;
@@ -1899,12 +2275,12 @@
   
   .zoom-hint {
     position: absolute;
-    bottom: 20px;
+    bottom: 1.25rem;
     left: 0;
     right: 0;
     text-align: center;
     color: rgba(255, 255, 255, 0.6);
-    font-size: 14px;
+    font-size: 1rem;
     pointer-events: none;
   }
 
@@ -1930,25 +2306,145 @@
     margin: 0 1px;
     opacity: 0.6;
   }
-/* ==========================
-   JOIN SESSION SYSTEM
-========================== */
+/* ===== BUDDY / BEASTFRIEND SLOT ===== */
+.buddy-slot {
+  background: rgba(255,255,255,0.03);
+  border: 0.125rem dashed rgba(255,255,255,0.18);
+  border-radius: 1rem;
+  padding: 0.5rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: stretch;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  min-height: 7rem;
+  position: relative;
+}
+.buddy-slot:hover { border-color: rgba(255,255,255,0.35); }
+.buddy-slot.has-buddy { border-style: solid; border-color: rgba(212,175,55,0.4); cursor: default; }
+.buddy-image {
+  width: 7.6rem; min-width: 7.6rem; height: 10.64rem;
+  background: rgba(255,255,255,0.05);
+  border: 0.125rem dashed rgba(255,255,255,0.2);
+  border-radius: 0.75rem;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; cursor: pointer; transition: all 0.2s ease;
+}
+.buddy-image:hover { border-color: rgba(212,175,55,0.5); background: rgba(212,175,55,0.06); }
+.buddy-image.has-image { border-style: solid; border-color: rgba(255,255,255,0.1); }
+.buddy-image img { width:100%; height:100%; object-fit:cover; border-radius:0.625rem; }
+.buddy-image svg { width:2rem; height:2rem; stroke:rgba(255,255,255,0.3); stroke-width:2; fill:none; }
+.buddy-info { flex:1; display:flex; flex-direction:column; gap:0.4rem; justify-content:center; padding:0.25rem 0; }
+.buddy-type { font-size:0.82rem; color:var(--muted); padding-left:0.25rem; }
+.buddy-name { font-size:1.15rem; font-weight:700; color:#fff; padding-left:0.25rem; }
+.buddy-empty-hint { color:rgba(255,255,255,0.3); font-size: 2rem; font-weight: 600; align-self:center; margin:auto; }
+.buddy-clear-btn {
+  position:absolute; top:0.5rem; right:0.5rem;
+  width:1.5rem; height:1.5rem;
+  background:rgba(255,0,0,0.25); border:none; border-radius:50%;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:opacity 0.2s ease;
+}
+.buddy-slot:hover .buddy-clear-btn, .buddy-slot.has-buddy:hover .buddy-clear-btn { opacity:1; }
+.buddy-clear-btn:hover { background:rgba(255,0,0,0.5); }
+.buddy-clear-btn svg { width:0.75rem; height:0.75rem; stroke:white; stroke-width:2; fill:none; }
+
+/* Buddy picker overlay */
+#buddyPickerOverlay {
+  position:fixed; inset:0;
+  background:rgba(15,15,18,0.92); backdrop-filter:blur(0.5rem);
+  z-index:var(--z-lightbox); display:none;
+  overflow-y:auto; padding:3.75rem 1rem 4rem;
+}
+#buddyPickerOverlay.visible { display:block; }
+.buddy-picker-content { max-width:80%; min-width: 25rem; margin:0 auto; }
+.buddy-picker-title { text-align:center; font-size:1.5rem; font-weight:700; color:#FFD700; margin-bottom:1.25rem; }
+.buddy-picker-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(11rem,1fr)); gap:0.75rem; }
+.buddy-option {
+  background:rgba(255,255,255,0.04); border:0.125rem solid rgba(255,255,255,0.1);
+  border-radius:0.75rem; padding:0.75rem; cursor:pointer; transition:all 0.2s ease;
+  text-align:center;
+}
+.buddy-option:hover { background:rgba(212,175,55,0.1); border-color:rgba(212,175,55,0.5); }
+.buddy-option-type { font-size:0.75rem; color:var(--muted); margin-bottom:0.25rem; }
+.buddy-option-name { font-size:0.95rem; font-weight:700; color:#fff; }
+.buddy-picker-close {
+  display:block; margin:1.5rem auto 0;
+  padding:0.75rem 2rem;
+  background:rgba(255,255,255,0.06); border:0.125rem solid rgba(255,255,255,0.2);
+  border-radius:0.5rem; color:#fff; font-size:1rem; cursor:pointer; transition:all 0.2s ease;
+}
+.buddy-picker-close:hover { background:rgba(255,255,255,0.12); }
+
+/* ===== SCATHE'S MEMO BOOK OVERLAY ===== */
+#scatheMemoOverlay.visible { display:flex !important; }
+.scathe-memo-content {
+  background:var(--bg-card, #1a1a2e);
+  border:1px solid rgba(212,175,55,0.3);
+  border-radius:1rem; padding:2rem;
+  max-width:90%; min-width:26rem;
+  box-shadow:0 0 2rem rgba(212,175,55,0.15);
+  display:flex; flex-direction:column; gap:1rem;
+}
+.scathe-memo-title {
+  font-size:1.5rem; font-weight:700; color:#FFD700; text-align:center;
+  font-style:italic;
+}
+.scathe-memo-subtitle { font-size:0.85rem; color:var(--muted); text-align:center; }
+.scathe-memo-input {
+  width:100%; min-height:10rem; resize:vertical;
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.12);
+  border-radius:0.5rem; color:#fff; font-size:1rem; font-family:inherit;
+  padding:0.75rem; outline:none; transition:border-color 0.2s ease;
+  box-sizing:border-box;
+}
+.scathe-memo-input:focus { border-color:rgba(212,175,55,0.5); }
+.scathe-memo-actions { display:flex; justify-content:space-between; gap:0.75rem; }
+.scathe-close-btn {
+  flex:1; padding:0.75rem;
+  background:rgba(32,178,170,0.15); border:1px solid rgba(32,178,170,0.5);
+  border-radius:0.5rem; color:#7fffd4; font-size:0.9rem; font-weight:700;
+  cursor:pointer; transition:all 0.2s ease;
+}
+.scathe-close-btn:hover { background:rgba(32,178,170,0.3); }
+.scathe-write-btn {
+  flex:1; padding:0.75rem;
+  background:rgba(212,175,55,0.15); border:1px solid rgba(212,175,55,0.5);
+  border-radius:0.5rem; color:#FFD700; font-size:0.9rem; font-weight:700;
+  cursor:pointer; transition:all 0.2s ease;
+}
+.scathe-write-btn:hover:not(:disabled) { background:rgba(212,175,55,0.3); }
+.scathe-write-btn:disabled { opacity:0.35; cursor:not-allowed; }
+
+/* ===== ARTEFACT ALIGNMENT BLINK ===== */
+@keyframes artefactBlink {
+  0%,100% { border-color: rgba(230,227,200,0.25); box-shadow:none; }
+  50% { border-color:#FFD700; box-shadow:0 0 8px rgba(255,215,0,0.7); }
+}
+.stat-value.artefact-aligned {
+  animation: artefactBlink 1s ease-in-out infinite;
+}
+
+/* ===== JOIN SESSION on main page ===== */
+.wrap .join-session-divider { margin-top: 1rem; }
+.wrap .join-session-area { padding-bottom: 0.125rem; }
+
 .join-session-divider {
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
-  margin: 2rem 0 1.5rem;
+  margin: 0.5rem 0rem 0.5rem;
 }
 
 .join-session-area {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
-  padding-bottom: 2rem;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .join-session-label {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.4);
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -1956,7 +2452,7 @@
 
 .join-code-input {
   font-family: 'Consolas', 'JetBrains Mono', monospace;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: 0.3em;
   text-align: center;
@@ -1992,7 +2488,7 @@
   padding: 0.5rem 1.5rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
   text-transform: uppercase;
 }
 
@@ -2007,6 +2503,11 @@
   cursor: not-allowed;
 }
 
+/* READY CHECK PARKED
+.ready-btn { ... }
+.ready-btn.is-ready { ... }
+*/
+
 .join-status {
   font-size: 0.85rem;
   min-height: 1.2rem;
@@ -2017,12 +2518,218 @@
 .join-status.error { color: #ff8fa3; }
 .join-status.success { color: #5fd08f; }
 .join-status.info { color: rgba(255, 255, 255, 0.5); }
-</style>
+
+/* ─── In-game ACT / REVEAL buttons ─── */
+.ingame-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+/* Dim when it's not this player's turn */
+.ingame-actions.not-my-turn {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Glow wrapper when it IS this player's turn */
+.ingame-actions.my-turn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.act-btn-player,
+.reveal-btn-player {
+  appearance: none;
+  font-family: 'Consolas', 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.55rem 1.6rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.act-btn-player {
+  border: 2px solid rgba(255, 179, 71, 0.5);
+  background: rgba(255, 179, 71, 0.08);
+  color: #ffb347;
+}
+.act-btn-player:hover {
+  background: rgba(255, 179, 71, 0.18);
+  border-color: #ffb347;
+}
+.act-btn-player.checked {
+  background: #ffb347;
+  border-color: #ffb347;
+  color: #1a0e00;
+  box-shadow: 0 0 12px rgba(255,179,71,0.5);
+}
+
+.reveal-btn-player {
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  background: rgba(255, 215, 0, 0.08);
+  color: #ffd700;
+}
+.reveal-btn-player:hover {
+  background: rgba(255, 215, 0, 0.18);
+  border-color: #ffd700;
+}
+.reveal-btn-player.checked {
+  background: #ffd700;
+  border-color: #ffd700;
+  color: #1a1400;
+  box-shadow: 0 0 12px rgba(255,215,0,0.5);
+}
+
+#coinBtn,
+#starBtn,
+#mindBtn,
+#inventoryBtn,
+#heartBtn {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  background: rgba(20, 20, 30, 0.5);
+
+  border-radius: 12px;
+  border: 0px solid rgba(255, 255, 255, 0.25);
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  color: white;
+} 
+
 </style>
 </head>
 <body>
   <button id="resetBtn">RESET</button>
   
+  <!-- Coinpurse Button -->
+  <button id="coinBtn" class="disabled" aria-label="Toggle Coinpurse">
+    <img src="../icons/cash.svg" alt="Coinpurse" />
+  </button>
+
+  <!-- Coinpurse Overlay -->
+  <div id="coinOverlay">
+    <div class="coin-content">
+      <div class="coin-title">Coinpurse</div>
+      <div class="coin-hint">100 Alloy = 1 Silver &nbsp;·&nbsp; 100 Silver = 1 Gold</div>
+
+      <div class="coin-section-label">Balance</div>
+
+      <!-- Gold -->
+      <div class="coin-row" id="coinRow-gold">
+        <div class="coin-icon gold">G</div>
+        <div class="coin-label-group">
+          <div class="coin-label">Gold</div>
+          <div class="coin-sublabel">Radiant hue masks its electrical abilities. Highly coveted.</div>
+        </div>
+        <div class="coin-balance" id="coinBal-gold">0</div>
+        <div class="coin-spend-group">
+          <button class="coin-adj-btn" data-coin="gold" data-dir="-1">−</button>
+          <span class="coin-pending zero" id="coinPend-gold">0</span>
+          <button class="coin-adj-btn" data-coin="gold" data-dir="1">+</button>
+        </div>
+      </div>
+
+      <!-- Silver -->
+      <div class="coin-row" id="coinRow-silver">
+        <div class="coin-icon silver">S</div>
+        <div class="coin-label-group">
+          <div class="coin-label">Silver</div>
+          <div class="coin-sublabel">Purified metals, silver in name only.</div>
+        </div>
+        <div class="coin-balance" id="coinBal-silver">0</div>
+        <div class="coin-spend-group">
+          <button class="coin-adj-btn" data-coin="silver" data-dir="-1">−</button>
+          <span class="coin-pending zero" id="coinPend-silver">0</span>
+          <button class="coin-adj-btn" data-coin="silver" data-dir="1">+</button>
+        </div>
+      </div>
+
+      <!-- Alloy -->
+      <div class="coin-row" id="coinRow-alloy">
+        <div class="coin-icon alloy">A</div>
+        <div class="coin-label-group">
+          <div class="coin-label">Alloy</div>
+          <div class="coin-sublabel">Useless scrap used as legal tender.</div>
+        </div>
+        <div class="coin-balance" id="coinBal-alloy">0</div>
+        <div class="coin-spend-group">
+          <button class="coin-adj-btn" data-coin="alloy" data-dir="-1">−</button>
+          <span class="coin-pending zero" id="coinPend-alloy">0</span>
+          <button class="coin-adj-btn" data-coin="alloy" data-dir="1">+</button>
+        </div>
+      </div>
+
+      <!-- Old World Coin -->
+      <div class="coin-row" id="coinRow-old">
+        <div class="coin-icon old">✦</div>
+        <div class="coin-label-group">
+          <div class="coin-label">Old Coin</div>
+          <div class="coin-sublabel">Some still value this relic of the old world, before the fall of that empire...</div>
+        </div>
+        <div class="coin-balance" id="coinBal-old">0</div>
+        <div class="coin-spend-group">
+          <button class="coin-adj-btn" data-coin="old" data-dir="-1">−</button>
+          <span class="coin-pending zero" id="coinPend-old">0</span>
+          <button class="coin-adj-btn" data-coin="old" data-dir="1">+</button>
+        </div>
+      </div>
+
+      <!-- Mystery coin: hidden until received, injected by JS -->
+      <div id="coinRow-mystery" style="display:none;">
+        <hr class="coin-divider">
+        <div class="coin-row">
+          <div class="coin-icon" id="mysteryIcon" style="background:linear-gradient(160deg,#e8d5b7,#9e7c3a);color:#2a1800;">
+            <svg viewBox="0 0 20 34" width="0.75rem" height="1.25rem" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="kobGold" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#f5d97a"/>
+                  <stop offset="50%" stop-color="#c8933a"/>
+                  <stop offset="100%" stop-color="#a06820"/>
+                </linearGradient>
+              </defs>
+              <!-- Koban body: tall rounded rectangle -->
+              <rect x="1.5" y="0.5" width="17" height="33" rx="7" ry="7" fill="url(#kobGold)" stroke="#7a4e10" stroke-width="1.2"/>
+              <!-- Horizontal ridges across face -->
+              <line x1="3.5" y1="5"  x2="16.5" y2="5"  stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="7"  x2="17"   y2="7"  stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="9"  x2="17"   y2="9"  stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="11" x2="17"   y2="11" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="13" x2="17"   y2="13" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="21" x2="17"   y2="21" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="23" x2="17"   y2="23" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="25" x2="17"   y2="25" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3"   y1="27" x2="17"   y2="27" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <line x1="3.5" y1="29" x2="16.5" y2="29" stroke="#c8851a" stroke-width="0.4" opacity="0.6"/>
+              <!-- Central oval stamp -->
+              <ellipse cx="10" cy="17" rx="4" ry="5.5" fill="none" stroke="#7a4e10" stroke-width="0.9" opacity="0.75"/>
+              <ellipse cx="10" cy="17" rx="2" ry="3"   fill="none" stroke="#9e6010" stroke-width="0.5" opacity="0.5"/>
+            </svg>
+          </div>
+          <div class="coin-label-group">
+            <div class="coin-label" id="mysteryLabel">Li</div>
+            <div class="coin-sublabel">Possession and exchange is forbidden outside its kingdom of origin.</div>
+          </div>
+          <div class="coin-balance" id="coinBal-mystery">0</div>
+          <div class="coin-spend-group">
+            <button class="coin-adj-btn" data-coin="mystery" data-dir="-1">−</button>
+            <span class="coin-pending zero" id="coinPend-mystery">0</span>
+            <button class="coin-adj-btn" data-coin="mystery" data-dir="1">+</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="coin-spend-btn" id="coinSpendBtn" disabled>Spend Coins</button>
+      <div class="coin-log" id="coinLog"></div>
+    </div>
+  </div>
+
   <!-- Star Button - Character Options -->
   <button id="starBtn" class="disabled" aria-label="Toggle Character Options">
     <svg viewBox="0 0 24 24">
@@ -2051,7 +2758,7 @@
   <!-- Character Overlay -->
   <div id="characterOverlay">
     <div class="character-content">
-      <div class="character-title" id="traitsTitle">Player's Traits</div>
+      <div class="character-title" id="traitsTitle">Player's Constellation</div>
       
       <!-- Traits Selection Grid -->
       <div class="traits-grid" id="traitsGrid">
@@ -2106,6 +2813,12 @@
       
       <!-- Traits Description (hidden initially) -->
       <div class="traits-description" id="traitsDescription" style="display: none;"></div>
+
+      <!-- Madness Whisper (hidden until host sends) -->
+      <div class="madness-whisper-box" id="madnessWhisperBox">
+        <div class="madness-whisper-label">The Madness...</div>
+        <div id="madnessWhisperText"></div>
+      </div>
     </div>
   </div>
 
@@ -2203,22 +2916,23 @@
       Add Character
     </button>
 
-    <!-- JOIN SESSION -->
-    <hr class="join-session-divider">
-    <div class="join-session-area">
-      <span class="join-session-label">Join Host Session</span>
-      <input
-        class="join-code-input"
-        id="joinCodeInput"
-        maxlength="4"
-        placeholder="XXXX"
-        autocomplete="off"
-        spellcheck="false"
-      />
-      <button class="join-btn" id="joinBtn" onclick="attemptJoinSession()">JOIN</button>
-      <div class="join-status info" id="joinStatus">Enter the 4-character code from your Host</div>
-    </div>
+    <!-- BUDDY SECTION added below NPC list -->
+    <hr class="join-session-divider" style="margin-top:1.5rem;">
+    <div class="relationship-title" style="font-size:1.2rem;margin-bottom:0.75rem;">Beastfriend</div>
+    <div id="buddySlot" class="buddy-slot"></div>
+  </div>
+</div>
 
+<!-- Scathe's Memo Book Overlay -->
+<div id="scatheMemoOverlay" style="display:none; position:fixed; inset:0; background:rgba(15,15,18,0.92); backdrop-filter:blur(0.5rem); z-index:var(--z-lightbox); align-items:center; justify-content:center; padding:2rem;">
+  <div class="scathe-memo-content">
+    <div class="scathe-memo-title">Scathe's Memo Book</div>
+    <div class="scathe-memo-subtitle">Write what is, was, or will be true.</div>
+    <textarea class="scathe-memo-input" id="scatheMemoInput" placeholder="Write your entry here..."></textarea>
+    <div class="scathe-memo-actions">
+      <button class="scathe-close-btn" onclick="scatheMemoClose()">Close — Remove Madness</button>
+      <button class="scathe-write-btn" id="scatheWriteBtn" onclick="scatheMemoWrite()" disabled>Write</button>
+    </div>
   </div>
 </div>
 
@@ -2237,13 +2951,13 @@
       Add Item
     </button>
   </div>
-  
-  <!-- Image Zoom Overlay -->
+</div>
+
+  <!-- Image Zoom Overlay — at body level so it's not clipped -->
   <div id="imageZoomOverlay">
     <img id="zoomedImage" src="" alt="Zoomed view" />
-    <div class="zoom-hint">_</div>
+    <div class="zoom-hint">Tap to close</div>
   </div>
-</div>
 
   <div class="wrap">
     <input id="playerName" placeholder="PLAYER" aria-label="Player name" />
@@ -2251,9 +2965,26 @@
     <div class="bars" id="bars"></div>
 
     <div class="attributes" id="attributes"></div>
+
+    <!-- JOIN SESSION — main page -->
+    <hr class="join-session-divider">
+    <div class="join-session-area">
+    <div class="join-status info" id="joinStatus">Enter the 4-character code from your Host</div>
+      <span class="join-session-label">Join Session</span>
+      <input
+        class="join-code-input"
+        id="joinCodeInput"
+        maxlength="4"
+        placeholder="XXXX"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <button class="join-btn" id="joinBtn" onclick="attemptJoinSession()">JOIN</button>
+      <!-- READY CHECK PARKED
+      <button class="ready-btn" id="readyBtn" style="display:none" onclick="toggleReady()">Ready?</button>
+      -->
+    </div>
   </div>
-    <!-- Bottom spacer to provide breathing room for the last entry -->
-    <div style="height: 3rem;"></div>
   <!-- Bottom Stats Bar -->
   <div id="bottomStats">
     <span class="stat-label">Level:</span><span class="stat-value" id="levelValue" style="background-color: rgba(106, 27, 154, 0.3)">1</span>
@@ -2261,8 +2992,21 @@
     <span class="stat-label">Arcane:</span><span class="stat-value" id="arcaneValue" style="background: linear-gradient(45deg,#27F5CC,#133bbb)">0</span>
   </div>
 
+<!-- Buddy Picker Overlay -->
+<div id="buddyPickerOverlay">
+  <div class="buddy-picker-content">
+    <div class="buddy-picker-title">Choose a Buddy!</div>
+    <div class="buddy-picker-grid" id="buddyPickerGrid"></div>
+    <button class="buddy-picker-close" onclick="closeBuddyPicker()">Cancel</button>
+  </div>
+</div>
+
 <script>
 /* ========= MODERN TOUCH INTERACTION MANAGER ========= */
+
+// Session state — declared at top level so all code can reference safely
+let activeSessionCode = null;
+let activePlayerSlot = null;
 
 /**
  * Simplified Press-and-Hold Manager
@@ -2553,29 +3297,55 @@ function calculateLevel() {
 
 function calculateTinge() {
   const potency = Number(loadState('Potency', 0)) || 0;
-  const currentMana = Number(loadState('mana', 0)) || 0;
-  
-  console.log('Tinge calc - Potency:', potency, 'Current Mana:', currentMana, 'Total:', potency + currentMana);
-  return potency + currentMana;
+  const spellList = loadState('spells', []) || [];
+
+  let lightCount = 0;
+
+  spellList.forEach(spell => {
+    if (!spell || !spell.name) return;
+
+    const type = (spell.secondaryType || '').toLowerCase();
+
+    if (type.includes('light')) {
+      lightCount++;
+    }
+  });
+
+  return potency + lightCount;
 }
 
 function calculateArcane() {
   const mastery = Number(loadState('Mastery', 0)) || 0;
-  const currentEnergy = Number(loadState('energy', 0)) || 0;
-  
-  console.log('Arcane calc - Mastery:', mastery, 'Current Energy:', currentEnergy, 'Total:', mastery + currentEnergy);
-  return mastery + currentEnergy;
+  const spellList = loadState('spells', []) || [];
+
+  const arcaneTypes = ['arcane', 'potency', 'beyond', 'madness'];
+  let arcaneCount = 0;
+
+  spellList.forEach(spell => {
+    if (!spell || !spell.name) return;
+
+    const type = (spell.secondaryType || '').toLowerCase();
+
+    if (arcaneTypes.some(t => type.includes(t))) {
+      arcaneCount++;
+    }
+  });
+
+  return mastery + arcaneCount;
 }
 
 function updateBottomStats() {
-  const level = calculateLevel();
+  // Level is HOST-controlled — display what host set, not derived from attributes
+  const level = Number(loadState('playerLevel', 1));
   const tinge = calculateTinge();
   const arcane = calculateArcane();
   
-  console.log('Bottom Stats Update - Level:', level, 'Tinge:', tinge, 'Arcane:', arcane);
   document.getElementById('levelValue').textContent = level;
   document.getElementById('tingeValue').textContent = tinge;
   document.getElementById('arcaneValue').textContent = arcane;
+
+  // Recalculate ability point gate whenever stats change
+  updateAbilityPoints();
 }
 
 /* ========= Stat Bonus Tables ========= */
@@ -2696,7 +3466,7 @@ const barsConfig = [
   { key:'stamina', label:'Stamina', dotClass:'dot-stamina', min: -3, max: 9, default: 0, dynamic: true },
   { key:'energy', label:'Energy', dotClass:'dot-energy', min: -1, max: 30, default: 0, dynamic: true },
   { key:'empower', label:'Empower', dotClass:'dot-empower', min: 0, max: 12, default: 0, dynamic: false },
-  { key:'coalesce', label:'Coalesce', dotClass:'dot-coalesce', min: 0, max: 12, default: 3, dynamic: false }
+  { key:'coalesce', label:'Coalesce', dotClass:'dot-coalesce', min: 0, max: 12, default: 0, dynamic: false }
 ];
 
 const barsContainer = document.getElementById('bars');
@@ -2864,10 +3634,6 @@ barsConfig.forEach(cfg => {
   // NEW CODE - Register update function for ALL bars
     barUpdateFunctions[cfg.key] = () => {
       updateBar();
-      // Update bottom stats if relevant bars change
-      if (cfg.key === 'mana' || cfg.key === 'energy') {
-        updateBottomStats();
-      }
     };
 
   minus.addEventListener('click', ()=> {
@@ -2879,9 +3645,9 @@ barsConfig.forEach(cfg => {
       console.log('Bar decreased - Key:', cfg.key, 'New Value:', value);
       updateButtonStates();
       
-      if (cfg.key === 'mana' || cfg.key === 'energy') {
-        updateBottomStats();
-      }
+      // if (cfg.key === 'mana' || cfg.key === 'energy') {
+      //   updateBottomStats();
+      // }
       
       flashElement(card);
     }
@@ -2897,9 +3663,9 @@ barsConfig.forEach(cfg => {
       console.log('Bar increased - Key:', cfg.key, 'New Value:', value);
       updateButtonStates();
       
-      if (cfg.key === 'mana' || cfg.key === 'energy') {
-        updateBottomStats();
-      }
+      // if (cfg.key === 'mana' || cfg.key === 'energy') {
+      //   updateBottomStats();
+      // }
       
       flashElement(card);
     }
@@ -3114,8 +3880,21 @@ function activateLuck(){
 
 card.setAttribute('tabindex','0');
 
-// 2025 Enhancement: Use same press-and-hold mechanism as other attributes
+// // 2025 Enhancement: Use same press-and-hold mechanism as other attributes
+// const activateLuckWithHold = () => {
+//   activateLuck();
+// };
+
 const activateLuckWithHold = () => {
+  if (!luckCostCheck()) {
+    const luckCard = document.querySelector('.attr.luck');
+    if (luckCard) {
+      luckCard.style.opacity = '0.4';
+      setTimeout(() => luckCard.style.opacity = '', 600);
+    }
+    return;
+  }
+
   activateLuck();
 };
 
@@ -3133,14 +3912,25 @@ updateLuckDisplay();
 
     function incrementAttribute() {
       if (lockout) return;
+      if (card.dataset.noPoints === 'true') return;
+      if (window._abilityPointsAvailable <= 0) return;
+
       valNum = (valNum + 1) % 10;
       val.textContent = String(valNum);
       saveState(name, valNum);
+
+      // Push attr value to Firebase for host logging
+      if (activeSessionCode && activePlayerSlot) {
+        db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`)
+          .update({ [name.toLowerCase()]: valNum });
+      }
 
       if (limitAffectingAttrs.includes(name)) {
         updateAllBars();
         updateBottomStats();
       }
+
+      updateAbilityPoints();
 
       card.classList.add('pulse');
       setTimeout(()=> card.classList.remove('pulse'), 420);
@@ -3174,6 +3964,27 @@ playerNameInput.addEventListener('blur', ()=>{
 });
 
 /* Reset button */
+// ==========================
+// IMAGE ZOOM OVERLAY
+// ==========================
+const imageZoomOverlay = document.getElementById('imageZoomOverlay');
+const zoomedImage      = document.getElementById('zoomedImage');
+const zoomHint         = imageZoomOverlay.querySelector('.zoom-hint');
+
+function openZoom(src, label) {
+  zoomedImage.src = src;
+  zoomHint.textContent = label ? `Tap to close  ·  ${label}` : 'Tap to close';
+  imageZoomOverlay.classList.add('visible');
+}
+
+function closeZoom() {
+  imageZoomOverlay.classList.remove('visible');
+  // Brief delay before clearing src so fade-out looks clean
+  setTimeout(() => { zoomedImage.src = ''; }, 300);
+}
+
+imageZoomOverlay.addEventListener('click', closeZoom);
+
 document.getElementById("resetBtn").onclick = () => {
   if (confirm("Are you sure you want to RESET ALL DATA?")) {
     localStorage.clear();
@@ -3190,7 +4001,7 @@ const relationshipTitle = document.getElementById('relationshipTitle');
 
 function updateRelationshipTitle() {
   const name = playerNameInput.value.trim() || 'Player';
-  relationshipTitle.textContent = `${name}'s Relationships`;
+  relationshipTitle.textContent = `${name}'s Bonds`;
 }
 
 updateRelationshipTitle();
@@ -3209,20 +4020,49 @@ function updateHeartButtonState() {
   }
 }
 
+// ===== CLOSE ALL OVERLAYS HELPER =====
+function closeAllOverlays() {
+  // Relationship
+  isRelationshipOpen = false;
+  relationshipOverlay.classList.remove('visible');
+  heartBtn.classList.remove('active');
+  // Character/Traits
+  characterOpen = false;
+  characterOverlay.classList.remove('visible');
+  starBtn.classList.remove('active');
+  // Inventory
+  inventoryOpen = false;
+  inventoryOverlay.classList.remove('visible');
+  inventoryBtn.classList.remove('active');
+  // Mind/Spells
+  mindOpen = false;
+  mindOverlay.classList.remove('visible');
+  mindBtn.classList.remove('active');
+  // Coinpurse
+  if (typeof coinOpen !== 'undefined') coinOpen = false;
+  if (document.getElementById('coinOverlay')) {
+    document.getElementById('coinOverlay').classList.remove('visible');
+  }
+  if (document.getElementById('coinBtn')) {
+    document.getElementById('coinBtn').classList.remove('active');
+  }
+
+  updateBottomStats();
+}
+
 heartBtn.addEventListener('click', () => {
   if (!hasPlayerName()) {
     alert('Please enter a player name first!');
     return;
   }
   
-  isRelationshipOpen = !isRelationshipOpen;
-  if (isRelationshipOpen) {
+  const opening = !isRelationshipOpen;
+  closeAllOverlays();
+  if (opening) {
+    isRelationshipOpen = true;
     relationshipOverlay.classList.add('visible');
     heartBtn.classList.add('active');
     updateRelationshipTitle();
-  } else {
-    relationshipOverlay.classList.remove('visible');
-    heartBtn.classList.remove('active');
   }
 });
 
@@ -3231,6 +4071,7 @@ playerNameInput.addEventListener('input', () => {
   updateRelationshipTitle();
   updateStarButtonState();
   updateTraitsTitle();
+  updateCoinButtonState();
 });
 updateHeartButtonState();
 
@@ -3359,7 +4200,7 @@ const traitsDescriptions = {
 
 function updateTraitsTitle() {
   const name = playerNameInput.value.trim() || 'Player';
-  traitsTitle.textContent = `${name}'s Traits`;
+  traitsTitle.textContent = `${name}'s Constellation`;
 }
 
 function generateTraitsDescription() {
@@ -3476,6 +4317,9 @@ traitsLockBtn.addEventListener('click', () => {
   // Show description
   traitsDescription.innerHTML = description;
   traitsDescription.style.display = 'block';
+
+  // Push traits notes to host notebook
+  pushPlayerMetaToFirebase();
 });
 
 // Check if traits are already locked and show description
@@ -3499,15 +4343,14 @@ starBtn.addEventListener('click', () => {
     return;
   }
   
-  characterOpen = !characterOpen;
-  if (characterOpen) {
+  const opening = !characterOpen;
+  closeAllOverlays();
+  if (opening) {
+    characterOpen = true;
     characterOverlay.classList.add('visible');
     starBtn.classList.add('active');
     updateTraitsTitle();
     checkTraitsLocked();
-  } else {
-    characterOverlay.classList.remove('visible');
-    starBtn.classList.remove('active');
   }
 });
 
@@ -3652,7 +4495,45 @@ function createNpcCard(npc, index) {
     }
   });
 
+// Official NPC card fronts mapping
+const NPC_CARD_FRONTS = {
+  "Hitomi":           "cards/fronts/000.webp",
+  "Tsubasa":          "cards/fronts/001.webp",
+  "Tress Bien":       "cards/fronts/002.webp",
+  "Dante Alimor":     "cards/fronts/003.webp",
+  "Evelynn":          "cards/fronts/004.webp",
+  "Flare vey Byornn": "cards/fronts/005.webp",
+  "Guy":              "cards/fronts/006.webp",
+  "Hector Havel":     "cards/fronts/007.webp",
+  "Jiu-lin Fan":      "cards/fronts/008.webp",
+  "Shang Tian":       "cards/fronts/009.webp",
+  "Marco":            "cards/fronts/010.webp",
+  "Lumiere":          "cards/fronts/011.webp",
+  "Anjali":           "cards/fronts/012.webp",
+  "Chinara Ekine":    "cards/fronts/013.webp",
+  "Ohm":              "cards/fronts/014.webp",
+  "Jon Quixote":      "cards/fronts/015.webp",
+  "Naya":             "cards/fronts/016.webp",
+  "Million Redgate":  "cards/fronts/017.webp",
+  "Captain Thiffany": "cards/fronts/018.webp",
+  "The Courier":      "cards/fronts/019.webp",
+  "Kleo Petra":       "cards/fronts/030.webp",
+  "Paarthi Lomedi":   "cards/fronts/035.webp",
+  "Qing Xi":          "cards/fronts/036.webp",
+  "Reeve S Basilisk": "cards/fronts/037.webp",
+  "Vincent Pererez":  "cards/fronts/038.webp",
+  "Taeonora 9C":      "cards/fronts/039.webp"
+};
+
   imageDiv.addEventListener('click', (e) => {
+    // If NPC already has an image, zoom the card front if available, else the portrait
+    const existingImg = imageDiv.querySelector('img');
+    if (existingImg?.src) {
+      const npcName = npcs[index].name || '';
+      const cardSrc = NPC_CARD_FRONTS[npcName];
+      openZoom(cardSrc || existingImg.src, npcName || 'Character');
+      return;
+    }
     // Allow upload only
     if (npcs[index].official) {
       alert("This is an official character. Their portrait cannot be changed.");
@@ -3881,6 +4762,7 @@ renderNpcs();
 updateAddButtonVisibility();
 
 updateBottomStats();
+updateAbilityPoints();
 
 window.addEventListener('beforeunload', () => {
   iconManager.cleanup();
@@ -3938,10 +4820,15 @@ function renderInventory() {
 }
 
 inventoryBtn.onclick = () => {
-  inventoryOpen = !inventoryOpen;
-  inventoryOverlay.classList.toggle('visible', inventoryOpen);
-  inventoryBtn.classList.toggle('active', inventoryOpen);
-  renderInventory();
+  const opening = !inventoryOpen;
+  closeAllOverlays();
+  if (opening) {
+    inventoryOpen = true;
+    inventoryOverlay.classList.add('visible');
+    inventoryBtn.classList.add('active');
+    renderInventory();
+    updateBottomStats();
+  }
 };
 
 const addInventoryBtn = document.getElementById('addInventoryItem');
@@ -4230,20 +5117,20 @@ Resist burn and freeze.`,
       type: "Artefact — Equipment",
       description: `Equip: Requires strength 4 or higher.
 Pay one stamina: Deal damage based on strength and stun a target, striking with devastating force. You may freely target walls, floors, etcetera.
-Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 3: Socket a soulgem.`,
+Mastery 3: Socket a soulgem.`,
       image: "cards/fronts/129.webp"
     },
     "Arcanite Slingshot": {
       type: "Artefact — Arcane Equipment",
       description: `Pay one energy: Shoot a pebble of arcane energy. Activate arcane objects.
-Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 3: Deal 1 true damage.`,
+Mastery 3: Deal 1 true damage.`,
       image: "cards/fronts/130.webp"
     },
     "Arcane Gemsetting Tool": {
       type: "Artefact — Arcane Equipment",
       description: `Pay two stamina, two energy, and 1 of any resource:
-Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 2: Install a soulgem.
-Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 5: Remove a soulgem.
+Mastery 2: Install a soulgem.
+Mastery 5: Remove a soulgem.
 Arcane 20: Carve a soulgem socket.`,
       image: "cards/fronts/131.webp"
     },
@@ -4268,13 +5155,13 @@ Requires Strength for the recoil. Physically striking with this weapon can activ
     },
     "Moontooth": {
       type: "Artefact — Arcane Equipment",
-      description: `Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 4: Swings blast seawater. The amount is equal to the user's mastery and strength combined (in litres).
+      description: `Mastery 4: Swings blast seawater. The amount is equal to the user's mastery and strength combined (in litres).
 Strength 6: All strikes push targets away. Force is incredible, forcing foes back a minimum of three meters. Maximum pushback is porportional to strength.`,
       image: "cards/fronts/135.webp"
     },
     "Saphir": {
       type: "Artefact — Arcane Equipment",
-      description: `Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 2: Strikes gain quick and pierce. 
+      description: `Mastery 2: Strikes gain quick and pierce. 
 Skill 3: Strikes gain triplestrike. Each single attack hits three times.`,
       image: "cards/fronts/136.webp"
     },
@@ -4320,13 +5207,13 @@ Items gain indestructible.`,
     "Strand-Type Cuff Device": {
       type: "Artefact — Arcane Equipment",
       description: `Pay three energy: Switch places with another bearer, you both gain 1 shield. (Absorb 1 damage; occasionally, nullify mundane damage instead)
-Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 2: Awaken soulgem.`,
+Mastery 2: Awaken soulgem.`,
       image: "cards/fronts/143.webp"
     },
     "Strand-Type Choker Device": {
       type: "Artefact — Arcane Equipment",
       description: `Pay one energy: Gain favour momentarily.
-Mastery <img src='../icons/mastery4.png' class='desc-icon' alt='Mastery' /> 3: Socket a soulgem.`,
+Mastery 3: Socket a soulgem.`,
       image: "cards/fronts/145.webp"
     },
     "Catscratch Medallion": {
@@ -4652,6 +5539,10 @@ function createInventoryCard(index, slotType, data = {}) {
     <button class="inv-confirm-btn">
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </button>
+    <button class="inv-consume-btn" title="Consume this item">
+      <span class="consume-label-full">Consume</span>
+      <span class="consume-label-short">Use</span>
+    </button>
     <button class="inv-delete-btn">
       <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
@@ -4782,20 +5673,33 @@ function bindInventoryEvents() {
     const slot = card.dataset.slot;
     const nameInput = card.querySelector('.inv-name');
     const confirmBtn = card.querySelector('.inv-confirm-btn');
+    const consumeBtn = card.querySelector('.inv-consume-btn');
     const deleteBtn = card.querySelector('.inv-delete-btn');
     const imageDiv = card.querySelector('.inv-image');
-    
-    // Show confirm button when name changes
+
+    // Show consume button if saved item is already consumable
+    const savedItem = inventory[index];
+    if (consumeBtn && savedItem?.name && isConsumable(savedItem.type)) {
+      consumeBtn.classList.add('visible');
+    }
+
+    // Show confirm button when name changes (hide consume btn while editing)
     nameInput.addEventListener('input', () => {
       const currentValue = nameInput.value.trim();
       const savedName = inventory[index]?.name || '';
       if (currentValue !== savedName && currentValue.length > 0) {
         confirmBtn.classList.add('visible');
+        if (consumeBtn) consumeBtn.classList.remove('visible');
       } else {
         confirmBtn.classList.remove('visible');
+        // Restore consume btn if current saved item is consumable
+        const item = inventory[index];
+        if (consumeBtn && item?.name && isConsumable(item.type)) {
+          consumeBtn.classList.add('visible');
+        }
       }
     });
-    
+
     // Save on Enter
     nameInput.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
@@ -4804,71 +5708,91 @@ function bindInventoryEvents() {
         nameInput.blur();
       }
     });
-    
+
     // Confirm button click
     confirmBtn.onclick = () => {
       saveInventoryItem(index, slot, nameInput.value.trim());
     };
-    
-    // Delete button with confirmation dialog
+
+    // Consume button click
+    if (consumeBtn) {
+      consumeBtn.onclick = () => {
+        const item = inventory[index];
+        if (!item?.name) return;
+        if (confirm(`Consume "${item.name}"?`)) {
+          const itemData = findItemInDB(item.name);
+          if (itemData?.effect && typeof itemData.effect === 'function') {
+            try { itemData.effect(); } catch (e) { console.error(e); }
+          }
+          if (index < 2) { inventory[index] = {}; } else { inventory.splice(index, 1); }
+          saveState('inventory', inventory);
+          renderInventory();
+        }
+      };
+    }
+
+    // Delete button
     deleteBtn.onclick = () => {
       const item = inventory[index];
       const itemName = item?.name || 'this item';
-      
       if (confirm(`Discard "${itemName}"? This action cannot be undone.`)) {
-        // Don't delete artefact/iris slots, just clear them
-        if (index < 2) {
-          inventory[index] = {};
-        } else {
-          inventory.splice(index, 1);
-        }
+        if (index < 2) { inventory[index] = {}; } else { inventory.splice(index, 1); }
         saveState('inventory', inventory);
         renderInventory();
       }
     };
-    
-    // Image click: Only consume for consumables, no zoom
+
+    // Image click: random pick for empty artefact/iris, zoom for everything else with an image
     imageDiv.onclick = () => {
       const item = inventory[index];
-      if (!item?.name) return;
-      
-      // Check if consumable
-      if (isConsumable(item.type)) {
-        if (confirm(`Consume "${item.name}"?`)) {
-          // Execute item effect if it exists
-          const itemData = findItemInDB(item.name);
-          if (itemData && itemData.effect && typeof itemData.effect === 'function') {
-            try {
-              itemData.effect();
-            } catch (error) {
-              console.error('Error executing item effect:', error);
-            }
-          }
-          
-          // Remove the consumed item
-          if (index < 2) {
-            inventory[index] = {};
-          } else {
-            inventory.splice(index, 1);
-          }
-          saveState('inventory', inventory);
-          renderInventory();
-        }
+
+      // Empty artefact slot — pick a random artefact
+      if (!item?.name && slot === 'artefact') {
+        const taken = inventory.map(i => i?.name).filter(Boolean);
+        const available = artefacts.filter(a => !taken.includes(a));
+        if (available.length === 0) return;
+        const pick = available[Math.floor(Math.random() * available.length)];
+        saveInventoryItem(index, slot, pick);
+        return;
       }
-      // Non-consumables: could add image upload here
+
+      // Empty iris slot — pick a random iris
+      if (!item?.name && slot === 'iris') {
+        const taken = inventory.map(i => i?.name).filter(Boolean);
+        const available = irises.filter(a => !taken.includes(a));
+        if (available.length === 0) return;
+        const pick = available[Math.floor(Math.random() * available.length)];
+        saveInventoryItem(index, slot, pick);
+        return;
+      }
+
+      if (!item?.name) return;
+
+      // All items with an image — zoom it
+      const imgEl = imageDiv.querySelector('img');
+      if (imgEl?.src) openZoom(imgEl.src, item.name);
     };
   });
 }
 
 function saveInventoryItem(index, slot, name) {
+  const wasEmpty = !inventory[index]?.name;
   const result = validateInventoryName(name, slot, index);
   if (!result) {
-    // Don't clear if validation failed due to duplicate
     if (!name || name.trim().length === 0) {
       inventory[index] = {};
     }
   } else {
     inventory[index] = result;
+
+    // Grant +1 coalesce the first time artefact or iris is chosen
+    if (wasEmpty && (slot === 'artefact' || slot === 'iris')) {
+      const current = Number(loadState('coalesce', 0)) || 0;
+      const cfg = barsConfig.find(b => b.key === 'coalesce');
+      const max = cfg ? cfg.max : 12;
+      saveState('coalesce', Math.min(current + 1, max));
+      if (barUpdateFunctions['coalesce']) barUpdateFunctions['coalesce']();
+    }
   }
   saveState('inventory', inventory);
   renderInventory();
@@ -6053,12 +6977,15 @@ mindBtn.onclick = () => {
     alert('Your mind cannot open without a Soulbound Artefact and Iris. Add them in your Inventory first.');
     return;
   }
-  mindOpen = !mindOpen;
-  mindOverlay.classList.toggle('visible', mindOpen);
-  mindBtn.classList.toggle('active', mindOpen);
-  if (mindOpen) {
+  const opening = !mindOpen;
+  closeAllOverlays();
+  if (opening) {
+    mindOpen = true;
+    mindOverlay.classList.add('visible');
+    mindBtn.classList.add('active');
     initializeSpells();
     renderSpells();
+    updateBottomStats();
   }
 };
 
@@ -6214,13 +7141,13 @@ function renderSpells() {
   spellList.innerHTML = '';
   
   // Render legendary slots
-  spellList.innerHTML += `<div class="spell-section-title">Legendary Spell${legendaryCount > 1 ? 's' : ''}</div>`;
+  spellList.innerHTML += `<div class="spell-section-title">Mind${legendaryCount > 1 ? 's' : ''}</div>`;
   for (let i = 0; i < legendaryCount; i++) {
     spellList.innerHTML += createSpellCard(i, spells[i] || {}, true);
   }
   
   // Render regular slots
-  spellList.innerHTML += '<div class="spell-section-title">Regular Spells</div>';
+  spellList.innerHTML += '<div class="spell-section-title">Spells</div>';
   for (let i = legendaryCount; i < spells.length && i < maxSlots; i++) {
     spellList.innerHTML += createSpellCard(i, spells[i] || {}, false);
   }
@@ -6295,6 +7222,16 @@ function bindSpellEvents() {
       }
     });
     
+    // Spell image: zoom if has image
+    if (imageDiv) {
+      imageDiv.addEventListener('click', () => {
+        const spell = spells[index];
+        if (!spell?.name) return;
+        const imgEl = imageDiv.querySelector('img');
+        if (imgEl?.src) openZoom(imgEl.src, spell.name);
+      });
+    }
+
     confirmBtn.onclick = () => saveSpell(index, nameInput.value.trim());
     
     // Delete (forget) spell
@@ -6803,6 +7740,10 @@ const originalRenderInventoryForMind = renderInventory;
 renderInventory = function() {
   originalRenderInventoryForMind();
   updateMindButtonState();
+  // Re-apply session lock after every re-render if connected
+  if (activeSessionCode && activePlayerSlot) {
+    lockArtefactIris();
+  }
 };
 
 // Initialize mind button state on page load
@@ -6848,6 +7789,247 @@ function renderSpellCost(costs) {
 }
 
 // ==========================
+// COINPURSE SYSTEM
+// ==========================
+
+const coinBtn     = document.getElementById('coinBtn');
+const coinOverlay = document.getElementById('coinOverlay');
+const coinSpendBtn = document.getElementById('coinSpendBtn');
+const coinLog     = document.getElementById('coinLog');
+
+const COIN_KEYS = ['gold', 'silver', 'alloy', 'old', 'mystery'];
+
+// Pending spend amounts (what player has dialled in)
+let coinPending = { gold: 0, silver: 0, alloy: 0, old: 0, mystery: 0 };
+
+// Load balances from localStorage
+function loadCoinBalances() {
+  const saved = loadState('coins', { gold: 0, silver: 0, alloy: 0, old: 0, mystery: 0 });
+  return saved;
+}
+
+function saveCoinBalances(balances) {
+  saveState('coins', balances);
+}
+
+function renderCoinUI() {
+  const balances = loadCoinBalances();
+
+  COIN_KEYS.forEach(coin => {
+    const balEl   = document.getElementById(`coinBal-${coin}`);
+    const pendEl  = document.getElementById(`coinPend-${coin}`);
+    if (!balEl || !pendEl) return;
+
+    const bal = balances[coin] || 0;
+    balEl.textContent = bal;
+    balEl.classList.toggle('empty', bal === 0);
+
+    const pend = coinPending[coin] || 0;
+    pendEl.textContent = pend;
+    pendEl.classList.toggle('zero', pend === 0);
+
+    // Disable + if pending >= balance, disable - if pending <= 0
+    const row = document.querySelector(`[data-coin="${coin}"][data-dir="1"]`);
+    const sub = document.querySelector(`[data-coin="${coin}"][data-dir="-1"]`);
+    if (row) row.disabled = (pend >= bal);
+    if (sub) sub.disabled = (pend <= 0);
+  });
+
+  // Show mystery coin row only if player has any
+  const mysteryBal = balances.mystery || 0;
+  document.getElementById('coinRow-mystery').style.display = mysteryBal > 0 ? 'block' : 'none';
+
+  // Enable spend button only if at least one pending > 0
+  const anyPending = COIN_KEYS.some(c => (coinPending[c] || 0) > 0);
+  coinSpendBtn.disabled = !anyPending;
+}
+
+const COIN_PER_TYPE_MAX = 999;  // max of each coin type
+const COIN_TOTAL_MAX   = 1024; // max total coins across all types
+
+// Adjust pending amount for a coin
+function adjustPending(coin, dir) {
+  const balances = loadCoinBalances();
+  const bal = balances[coin] || 0;
+  const current = coinPending[coin] || 0;
+  const totalPending = COIN_KEYS.reduce((s, c) => s + (coinPending[c] || 0), 0);
+  const totalBalance = COIN_KEYS.reduce((s, c) => s + (balances[c] || 0), 0);
+
+  // Can't spend more than balance, can't spend more than total owned
+  coinPending[coin] = Math.max(0, Math.min(bal, current + dir));
+  renderCoinUI();
+}
+
+// Wire up +/- buttons
+document.querySelectorAll('.coin-adj-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const coin = btn.dataset.coin;
+    const dir  = parseInt(btn.dataset.dir, 10);
+    adjustPending(coin, dir);
+  });
+});
+
+// Spend coins: deduct, push to Firebase, show log
+coinSpendBtn.addEventListener('click', () => {
+  const balances = loadCoinBalances();
+  const spent = {};
+  let anySpent = false;
+
+  COIN_KEYS.forEach(coin => {
+    const pend = coinPending[coin] || 0;
+    if (pend > 0) {
+      balances[coin] = Math.max(0, (balances[coin] || 0) - pend);
+      spent[coin] = pend;
+      coinPending[coin] = 0;
+      anySpent = true;
+    }
+  });
+
+  if (!anySpent) return;
+
+  saveCoinBalances(balances);
+
+  // Build human-readable summary
+  const coinNames = { gold: 'Gold', silver: 'Silver', alloy: 'Alloy', old: 'Old Coin', mystery: 'Rare Coin' };
+  const parts = Object.entries(spent).map(([c, n]) => `${n} ${coinNames[c]}`);
+  const summary = `Spent: ${parts.join(', ')}`;
+
+  // Show local log
+  coinLog.textContent = summary;
+  coinLog.classList.add('visible');
+  setTimeout(() => coinLog.classList.remove('visible'), 4000);
+
+  // Push to Firebase if in a session
+  if (activeSessionCode && activePlayerSlot) {
+    const playerName = loadState('playerName', 'Player');
+    db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`).update({
+      coins: balances,
+      coinLog: summary   // host reads this, logs it, then clears it
+    });
+    db.ref(`sessions/${activeSessionCode}/log`).push({
+      type: 'coinSpend',
+      player: playerName,
+      summary,
+      spent,
+      remaining: balances,
+      timestamp: Date.now()
+    });
+  }
+
+  renderCoinUI();
+});
+
+// Listen for host granting coins via Firebase
+function listenForCoinGrants(code, slotKey) {
+  db.ref(`sessions/${code}/players/${slotKey}/coins`).on('value', snap => {
+    const incoming = snap.val();
+    if (!incoming || typeof incoming !== 'object') return;
+
+    // Apply incoming values, capping each coin at COIN_PER_TYPE_MAX
+    const local = loadCoinBalances();
+    COIN_KEYS.forEach(coin => {
+      if (incoming[coin] !== undefined) {
+        local[coin] = Math.min(incoming[coin], COIN_PER_TYPE_MAX);
+      }
+    });
+
+    // Enforce total cap — trim from lowest-value coins first (alloy → silver → gold → old → mystery)
+    const trimOrder = ['alloy', 'silver', 'gold', 'old', 'mystery'];
+    let total = COIN_KEYS.reduce((s, c) => s + (local[c] || 0), 0);
+    for (const coin of trimOrder) {
+      if (total <= COIN_TOTAL_MAX) break;
+      const excess = total - COIN_TOTAL_MAX;
+      const removed = Math.min(local[coin] || 0, excess);
+      local[coin] = (local[coin] || 0) - removed;
+      total -= removed;
+    }
+
+    saveCoinBalances(local);
+
+    // Reveal mystery coin row if balance > 0
+    if ((local.mystery || 0) > 0) {
+      document.getElementById('coinRow-mystery').style.display = 'block';
+    }
+
+    // Re-render if overlay is open
+    if (document.getElementById('coinOverlay').classList.contains('visible')) {
+      renderCoinUI();
+    }
+  });
+}
+
+// Fetch latest coin balances from Firebase and update localStorage, then run callback
+function syncCoinsFromFirebase(callback) {
+  if (!activeSessionCode || !activePlayerSlot) {
+    if (callback) callback();
+    return;
+  }
+  db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/coins`).get().then(snap => {
+    const incoming = snap.val();
+    if (incoming && typeof incoming === 'object') {
+      const local = loadCoinBalances();
+      COIN_KEYS.forEach(coin => {
+        if (incoming[coin] !== undefined) {
+          local[coin] = Math.min(incoming[coin], COIN_PER_TYPE_MAX);
+        }
+      });
+      // Enforce total cap
+      let total = COIN_KEYS.reduce((s, c) => s + (local[c] || 0), 0);
+      const trimOrder = ['alloy', 'silver', 'gold', 'old', 'mystery'];
+      for (const coin of trimOrder) {
+        if (total <= COIN_TOTAL_MAX) break;
+        const excess = total - COIN_TOTAL_MAX;
+        const removed = Math.min(local[coin] || 0, excess);
+        local[coin] = (local[coin] || 0) - removed;
+        total -= removed;
+      }
+      saveCoinBalances(local);
+      if ((local.mystery || 0) > 0) {
+        document.getElementById('coinRow-mystery').style.display = 'block';
+      }
+    }
+    if (callback) callback();
+  }).catch(() => {
+    if (callback) callback();
+  });
+}
+
+// Toggle coinpurse overlay
+let coinOpen = false;
+
+function updateCoinButtonState() {
+  if (hasPlayerName()) {
+    coinBtn.classList.remove('disabled');
+  } else {
+    coinBtn.classList.add('disabled');
+  }
+}
+updateCoinButtonState();
+
+coinBtn.addEventListener('click', () => {
+  if (!hasPlayerName()) return;
+  const opening = !coinOpen;
+  closeAllOverlays();
+  if (opening) {
+    coinOpen = true;
+    coinOverlay.classList.add('visible');
+    coinBtn.classList.add('active');
+    coinPending = { gold: 0, silver: 0, alloy: 0, old: 0, mystery: 0 };
+    // Always pull latest from Firebase before rendering
+    syncCoinsFromFirebase(() => renderCoinUI());
+  }
+});
+
+// Close on backdrop click
+coinOverlay.addEventListener('click', e => {
+  if (e.target === coinOverlay) {
+    coinOpen = false;
+    coinOverlay.classList.remove('visible');
+    coinBtn.classList.remove('active');
+  }
+});
+
+// ==========================
 // FIREBASE + JOIN SESSION
 // ==========================
 const firebaseConfig = {
@@ -6863,9 +8045,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 document.addEventListener('DOMContentLoaded', restorePlayerSession);
-
-let activeSessionCode = null;
-let activePlayerSlot = null;  // e.g. "player0"
 
 // Force code input to uppercase only
 document.getElementById('joinCodeInput').addEventListener('input', function() {
@@ -6963,6 +8142,23 @@ const iris = getItemName(inventory[1]);
   }
 }
 
+// Lock artefact and iris slots once player is connected to a session
+function lockArtefactIris() {
+  document.querySelectorAll('.inventory-item[data-slot="artefact"], .inventory-item[data-slot="iris"]').forEach(card => {
+    card.classList.add('session-locked');
+    const input = card.querySelector('.inv-name');
+    if (input) input.setAttribute('readonly', true);
+    // Add lock badge if not already present
+    if (!card.querySelector('.session-lock-badge')) {
+      const badge = document.createElement('div');
+      badge.className = 'session-lock-badge';
+      badge.textContent = '⚿ Session locked';
+      const info = card.querySelector('.inv-info');
+      if (info) info.appendChild(badge);
+    }
+  });
+}
+
 function waitForAcceptance(code, name, artefact, iris) {
   // Listen on all player slots for one that matches our name
   const playersRef = db.ref(`sessions/${code}/players`);
@@ -6997,24 +8193,152 @@ function waitForAcceptance(code, name, artefact, iris) {
     document.getElementById('joinBtn').disabled = true;
     document.getElementById('joinCodeInput').disabled = true;
 
+    // After 1s: fade out joinBtn, show in-game buttons
+    setTimeout(() => {
+      const joinBtn = document.getElementById('joinBtn');
+      if (joinBtn) {
+        joinBtn.style.transition = 'opacity 0.4s ease';
+        joinBtn.style.opacity = '0';
+        setTimeout(() => { joinBtn.style.display = 'none'; }, 400);
+      }
+      showInGameActionButtons();
+    }, 1000);
+
+    // Lock artefact and iris now that session is active
+    lockArtefactIris();
+
     // Start bidirectional sync
     startPlayerSync(code, mySlotKey);
+
+    // Push current level and traits to host immediately on connect
+    setTimeout(pushPlayerMetaToFirebase, 500);
   });
 }
 
 function startPlayerSync(code, slotKey) {
   const slotRef = db.ref(`sessions/${code}/players/${slotKey}`);
 
-  // Listen for host-driven life changes → update player page
+  // Listen for host ending the session
+  db.ref(`sessions/${code}/ended`).on('value', (snap) => {
+    if (!snap.val()) return;
+    // Session has been ended by host — unlock and reset join UI
+    activeSessionCode = null;
+    activePlayerSlot = null;
+    localStorage.removeItem('playerSessionCode');
+    localStorage.removeItem('playerSessionSlot');
+
+    // Unlock artefact/iris so player can re-enter for new session
+    document.querySelectorAll('.inventory-item[data-slot="artefact"], .inventory-item[data-slot="iris"]').forEach(card => {
+      card.classList.remove('session-locked');
+      const input = card.querySelector('.inv-name');
+      if (input) input.removeAttribute('readonly');
+      const badge = card.querySelector('.session-lock-badge');
+      if (badge) badge.remove();
+    });
+
+    // Reset join UI
+    setJoinStatus('info', 'Session ended by host.');
+    const joinBtn = document.getElementById('joinBtn');
+    const joinInput = document.getElementById('joinCodeInput');
+    if (joinBtn) {
+      joinBtn.style.display = '';
+      joinBtn.style.opacity = '1';
+      joinBtn.style.transition = '';
+      joinBtn.textContent = 'JOIN';
+      joinBtn.disabled = false;
+    }
+    if (joinInput) { joinInput.value = ''; joinInput.disabled = false; }
+
+    // Remove in-game ACT / REVEAL buttons if present
+    removeInGameActionButtons();
+    /* READY CHECK PARKED
+    const readyBtn = document.getElementById('readyBtn');
+    if (readyBtn) { readyBtn.style.display='none'; readyBtn.textContent='Ready?'; readyBtn.classList.remove('is-ready'); }
+    playerIsReady = false;
+    */
+  });
+
+  // Listen for host coin grants
+  listenForCoinGrants(code, slotKey);
+
+  // Listen for whose turn it is
+  listenForTurn(code, slotKey);
+
+  /* READY CHECK PARKED
+  listenForReadyReset(code, slotKey);
+  listenForGameStarted(code);
+  */
+
+  // Listen for level updates from host
+  slotRef.child('level').on('value', (snap) => {
+    if (snap.val() === null) return;
+    const newLevel = snap.val();
+    saveState('playerLevel', newLevel);
+    updateAbilityPoints();
+    updateBottomStats();
+  });
+
+  // Listen for soul (secret — used for ability point calc only)
+  slotRef.child('soul').on('value', (snap) => {
+    if (snap.val() === null) return;
+    saveState('playerSoul', snap.val());
+    updateAbilityPoints();
+  });
+
+  // Listen for death state from host
+  slotRef.child('dead').on('value', (snap) => {
+    if (!snap.val()) return;
+    handlePlayerDeath();
+  });
+
+  // Listen for life — detect revival (life goes from <=0 to 1)
   slotRef.child('currentLife').on('value', (snap) => {
     if (snap.val() === null) return;
     const hostLife = snap.val();
     const localLife = Number(loadState('life', 1));
 
-    // Only update if host changed it (avoid infinite loop)
     if (hostLife !== localLife) {
+      // Revival: was dead (life <= 0), now alive (life >= 1)
+      const wasDead = localLife <= 0;
+      const nowAlive = hostLife >= 1;
+      if (wasDead && nowAlive) {
+        handlePlayerRevival();
+      }
       saveState('life', hostLife);
       if (barUpdateFunctions['life']) barUpdateFunctions['life']();
+    }
+  });
+
+  // Listen for host madness whispers
+  slotRef.child('madnessWhisper').on('value', (snap) => {
+    const text = snap.val();
+    const box  = document.getElementById('madnessWhisperBox');
+    const textEl = document.getElementById('madnessWhisperText');
+    if (text && text.trim()) {
+      textEl.textContent = text.trim();
+      box.classList.add('visible');
+    } else {
+      box.classList.remove('visible');
+      textEl.textContent = '';
+    }
+  });
+
+  // Listen for host-driven artefact/iris overrides
+  slotRef.child('artefact').on('value', (snap) => {
+    if (snap.val() === null) return;
+    const hostArtefact = snap.val();
+    const localArtefact = inventory[0]?.name || '';
+    if (hostArtefact && hostArtefact !== localArtefact) {
+      saveInventoryItem(0, 'artefact', hostArtefact);
+    }
+  });
+
+  slotRef.child('iris').on('value', (snap) => {
+    if (snap.val() === null) return;
+    const hostIris = snap.val();
+    const localIris = inventory[1]?.name || '';
+    if (hostIris && hostIris !== localIris) {
+      saveInventoryItem(1, 'iris', hostIris);
     }
   });
 
@@ -7034,8 +8358,590 @@ function startPlayerSync(code, slotKey) {
   };
 }
 
-// Restore session after page refresh
+// ==========================
+// DEATH, REVIVAL & ABILITY POINTS
+// ==========================
+
+function handlePlayerDeath() {
+  // Set life to -1
+  saveState('life', -1);
+  if (barUpdateFunctions['life']) barUpdateFunctions['life']();
+
+  // Reset all stats to 0 (keep artefact & iris in inventory — slots 0 & 1)
+  ['Endurance','Potency','Mastery','Strength','Skill'].forEach(attr => {
+    saveState(attr, 0);
+  });
+  // Update attr display
+  document.querySelectorAll('.attr[data-name]').forEach(card => {
+    const name = card.dataset.name;
+    if (['Endurance','Potency','Mastery','Strength','Skill'].includes(name)) {
+      const val = card.querySelector('.attr-val');
+      if (val) val.textContent = '0';
+    }
+  });
+
+  // Reset bars (mana, energy, stamina, etc.) to 0
+  ['mana','energy','stamina','coalesce'].forEach(key => {
+    saveState(key, 0);
+    if (barUpdateFunctions[key]) barUpdateFunctions[key]();
+  });
+
+  // Reset relationships — clear all NPC hearts except keep official NPC records
+  npcs.forEach((npc, i) => {
+    npc.hearts = [0,0,0,0,0];
+    npc.status = '';
+  });
+  saveState('npcs', npcs);
+  renderRelationships();
+
+  // Reset traits (constellation)
+  characterOptions.innate = '';
+  characterOptions.proficiency = '';
+  characterOptions.interest = '';
+  characterOptions.fear = '';
+  characterOptions.hate = '';
+  characterOptions.locked = false;
+  saveState('characterOptions', characterOptions);
+  checkTraitsLocked();
+
+  // Clear inventory items except artefact (slot 0) and iris (slot 1)
+  // and any legendary spells tied to artefact
+  inventory = inventory.filter((item, idx) => idx === 0 || idx === 1 || item.legendary);
+  saveState('inventory', inventory);
+  renderInventory();
+
+  // Clear spells except legendary ones
+  if (typeof spellSlots !== 'undefined') {
+    const legendarySpells = spellSlots.filter(s => s && s.legendary);
+    spellSlots = [...legendarySpells, ...Array(Math.max(0, spellSlots.length - legendarySpells.length)).fill(null)];
+    saveState('spellSlots', spellSlots);
+    if (typeof renderSpells === 'function') renderSpells();
+  }
+
+  // Set level to 1 (attrs already wiped to 0 above, spent resets naturally via attribute sum)
+  saveState('playerLevel', 1);
+  updateBottomStats();
+  updateAbilityPoints();
+
+  // Mark body as dead
+  document.body.classList.add('player-dead');
+}
+
+function handlePlayerRevival() {
+  document.body.classList.remove('player-dead');
+  // Clear dead flag in Firebase
+  if (activeSessionCode && activePlayerSlot) {
+    db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/dead`).set(false);
+  }
+  updateAbilityPoints();
+}
+
+function updateAbilityPoints() {
+  const MaxAbilityPoints = Number(loadState('playerLevel', 1)) + Number(loadState('playerSoul', 0));
+
+  const SpentAbilityPoints = ['Endurance', 'Strength', 'Skill', 'Potency', 'Mastery']
+    .reduce((sum, attr) => sum + (Number(loadState(attr, 0)) || 0), 0);
+
+  const available = Math.max(0, MaxAbilityPoints - SpentAbilityPoints);
+
+  window._abilityPointsAvailable = available;
+
+  const levelEl = document.getElementById('levelValue');
+  if (levelEl) levelEl.classList.toggle('has-points', available > 0);
+
+  setAttrsDisabled(available <= 0);
+}
+
+function setAttrsDisabled(disabled) {
+  document.querySelectorAll('.attr:not(.luck)').forEach(card => {
+    card.classList.toggle('attr-disabled', disabled);
+    // Also set data attribute since touchManager bypasses pointer-events CSS
+    if (disabled) {
+      card.dataset.noPoints = 'true';
+    } else {
+      delete card.dataset.noPoints;
+    }
+  });
+}
+
+// Push level + traits notes to Firebase for the host notebook
+function pushPlayerMetaToFirebase() {
+  if (!activeSessionCode || !activePlayerSlot) return;
+
+  // Build abbreviated traits notes if locked
+  let traitsNotes = '';
+  if (typeof characterOptions !== 'undefined' && characterOptions.locked) {
+    const name = playerNameInput.value.trim() || 'Player';
+    const TRAIT_NOTES = {
+      // Innate
+      studious:     () => `Innately studious.`,
+      insight:      () => `Innately insightful.`,
+      wayfinding:   () => `Innate sense of direction.`,
+      revelry:      () => `Innately given to revelry.`,
+      // Proficiency
+      magicks:      () => `Proficient with magicks.`,
+      weapons:      () => `Proficient with weapons.`,
+      archery:      () => `Proficient with archery.`,
+      hands:        () => `Proficient with hands.`,
+      // Interest
+      animalist:    () => `An interest in animals.`,
+      naturalist:   () => `A naturalist by interest.`,
+      chemist:      () => `An interest in chemistry.`,
+      avarist:      () => `An interest in wealth and trade.`,
+      // Fear
+      beasts:       () => `Fears beasts.`,
+      insects:      () => `Fears insects.`,
+      abominations: () => `Fears abominations.`,
+      spirits:      () => `Fears spirits.`,
+      // Hate
+      authority:    () => `Despises authority.`,
+      aggression:   () => `Cannot cope with aggression.`,
+      sickness:     () => `Averse to sickness and disease.`,
+      religion:     () => `Despises religion.`,
+    };
+    traitsOrder.forEach(row => {
+      const val = characterOptions[row];
+      if (val && TRAIT_NOTES[val]) traitsNotes += TRAIT_NOTES[val]() + ' ';
+    });
+    traitsNotes = traitsNotes.trim();
+  }
+
+  // Only push traitsNotes — level is HOST-owned, player never writes it
+  db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`).update({
+    traitsNotes
+  });
+}
+
+// ==========================
+// BUDDY / BEASTFRIEND SYSTEM
+// ==========================
+const BUDDIES = [
+  { type: "Buddy Creature — Beast Forme",
+  name: "Celestial Tabby",
+  image: "hearts/BUDDY_card1.webp",
+  effect: `Innate: Smack something. Hmm... <br>Invisible if you are not enchanted, cursed, or blessed. <br>Nullify a killing blow, <em>once<em>.`
+  },
+
+  { type: "Buddy Creature — Beast Forme",
+  name: "Fiery Zapfiend",
+  image: "hearts/BUDDY_card2.webp",
+  effect: `Alerts when danger approaches. <br>Tracks small prey. <br>Innate:  Small electromagnetic field.`
+  },
+
+  { type: "Buddy Creature — Beast Forme",
+  name: "Mr. Hyde",
+  image: "hearts/BUDDY_card3.webp",
+  effect: `Detects treasure, or food. <br>Hunts small prey, including fish. <br>Innate:  Add 1 to any strength resolves.`
+  },
+
+  { type: "Buddy Creature — Beast Forme",
+  name: "Little One",
+  image: "hearts/BUDDY_card4.webp",
+  effect: `Reroll any critical fails.`
+  },
+
+  { type: "Buddy Creature — Beast Forme",
+  name: "Minimorty",
+  image: "hearts/BUDDY_card5.webp",
+  effect: `Cause a ruckus or distraction. <br>Detect food and water.`
+  },
+
+  { type: "Buddy Creature — Buddy Forme",
+  name: "Mukmuk Yakyak",
+  image: "hearts/BUDDY_card6.webp",
+  effect: `Can only change formes if well-fed. <br>Innate:  Push target away from player; can be used as a reaction after target approaches. `
+  },
+
+  { type: "Buddy Creature — Sneaky Rascal",
+  name: "Silly Snook",
+  image: "hearts/BUDDY_card7.webp",
+  effect: `After any command, resolve d20. <br>Can perform tasks, but may not obey. <br>Smooth liquid body: moves freely. <br>Innate:  Mischief.`
+  },
+
+  { type: "Buddy Creature — Dog",
+  name: "Long Jaxon",
+  image: "hearts/BUDDY_card8.webp",
+  effect: `Can hold potions and elixirs, granting them indestructible. <br>Can make deliveries and retrieve items or loot. <br>Chance to make any hume friendly.`
+  },
+
+  { type: "Buddy Creature — Canine",
+  name: "Alsatian",
+  image: "hearts/BUDDY_card9.webp",
+  effect: `Can hold equipment. <br>Instantly equip or store equipment. <br>Chance to scare off beasts. <br>Can redirect target's aggression once.`
+  },
+
+  { type: "Buddy Creature — Sonic Bluebird",
+  name: "Zigzag Jay",
+  image: "hearts/BUDDY_card10.webp",
+  effect: `Super Quick (always acts first) <br>Can scout areas and report findings. <br>Can steal small hand-sized objects. <br>Flees after dealing any damage.`
+  },
+
+  { type: "Buddy Creature — Redshift Cardinal", 
+  name: "Leggy Dee",
+  image: "hearts/BUDDY_card11.webp",
+  effect: `Super Quick (always acts first) <br>Can scout areas and report findings. <br>Can disarm some opponents. <br>Flees after dealing any damage.`
+  },
+
+  { type: "Buddy Creature — Hatchling",
+  name: "Baby Rappy",
+  image: "hearts/BUDDY_card12.webp",
+  effect: `Channel: Flying <br>Peep Screech: Nearby target is either stunned or blinded.`  },
+
+  { type: "Buddy Creature — Raptor",
+  name: "Big Rappy",
+  image: "hearts/BUDDY_card13.webp",
+  effect: `Flying <br>After any attack, performs a follow-up attack. <br>Can provide area wide surveillance.`
+  },
+
+  { type: "Buddy Creature — Lizard",
+  name: "Mini Dongodon",
+  image: "hearts/BUDDY_card14.webp",
+  effect: `Immune to fire and heat. <br>Reduce damage to 1 when in sunlight. <br>Can swim and dive in any water. <br>Innate:  Rapid Fire, deal 1 damage, repeat for each spell with with empower. <br>(Note: this action counts as quick.)`
+  },
+
+];
+
+let buddy = loadState('buddy', null);
+
+function renderBuddySlot() {
+  const slot = document.getElementById('buddySlot');
+  if (!slot) return;
+
+  if (buddy) {
+    slot.className = 'buddy-slot has-buddy';
+    slot.onclick = null;
+
+    slot.innerHTML = `
+      <div class="buddy-image${buddy.image ? ' has-image' : ''}">
+        ${buddy.image 
+          ? `<img src="${buddy.image}" alt="${buddy.name}" />` 
+          : `<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`}
+      </div>
+      <div class="buddy-info">
+        <div class="buddy-type">${buddy.type}</div>
+        <div class="buddy-name">${buddy.name}</div>
+        ${buddy.effect ? `<div class="buddy-effect">${buddy.effect}</div>` : ''}
+      </div>
+      <button class="buddy-clear-btn" title="Release companion">
+        <svg viewBox="0 0 24 24">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>`;
+
+    // 🔥 FIX: Attach zoom click handler
+    const imgDiv = slot.querySelector('.buddy-image.has-image');
+    if (imgDiv) {
+      imgDiv.style.cursor = 'zoom-in'; // optional UX improvement
+      imgDiv.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const img = imgDiv.querySelector('img');
+        if (img) {
+          openZoom(img.src, buddy.name);
+        }
+      });
+    }
+
+    // Existing clear button logic
+    slot.querySelector('.buddy-clear-btn').addEventListener('click', e => {
+      e.stopPropagation();
+
+      const confirmRelease = confirm(`Release ${buddy.name}?`);
+      if (!confirmRelease) return;
+
+      buddy = null;
+      saveState('buddy', null);
+      renderBuddySlot();
+    });
+
+  } else {
+    slot.className = 'buddy-slot';
+    slot.innerHTML = `<div class="buddy-empty-hint">+ Add Buddy</div>`;
+    slot.onclick = openBuddyPicker;
+  }
+}
+
+function openBuddyPicker() {
+  const grid = document.getElementById('buddyPickerGrid');
+  grid.innerHTML = '';
+  BUDDIES.forEach(b => {
+    const el = document.createElement('div');
+    el.className = 'buddy-option';
+    el.innerHTML = `${b.image ? `<img src="${b.image}" alt="${b.name}" style="width:100%;aspect-ratio:1200/1680;object-fit:cover;border-radius:0.5rem;margin-bottom:0.4rem;">` : ''}<div class="buddy-option-type">${b.type}</div><div class="buddy-option-name">${b.name}</div>`;
+    el.onclick = () => { buddy = b; saveState('buddy', b); closeBuddyPicker(); renderBuddySlot(); };
+    grid.appendChild(el);
+  });
+  document.getElementById('buddyPickerOverlay').classList.add('visible');
+}
+
+function closeBuddyPicker() {
+  document.getElementById('buddyPickerOverlay').classList.remove('visible');
+}
+
+renderBuddySlot();
+
+// ==========================
+// ARTEFACT EFFECTS SYSTEM
+// ==========================
+function getArtefactName() {
+  return inventory[0]?.name || '';
+}
+
+function applyArtefactEffects() {
+  const art = getArtefactName();
+  const inventoryOpen = document.getElementById('inventoryOverlay')?.classList.contains('visible');
+
+  document.getElementById('tingeValue')?.classList.remove('artefact-aligned');
+  document.getElementById('arcaneValue')?.classList.remove('artefact-aligned');
+
+  if ((art === 'The Darkflame' || art === 'The Wintergrace') && inventoryOpen) {
+    const tinge  = calculateTinge();
+    const arcane = calculateArcane();
+    if (tinge >= arcane) {
+      document.getElementById('tingeValue')?.classList.add('artefact-aligned');
+    } else {
+      document.getElementById('arcaneValue')?.classList.add('artefact-aligned');
+    }
+  }
+  renderAttributeOverrides();
+}
+
+function renderAttributeOverrides() {
+  const art = getArtefactName();
+  document.querySelectorAll('.attr[data-name]').forEach(card => {
+    const name = card.dataset.name;
+    const valEl = card.querySelector('.attr-val');
+    if (!valEl) return;
+    const raw = Number(loadState(name, 0)) || 0;
+    if (art === 'The Pair and a Half' && name === 'Skill') {
+      valEl.textContent = `${raw}+1`;
+    } else if (art === 'The Trickblade' && name === 'Strength') {
+      valEl.textContent = `${raw}+1`;
+    } else if (valEl.textContent.includes('+')) {
+      valEl.textContent = String(raw);
+    }
+  });
+}
+
+// Wrap updateBottomStats to apply artefact bonuses to display
+const _origUpdateBottomStatsArtefact = updateBottomStats;
+updateBottomStats = function() {
+  _origUpdateBottomStatsArtefact();
+  const art = getArtefactName();
+  const tingeEl  = document.getElementById('tingeValue');
+  const arcaneEl = document.getElementById('arcaneValue');
+  const rawTinge  = calculateTinge();
+  const rawArcane = calculateArcane();
+  if (art === 'The Wand') {
+    arcaneEl.textContent = rawArcane + rawTinge;
+  } else if (art === "The Fisherman's Flask") {
+    arcaneEl.textContent = rawArcane + 2;
+  } else if (art === 'The Prismatic Glasses') {
+    tingeEl.textContent = rawTinge + 2;
+  }
+  applyArtefactEffects();
+};
+
+// Watch inventory overlay visibility for Darkflame/Wintergrace blink
+['inventoryOverlay'].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  new MutationObserver(() => applyArtefactEffects()).observe(el, { attributes: true, attributeFilter: ['class','style'] });
+});
+
+// ==========================
+// BRONZE RING: start rank 2
+// ==========================
+function onNpcNameSaved() {
+  if (getArtefactName() !== 'The Bronze Ring of Smiles') return;
+  let changed = false;
+  npcs.forEach(npc => {
+    if (npc.name && npc.hearts &&
+        npc.hearts[0] === 1 && npc.hearts.filter(h => h > 0).length === 1) {
+      npc.hearts[0] = 2;
+      changed = true;
+    }
+  });
+  if (changed) { saveState('npcs', npcs); renderRelationships(); }
+}
+
+const _origRenderRelationships2 = renderRelationships;
+renderRelationships = function() {
+  _origRenderRelationships2();
+  onNpcNameSaved();
+};
+
+// ==========================
+// THE COIN ARTEFACT EFFECTS
+// ==========================
+let coinArtefactGranted = loadState('coinArtefactGranted', false);
+
+function checkCoinArtefact() {
+  if (getArtefactName() === 'The Coin' && !coinArtefactGranted) {
+    const balances = loadCoinBalances();
+    balances.gold = (balances.gold || 0) + 1;
+    saveCoinBalances(balances);
+    coinArtefactGranted = true;
+    saveState('coinArtefactGranted', true);
+    if (typeof renderCoinUI === 'function') renderCoinUI();
+    if (activeSessionCode && activePlayerSlot) {
+      db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/coins`).set(balances);
+    }
+  }
+}
+
+function checkCoinZeroBalance() {
+  if (getArtefactName() !== 'The Coin') return;
+  const balances = loadCoinBalances();
+  const total = Object.values(balances).reduce((s,v) => s + (Number(v)||0), 0);
+  if (total === 0) {
+    const types = ['gold','silver','alloy','old'];
+    const weights = [10,35,40,15];
+    let r = Math.random()*100, picked = 'alloy', cum = 0;
+    for (let i=0;i<types.length;i++){cum+=weights[i];if(r<cum){picked=types[i];break;}}
+    balances[picked] = (balances[picked]||0) + 1;
+    saveCoinBalances(balances);
+    if (activeSessionCode && activePlayerSlot) {
+      db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/coins`).set(balances);
+    }
+    if (typeof renderCoinUI === 'function') renderCoinUI();
+  }
+}
+
+// Wrap saveCoinBalances to check zero after any save
+const _origSaveCoinBalances = saveCoinBalances;
+saveCoinBalances = function(b) {
+  _origSaveCoinBalances(b);
+  setTimeout(checkCoinZeroBalance, 100);
+};
+
+// Wrap saveInventoryItem to detect artefact change
+const _origSaveInventoryItemArtefact = saveInventoryItem;
+saveInventoryItem = function(index, slot, name) {
+  _origSaveInventoryItemArtefact(index, slot, name);
+  if (index === 0) {
+    coinArtefactGranted = loadState('coinArtefactGranted', false);
+    checkCoinArtefact();
+    applyArtefactEffects();
+  }
+};
+
+// Init on load
+checkCoinArtefact();
+applyArtefactEffects();
+
+// ==========================
+// LUCK GATING
+// ==========================
+function isLuckUnlocked() {
+  const artefacts = loadState('artefacts', []);
+  if (artefacts.some(a => a.name === 'The Coin')) return true;
+
+  const buddy = loadState('buddy', null);
+  if (buddy && ['Little One', 'Silly Snook'].includes(buddy.name)) {
+    return true;
+  }
+
+  const qualifyingNpcs = ['Jon Quixote','Marco','Hitomi','Tress Bien','Captain Thiffany','The Courier'];
+
+  return npcs.some(npc =>
+    qualifyingNpcs.includes(npc.name) &&
+    npc.hearts &&
+    npc.hearts.filter(h => h === 1).length >= 4
+  );
+}
+
+function luckCostCheck() {
+  if (isLuckUnlocked()) return true;
+  const balances = loadCoinBalances();
+  if ((balances.gold||0) >= 1) {
+    balances.gold -= 1;
+    saveCoinBalances(balances);
+    if (activeSessionCode && activePlayerSlot) {
+      db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/coins`).set(balances);
+    }
+    checkCoinZeroBalance();
+    return true;
+  }
+  return false;
+}
+
+// Wrap activateLuck with gate
+const _origActivateLuckGated = activateLuck;
+activateLuck = function() {
+  if (!luckCostCheck()) {
+    const luckCard = document.querySelector('.attr.luck');
+    if (luckCard) { luckCard.style.opacity='0.4'; setTimeout(()=>luckCard.style.opacity='',600); }
+    return;
+  }
+  _origActivateLuckGated();
+};
+
+// Push luck to Firebase when it changes (host notebook)
+function pushLuckToFirebase(val) {
+  if (!activeSessionCode || !activePlayerSlot) return;
+  db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`).update({ luck: val });
+}
+
+// ==========================
+// SCATHE'S MEMO BOOK
+// ==========================
+document.getElementById('scatheMemoInput')?.addEventListener('input', function() {
+  document.getElementById('scatheWriteBtn').disabled = this.value.trim().length === 0;
+});
+
+function openScatheMemo() {
+  document.getElementById('scatheMemoInput').value = '';
+  document.getElementById('scatheWriteBtn').disabled = true;
+  const ov = document.getElementById('scatheMemoOverlay');
+  ov.style.display = 'flex';
+  ov.classList.add('visible');
+}
+
+function scatheMemoClose() {
+  const ov = document.getElementById('scatheMemoOverlay');
+  ov.style.display = 'none';
+  ov.classList.remove('visible');
+  if (activeSessionCode && activePlayerSlot) {
+    db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`).update({
+      scatheMemo: null,
+      scatheMemoClose: true
+    });
+    setTimeout(() => {
+      db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/scatheMemoClose`).set(false);
+    }, 2000);
+  }
+}
+
+function scatheMemoWrite() {
+  const text = document.getElementById('scatheMemoInput').value.trim();
+  if (!text) return;
+  document.getElementById('scatheMemoOverlay').style.display = 'none';
+  document.getElementById('scatheMemoOverlay').classList.remove('visible');
+  if (activeSessionCode && activePlayerSlot) {
+    const ts = new Date();
+    const stamp = `${ts.getHours().toString().padStart(2,'0')}:${ts.getMinutes().toString().padStart(2,'0')}`;
+    db.ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/scatheMemo`).push(`[${stamp}] ${text}`);
+  }
+}
+
+// Hook Scribe spell cast
+const _origCastSpellScathe = castSpell;
+castSpell = function(index) {
+  const spell = spells[index];
+  if (spell?.name === 'Scribe' && getArtefactName() === "Scathe's Memo Book") {
+    openScatheMemo();
+    return;
+  }
+  _origCastSpellScathe(index);
+};
+
 async function restorePlayerSession() {
+  // Restore dead visual state if life was -1
+  if (Number(loadState('life', 1)) < 0) {
+    document.body.classList.add('player-dead');
+  }
+
   const savedCode = localStorage.getItem('playerSessionCode');
   const savedSlot = localStorage.getItem('playerSessionSlot');
   if (!savedCode || !savedSlot) return;
@@ -7065,6 +8971,20 @@ async function restorePlayerSession() {
     document.getElementById('joinCodeInput').value = savedCode;
     document.getElementById('joinCodeInput').disabled = true;
 
+    // After 1s: fade out joinBtn, show in-game buttons
+    setTimeout(() => {
+      const joinBtn = document.getElementById('joinBtn');
+      if (joinBtn) {
+        joinBtn.style.transition = 'opacity 0.4s ease';
+        joinBtn.style.opacity = '0';
+        setTimeout(() => { joinBtn.style.display = 'none'; }, 400);
+      }
+      showInGameActionButtons();
+    }, 1000);
+
+    // Lock artefact and iris on reconnect
+    lockArtefactIris();
+
     // Resume bidirectional sync
     startPlayerSync(savedCode, savedSlot);
 
@@ -7080,6 +9000,232 @@ function setJoinStatus(type, message) {
   el.className = `join-status ${type}`;
   el.textContent = message;
 }
+
+/* ─── READY CHECK PARKED ──────────────────────────────────
+let playerIsReady = false;
+
+function toggleReady() {
+  if (!activeSessionCode || !activePlayerSlot) return;
+  playerIsReady = !playerIsReady;
+  const btn = document.getElementById('readyBtn');
+  if (playerIsReady) {
+    btn.textContent = 'READY!';
+    btn.classList.add('is-ready');
+  } else {
+    btn.textContent = 'Ready?';
+    btn.classList.remove('is-ready');
+  }
+  // Write 1 (ready) or 0 (not ready) to dedicated readyState node
+  db.ref(`sessions/${activeSessionCode}/readyState/${activePlayerSlot}`)
+    .set(playerIsReady ? 1 : 0);
+}
+
+// Listen for host resetting ready state (host pressed NO — readyState node cleared)
+function listenForReadyReset(code, slotKey) {
+  db.ref(`sessions/${code}/readyState/${slotKey}`).on('value', snap => {
+    const val = snap.val();
+    const btn = document.getElementById('readyBtn');
+    if (!btn) return;
+    if ((val === null || val === 0) && playerIsReady) {
+      playerIsReady = false;
+      btn.textContent = 'Ready?';
+      btn.classList.remove('is-ready');
+    }
+  });
+}
+
+// Listen for host starting the game — hide ready UI, show ACT + REVEAL buttons
+function listenForGameStarted(code) {
+  db.ref(`sessions/${code}/gameStarted`).on('value', snap => {
+    if (snap.val() !== true) return;
+    const readyBtn = document.getElementById('readyBtn');
+    if (readyBtn) {
+      readyBtn.style.transition = 'opacity 0.3s ease';
+      readyBtn.style.opacity = '0';
+      setTimeout(() => {
+        readyBtn.style.display = 'none';
+        readyBtn.style.opacity = '1';
+        showInGameActionButtons();
+      }, 300);
+    } else {
+      showInGameActionButtons();
+    }
+  });
+}
+
+function showInGameActionButtons() {
+  const area = document.querySelector('.join-session-area');
+  if (!area || document.getElementById('playerActBtn')) return;
+
+  const actBtn = document.createElement('button');
+  actBtn.id = 'playerActBtn';
+  actBtn.textContent = 'ACT';
+  actBtn.style.cssText = `
+    appearance:none; border:2px solid rgba(255,179,71,0.6);
+    background:rgba(255,179,71,0.12); color:#ffb347;
+    font-family:'Consolas','JetBrains Mono',monospace;
+    font-size:0.95rem; font-weight:700; letter-spacing:0.08em;
+    padding:0.5rem 1.5rem; border-radius:0.5rem; cursor:pointer;
+    transition:all 0.25s ease; text-transform:uppercase; margin-top:0.5rem;
+  `;
+
+  const revealBtn = document.createElement('button');
+  revealBtn.id = 'playerRevealBtn';
+  revealBtn.textContent = 'REVEAL';
+  revealBtn.style.cssText = `
+    appearance:none; border:2px solid rgba(255,215,0,0.5);
+    background:rgba(255,215,0,0.1); color:#ffd700;
+    font-family:'Consolas','JetBrains Mono',monospace;
+    font-size:0.95rem; font-weight:700; letter-spacing:0.08em;
+    padding:0.5rem 1.5rem; border-radius:0.5rem; cursor:pointer;
+    transition:all 0.25s ease; text-transform:uppercase;
+    margin-top:0.5rem; margin-left:0.5rem;
+  `;
+
+  area.appendChild(actBtn);
+  area.appendChild(revealBtn);
+}
+*/
+
+// ─── Turn listener ─────────────────────────────────────────
+function listenForTurn(code, slotKey) {
+  db.ref(`sessions/${code}/game`).on('value', snap => {
+    const wrapper = document.getElementById('ingameActionsWrapper');
+    if (!wrapper) return;
+
+    if (!snap.exists()) return;
+    const game = snap.val();
+    if (!game.active) return;
+
+    const isMyTurn = game.currentTurn === slotKey;
+    wrapper.classList.toggle('my-turn',     isMyTurn);
+    wrapper.classList.toggle('not-my-turn', !isMyTurn);
+
+    // Also reset checked state when a new turn starts (not my turn means slot advanced)
+    if (!isMyTurn) {
+      const actBtn    = document.getElementById('playerActBtn');
+      const revealBtn = document.getElementById('playerRevealBtn');
+      if (actBtn)    actBtn.classList.remove('checked');
+      if (revealBtn) revealBtn.classList.remove('checked');
+      playerActChecked    = false;
+      playerRevealChecked = false;
+    }
+  });
+}
+
+// ─── In-game ACT / REVEAL buttons ──────────────────────────
+let playerActChecked = false;
+let playerRevealChecked = false;
+let walkerSlotListener = null;
+
+function showInGameActionButtons() {
+  const area = document.querySelector('.join-session-area');
+  if (!area || document.getElementById('playerActBtn')) return;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'ingame-actions';
+  wrapper.id = 'ingameActionsWrapper';
+
+  const actBtn = document.createElement('button');
+  actBtn.id = 'playerActBtn';
+  actBtn.className = 'act-btn-player';
+  actBtn.textContent = 'ACT';
+  actBtn.addEventListener('click', () => togglePlayerAction('act'));
+
+  const revealBtn = document.createElement('button');
+  revealBtn.id = 'playerRevealBtn';
+  revealBtn.className = 'reveal-btn-player';
+  revealBtn.textContent = 'REVEAL';
+  revealBtn.addEventListener('click', () => togglePlayerAction('reveal'));
+
+  wrapper.appendChild(actBtn);
+  wrapper.appendChild(revealBtn);
+  area.appendChild(wrapper);
+
+  // Listen for slot changes from walker — reset buttons each new slot
+  if (activeSessionCode && !walkerSlotListener) {
+    walkerSlotListener = firebase.database()
+      .ref(`sessions/${activeSessionCode}/walkerData/slot`)
+      .on('value', snap => {
+        if (snap.val() !== null) resetPlayerActionButtons();
+      });
+  }
+}
+
+function togglePlayerAction(action) {
+  if (!activeSessionCode || !activePlayerSlot) return;
+
+  if (action === 'act') {
+    playerActChecked = !playerActChecked;
+    const btn = document.getElementById('playerActBtn');
+    if (btn) btn.classList.toggle('checked', playerActChecked);
+    firebase.database()
+      .ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/act`)
+      .set(playerActChecked ? 1 : 0);
+
+  } else if (action === 'reveal') {
+    playerRevealChecked = !playerRevealChecked;
+    const btn = document.getElementById('playerRevealBtn');
+    if (btn) btn.classList.toggle('checked', playerRevealChecked);
+    firebase.database()
+      .ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/reveal`)
+      .set(playerRevealChecked ? 1 : 0);
+  }
+}
+
+function resetPlayerActionButtons() {
+  playerActChecked = false;
+  playerRevealChecked = false;
+  const actBtn = document.getElementById('playerActBtn');
+  const revealBtn = document.getElementById('playerRevealBtn');
+  if (actBtn) actBtn.classList.remove('checked');
+  if (revealBtn) revealBtn.classList.remove('checked');
+  // Clear Firebase flags for this player
+  if (activeSessionCode && activePlayerSlot) {
+    firebase.database()
+      .ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`)
+      .update({ act: 0, reveal: 0 });
+  }
+}
+
+function removeInGameActionButtons() {
+  document.getElementById('ingameActionsWrapper')?.remove();
+  // Detach slot listener
+  if (walkerSlotListener && activeSessionCode) {
+    firebase.database()
+      .ref(`sessions/${activeSessionCode}/walkerData/slot`)
+      .off('value', walkerSlotListener);
+    walkerSlotListener = null;
+  }
+  playerActChecked = false;
+  playerRevealChecked = false;
+}
+
+// document.addEventListener('DOMContentLoaded', () => {
+//   const inventoryBtn = document.getElementById('inventoryBtn');
+//   const mindBtn = document.getElementById('mindBtn');
+
+//   if (inventoryBtn) {
+//     inventoryBtn.addEventListener('click', () => {
+//       updateBottomStats();
+//     });
+//   }
+
+//   if (mindBtn) {
+//     mindBtn.addEventListener('click', () => {
+//       updateBottomStats();
+//     });
+//   }
+// });
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('inventoryBtn')?.addEventListener('click', () => {
+    updateBottomStats();
+  });
+
+  document.getElementById('mindBtn')?.addEventListener('click', () => {
+    updateBottomStats();
+  });
+});
 
 </script>
 </body>
