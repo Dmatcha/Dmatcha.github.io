@@ -5901,14 +5901,81 @@ function showSessionCode(code) {
 // Copy code to clipboard with COPY! feedback
 function copySessionCode() {
   const el = document.getElementById('sessionCodeDisplay');
-  navigator.clipboard.writeText(activeSessionCode).then(() => {
-    el.textContent = 'COPY!';
-    el.classList.add('COPY');
-    setTimeout(() => {
-      el.textContent = activeSessionCode;
-      el.classList.remove('COPY');
-    }, 1500);
-  });
+  if (!el) return;
+  
+  // Guard against null session code
+  const codeToCopy = activeSessionCode || el.textContent;
+  if (!codeToCopy) return;
+  
+  // Try modern Clipboard API first
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(codeToCopy).then(() => {
+      // Success feedback
+      el.textContent = 'COPY!';
+      el.classList.add('COPY');
+      setTimeout(() => {
+        el.textContent = codeToCopy;
+        el.classList.remove('COPY');
+      }, 1500);
+    }).catch((err) => {
+      // Fallback for permission denied or other clipboard errors
+      console.warn('Clipboard API failed:', err);
+      fallbackCopyText(codeToCopy, el);
+    });
+  } else {
+    // Fallback for older browsers or insecure contexts
+    fallbackCopyText(codeToCopy, el);
+  }
+}
+
+// Fallback copy method using select + execCommand
+function fallbackCopyText(text, el) {
+  try {
+    // Create a temporary textarea element
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-9999px';
+    textarea.style.top = '0';
+    textarea.setAttribute('readonly', '');
+    document.body.appendChild(textarea);
+    
+    // Select and copy
+    textarea.select();
+    textarea.setSelectionRange(0, 99999); // For mobile devices
+    
+    const successful = document.execCommand('copy');
+    document.body.removeChild(textarea);
+    
+    if (successful) {
+      // Success feedback
+      el.textContent = 'COPY!';
+      el.classList.add('COPY');
+      setTimeout(() => {
+        el.textContent = activeSessionCode || text;
+        el.classList.remove('COPY');
+      }, 1500);
+    } else {
+      // Copy command failed
+      showCopyError(el);
+    }
+  } catch (err) {
+    console.error('Fallback copy failed:', err);
+    showCopyError(el);
+  }
+}
+
+// Show error feedback when copy fails
+function showCopyError(el) {
+  const originalText = el.textContent;
+  el.textContent = 'FAILED';
+  el.style.color = 'var(--accent-danger)';
+  el.style.borderColor = 'var(--accent-danger)';
+  setTimeout(() => {
+    el.textContent = originalText;
+    el.style.color = '';
+    el.style.borderColor = '';
+  }, 1500);
 }
 
 // ─── Ready check system ─────────────────────────────────────
