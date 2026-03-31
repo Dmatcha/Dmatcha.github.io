@@ -2997,7 +2997,7 @@ window.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
   loadState();
   renderPlayers();
-  setupDeleteButtons();  // ← this does not work
+  setupDeleteButtons();
   renderEnemies();
   updateAddEnemyButton();
   updateActButton();
@@ -3049,6 +3049,8 @@ function renderPlayers() {
   gameState.players.forEach((player, index) => {
     const card = document.createElement('div');
     card.className = 'player-card';
+    card.dataset.playerIndex = index;
+    const isReady = player._ready === true;
     card.innerHTML = `
       <button class="delete-btn" id="deleteBtn${index}" data-player-index="${index}" title="Delete Player">
         <div class="halo"></div>
@@ -3066,6 +3068,7 @@ function renderPlayers() {
         <div class="player-name-section">
           <input type="text" class="player-name" value="${player.name}" 
             placeholder="Player ${index + 1} Name" 
+            style="${isReady ? 'color:#ffd700;' : ''}"
             onchange="updatePlayer(${index}, 'name', this.value)"
             onkeydown="if(event.key === 'Enter') { event.preventDefault(); this.blur(); }">
           <select class="tag-select artefact-select" onchange="updatePlayer(${index}, 'artefact', this.value)">
@@ -3242,6 +3245,8 @@ function renderPlayers() {
   updateMadnessLinks();
   // Initialise inline SVG for all level-up buttons
   setTimeout(() => gameState.players.forEach((_, i) => setLevelupImg(i, 0)), 0);
+  // Re-attach delete button handlers after DOM rebuild
+  setupDeleteButtons();
 }
 
 function getArrowText(placeholder) {
@@ -5660,7 +5665,7 @@ function resetAll() {
     document.getElementById('enemySection').classList.remove('visible');
     
     renderPlayers();
-    setupDeleteButtons();  // ← ADD THIS LINE HERE
+    setupDeleteButtons();
     renderEnemies();
     updateAddEnemyButton();
     updateActButton();
@@ -5690,6 +5695,22 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+
+// ==========================
+// WALKER DATA TRACKING
+// ==========================
+// These are updated whenever walker.html pushes state to the session
+let walkerCycle = parseInt(localStorage.getItem('hostWalkerCycle') || '1', 10);
+let walkerSlot  = parseInt(localStorage.getItem('hostWalkerSlot')  || '0', 10);
+
+function startListeningForWalkerData(code) {
+  db.ref(`sessions/${code}/walkerData`).on('value', snap => {
+    if (!snap.exists()) return;
+    const d = snap.val();
+    if (d.cycle     !== undefined) { walkerCycle = d.cycle;     localStorage.setItem('hostWalkerCycle', d.cycle); }
+    if (d.slot      !== undefined) { walkerSlot  = d.slot;      localStorage.setItem('hostWalkerSlot',  d.slot);  }
+  });
+}
 
 // ==========================
 // SESSION SYSTEM
@@ -5737,6 +5758,8 @@ async function restoreHostSession() {
     showSessionCode(savedCode);
     listenForPlayerJoins(savedCode);
     listenForPlayerStatUpdates(savedCode);
+    startListeningForWalkerData(savedCode);
+    startListeningForReadyState(savedCode);
 
   } catch (err) {
     console.error('Failed to restore session:', err);
@@ -5794,6 +5817,11 @@ async function endSession() {
   }
 
   // 4. Reset host state
+  stopListeningForReadyState(code);
+  readyCheckActive = false;
+  gameState.players.forEach(p => { p._ready = false; });
+  document.getElementById('allReadyPrompt')?.remove();
+
   activeSessionCode = null;
   localStorage.removeItem('hostSessionCode');
 
@@ -5823,7 +5851,13 @@ async function startHostSession() {
     await db.ref(`sessions/${code}`).set({
       createdAt: Date.now(),
       expiresAt: Date.now() + SESSION_TTL_MS,
-      gameState: JSON.parse(JSON.stringify(gameState)) // deep copy
+      gameState: JSON.parse(JSON.stringify(gameState)),
+      walkerData: {
+        cycle: (typeof walkerCycle !== 'undefined') ? walkerCycle : 1,
+        slot:  (typeof walkerSlot  !== 'undefined') ? walkerSlot  : 0,
+        isNight: false, nightStep: 0, phaseMode: null
+      },
+      walkerConnected: false
     });
 
     // Show the code in place of the button
@@ -5831,9 +5865,12 @@ async function startHostSession() {
 
     // Start listening for player join requests
     listenForPlayerJoins(code);
-
     // Start listening for player stat updates
     listenForPlayerStatUpdates(code);
+    // Start listening for walker state updates
+    startListeningForWalkerData(code);
+    // Start listening for player ready states
+    startListeningForReadyState(code);
 
   } catch (err) {
     console.error('Failed to start session:', err);
@@ -5871,6 +5908,91 @@ function copySessionCode() {
       el.textContent = activeSessionCode;
       el.classList.remove('COPY');
     }, 1500);
+  });
+}
+
+// ─── Ready check system ─────────────────────────────────────
+// Each player writes their slot key → 1 when ready.
+// Host watches the whole node and compares count to joined players.
+
+let readyCheckActive = false;
+let readyStateListener = null;
+
+function startListeningForReadyState(code) {
+  if (readyStateListener) return; // already listening
+  readyStateListener = db.ref(`sessions/${code}/readyState`).on('value', snap => {
+    const readyMap = snap.val() || {};
+    const readyCount = Object.values(readyMap).filter(v => v === 1).length;
+
+    // Update _ready on each local player by matching their slot key
+    gameState.players.forEach((p, i) => {
+      p._ready = readyMap[`player${i}`] === 1;
+    });
+    renderPlayers();
+
+    // Check if all joined players are ready
+    const joined = gameState.players.filter(p => p.name && p.name.trim());
+    if (joined.length > 0 && readyCount >= joined.length && !readyCheckActive) {
+      showAllReadyPrompt(code);
+    }
+  });
+}
+
+function stopListeningForReadyState(code) {
+  if (readyStateListener) {
+    db.ref(`sessions/${code}/readyState`).off('value', readyStateListener);
+    readyStateListener = null;
+  }
+}
+
+function showAllReadyPrompt(code) {
+  if (readyCheckActive) return;
+  readyCheckActive = true;
+  if (document.getElementById('allReadyPrompt')) return;
+
+  const prompt = document.createElement('div');
+  prompt.id = 'allReadyPrompt';
+  prompt.style.cssText = `
+    position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+    background:#1a1a2e; border:2px solid #ffd700; border-radius:14px;
+    padding:2rem 2.5rem; text-align:center; z-index:9999;
+    box-shadow:0 0 40px rgba(255,215,0,0.3); color:#fff; font-size:1.1rem;
+    min-width: 280px;
+  `;
+  prompt.innerHTML = `
+    <div style="font-size:1.4rem;font-weight:700;margin-bottom:0.75rem;color:#ffd700;">✦ All players are ready!</div>
+    <div style="margin-bottom:1.5rem;color:#aaa;font-size:0.95rem;">Start the game?</div>
+    <div id="allReadyWalkerWarn" style="display:none;color:#ff8080;font-size:0.85rem;margin-bottom:1rem;">
+      ⚠ No Walker session connected. Connect Walker first.
+    </div>
+    <div style="display:flex;gap:1rem;justify-content:center;">
+      <button id="allReadyYes" style="padding:0.6rem 2rem;background:#ffd700;color:#1a1a00;
+        border:none;border-radius:8px;font-weight:700;font-size:1rem;cursor:pointer;">YES</button>
+      <button id="allReadyNo" style="padding:0.6rem 2rem;background:rgba(255,255,255,0.08);color:#fff;
+        border:1px solid rgba(255,255,255,0.25);border-radius:8px;font-weight:700;font-size:1rem;cursor:pointer;">NO</button>
+    </div>
+  `;
+  document.body.appendChild(prompt);
+
+  document.getElementById('allReadyYes').addEventListener('click', async () => {
+    const snap = await db.ref(`sessions/${code}/walkerConnected`).get();
+    if (!snap.exists() || snap.val() !== true) {
+      document.getElementById('allReadyWalkerWarn').style.display = 'block';
+      return;
+    }
+    prompt.remove();
+    readyCheckActive = false;
+    db.ref(`sessions/${code}/gameStarted`).set(true);
+  });
+
+  document.getElementById('allReadyNo').addEventListener('click', async () => {
+    prompt.remove();
+    readyCheckActive = false;
+    // Clear all ready states in Firebase
+    await db.ref(`sessions/${code}/readyState`).remove();
+    // Clear local _ready flags
+    gameState.players.forEach(p => { p._ready = false; });
+    renderPlayers();
   });
 }
 
@@ -5927,7 +6049,8 @@ function listenForPlayerJoins(code) {
       maxLife: gameState.players[matchIndex].life,
       madness: gameState.players[matchIndex].madness,
       soul: gameState.players[matchIndex].soul,
-      coins: gameState.players[matchIndex].coins
+      coins: gameState.players[matchIndex].coins,
+      ready: false
     });
 
     // Remove the join request
@@ -6003,6 +6126,9 @@ function listenForPlayerStatUpdates(code) {
         if (!p.scatheEntries.includes(entry)) p.scatheEntries.push(entry);
       });
     }
+
+    // Ready state — now handled by dedicated readyState listener
+    // (nothing to do here for ready)
 
     // Scathe Memo Book — player clicked CLOSE: remove 1 madness, clear entries
     if (data.scatheMemoClose === true) {

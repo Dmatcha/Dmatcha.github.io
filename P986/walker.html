@@ -11,6 +11,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   
   <style>
     /* CSS Custom Properties for modern theming */
@@ -311,8 +314,13 @@
       }
     }
 
-    /* narrow window change */
+    /* Fallback for browsers without container queries */
     @media (max-width: 600px) {
+/*      .game-container {
+        width: 92vw;
+        max-width: none;
+        min-width: 300px;
+      }*/
       .reset-btn { position: fixed; top: 0.125rem; left: 0.125rem; padding: 0.125rem}
     }
 
@@ -575,6 +583,29 @@
       opacity: 0;
     }
 
+
+    /* ─── Walker session code input (replaces slot label) ─── */
+    .walker-session-input {
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: 0.5rem;
+      color: #fff;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-align: center;
+      text-transform: uppercase;
+      width: 5rem;
+      padding: 0.2rem 0.4rem;
+      transition: border-color 0.2s, background 0.2s;
+      outline: none;
+    }
+    .walker-session-input::placeholder { color: rgba(255,255,255,0.35); letter-spacing: 0.1em; }
+    .walker-session-input:focus { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.12); }
+    .walker-session-input.connected { border-color: #ffd700; color: #ffd700; background: rgba(255,215,0,0.08); }
+    .walker-session-input.error { border-color: #ff4d4d; color: #ff8080; animation: shake 0.3s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
     /* Modern accessibility improvements */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -618,7 +649,17 @@
       <main class="game-container day-theme" role="main" aria-labelledby="game-title">
         <header class="game-header">
           <h1 class="day-label" id="dayLabel" aria-live="polite">DAWN of Cycle 1</h1>
-          <span class="slot-label" id="slotLabel" aria-live="polite">[0]</span>
+          <span class="slot-label" id="slotLabel" aria-live="polite" style="display:none">[0]</span>
+          <input
+            class="walker-session-input"
+            id="walkerSessionInput"
+            maxlength="4"
+            placeholder="XXXX"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Session code"
+            title="Enter host session code to connect"
+          />
         </header>
 
         <section class="text-area" id="textArea" aria-live="polite" aria-atomic="true">
@@ -1630,7 +1671,7 @@
       // Build the progress map grid
       ProgressMapManager.build();
       
-      // NEW: Try to load saved state first
+      // Try to load saved state first
       const hasSavedState = StateManager.hasSavedState();
       if (hasSavedState) {
         StateManager.loadState();
@@ -1640,12 +1681,8 @@
       initializeEventListeners();
       UIManager.update();
       
-      // Add modern performance optimizations
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(() => {
-          // Preload next game state or other heavy operations
-        });
-      }
+      // Restore walker session after UI is ready
+      restoreWalkerSession();
     }
 
     // Start the game when DOM is loaded
@@ -1655,7 +1692,171 @@
       initializeGame();
     }
 
-    // Global functions for backward compatibility
+    // ═══════════════════════════════════════════════════════════
+    // FIREBASE + WALKER SESSION INTEGRATION
+    // ═══════════════════════════════════════════════════════════
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtbq0awljUBBA7Oy7NgjH4tEd9NM-95Mg",
+      authDomain: "p986-online.firebaseapp.com",
+      databaseURL: "https://p986-online-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "p986-online",
+      storageBucket: "p986-online.firebasestorage.app",
+      messagingSenderId: "782380134937",
+      appId: "1:782380134937:web:68bd687556b526b948b088"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const walkerDb = firebase.database();
+
+    let walkerSessionCode = null;
+    let walkerSessionListener = null;
+
+    const walkerInput = document.getElementById('walkerSessionInput');
+
+    // Input: uppercase + filter invalid chars, auto-attempt on 4 chars
+    walkerInput.addEventListener('input', function () {
+      this.value = this.value.toUpperCase().replace(/[^A-Z2-9]/g, '');
+      this.classList.remove('error', 'connected');
+      if (this.value.length === 4) attemptWalkerConnect(this.value);
+    });
+
+    walkerInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && this.value.length === 4) attemptWalkerConnect(this.value);
+    });
+
+    async function attemptWalkerConnect(code) {
+      walkerInput.disabled = true;
+      try {
+        const snap = await walkerDb.ref(`sessions/${code}`).get();
+        if (!snap.exists()) {
+          walkerInputError();
+          return;
+        }
+        const session = snap.val();
+        if (session.expiresAt && Date.now() > session.expiresAt) {
+          walkerInputError();
+          return;
+        }
+
+        // Valid session — connect
+        walkerSessionCode = code;
+        localStorage.setItem('walkerSessionCode', code);
+        walkerInput.classList.add('connected');
+        walkerInput.disabled = true; // stays locked while connected
+
+        // Signal to Firebase that walker is connected
+        await walkerDb.ref(`sessions/${code}/walkerConnected`).set(true);
+
+        // Load any pre-existing walkerData from host save
+        const walkerData = session.walkerData;
+        if (walkerData && typeof walkerData.cycle === 'number' && typeof walkerData.slot === 'number') {
+          gameState.cycle    = walkerData.cycle;
+          gameState.slot     = walkerData.slot;
+          gameState.isNight  = walkerData.isNight  ?? false;
+          gameState.nightStep= walkerData.nightStep ?? 0;
+          gameState.phaseMode= walkerData.phaseMode ?? null;
+          UIManager.update();
+          ProgressMapManager.update();
+        }
+
+        // Start listening for walkerData updates from host
+        walkerSessionListener = walkerDb.ref(`sessions/${code}/walkerData`).on('value', snap => {
+          const d = snap.val();
+          if (!d) return;
+          // Only update if host changed something we track
+          if (d.cycle !== undefined) gameState.cycle     = d.cycle;
+          if (d.slot  !== undefined) gameState.slot      = d.slot;
+          if (d.isNight !== undefined) gameState.isNight = d.isNight;
+          if (d.nightStep !== undefined) gameState.nightStep = d.nightStep;
+          UIManager.update();
+          ProgressMapManager.update();
+        });
+
+        // Push current state up immediately
+        pushWalkerStateToFirebase();
+
+      } catch (err) {
+        console.error('Walker connect error:', err);
+        walkerInputError();
+      }
+    }
+
+    function walkerInputError() {
+      walkerInput.disabled = false;
+      walkerInput.classList.add('error');
+      walkerInput.value = '';
+      setTimeout(() => walkerInput.classList.remove('error'), 800);
+    }
+
+    function pushWalkerStateToFirebase() {
+      if (!walkerSessionCode) return;
+      walkerDb.ref(`sessions/${walkerSessionCode}/walkerData`).set({
+        cycle:     gameState.cycle,
+        slot:      gameState.slot,
+        isNight:   gameState.isNight,
+        nightStep: gameState.nightStep,
+        phaseMode: gameState.phaseMode
+      });
+    }
+
+    function disconnectWalkerSession() {
+      if (walkerSessionListener && walkerSessionCode) {
+        walkerDb.ref(`sessions/${walkerSessionCode}/walkerData`).off('value', walkerSessionListener);
+        walkerDb.ref(`sessions/${walkerSessionCode}/walkerConnected`).set(false);
+        walkerSessionListener = null;
+      }
+      walkerSessionCode = null;
+      localStorage.removeItem('walkerSessionCode');
+      walkerInput.value = '';
+      walkerInput.classList.remove('connected', 'error');
+      walkerInput.disabled = false;
+    }
+
+    // Restore walker session on page load
+    async function restoreWalkerSession() {
+      const saved = localStorage.getItem('walkerSessionCode');
+      if (!saved) return;
+      walkerInput.value = saved;
+      await attemptWalkerConnect(saved);
+    }
+    const _origSaveState = StateManager.saveState.bind(StateManager);
+    StateManager.saveState = function() {
+      _origSaveState();
+      pushWalkerStateToFirebase();
+    };
+
+    // Hook RESET to also disconnect walker session
+    GameFlow.resetGame = function() {
+      // Standard reset confirmation + logic
+      if (!confirm("Are you sure you want to reset all game data?")) return;
+      StateManager.clearState();
+      Object.assign(gameState, { cycle:1, slot:0, isNight:false, nightStep:0, phaseMode:null });
+      ProgressMapManager.resetCardAssignments();
+      CardTrayManager.hide();
+      UIManager.cleanupTransientButtons();
+      elements.checkboxesDiv.innerHTML = `
+        <div class="checkbox" id="actCheckbox" role="checkbox" aria-checked="false">ACT</div>
+        <div class="checkbox" id="mapCheckbox" role="checkbox" aria-checked="false">REVEAL</div>
+      `;
+      elements.actCheckbox = document.getElementById('actCheckbox');
+      elements.mapCheckbox = document.getElementById('mapCheckbox');
+      UIManager.attachCheckboxListeners();
+      elements.actCheckbox.classList.remove('checked');
+      elements.actCheckbox.setAttribute('aria-checked', 'false');
+      elements.mapCheckbox.classList.remove('checked');
+      elements.mapCheckbox.setAttribute('aria-checked', 'false');
+      elements.checkboxesDiv.style.display = 'none';
+      elements.dayLabel.textContent = "DAWN of Cycle 1";
+      elements.slotLabel.textContent = "[0]";
+      elements.textArea.innerHTML = "All players gain <strong>one level!</strong> <br>All players regain all <strong>light mana!</strong>";
+      elements.mainButton.textContent = "CONTINUE";
+      elements.mainButton.disabled = false;
+      elements.mainButton.style.display = 'block';
+      ThemeManager.setTheme('day');
+      ProgressMapManager.update();
+      // Disconnect from session on reset
+      disconnectWalkerSession();
+    };
     window.resetGame = () => GameFlow.resetGame();
   </script>
 </body>

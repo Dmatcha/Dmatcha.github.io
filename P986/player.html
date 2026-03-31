@@ -2503,6 +2503,11 @@
   cursor: not-allowed;
 }
 
+/* READY CHECK PARKED
+.ready-btn { ... }
+.ready-btn.is-ready { ... }
+*/
+
 .join-status {
   font-size: 0.85rem;
   min-height: 1.2rem;
@@ -2513,6 +2518,60 @@
 .join-status.error { color: #ff8fa3; }
 .join-status.success { color: #5fd08f; }
 .join-status.info { color: rgba(255, 255, 255, 0.5); }
+
+/* ─── In-game ACT / REVEAL buttons ─── */
+.ingame-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  justify-content: center;
+}
+
+.act-btn-player,
+.reveal-btn-player {
+  appearance: none;
+  font-family: 'Consolas', 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.55rem 1.6rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+}
+
+.act-btn-player {
+  border: 2px solid rgba(255, 179, 71, 0.5);
+  background: rgba(255, 179, 71, 0.08);
+  color: #ffb347;
+}
+.act-btn-player:hover {
+  background: rgba(255, 179, 71, 0.18);
+  border-color: #ffb347;
+}
+.act-btn-player.checked {
+  background: #ffb347;
+  border-color: #ffb347;
+  color: #1a0e00;
+  box-shadow: 0 0 12px rgba(255,179,71,0.5);
+}
+
+.reveal-btn-player {
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  background: rgba(255, 215, 0, 0.08);
+  color: #ffd700;
+}
+.reveal-btn-player:hover {
+  background: rgba(255, 215, 0, 0.18);
+  border-color: #ffd700;
+}
+.reveal-btn-player.checked {
+  background: #ffd700;
+  border-color: #ffd700;
+  color: #1a1400;
+  box-shadow: 0 0 12px rgba(255,215,0,0.5);
+}
 
 #coinBtn,
 #starBtn,
@@ -2908,6 +2967,9 @@
         spellcheck="false"
       />
       <button class="join-btn" id="joinBtn" onclick="attemptJoinSession()">JOIN</button>
+      <!-- READY CHECK PARKED
+      <button class="ready-btn" id="readyBtn" style="display:none" onclick="toggleReady()">Ready?</button>
+      -->
     </div>
   </div>
   <!-- Bottom Stats Bar -->
@@ -8118,6 +8180,17 @@ function waitForAcceptance(code, name, artefact, iris) {
     document.getElementById('joinBtn').disabled = true;
     document.getElementById('joinCodeInput').disabled = true;
 
+    // After 1s: fade out joinBtn, show in-game buttons
+    setTimeout(() => {
+      const joinBtn = document.getElementById('joinBtn');
+      if (joinBtn) {
+        joinBtn.style.transition = 'opacity 0.4s ease';
+        joinBtn.style.opacity = '0';
+        setTimeout(() => { joinBtn.style.display = 'none'; }, 400);
+      }
+      showInGameActionButtons();
+    }, 1000);
+
     // Lock artefact and iris now that session is active
     lockArtefactIris();
 
@@ -8154,12 +8227,31 @@ function startPlayerSync(code, slotKey) {
     setJoinStatus('info', 'Session ended by host.');
     const joinBtn = document.getElementById('joinBtn');
     const joinInput = document.getElementById('joinCodeInput');
-    if (joinBtn)  { joinBtn.textContent = 'JOIN'; joinBtn.disabled = false; }
-    if (joinInput){ joinInput.value = ''; joinInput.disabled = false; }
+    if (joinBtn) {
+      joinBtn.style.display = '';
+      joinBtn.style.opacity = '1';
+      joinBtn.style.transition = '';
+      joinBtn.textContent = 'JOIN';
+      joinBtn.disabled = false;
+    }
+    if (joinInput) { joinInput.value = ''; joinInput.disabled = false; }
+
+    // Remove in-game ACT / REVEAL buttons if present
+    removeInGameActionButtons();
+    /* READY CHECK PARKED
+    const readyBtn = document.getElementById('readyBtn');
+    if (readyBtn) { readyBtn.style.display='none'; readyBtn.textContent='Ready?'; readyBtn.classList.remove('is-ready'); }
+    playerIsReady = false;
+    */
   });
 
   // Listen for host coin grants
   listenForCoinGrants(code, slotKey);
+
+  /* READY CHECK PARKED
+  listenForReadyReset(code, slotKey);
+  listenForGameStarted(code);
+  */
 
   // Listen for level updates from host
   slotRef.child('level').on('value', (snap) => {
@@ -8863,6 +8955,17 @@ async function restorePlayerSession() {
     document.getElementById('joinCodeInput').value = savedCode;
     document.getElementById('joinCodeInput').disabled = true;
 
+    // After 1s: fade out joinBtn, show in-game buttons
+    setTimeout(() => {
+      const joinBtn = document.getElementById('joinBtn');
+      if (joinBtn) {
+        joinBtn.style.transition = 'opacity 0.4s ease';
+        joinBtn.style.opacity = '0';
+        setTimeout(() => { joinBtn.style.display = 'none'; }, 400);
+      }
+      showInGameActionButtons();
+    }, 1000);
+
     // Lock artefact and iris on reconnect
     lockArtefactIris();
 
@@ -8880,6 +8983,180 @@ function setJoinStatus(type, message) {
   const el = document.getElementById('joinStatus');
   el.className = `join-status ${type}`;
   el.textContent = message;
+}
+
+/* ─── READY CHECK PARKED ──────────────────────────────────
+let playerIsReady = false;
+
+function toggleReady() {
+  if (!activeSessionCode || !activePlayerSlot) return;
+  playerIsReady = !playerIsReady;
+  const btn = document.getElementById('readyBtn');
+  if (playerIsReady) {
+    btn.textContent = 'READY!';
+    btn.classList.add('is-ready');
+  } else {
+    btn.textContent = 'Ready?';
+    btn.classList.remove('is-ready');
+  }
+  // Write 1 (ready) or 0 (not ready) to dedicated readyState node
+  db.ref(`sessions/${activeSessionCode}/readyState/${activePlayerSlot}`)
+    .set(playerIsReady ? 1 : 0);
+}
+
+// Listen for host resetting ready state (host pressed NO — readyState node cleared)
+function listenForReadyReset(code, slotKey) {
+  db.ref(`sessions/${code}/readyState/${slotKey}`).on('value', snap => {
+    const val = snap.val();
+    const btn = document.getElementById('readyBtn');
+    if (!btn) return;
+    if ((val === null || val === 0) && playerIsReady) {
+      playerIsReady = false;
+      btn.textContent = 'Ready?';
+      btn.classList.remove('is-ready');
+    }
+  });
+}
+
+// Listen for host starting the game — hide ready UI, show ACT + REVEAL buttons
+function listenForGameStarted(code) {
+  db.ref(`sessions/${code}/gameStarted`).on('value', snap => {
+    if (snap.val() !== true) return;
+    const readyBtn = document.getElementById('readyBtn');
+    if (readyBtn) {
+      readyBtn.style.transition = 'opacity 0.3s ease';
+      readyBtn.style.opacity = '0';
+      setTimeout(() => {
+        readyBtn.style.display = 'none';
+        readyBtn.style.opacity = '1';
+        showInGameActionButtons();
+      }, 300);
+    } else {
+      showInGameActionButtons();
+    }
+  });
+}
+
+function showInGameActionButtons() {
+  const area = document.querySelector('.join-session-area');
+  if (!area || document.getElementById('playerActBtn')) return;
+
+  const actBtn = document.createElement('button');
+  actBtn.id = 'playerActBtn';
+  actBtn.textContent = 'ACT';
+  actBtn.style.cssText = `
+    appearance:none; border:2px solid rgba(255,179,71,0.6);
+    background:rgba(255,179,71,0.12); color:#ffb347;
+    font-family:'Consolas','JetBrains Mono',monospace;
+    font-size:0.95rem; font-weight:700; letter-spacing:0.08em;
+    padding:0.5rem 1.5rem; border-radius:0.5rem; cursor:pointer;
+    transition:all 0.25s ease; text-transform:uppercase; margin-top:0.5rem;
+  `;
+
+  const revealBtn = document.createElement('button');
+  revealBtn.id = 'playerRevealBtn';
+  revealBtn.textContent = 'REVEAL';
+  revealBtn.style.cssText = `
+    appearance:none; border:2px solid rgba(255,215,0,0.5);
+    background:rgba(255,215,0,0.1); color:#ffd700;
+    font-family:'Consolas','JetBrains Mono',monospace;
+    font-size:0.95rem; font-weight:700; letter-spacing:0.08em;
+    padding:0.5rem 1.5rem; border-radius:0.5rem; cursor:pointer;
+    transition:all 0.25s ease; text-transform:uppercase;
+    margin-top:0.5rem; margin-left:0.5rem;
+  `;
+
+  area.appendChild(actBtn);
+  area.appendChild(revealBtn);
+}
+*/
+
+// ─── In-game ACT / REVEAL buttons ──────────────────────────
+let playerActChecked = false;
+let playerRevealChecked = false;
+let walkerSlotListener = null;
+
+function showInGameActionButtons() {
+  const area = document.querySelector('.join-session-area');
+  if (!area || document.getElementById('playerActBtn')) return;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'ingame-actions';
+  wrapper.id = 'ingameActionsWrapper';
+
+  const actBtn = document.createElement('button');
+  actBtn.id = 'playerActBtn';
+  actBtn.className = 'act-btn-player';
+  actBtn.textContent = 'ACT';
+  actBtn.addEventListener('click', () => togglePlayerAction('act'));
+
+  const revealBtn = document.createElement('button');
+  revealBtn.id = 'playerRevealBtn';
+  revealBtn.className = 'reveal-btn-player';
+  revealBtn.textContent = 'REVEAL';
+  revealBtn.addEventListener('click', () => togglePlayerAction('reveal'));
+
+  wrapper.appendChild(actBtn);
+  wrapper.appendChild(revealBtn);
+  area.appendChild(wrapper);
+
+  // Listen for slot changes from walker — reset buttons each new slot
+  if (activeSessionCode && !walkerSlotListener) {
+    walkerSlotListener = firebase.database()
+      .ref(`sessions/${activeSessionCode}/walkerData/slot`)
+      .on('value', snap => {
+        if (snap.val() !== null) resetPlayerActionButtons();
+      });
+  }
+}
+
+function togglePlayerAction(action) {
+  if (!activeSessionCode || !activePlayerSlot) return;
+
+  if (action === 'act') {
+    playerActChecked = !playerActChecked;
+    const btn = document.getElementById('playerActBtn');
+    if (btn) btn.classList.toggle('checked', playerActChecked);
+    firebase.database()
+      .ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/act`)
+      .set(playerActChecked ? 1 : 0);
+
+  } else if (action === 'reveal') {
+    playerRevealChecked = !playerRevealChecked;
+    const btn = document.getElementById('playerRevealBtn');
+    if (btn) btn.classList.toggle('checked', playerRevealChecked);
+    firebase.database()
+      .ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/reveal`)
+      .set(playerRevealChecked ? 1 : 0);
+  }
+}
+
+function resetPlayerActionButtons() {
+  playerActChecked = false;
+  playerRevealChecked = false;
+  const actBtn = document.getElementById('playerActBtn');
+  const revealBtn = document.getElementById('playerRevealBtn');
+  if (actBtn) actBtn.classList.remove('checked');
+  if (revealBtn) revealBtn.classList.remove('checked');
+  // Clear Firebase flags for this player
+  if (activeSessionCode && activePlayerSlot) {
+    firebase.database()
+      .ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`)
+      .update({ act: 0, reveal: 0 });
+  }
+}
+
+function removeInGameActionButtons() {
+  document.getElementById('ingameActionsWrapper')?.remove();
+  // Detach slot listener
+  if (walkerSlotListener && activeSessionCode) {
+    firebase.database()
+      .ref(`sessions/${activeSessionCode}/walkerData/slot`)
+      .off('value', walkerSlotListener);
+    walkerSlotListener = null;
+  }
+  playerActChecked = false;
+  playerRevealChecked = false;
 }
 
 // document.addEventListener('DOMContentLoaded', () => {
