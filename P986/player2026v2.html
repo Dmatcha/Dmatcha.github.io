@@ -2552,38 +2552,23 @@
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
 }
 
-.act-btn-player {
-  border: 2px solid rgba(255, 179, 71, 0.5);
-  background: rgba(255, 179, 71, 0.08);
-  color: #ffb347;
-}
-.act-btn-player:hover {
-  background: rgba(255, 179, 71, 0.18);
-  border-color: #ffb347;
-}
-.act-btn-player.checked {
-  background: #ffb347;
-  border-color: #ffb347;
-  color: #1a0e00;
-  box-shadow: 0 0 12px rgba(255,179,71,0.5);
-}
-
-.reveal-btn-player {
-  border: 2px solid rgba(255, 215, 0, 0.5);
-  background: rgba(255, 215, 0, 0.08);
-  color: #ffd700;
-}
+.act-btn-player:hover,
 .reveal-btn-player:hover {
-  background: rgba(255, 215, 0, 0.18);
-  border-color: #ffd700;
+  border-color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.12);
 }
+
+.act-btn-player.checked,
 .reveal-btn-player.checked {
-  background: #ffd700;
-  border-color: #ffd700;
-  color: #1a1400;
-  box-shadow: 0 0 12px rgba(255,215,0,0.5);
+  border-color: #32cd32;
+  background: rgba(50, 205, 50, 0.15);
+  color: #32cd32;
+  box-shadow: 0 0 10px rgba(50, 205, 50, 0.3);
 }
 
 #coinBtn,
@@ -9101,7 +9086,7 @@ function listenForTurn(code, slotKey) {
     wrapper.classList.toggle('my-turn',     isMyTurn);
     wrapper.classList.toggle('not-my-turn', !isMyTurn);
 
-    // Also reset checked state when a new turn starts (not my turn means slot advanced)
+    // Reset checked state when it becomes someone else's turn
     if (!isMyTurn) {
       const actBtn    = document.getElementById('playerActBtn');
       const revealBtn = document.getElementById('playerRevealBtn');
@@ -9110,6 +9095,25 @@ function listenForTurn(code, slotKey) {
       playerActChecked    = false;
       playerRevealChecked = false;
     }
+  });
+
+  // Live sync: reflect act/reveal written by walker back onto player buttons
+  db.ref(`sessions/${code}/players/${slotKey}/act`).on('value', snap => {
+    const val = snap.val();
+    const btn = document.getElementById('playerActBtn');
+    if (!btn) return;
+    const checked = val === 1;
+    playerActChecked = checked;
+    btn.classList.toggle('checked', checked);
+  });
+
+  db.ref(`sessions/${code}/players/${slotKey}/reveal`).on('value', snap => {
+    const val = snap.val();
+    const btn = document.getElementById('playerRevealBtn');
+    if (!btn) return;
+    const checked = val === 1;
+    playerRevealChecked = checked;
+    btn.classList.toggle('checked', checked);
   });
 }
 
@@ -9142,11 +9146,13 @@ function showInGameActionButtons() {
   wrapper.appendChild(revealBtn);
   area.appendChild(wrapper);
 
-  // Listen for slot changes from walker — reset buttons each new slot
+  // Listen for slot changes from walker — reset buttons on each new slot
   if (activeSessionCode && !walkerSlotListener) {
+    let walkerSlotInitialized = false;
     walkerSlotListener = firebase.database()
       .ref(`sessions/${activeSessionCode}/walkerData/slot`)
       .on('value', snap => {
+        if (!walkerSlotInitialized) { walkerSlotInitialized = true; return; }
         if (snap.val() !== null) resetPlayerActionButtons();
       });
   }
