@@ -1351,6 +1351,8 @@
       }
 
       static enableMainIfBothChecked() {
+        // Dawn slot and special phases use their own button logic — never interfere
+        if (gameState.slot === 0 || gameState.phaseMode) return;
         if (!elements.actCheckbox || !elements.mapCheckbox) { 
           elements.mainButton.disabled = true; 
           return; 
