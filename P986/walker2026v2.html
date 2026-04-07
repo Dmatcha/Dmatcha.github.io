@@ -1397,28 +1397,22 @@
       static toggleCheckbox(event) {
         const checkbox = event.currentTarget;
 
-        if (checkbox.id === 'actCheckbox' && walkerSessionCode && walkerCurrentTurn) {
-          // ACT: write to Firebase only — listener drives the visual
+        if (walkerSessionCode) {
+          // Write to shared turnAction path — listener drives the visual for both pages
+          const isAct = checkbox.id === 'actCheckbox';
           const currentlyChecked = checkbox.classList.contains('checked');
-          walkerDb.ref(`sessions/${walkerSessionCode}/players/${walkerCurrentTurn}/act`)
-            .set(currentlyChecked ? 0 : 1);
-          // Visual update is handled by startListeningForPlayerActions actFn
+          const field = isAct ? 'act' : 'reveal';
+          walkerDb.ref(`sessions/${walkerSessionCode}/turnAction`)
+            .update({ [field]: currentlyChecked ? 0 : 1 });
+          // Visual update handled by startListeningForPlayerActions listener
         } else {
-          // No session or REVEAL: toggle locally as before
+          // No session — local toggle only
           checkbox.classList.toggle('checked');
           const isChecked = checkbox.classList.contains('checked');
           checkbox.setAttribute('aria-checked', isChecked.toString());
-
-          if (checkbox.id === 'mapCheckbox' && isChecked) {
-            CardTrayManager.reveal();
-          } else if (checkbox.id === 'mapCheckbox' && !isChecked) {
-            CardTrayManager.reset();
-          }
-
-          // Write reveal to Firebase too
-          if (walkerSessionCode && walkerCurrentTurn && checkbox.id === 'mapCheckbox') {
-            walkerDb.ref(`sessions/${walkerSessionCode}/players/${walkerCurrentTurn}/reveal`)
-              .set(isChecked ? 1 : 0);
+          if (checkbox.id === 'mapCheckbox') {
+            if (isChecked) CardTrayManager.reveal();
+            else CardTrayManager.reset();
           }
         }
 
@@ -1799,6 +1793,9 @@
           walkerDb.ref(`sessions/${code}/hostCommand`).remove();
         });
 
+        // Reset turnAction to clean state on connect
+        walkerDb.ref(`sessions/${code}/turnAction`).set({ act: 0, reveal: 0 });
+
         // Do NOT push state to Firebase on connect — the host's saved walkerData
         // is authoritative. Walker only pushes when the user advances the game.
 
@@ -1861,12 +1858,8 @@
       if (!walkerSessionCode || !walkerTurnOrder.length) return;
       const nextIndex = (walkerTurnIndex + 1) % walkerTurnOrder.length;
 
-      // Clear act/reveal for the slot we just finished
-      const finishedSlot = walkerTurnOrder[walkerTurnIndex];
-      if (finishedSlot) {
-        walkerDb.ref(`sessions/${walkerSessionCode}/players/${finishedSlot}`)
-          .update({ act: 0, reveal: 0 });
-      }
+      // Reset shared turnAction so next player starts with clean state
+      walkerDb.ref(`sessions/${walkerSessionCode}/turnAction`).set({ act: 0, reveal: 0 });
 
       await walkerDb.ref(`sessions/${walkerSessionCode}/game`).update({
         currentTurnIndex: nextIndex,
@@ -1874,79 +1867,40 @@
       });
     }
 
-    // ─── Listen for current player's ACT / REVEAL from Firebase ─
-    let walkerPlayerActListener = null;
-    let walkerPlayerRevealListener = null;
+    // ── Walker listens to turnAction — same path player writes to ──────
+    let walkerTurnActionListener = null;
 
     function startListeningForPlayerActions(code) {
-      let lastAttachedSlot = null;
+      // Listen to turnAction — the single shared path for act/reveal state
+      walkerTurnActionListener = walkerDb.ref(`sessions/${code}/turnAction`)
+        .on('value', snap => {
+          const data = snap.val() || { act: 0, reveal: 0 };
 
-      // Watch the whole game node so we catch both initial state and turns changes
-      walkerDb.ref(`sessions/${code}/game`).on('value', snap => {
-        if (!snap.exists()) return;
-        const game = snap.val();
-        if (!game || !game.active || !game.currentTurn) return;
+          // Update ACT checkbox
+          const actChecked = data.act === 1;
+          if (elements.actCheckbox) {
+            elements.actCheckbox.classList.toggle('checked', actChecked);
+            elements.actCheckbox.setAttribute('aria-checked', String(actChecked));
+          }
 
-        const currentSlot = game.currentTurn;
-        if (currentSlot === lastAttachedSlot) return; // no change, skip re-attach
-        lastAttachedSlot = currentSlot;
+          // Update REVEAL checkbox + card tray
+          const revChecked = data.reveal === 1;
+          if (elements.mapCheckbox) {
+            elements.mapCheckbox.classList.toggle('checked', revChecked);
+            elements.mapCheckbox.setAttribute('aria-checked', String(revChecked));
+            if (revChecked) CardTrayManager.reveal();
+            else CardTrayManager.reset();
+          }
 
-        // Detach old listeners
-        if (walkerPlayerActListener && walkerPlayerActListener.ref) {
-          walkerPlayerActListener.ref.off('value', walkerPlayerActListener.fn);
-        }
-        if (walkerPlayerRevealListener && walkerPlayerRevealListener.ref) {
-          walkerPlayerRevealListener.ref.off('value', walkerPlayerRevealListener.fn);
-        }
-
-        // Reset checkboxes on turn change
-        if (elements.actCheckbox) {
-          elements.actCheckbox.classList.remove('checked');
-          elements.actCheckbox.setAttribute('aria-checked', 'false');
-        }
-        if (elements.mapCheckbox) {
-          elements.mapCheckbox.classList.remove('checked');
-          elements.mapCheckbox.setAttribute('aria-checked', 'false');
-        }
-        UIManager.enableMainIfBothChecked();
-
-        // Attach new listeners for current player's act/reveal
-        const actRef = walkerDb.ref(`sessions/${code}/players/${currentSlot}/act`);
-        const actFn  = actSnap => {
-          const val = actSnap.val();
-          if (!elements.actCheckbox) return;
-          const checked = val === 1;
-          elements.actCheckbox.classList.toggle('checked', checked);
-          elements.actCheckbox.setAttribute('aria-checked', String(checked));
           UIManager.enableMainIfBothChecked();
-        };
-        actRef.on('value', actFn);
-        walkerPlayerActListener = { ref: actRef, fn: actFn };
-
-        const revRef = walkerDb.ref(`sessions/${code}/players/${currentSlot}/reveal`);
-        const revFn  = revSnap => {
-          const val = revSnap.val();
-          if (!elements.mapCheckbox) return;
-          const checked = val === 1;
-          elements.mapCheckbox.classList.toggle('checked', checked);
-          elements.mapCheckbox.setAttribute('aria-checked', String(checked));
-          if (checked) CardTrayManager.reveal();
-          else CardTrayManager.reset();
-          UIManager.enableMainIfBothChecked();
-        };
-        revRef.on('value', revFn);
-        walkerPlayerRevealListener = { ref: revRef, fn: revFn };
-      });
+        });
     }
 
     function stopListeningForPlayerActions(code) {
-      // .off() with no callback removes ALL listeners on this node,
-      // including startListeningForTurnData — intentional on disconnect
-      if (code) walkerDb.ref(`sessions/${code}/game`).off();
-      if (walkerPlayerActListener?.ref)    walkerPlayerActListener.ref.off('value', walkerPlayerActListener.fn);
-      if (walkerPlayerRevealListener?.ref) walkerPlayerRevealListener.ref.off('value', walkerPlayerRevealListener.fn);
-      walkerPlayerActListener = null;
-      walkerPlayerRevealListener = null;
+      if (walkerTurnActionListener && code) {
+        walkerDb.ref(`sessions/${code}/turnAction`).off('value', walkerTurnActionListener);
+        walkerTurnActionListener = null;
+      }
     }
 
     function disconnectWalkerSession() {
@@ -1955,9 +1909,10 @@
         walkerDb.ref(`sessions/${walkerSessionCode}/walkerConnected`).set(false);
         walkerSessionListener = null;
       }
-      // Also detach hostCommand listener
+      // Also detach hostCommand listener and clear turnAction
       if (walkerSessionCode) {
         walkerDb.ref(`sessions/${walkerSessionCode}/hostCommand`).off();
+        walkerDb.ref(`sessions/${walkerSessionCode}/turnAction`).set({ act: 0, reveal: 0 });
       }
       stopListeningForTurnData(walkerSessionCode);
       stopListeningForPlayerActions(walkerSessionCode);

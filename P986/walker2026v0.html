@@ -1157,7 +1157,7 @@
       static assignCard(slot, src) {
         this.cardAssignments[slot] = src;
         this._applyCellImage(slot, src);
-        StateManager.saveState(); pushWalkerStateToFirebase();
+        StateManager.saveState();
       }
 
       static resetCardAssignments() {
@@ -1351,8 +1351,6 @@
       }
 
       static enableMainIfBothChecked() {
-        // Dawn slot and special phases use their own button logic — never interfere
-        if (gameState.slot === 0 || gameState.phaseMode) return;
         if (!elements.actCheckbox || !elements.mapCheckbox) { 
           elements.mainButton.disabled = true; 
           return; 
@@ -1396,28 +1394,20 @@
 
       static toggleCheckbox(event) {
         const checkbox = event.currentTarget;
-
-        if (walkerSessionCode) {
-          // Write to shared turnAction path — listener drives the visual for both pages
-          const isAct = checkbox.id === 'actCheckbox';
-          const currentlyChecked = checkbox.classList.contains('checked');
-          const field = isAct ? 'act' : 'reveal';
-          walkerDb.ref(`sessions/${walkerSessionCode}/turnAction`)
-            .update({ [field]: currentlyChecked ? 0 : 1 });
-          // Visual update handled by startListeningForPlayerActions listener
-        } else {
-          // No session — local toggle only
-          checkbox.classList.toggle('checked');
-          const isChecked = checkbox.classList.contains('checked');
-          checkbox.setAttribute('aria-checked', isChecked.toString());
-          if (checkbox.id === 'mapCheckbox') {
-            if (isChecked) CardTrayManager.reveal();
-            else CardTrayManager.reset();
-          }
-        }
-
+        checkbox.classList.toggle('checked');
+        const isChecked = checkbox.classList.contains('checked');
+        checkbox.setAttribute('aria-checked', isChecked.toString());
         UIManager.enableMainIfBothChecked();
-        StateManager.saveState(); pushWalkerStateToFirebase();
+        
+        // Reveal cards when REVEAL checkbox is checked
+        if (checkbox.id === 'mapCheckbox' && isChecked) {
+          CardTrayManager.reveal();
+        } else if (checkbox.id === 'mapCheckbox' && !isChecked) {
+          CardTrayManager.reset();
+        }
+        
+        // NEW: Save state whenever checkbox state changes
+        StateManager.saveState();
       }
     }
 
@@ -1434,7 +1424,7 @@
         UIManager.update();
         
         // NEW: Save state after state change
-        StateManager.saveState(); pushWalkerStateToFirebase();
+        StateManager.saveState();
       }
 
       static showDuskChoice() {
@@ -1481,7 +1471,7 @@
           UIManager.update();
           
           // NEW: Save state after state change
-          StateManager.saveState(); pushWalkerStateToFirebase();
+          StateManager.saveState();
         });
       }
 
@@ -1528,7 +1518,7 @@
           UIManager.update();
           
           // NEW: Save state after state change
-          StateManager.saveState(); pushWalkerStateToFirebase();
+          StateManager.saveState();
         });
       }
 
@@ -1562,7 +1552,7 @@
           elements.mainButton.disabled = !bothChecked;
           
           // NEW: Save state when checkbox state changes in deep night mode
-          StateManager.saveState(); pushWalkerStateToFirebase();
+          StateManager.saveState();
         };
 
         lootBtn.addEventListener('click', () => { 
@@ -1586,15 +1576,17 @@
           if (gameState.slot === 0) { 
             gameState.slot = 1; 
             UIManager.update(); 
-            StateManager.saveState(); pushWalkerStateToFirebase();
-            walkerAdvanceTurn();
+            
+            // NEW: Save state after state change
+            StateManager.saveState();
             return; 
           }
           if (gameState.slot < gameState.DAY_SLOTS) { 
             gameState.slot++; 
             UIManager.update(); 
-            StateManager.saveState(); pushWalkerStateToFirebase();
-            walkerAdvanceTurn();
+            
+            // NEW: Save state after state change
+            StateManager.saveState();
             return; 
           }
           this.showDuskChoice();
@@ -1679,10 +1671,12 @@
       // Build the progress map grid
       ProgressMapManager.build();
       
-      // Do NOT restore saved game state from localStorage on startup.
-      // The walker always starts at Dawn (slot 0) and syncs from Firebase
-      // when it connects to a session. localStorage is only used for the
-      // session code so we can auto-reconnect to an existing session.
+      // Try to load saved state first
+      const hasSavedState = StateManager.hasSavedState();
+      if (hasSavedState) {
+        StateManager.loadState();
+        console.log('Loaded saved game state');
+      }
       
       initializeEventListeners();
       UIManager.update();
@@ -1753,51 +1747,33 @@
         // Signal to Firebase that walker is connected
         await walkerDb.ref(`sessions/${code}/walkerConnected`).set(true);
 
-        // Start listening for turn data from host
-        startListeningForTurnData(code);
-
-        // Start listening for current player's ACT/REVEAL signals
-        startListeningForPlayerActions(code);
-
-        // Always apply walkerData from Firebase — this is the authoritative state.
-        // Walker starts at Dawn (slot 0) by default; Firebase tells it where to resume.
+        // Load any pre-existing walkerData from host save
         const walkerData = session.walkerData;
-        if (walkerData && typeof walkerData.cycle === 'number') {
-          gameState.cycle     = walkerData.cycle;
-          gameState.slot      = walkerData.slot      ?? 0;
-          gameState.isNight   = walkerData.isNight   ?? false;
-          gameState.nightStep = walkerData.nightStep ?? 0;
-          gameState.phaseMode = walkerData.phaseMode ?? null;
-        } else {
-          // No walkerData in session yet — start at Dawn
-          Object.assign(gameState, { cycle:1, slot:0, isNight:false, nightStep:0, phaseMode:null });
+        if (walkerData && typeof walkerData.cycle === 'number' && typeof walkerData.slot === 'number') {
+          gameState.cycle    = walkerData.cycle;
+          gameState.slot     = walkerData.slot;
+          gameState.isNight  = walkerData.isNight  ?? false;
+          gameState.nightStep= walkerData.nightStep ?? 0;
+          gameState.phaseMode= walkerData.phaseMode ?? null;
+          UIManager.update();
+          ProgressMapManager.update();
         }
-        UIManager.update();
-        ProgressMapManager.update();
 
-        // walkerData listener — only needed for future external changes
-        // (walker is the writer; this is mainly for host-driven resets)
+        // Start listening for walkerData updates from host
         walkerSessionListener = walkerDb.ref(`sessions/${code}/walkerData`).on('value', snap => {
-          // no-op — walker is the source of truth, it writes here, doesn't need to read back
+          const d = snap.val();
+          if (!d) return;
+          // Only update if host changed something we track
+          if (d.cycle !== undefined) gameState.cycle     = d.cycle;
+          if (d.slot  !== undefined) gameState.slot      = d.slot;
+          if (d.isNight !== undefined) gameState.isNight = d.isNight;
+          if (d.nightStep !== undefined) gameState.nightStep = d.nightStep;
+          UIManager.update();
+          ProgressMapManager.update();
         });
 
-        // Listen for host commands (CONTINUE button → trigger walker main button)
-        // Skip the first fire — Firebase always delivers current value on attach.
-        let hostCommandInitialized = false;
-        walkerDb.ref(`sessions/${code}/hostCommand`).on('value', snap => {
-          if (!hostCommandInitialized) { hostCommandInitialized = true; return; }
-          if (snap.val() !== 'continue') return;
-          if (elements.mainButton && !elements.mainButton.disabled) {
-            GameFlow.handleMainButton();
-          }
-          walkerDb.ref(`sessions/${code}/hostCommand`).remove();
-        });
-
-        // Reset turnAction to clean state on connect
-        walkerDb.ref(`sessions/${code}/turnAction`).set({ act: 0, reveal: 0 });
-
-        // Do NOT push state to Firebase on connect — the host's saved walkerData
-        // is authoritative. Walker only pushes when the user advances the game.
+        // Push current state up immediately
+        pushWalkerStateToFirebase();
 
       } catch (err) {
         console.error('Walker connect error:', err);
@@ -1823,99 +1799,12 @@
       });
     }
 
-    // ─── Turn management ────────────────────────────────────
-    let walkerCurrentTurn = null;    // e.g. 'player1'
-    let walkerTurnOrder = [];
-    let walkerTurnIndex = 0;
-    let walkerTurnListener = null;
-
-    function startListeningForTurnData(code) {
-      walkerTurnListener = walkerDb.ref(`sessions/${code}/game`).on('value', snap => {
-        if (!snap.exists()) return;
-        const game = snap.val();
-        if (!game.active) return;
-        walkerTurnOrder   = game.turnOrder   || [];
-        walkerTurnIndex   = game.currentTurnIndex || 0;
-        walkerCurrentTurn = game.currentTurn || null;
-        updateWalkerTurnDisplay();
-      });
-    }
-
-    function stopListeningForTurnData(code) {
-      if (walkerTurnListener) {
-        walkerDb.ref(`sessions/${code}/game`).off('value', walkerTurnListener);
-        walkerTurnListener = null;
-      }
-    }
-
-    function updateWalkerTurnDisplay() {
-      // Update the slotLabel to show current turn player name as a hint
-      // (slotLabel is hidden from UI but can be used internally)
-      // Slot advancement already handled by NEXT PLAYER button
-    }
-
-    async function walkerAdvanceTurn() {
-      if (!walkerSessionCode || !walkerTurnOrder.length) return;
-      const nextIndex = (walkerTurnIndex + 1) % walkerTurnOrder.length;
-
-      // Reset shared turnAction so next player starts with clean state
-      walkerDb.ref(`sessions/${walkerSessionCode}/turnAction`).set({ act: 0, reveal: 0 });
-
-      await walkerDb.ref(`sessions/${walkerSessionCode}/game`).update({
-        currentTurnIndex: nextIndex,
-        currentTurn: walkerTurnOrder[nextIndex]
-      });
-    }
-
-    // ── Walker listens to turnAction — same path player writes to ──────
-    let walkerTurnActionListener = null;
-
-    function startListeningForPlayerActions(code) {
-      // Listen to turnAction — the single shared path for act/reveal state
-      walkerTurnActionListener = walkerDb.ref(`sessions/${code}/turnAction`)
-        .on('value', snap => {
-          const data = snap.val() || { act: 0, reveal: 0 };
-
-          // Update ACT checkbox
-          const actChecked = data.act === 1;
-          if (elements.actCheckbox) {
-            elements.actCheckbox.classList.toggle('checked', actChecked);
-            elements.actCheckbox.setAttribute('aria-checked', String(actChecked));
-          }
-
-          // Update REVEAL checkbox + card tray
-          const revChecked = data.reveal === 1;
-          if (elements.mapCheckbox) {
-            elements.mapCheckbox.classList.toggle('checked', revChecked);
-            elements.mapCheckbox.setAttribute('aria-checked', String(revChecked));
-            if (revChecked) CardTrayManager.reveal();
-            else CardTrayManager.reset();
-          }
-
-          UIManager.enableMainIfBothChecked();
-        });
-    }
-
-    function stopListeningForPlayerActions(code) {
-      if (walkerTurnActionListener && code) {
-        walkerDb.ref(`sessions/${code}/turnAction`).off('value', walkerTurnActionListener);
-        walkerTurnActionListener = null;
-      }
-    }
-
     function disconnectWalkerSession() {
       if (walkerSessionListener && walkerSessionCode) {
         walkerDb.ref(`sessions/${walkerSessionCode}/walkerData`).off('value', walkerSessionListener);
         walkerDb.ref(`sessions/${walkerSessionCode}/walkerConnected`).set(false);
         walkerSessionListener = null;
       }
-      // Also detach hostCommand listener and clear turnAction
-      if (walkerSessionCode) {
-        walkerDb.ref(`sessions/${walkerSessionCode}/hostCommand`).off();
-        walkerDb.ref(`sessions/${walkerSessionCode}/turnAction`).set({ act: 0, reveal: 0 });
-      }
-      stopListeningForTurnData(walkerSessionCode);
-      stopListeningForPlayerActions(walkerSessionCode);
       walkerSessionCode = null;
       localStorage.removeItem('walkerSessionCode');
       walkerInput.value = '';
@@ -1930,29 +1819,17 @@
       walkerInput.value = saved;
       await attemptWalkerConnect(saved);
     }
-    // saveState only saves to localStorage — Firebase is pushed explicitly
-    // only when the game actually advances (handleMainButton, goToDawn, etc.)
-    // This prevents stale local state from overwriting the host's Firebase data on connect.
+    const _origSaveState = StateManager.saveState.bind(StateManager);
+    StateManager.saveState = function() {
+      _origSaveState();
+      pushWalkerStateToFirebase();
+    };
 
     // Hook RESET to also disconnect walker session
     GameFlow.resetGame = function() {
+      // Standard reset confirmation + logic
       if (!confirm("Are you sure you want to reset all game data?")) return;
-
-      // Disconnect FIRST — stops any further Firebase pushes
-      const codeBeforeReset = walkerSessionCode;
-      disconnectWalkerSession();
-
-      // Clear walkerData in Firebase to slot 0 so any reconnecting client starts fresh
-      if (codeBeforeReset) {
-        walkerDb.ref(`sessions/${codeBeforeReset}/walkerData`).set({
-          cycle: 1, slot: 0, isNight: false, nightStep: 0, phaseMode: null
-        });
-        walkerDb.ref(`sessions/${codeBeforeReset}/hostCommand`).remove();
-      }
-
-      // Wipe ALL walker localStorage — cycle, slot, card assignments, session code
-      localStorage.clear();
-
+      StateManager.clearState();
       Object.assign(gameState, { cycle:1, slot:0, isNight:false, nightStep:0, phaseMode:null });
       ProgressMapManager.resetCardAssignments();
       CardTrayManager.hide();
@@ -1977,6 +1854,8 @@
       elements.mainButton.style.display = 'block';
       ThemeManager.setTheme('day');
       ProgressMapManager.update();
+      // Disconnect from session on reset
+      disconnectWalkerSession();
     };
     window.resetGame = () => GameFlow.resetGame();
   </script>

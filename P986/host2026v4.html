@@ -6194,13 +6194,38 @@ async function startGame() {
 }
 
 async function advanceTurn() {
-  if (!activeSessionCode || !gameActive) return;
+  if (!activeSessionCode || !gameActive) {
+    console.warn('advanceTurn: game not active or no session');
+    return;
+  }
+
+  // Safety check: ensure turnOrder is valid
+  if (!turnOrder || turnOrder.length === 0) {
+    console.error('advanceTurn: turnOrder is empty! Rebuilding from gameState...');
+    // Rebuild turn order from current gameState
+    turnOrder = gameState.players
+      .map((p, i) => ({ name: p.name, slotKey: `player${i}` }))
+      .filter(p => p.name && p.name.trim())
+      .map(p => p.slotKey);
+    
+    if (turnOrder.length === 0) {
+      console.error('advanceTurn: still no players in turnOrder!');
+      return;
+    }
+    
+    // Push rebuilt order to Firebase
+    await db.ref(`sessions/${activeSessionCode}/game`).update({ turnOrder });
+    currentTurnIndex = 0;
+  }
 
   // Send continue command to walker first
   await db.ref(`sessions/${activeSessionCode}/hostCommand`).set('continue');
 
   // Advance turn index (wraps around)
+  const previousIndex = currentTurnIndex;
   currentTurnIndex = (currentTurnIndex + 1) % turnOrder.length;
+
+  console.log(`advanceTurn: ${previousIndex} -> ${currentTurnIndex} (player ${turnOrder[currentTurnIndex]})`);
 
   await db.ref(`sessions/${activeSessionCode}/game`).update({
     currentTurnIndex,
@@ -6282,6 +6307,38 @@ function listenForPlayerJoins(code) {
     renderPlayers();
     setupDeleteButtons();
     saveState();
+
+    // ─────────────────────────────────────────────────────────────────────
+    // FIX: If game is active, rebuild turnOrder to include the new player
+    // ─────────────────────────────────────────────────────────────────────
+    if (gameActive) {
+      console.log(`listenForPlayerJoins: Game is active, rebuilding turnOrder...`);
+
+      // Get all currently joined players
+      const currentTurnOrder = gameState.players
+        .map((p, i) => ({ name: p.name, slotKey: `player${i}` }))
+        .filter(p => p.name && p.name.trim())
+        .map(p => p.slotKey);
+
+      // Check if the new player is already in turnOrder
+      if (!turnOrder.includes(playerSlot)) {
+        // Add new player to the END of turn order
+        turnOrder.push(playerSlot);
+        console.log(`listenForPlayerJoins: Added ${playerSlot} to turnOrder. New order:`, turnOrder);
+
+        // Push updated turnOrder to Firebase
+        await db.ref(`sessions/${code}/game`).update({
+          turnOrder: turnOrder,
+          // Update currentTurn if needed (if currentTurn is undefined)
+          currentTurn: turnOrder[currentTurnIndex] || turnOrder[0]
+        });
+
+        // Refresh the game control bar to show updated order
+        updateGameControlBar();
+      } else {
+        console.log(`listenForPlayerJoins: ${playerSlot} already in turnOrder`);
+      }
+    }
   });
 }
 

@@ -1207,254 +1207,6 @@
     margin-bottom: 0.5rem;
   }
 
-  /* ========= BLESSINGS & CURSES STYLING ========= */
-  .blessings-section,
-  .curses-section {
-    margin-top: 1.5rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .blessings-section {
-    border-color: rgba(255, 182, 193, 0.4);
-    background: linear-gradient(135deg, rgba(255, 192, 203, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-    box-shadow: 0 0 20px rgba(255, 182, 193, 0.1);
-  }
-
-  .curses-section {
-    border-color: rgba(138, 43, 226, 0.4);
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-    box-shadow: 0 0 20px rgba(138, 43, 226, 0.1);
-  }
-
-  .section-title {
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-  }
-
-  .blessings-section .section-title {
-    color: rgba(255, 182, 193, 0.95);
-    text-shadow: 0 0 10px rgba(255, 182, 193, 0.5);
-  }
-
-  .curses-section .section-title {
-    color: rgba(180, 100, 255, 0.9);
-    text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
-  }
-
-  .draw-blessing-btn,
-  .draw-curse-btn {
-    width: 100%;
-    padding: 0.875rem 1.25rem;
-    background: rgba(255, 255, 255, 0.08);
-    border: 2px dashed rgba(255, 255, 255, 0.3);
-    border-radius: 0.75rem;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.25s ease;
-  }
-
-  .draw-blessing-btn:hover {
-    background: rgba(255, 182, 193, 0.2);
-    border-color: rgba(255, 182, 193, 0.7);
-    color: rgba(255, 240, 245, 1);
-    box-shadow: 0 0 15px rgba(255, 182, 193, 0.3);
-  }
-
-  .draw-curse-btn:hover {
-    background: rgba(138, 43, 226, 0.2);
-    border-color: rgba(180, 100, 255, 0.6);
-    color: rgba(200, 150, 255, 1);
-    box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
-  }
-
-  .blessing-card,
-  .curse-card {
-    display: flex;
-    align-items: stretch;
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 0.75rem;
-    margin-bottom: 0.75rem;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    transition: all 0.2s ease;
-  }
-
-  .blessing-card:hover,
-  .curse-card:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-
-  .blessing-card {
-    border-color: rgba(255, 182, 193, 0.3);
-  }
-
-  .blessing-card:hover {
-    box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
-  }
-
-  .curse-card {
-    border-color: rgba(138, 43, 226, 0.3);
-  }
-
-  .curse-card:hover {
-    box-shadow: 0 4px 15px rgba(138, 43, 226, 0.2);
-  }
-
-  .blessing-image,
-  .curse-image {
-    width: 5rem;
-    min-height: 5rem;
-    background: rgba(255, 255, 255, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .blessing-image {
-    background: linear-gradient(135deg, rgba(255, 182, 193, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-  }
-
-  .curse-image {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-  }
-
-  .blessing-image img,
-  .curse-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .blessing-image svg,
-  .curse-image svg {
-    width: 2.5rem;
-    height: 2.5rem;
-    stroke: rgba(255, 182, 193, 0.8);
-    fill: none;
-    stroke-width: 2;
-  }
-
-  .curse-image svg {
-    stroke: rgba(180, 100, 255, 0.8);
-  }
-
-  .blessing-info,
-  .curse-info {
-    flex: 1;
-    padding: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    min-width: 0;
-  }
-
-  .blessing-name,
-  .curse-name {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.95);
-  }
-
-  .blessing-type,
-  .curse-type {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: rgba(255, 182, 193, 0.8);
-  }
-
-  .curse-type {
-    color: rgba(180, 100, 255, 0.7);
-  }
-
-  .blessing-meta,
-  .curse-meta {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    margin-bottom: 0.25rem;
-  }
-
-  .blessing-active,
-  .curse-active {
-    font-size: 0.65rem;
-    padding: 0.15rem 0.4rem;
-    border-radius: 0.25rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 600;
-  }
-
-  .blessing-active {
-    background: rgba(255, 182, 193, 0.25);
-    color: rgba(255, 240, 245, 0.95);
-    box-shadow: 0 0 8px rgba(255, 182, 193, 0.3);
-  }
-
-  .curse-active {
-    background: rgba(138, 43, 226, 0.25);
-    color: rgba(200, 150, 255, 0.95);
-    box-shadow: 0 0 8px rgba(138, 43, 226, 0.3);
-  }
-
-  .blessing-rules,
-  .curse-rules {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.85);
-    line-height: 1.5;
-    margin-top: 0.25rem;
-  }
-
-  .blessing-flavor,
-  .curse-flavor {
-    font-size: 0.72rem;
-    color: rgba(255, 255, 255, 0.5);
-    font-style: italic;
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .blessing-sacrifice-btn {
-    padding: 0.5rem 0.75rem;
-    background: rgba(255, 105, 180, 0.2);
-    border: 1px solid rgba(255, 182, 193, 0.6);
-    border-radius: 0.5rem;
-    color: rgba(255, 240, 245, 0.95);
-    font-size: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    align-self: center;
-    margin-right: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    box-shadow: 0 0 10px rgba(255, 182, 193, 0.2);
-  }
-
-  .blessing-sacrifice-btn:hover {
-    background: rgba(255, 105, 180, 0.35);
-    border-color: rgba(255, 182, 193, 0.9);
-    color: #fff;
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(255, 182, 193, 0.4);
-  }
-
 #inventoryBtn {
   position: fixed;
   top: 0.6rem;
@@ -2773,19 +2525,6 @@
   gap: 0.75rem;
   margin-top: 0.75rem;
   justify-content: center;
-  transition: opacity 0.3s ease;
-}
-
-/* Dim when it's not this player's turn */
-.ingame-actions.not-my-turn {
-  opacity: 0.35;
-  pointer-events: none;
-}
-
-/* Glow wrapper when it IS this player's turn */
-.ingame-actions.my-turn {
-  opacity: 1;
-  pointer-events: auto;
 }
 
 .act-btn-player,
@@ -2800,37 +2539,38 @@
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
 }
 
-.act-btn-player:hover,
+.act-btn-player {
+  border: 2px solid rgba(255, 179, 71, 0.5);
+  background: rgba(255, 179, 71, 0.08);
+  color: #ffb347;
+}
+.act-btn-player:hover {
+  background: rgba(255, 179, 71, 0.18);
+  border-color: #ffb347;
+}
+.act-btn-player.checked {
+  background: #ffb347;
+  border-color: #ffb347;
+  color: #1a0e00;
+  box-shadow: 0 0 12px rgba(255,179,71,0.5);
+}
+
+.reveal-btn-player {
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  background: rgba(255, 215, 0, 0.08);
+  color: #ffd700;
+}
 .reveal-btn-player:hover {
-  border-color: rgba(255, 255, 255, 0.85);
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 215, 0, 0.18);
+  border-color: #ffd700;
 }
-
-.act-btn-player.checked,
 .reveal-btn-player.checked {
-  border-color: #32cd32;
-  background: rgba(50, 205, 50, 0.15);
-  color: #32cd32;
-  box-shadow: 0 0 10px rgba(50, 205, 50, 0.3);
-}
-
-.act-btn-player:disabled,
-.reveal-btn-player:disabled {
-  background: rgba(40,40,40,0.3);
-  border-color: rgba(90,90,90,0.5);
-  color: #777;
-  cursor: not-allowed;
-}
-
-.act-btn-player:disabled:hover,
-.reveal-btn-player:disabled:hover {
-  background: rgba(40,40,40,0.3);
-  border-color: rgba(90,90,90,0.5);
+  background: #ffd700;
+  border-color: #ffd700;
+  color: #1a1400;
+  box-shadow: 0 0 12px rgba(255,215,0,0.5);
 }
 
 #coinBtn,
@@ -3065,18 +2805,6 @@
       <div class="madness-whisper-box" id="madnessWhisperBox">
         <div class="madness-whisper-label">The Madness...</div>
         <div id="madnessWhisperText"></div>
-      </div>
-
-      <!-- Blessings Section (visible when host grants Blessed status) -->
-      <div class="blessings-section" id="blessingsSection" style="display: none;">
-        <div class="section-title">Blessings</div>
-        <div id="blessingsList"></div>
-      </div>
-
-      <!-- Curses Section (visible when host grants Curse status) -->
-      <div class="curses-section" id="cursesSection" style="display: none;">
-        <div class="section-title">Curses</div>
-        <div id="cursesList"></div>
       </div>
     </div>
   </div>
@@ -6085,254 +5813,6 @@ renderInventory = function() {
   updateAddItemButtonState();
 };
 
-/* ========= BLESSINGS & CURSES SYSTEM ========= */
-
-// Blessings and curses storage
-let playerBlessings = loadState('playerBlessings', []);
-let playerCurses = loadState('playerCurses', []);
-let usedBlessings = loadState('usedBlessings', []); // Blessings sacrificed (lost until death)
-
-// Update Blessed/Curse UI based on host status
-function updateBlessedCurseUI() {
-  const isBlessed = loadState('isBlessed', false);
-  const isCursed = loadState('isCursed', false);
-
-  const blessingsSection = document.getElementById('blessingsSection');
-  const cursesSection = document.getElementById('cursesSection');
-
-  if (blessingsSection) {
-    blessingsSection.style.display = isBlessed ? 'block' : 'none';
-    if (isBlessed) renderBlessings();
-  }
-
-  if (cursesSection) {
-    cursesSection.style.display = isCursed ? 'block' : 'none';
-    if (isCursed) renderCurses();
-  }
-}
-
-// Render blessings cards
-function renderBlessings() {
-  const blessingsList = document.getElementById('blessingsList');
-  if (!blessingsList) return;
-
-  blessingsList.innerHTML = '';
-
-  // Check if player has any blessings
-  if (playerBlessings.length === 0) {
-    // Show draw button
-    const drawBtn = document.createElement('button');
-    drawBtn.className = 'draw-blessing-btn';
-    drawBtn.textContent = 'Draw a Blessing';
-    drawBtn.onclick = drawRandomBlessing;
-    blessingsList.appendChild(drawBtn);
-    return;
-  }
-
-  // Render blessing cards
-  playerBlessings.forEach((blessing, index) => {
-    const card = createBlessingCard(blessing, index);
-    blessingsList.appendChild(card);
-  });
-
-  // Add button to draw more blessings (based on special cards)
-  if (playerBlessings.length < getMaxBlessings()) {
-    const drawBtn = document.createElement('button');
-    drawBtn.className = 'draw-blessing-btn';
-    drawBtn.textContent = playerBlessings.length === 0 ? 'Draw a Blessing' : '+ Draw Blessing';
-    drawBtn.onclick = drawRandomBlessing;
-    blessingsList.appendChild(drawBtn);
-  }
-}
-
-// Create a blessing card element
-function createBlessingCard(blessingName, index) {
-  const blessingData = blessingsDB[blessingName];
-  if (!blessingData) return document.createElement('div');
-
-  const card = document.createElement('div');
-  card.className = 'blessing-card';
-  card.dataset.index = index;
-  card.dataset.name = blessingName;
-
-  const canSacrifice = blessingData.sacrifice === 1;
-  const activeStatus = blessingData.active || 'Passive';
-
-  card.innerHTML = `
-    <div class="blessing-image">
-      ${blessingData.image ? `<img src="${blessingData.image}" alt="${blessingName}" onerror="this.parentElement.innerHTML='<svg viewBox=\\'0 0 24 24\\'><path d=\\'M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z\\'/></svg>'" />` :
-        '<svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>'}
-    </div>
-    <div class="blessing-info">
-      <div class="blessing-name">${blessingName}</div>
-      <div class="blessing-meta">
-        <span class="blessing-type">${blessingData.type}</span>
-        <span class="blessing-active">${activeStatus}</span>
-      </div>
-      <div class="blessing-rules">${blessingData.rules}</div>
-      ${blessingData.flavor ? `<div class="blessing-flavor"><em>${blessingData.flavor}</em></div>` : ''}
-    </div>
-    ${canSacrifice ? '<button class="blessing-sacrifice-btn" title="Sacrifice this blessing">Sacrifice</button>' : ''}
-  `;
-
-  // Add sacrifice functionality
-  if (canSacrifice) {
-    const sacrificeBtn = card.querySelector('.blessing-sacrifice-btn');
-    if (sacrificeBtn) {
-      sacrificeBtn.onclick = () => {
-        if (confirm(`Sacrifice "${blessingName}"? This blessing will be lost until you die.`)) {
-          sacrificeBlessing(index);
-        }
-      };
-    }
-  }
-
-  return card;
-}
-
-// Draw a random blessing
-// Check if player has special blessing/curse that allows multiple
-function canHaveMultipleBlessings() {
-  return playerBlessings.includes("Blessing of Whelm");
-}
-
-function canHaveMultipleCurses() {
-  return playerCurses.includes("Curse of Zan");
-}
-
-function getMaxBlessings() {
-  return canHaveMultipleBlessings() ? 3 : 1;
-}
-
-function getMaxCurses() {
-  return canHaveMultipleCurses() ? 3 : 1;
-}
-
-function drawRandomBlessing() {
-  // Get blessing names not already owned and not in used pool
-  const availableBlessings = Object.keys(blessingsDB).filter(name =>
-    !playerBlessings.includes(name) && !usedBlessings.includes(name)
-  );
-
-  if (availableBlessings.length === 0) {
-    alert('No more blessings available!');
-    return;
-  }
-
-  const randomBlessing = availableBlessings[Math.floor(Math.random() * availableBlessings.length)];
-  playerBlessings.push(randomBlessing);
-  saveState('playerBlessings', playerBlessings);
-  renderBlessings();
-}
-
-// Sacrifice a blessing (removes it permanently until death)
-function sacrificeBlessing(index) {
-  const blessing = playerBlessings[index];
-  if (!blessing) return;
-
-  // Add to used pool (can't be drawn again until death)
-  usedBlessings.push(blessing);
-  saveState('usedBlessings', usedBlessings);
-
-  // Remove from active blessings
-  playerBlessings.splice(index, 1);
-  saveState('playerBlessings', playerBlessings);
-  renderBlessings();
-}
-
-// Render curses cards
-function renderCurses() {
-  const cursesList = document.getElementById('cursesList');
-  if (!cursesList) return;
-
-  cursesList.innerHTML = '';
-
-  // Check if player has any curses
-  if (playerCurses.length === 0) {
-    // Show draw button
-    const drawBtn = document.createElement('button');
-    drawBtn.className = 'draw-curse-btn';
-    drawBtn.textContent = 'Draw a Curse';
-    drawBtn.onclick = drawRandomCurse;
-    cursesList.appendChild(drawBtn);
-    return;
-  }
-
-  // Render curse cards
-  playerCurses.forEach((curse, index) => {
-    const card = createCurseCard(curse, index);
-    cursesList.appendChild(card);
-  });
-
-  // Add button to draw more curses (based on special cards)
-  if (playerCurses.length < getMaxCurses()) {
-    const drawBtn = document.createElement('button');
-    drawBtn.className = 'draw-curse-btn';
-    drawBtn.textContent = playerCurses.length === 0 ? 'Draw a Curse' : '+ Draw Curse';
-    drawBtn.onclick = drawRandomCurse;
-    cursesList.appendChild(drawBtn);
-  }
-}
-
-// Create a curse card element
-function createCurseCard(curseName, index) {
-  const curseData = cursesDB[curseName];
-  if (!curseData) return document.createElement('div');
-
-  const card = document.createElement('div');
-  card.className = 'curse-card';
-  card.dataset.index = index;
-  card.dataset.name = curseName;
-
-  const activeStatus = curseData.active || 'Passive';
-
-  card.innerHTML = `
-    <div class="curse-image">
-      ${curseData.image ? `<img src="${curseData.image}" alt="${curseName}" onerror="this.parentElement.innerHTML='<svg viewBox=\\'0 0 24 24\\'><path d=\\'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\\'/></svg>'" />` :
-        '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>'}
-    </div>
-    <div class="curse-info">
-      <div class="curse-name">${curseName}</div>
-      <div class="curse-meta">
-        <span class="curse-type">${curseData.type}</span>
-        <span class="curse-active">${activeStatus}</span>
-      </div>
-      <div class="curse-rules">${curseData.rules}</div>
-      ${curseData.flavor ? `<div class="curse-flavor"><em>${curseData.flavor}</em></div>` : ''}
-    </div>
-  `;
-
-  return card;
-}
-
-// Draw a random curse
-function drawRandomCurse() {
-  // Get curse names not already owned
-  const availableCurses = Object.keys(cursesDB).filter(name =>
-    !playerCurses.includes(name)
-  );
-
-  if (availableCurses.length === 0) {
-    alert('No more curses available!');
-    return;
-  }
-
-  const randomCurse = availableCurses[Math.floor(Math.random() * availableCurses.length)];
-  playerCurses.push(randomCurse);
-  saveState('playerCurses', playerCurses);
-  renderCurses();
-}
-
-// Handle player death - reset blessings and restore used pool
-function handleBlessedCurseDeath() {
-  // Move used blessings back to available pool
-  usedBlessings = [];
-  saveState('usedBlessings', usedBlessings);
-
-  // Keep current blessings (they're already sacrificed)
-  // Player can draw new blessings
-}
-
 /* ========= MIND/SPELL SYSTEM ========= */
 const mindBtn = document.getElementById('mindBtn');
 const mindOverlay = document.getElementById('mindOverlay');
@@ -7252,338 +6732,6 @@ const spellDB = {
     cost: [{ type: "life", amount: 1 },{ type: "stamina", amount: 1 },{ type: "mana", amount: 1 },{ type: "energy", amount: 1 },{ type: "empower", amount: 1 }],
     description: "Turn invisible then shadow-step a moderate distance. If you attack or take damage, lose invisibility, become stunned, halve all resource pools.\n<em>Now you see me...</em>",
     image: "../icons/999.webp"
-  }
-};
-
-// ==========================
-// BLESSINGS DATABASE
-// ==========================
-const blessingsDB = {
-  "Blessing of Swiftwalk": {
-    type: "Enchantment — Blessing",
-    rules: "If you would move through rough terrain or your movement would be impeded in any way, move normally. Skate along rails and similar things, building momentum.",
-    flavor: "Children learned to use the Railways like this, useful when some trains were beyond repair.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/070.webp"
-  },
-  "Blessing of Komorebi": {
-    type: "Enchantment — Blessing",
-    rules: "If you would cast any spell, you may sacrifice this blessing instead of paying the cost. If you lose this blessing in any way, restore life and stamina to full.",
-    flavor: "Playful cascading of shadows and light through the leaves and canopies... Ahh.",
-    sacrifice: 1,
-    active: "Active",
-    image: "cards/fronts/071.webp"
-  },
-  "Blessing of Rain": {
-    type: "Enchantment — Blessing",
-    rules: "When affected by rainfall, you may sense and influence anything else affected by rainfall. Sacrifice this blessing: instantly move yourself and nearby allies to anywhere else also affected by rainfall.",
-    flavor: "Sometimes getting wet isn't so bad, eh?",
-    sacrifice: 1,
-    active: "Both",
-    image: "cards/fronts/072.webp"
-  },
-  "Blessing of Letters": {
-    type: "Enchantment — Blessing",
-    rules: "After being afflicted by a status ailment, receive a letter or package. Sacrifice this blessing: Distract target or escape any scenario by receiving a letter or package.",
-    flavor: "The messenger is a sacred occupation across the world.",
-    sacrifice: 1,
-    active: "Both",
-    image: "cards/fronts/073.webp"
-  },
-  "Blessing of Paws": {
-    type: "Enchantment — Blessing",
-    rules: "Leave footprints, fingerprints, and any other physical evidence as if that of a cat. Sneak perfectly when unseen.",
-    flavor: "Cat gods grant the strangest blessings...",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/074.webp"
-  },
-  "Blessing of Purity": {
-    type: "Enchantment — Blessing",
-    rules: "Remove all curses. The next time you would become cursed, you may negate the curse immediately, then lose this blessing. Double patience as negotiator.",
-    flavor: "Be touched and once again untouched.",
-    sacrifice: 1,
-    active: "Passive",
-    image: "cards/fronts/075.webp"
-  },
-  "Blessing of Vita": {
-    type: "Enchantment — Blessing",
-    rules: "If you would be poisoned, gain bleed, or any other persistent negative status effect, dismiss it immediately, then sacrifice this blessing.",
-    flavor: "Be thy second chance.",
-    sacrifice: 1,
-    active: "Passive",
-    image: "cards/fronts/076.webp"
-  },
-  "Blessing of Sips": {
-    type: "Enchantment — Blessing",
-    rules: "Consuming teas, coffees, and other beverages are always pleasant and apply benefits. Abate a {B} effect after drinking.",
-    flavor: "Wine into water.",
-    sacrifice: 0,
-    active: "Active",
-    image: "cards/fronts/077.webp"
-  },
-  "Blessing of Solid Mind": {
-    type: "Enchantment — Blessing",
-    rules: "If you would become haunted or be affected by a ghost or other apparition, retain sanity and ignore negative effects.",
-    flavor: "No harm can come to those in or around the stations.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/078.webp"
-  },
-  "Blessing of the Untarnished": {
-    type: "Enchantment — Blessing",
-    rules: "You can gain this blessing only if you have never sustained a curse. When resolving: You may reroll any dice once.",
-    flavor: "Go forward and realize this wish.",
-    sacrifice: 0,
-    active: "Active",
-    image: "cards/fronts/079.webp"
-  },
-  "Blessing of a Nightmare Slayer": {
-    type: "Enchantment — Blessing",
-    rules: "If the enemy intends to attack physically, you gain quick. Sacrifice this blessing: Slay Horror or Wormridden.",
-    flavor: "The first slayers were sent to make the world more habitable.",
-    sacrifice: 1,
-    active: "Passive",
-    image: "cards/fronts/080.webp"
-  },
-  "Blessing of Oseyeris": {
-    type: "Enchantment — Blessing",
-    rules: "Gain heterochromia: Choose one more iris. Your eyes emit a faint glow.",
-    flavor: "The god or gods responsible for splitting light.",
-    sacrifice: 0,
-    active: "SPECIAL Passive",
-    image: "cards/fronts/081.webp"
-  },
-  "Blessing of Nyx": {
-    type: "Enchantment — Blessing",
-    rules: "At night, hold your breath to make no noise when moving or acting. You catch fish easily. Interest cannot fall below patience.",
-    flavor: "Overcome your fears. The night isn't so bad.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/082.webp"
-  },
-  "Blessing of Rememory": {
-    type: "Enchantment — Blessing",
-    rules: "When you obtain a spell, you may instead replace it with a different spell. Do this only once whenever you get a new spell.",
-    flavor: "Lining up the pieces... Yours, and mine.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/083.webp"
-  },
-  "Blessing of Whelm": {
-    type: "Enchantment — Blessing",
-    rules: "You can have more than 1 blessing. If you sustain a killing blow, sacrifice this card then revive with one new blessing.",
-    flavor: "Homes ruined in the name of unification, or conquest?",
-    sacrifice: 1,
-    active: "Passive",
-    image: "cards/fronts/084.webp"
-  },
-  "Blessing of Musicbox Memories": {
-    type: "Enchantment — Blessing",
-    rules: "Whenever you reveal, add 1 counter. At dawn, you may remove all counters. For every 3 removed, add treasure to the night. Sacrifice this blessing and succeed any negotiation.",
-    flavor: "Dearly beloved. I will come back, I promise.",
-    sacrifice: 1,
-    active: "Both",
-    image: "cards/fronts/085.webp"
-  },
-  "Blessing of the Paper Tiger": {
-    type: "Enchantment — Blessing",
-    rules: "If you reveal a Camp, you may create wards to fend off spirits or monsters. Occasionally, add 1 to your resolves at night. Instead of failing any negotiation, sacrifice this blessing.",
-    flavor: "An ancient phrase originally intended as a warning.",
-    sacrifice: 1,
-    active: "Passive",
-    image: "cards/fronts/086.webp"
-  },
-  "Blessing of Blackrose": {
-    type: "Enchantment — Blessing",
-    rules: "At the start of your turn, you may remove 1 {dur} from yourself or an ally. If you become wormridden, negate infection and recover all life, then sacrifice this blessing.",
-    flavor: "Lest we forget. All that remains of the species are paper imitations.",
-    sacrifice: 1,
-    active: "Passive",
-    image: "cards/fronts/087.webp"
-  },
-  "Blessing of Hollowpeak": {
-    type: "Enchantment — Blessing",
-    rules: "You are haunted by visions of a familiar place. Guided by hushed voices, you are compelled to gain soulgems. Occasionally, you may activate arcane items and ruins.",
-    flavor: "The science came from inspirations. What inspirations?",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/088.webp"
-  },
-  "Blessing of the Red Thread": {
-    type: "Enchantment — Blessing",
-    rules: "If you reveal a Story, you may resolve to your whim. You are prone to fateful encounters. Occasionally succeed as negotiator.",
-    flavor: "An ancient superstition. Why do we believe our eyes?",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/089.webp"
-  }
-};
-
-// ==========================
-// CURSES DATABASE
-// ==========================
-const cursesDB = {
-  "Curse of the Feeble One": {
-    type: "Enchantment — Curse",
-    rules: "If you would resolve anything, fail or take 1 damage.",
-    flavor: "A cut from that strange Jade metal leaves a neverending ouch.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/090.webp"
-  },
-  "Curse of Oops": {
-    type: "Enchantment — Curse",
-    rules: "If you would resolve anything, reduce the result by 1; if you would sustain three or more status ailments, remove this curse.",
-    flavor: "Accidents started happening, and they didn't stop happening.",
-    sacrifice: 0, // Can Remove - special case
-    active: "Passive",
-    image: "cards/fronts/091.webp"
-  },
-  "Curse of Despisement": {
-    type: "Enchantment — Curse",
-    rules: "Living, intelligent humanoid creatures dislike you immediately on-sight. Lose all patience instead of one.",
-    flavor: "Darn it to pieces!",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/092.webp"
-  },
-  "Curse of Hauntedness": {
-    type: "Enchantment — Curse",
-    rules: "At any possible moment, you are haunted. If you would be exorcised by any ritual, sacred land, or religious authority, remove this curse and set life to 1 until dawn.",
-    flavor: "What even is silence anymore? When last did I sleep soundly...",
-    sacrifice: 0, // Can Remove - special case
-    active: "Passive",
-    image: "cards/fronts/093.webp"
-  },
-  "Curse of Nyx": {
-    type: "Enchantment — Curse",
-    rules: "You awaken groggy and irritable. You can never be fully rested, ignore dawn. Reduce elixir durations {dur} to 1.",
-    flavor: "Ugh, I hate mornings.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/094.webp"
-  },
-  "Curse of Anx": {
-    type: "Enchantment — Curse",
-    rules: "You have negative thoughts, and are easily overwhelmed at night. Any negotiation begins with 0 interest.",
-    flavor: "All I have are negative thoughts. We are making a mistake.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/095.webp"
-  },
-  "Curse of Hypertension": {
-    type: "Enchantment — Curse",
-    rules: "If you would suffer any long-term effect (poison, bleed, toxic, etc.), double the duration {dur} of the effect.",
-    flavor: "Misery of the unhealthy. Designers were prone to this ailment.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/096.webp"
-  },
-  "Curse of Howling": {
-    type: "Enchantment — Curse",
-    rules: "Your sneezes become howls. Your sense of smell is extremely sensitive. Certain beasts avoid you at night.",
-    flavor: "Sometimes the first sign of infection.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/097.webp"
-  },
-  "Curse of Adahada": {
-    type: "Enchantment — Curse",
-    rules: "Occasionally, when you intend to take an action, {d} resolve: if you fail, take a different action.",
-    flavor: "An unquiet mind unwinds kindness.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/098.webp"
-  },
-  "Curse of Addiction": {
-    type: "Enchantment — Curse",
-    rules: "Every morning, take damage equal to the number of counters on this card. Consuming substances removes 1 counter. If you have not consumed a substance recently, place 1 counter on this card.",
-    flavor: "Trivial for those coping with trauma, ever since that day.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/099.webp"
-  },
-  "Curse of Bones": {
-    type: "Enchantment — Curse",
-    rules: "After any physical task, suffer proportional to combined strength and endurance. Occasionally sleep past dawn.",
-    flavor: "Upon retirement, many paid the price for evils they did not know.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/100.webp"
-  },
-  "Curse of Undeath": {
-    type: "Enchantment — Curse",
-    rules: "You cannot die. If life would be reduced to zero, it remains at zero; gain undead type. (Undead: you cannot regain life)",
-    flavor: "Some of the builders re-appeared. They continued their labour.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/101.webp"
-  },
-  "Curse of Syph": {
-    type: "Enchantment — Curse",
-    rules: "Occasionally, your skin mutates painfully after using light and arcane magicks. You cannot improve relationships.",
-    flavor: "Through rejection, loneliness, and ignorace, the disease kills you eventually.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/102.webp"
-  },
-  "Curse of Zan": {
-    type: "Enchantment — Curse",
-    rules: "You can gain more than one curse. If you would lose a curse, you can choose to retain it instead. Increase resolves by your curses.",
-    flavor: "Inherit the nightmare.",
-    sacrifice: 0,
-    active: "SPECIAL Passive",
-    image: "cards/fronts/103.webp"
-  },
-  "Curse of the Slayer": {
-    type: "Enchantment — Curse",
-    rules: "Gain {B} whenever you do not execute enemy targets. Slay: You may remove one {B}.",
-    flavor: "I am the storm that is approaching.",
-    sacrifice: 0,
-    active: "Both",
-    image: "cards/fronts/104.webp"
-  },
-  "Curse of Vermillion Tears": {
-    type: "Enchantment — Curse",
-    rules: "You are prone to sobbing, you are more susceptible to dread. If {B} is over 10, any negotiations cannot gain interest.",
-    flavor: "Some prefer to hire those afflicted. Streamlines business.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/105.webp"
-  },
-  "Curse of the Deadeye": {
-    type: "Enchantment — Curse",
-    rules: "When using any type of ranged ability, spell, or attack: resolve {B}. If you fail, gain {B} and miss; if you succeed, critically hit. You may lose this curse if you score a critical hit.",
-    flavor: "The reluctant were either very good or very bad at hitting targets.",
-    sacrifice: 0, // May lose on crit - special case
-    active: "Passive",
-    image: "cards/fronts/106.webp"
-  },
-  "Curse of Amor": {
-    type: "Enchantment — Curse",
-    rules: "Living things become infatuated with you, and infantilize you. Reduce resolves per relationship heart.",
-    flavor: "Demeaning and infuriating.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/107.webp"
-  },
-  "Curse of Scaleskin": {
-    type: "Enchantment — Curse",
-    rules: "Immune to bleed and poison. Friendly animals, beasts, and other creatures are afraid of you on-sight.",
-    flavor: "Some things are only monstrous on the outside.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/108.webp"
-  },
-  "Curse of Entropy": {
-    type: "Enchantment — Curse",
-    rules: "Whenever casting a spell or when using a special action, lose 1 life. Panic at night.",
-    flavor: "All things come to an end. I'm sorry.",
-    sacrifice: 0,
-    active: "Passive",
-    image: "cards/fronts/109.webp"
   }
 };
 
@@ -9178,27 +8326,6 @@ function startPlayerSync(code, slotKey) {
     }
   });
 
-  // Listen for blessed status from host
-  slotRef.child('blessed').on('value', (snap) => {
-    const isBlessed = snap.val();
-    if (isBlessed !== null && isBlessed !== undefined) {
-      saveState('isBlessed', isBlessed);
-      updateBlessedCurseUI();
-    }
-  });
-
-  // Listen for curse status from host
-  slotRef.child('curse').on('value', (snap) => {
-    const isCursed = snap.val();
-    if (isCursed !== null && isCursed !== undefined) {
-      saveState('isCursed', isCursed);
-      updateBlessedCurseUI();
-    }
-  });
-
-  // Initialize blessed/curse UI based on saved state
-  updateBlessedCurseUI();
-
   // Push player life changes → Firebase whenever life bar changes
   // We hook into the existing saveState function
   const originalSaveState = window.saveState;
@@ -9266,13 +8393,6 @@ function handlePlayerDeath() {
   inventory = inventory.filter((item, idx) => idx === 0 || idx === 1 || item.legendary);
   saveState('inventory', inventory);
   renderInventory();
-
-  // Reset blessings: clear active blessings and used pool (so player can draw new ones)
-  playerBlessings = [];
-  saveState('playerBlessings', playerBlessings);
-  usedBlessings = [];
-  saveState('usedBlessings', usedBlessings);
-  updateBlessedCurseUI(); // This will show draw button
 
   // Clear spells except legendary ones
   if (typeof spellSlots !== 'undefined') {
@@ -9849,9 +8969,6 @@ async function restorePlayerSession() {
     // Lock artefact and iris on reconnect
     lockArtefactIris();
 
-    // Initialize blessed/curse UI
-    updateBlessedCurseUI();
-
     // Resume bidirectional sync
     startPlayerSync(savedCode, savedSlot);
 
@@ -9954,52 +9071,118 @@ function showInGameActionButtons() {
 }
 */
 
-// ═══════════════════════════════════════════════════════════
-// ACT / REVEAL SYNC  —  DISABLED FOR NOW
-// The player page ACT/REVEAL buttons are currently DISABLED.
-// They will be linked to the walker page in a future update.
-// For now, only the WALKER page controls ACT/REVEAL functionality.
-// ═══════════════════════════════════════════════════════════
+// ─── In-game ACT / REVEAL buttons ──────────────────────────
+let playerActChecked = false;
+let playerRevealChecked = false;
+let walkerSlotListener = null;
 
-// TEMPORARILY DISABLED - Buttons shown but non-functional
 function showInGameActionButtons() {
   const area = document.querySelector('.join-session-area');
   if (!area || document.getElementById('playerActBtn')) return;
 
-  console.log('[DISABLED] ACT/REVEAL buttons not available - walker controls these');
-
   const wrapper = document.createElement('div');
-  wrapper.className = 'ingame-actions disabled-placeholder';
+  wrapper.className = 'ingame-actions';
   wrapper.id = 'ingameActionsWrapper';
 
   const actBtn = document.createElement('button');
-  actBtn.id        = 'playerActBtn';
-  actBtn.className = 'act-btn-player disabled';
-  actBtn.textContent = 'ACT (coming soon)';
-  actBtn.disabled  = true; // ALWAYS DISABLED - walker controls this
+  actBtn.id = 'playerActBtn';
+  actBtn.className = 'act-btn-player';
+  actBtn.textContent = 'ACT';
+  actBtn.addEventListener('click', () => togglePlayerAction('act'));
 
   const revealBtn = document.createElement('button');
-  revealBtn.id        = 'playerRevealBtn';
-  revealBtn.className = 'reveal-btn-player disabled';
-  revealBtn.textContent = 'REVEAL (coming soon)';
-  revealBtn.disabled  = true; // ALWAYS DISABLED - walker controls this
+  revealBtn.id = 'playerRevealBtn';
+  revealBtn.className = 'reveal-btn-player';
+  revealBtn.textContent = 'REVEAL';
+  revealBtn.addEventListener('click', () => togglePlayerAction('reveal'));
 
   wrapper.appendChild(actBtn);
   wrapper.appendChild(revealBtn);
   area.appendChild(wrapper);
 
-  // NO Firebase listeners - functionality disabled
-  // ACT/REVEAL is controlled entirely by the WALKER page
+  // Listen for slot changes from walker — reset buttons each new slot
+  if (activeSessionCode && !walkerSlotListener) {
+    walkerSlotListener = firebase.database()
+      .ref(`sessions/${activeSessionCode}/walkerData/slot`)
+      .on('value', snap => {
+        if (snap.val() !== null) resetPlayerActionButtons();
+      });
+  }
 }
 
-// Placeholder for compatibility - does nothing
+function togglePlayerAction(action) {
+  if (!activeSessionCode || !activePlayerSlot) return;
+
+  if (action === 'act') {
+    playerActChecked = !playerActChecked;
+    const btn = document.getElementById('playerActBtn');
+    if (btn) btn.classList.toggle('checked', playerActChecked);
+    firebase.database()
+      .ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/act`)
+      .set(playerActChecked ? 1 : 0);
+
+  } else if (action === 'reveal') {
+    playerRevealChecked = !playerRevealChecked;
+    const btn = document.getElementById('playerRevealBtn');
+    if (btn) btn.classList.toggle('checked', playerRevealChecked);
+    firebase.database()
+      .ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/reveal`)
+      .set(playerRevealChecked ? 1 : 0);
+  }
+}
+
+function resetPlayerActionButtons() {
+  playerActChecked = false;
+  playerRevealChecked = false;
+  const actBtn = document.getElementById('playerActBtn');
+  const revealBtn = document.getElementById('playerRevealBtn');
+  if (actBtn) actBtn.classList.remove('checked');
+  if (revealBtn) revealBtn.classList.remove('checked');
+  // Clear Firebase flags for this player
+  if (activeSessionCode && activePlayerSlot) {
+    firebase.database()
+      .ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`)
+      .update({ act: 0, reveal: 0 });
+  }
+}
+
 function removeInGameActionButtons() {
   document.getElementById('ingameActionsWrapper')?.remove();
+  // Detach slot listener
+  if (walkerSlotListener && activeSessionCode) {
+    firebase.database()
+      .ref(`sessions/${activeSessionCode}/walkerData/slot`)
+      .off('value', walkerSlotListener);
+    walkerSlotListener = null;
+  }
+  playerActChecked = false;
+  playerRevealChecked = false;
 }
 
+// document.addEventListener('DOMContentLoaded', () => {
+//   const inventoryBtn = document.getElementById('inventoryBtn');
+//   const mindBtn = document.getElementById('mindBtn');
+
+//   if (inventoryBtn) {
+//     inventoryBtn.addEventListener('click', () => {
+//       updateBottomStats();
+//     });
+//   }
+
+//   if (mindBtn) {
+//     mindBtn.addEventListener('click', () => {
+//       updateBottomStats();
+//     });
+//   }
+// });
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('inventoryBtn')?.addEventListener('click', () => updateBottomStats());
-  document.getElementById('mindBtn')?.addEventListener('click',      () => updateBottomStats());
+  document.getElementById('inventoryBtn')?.addEventListener('click', () => {
+    updateBottomStats();
+  });
+
+  document.getElementById('mindBtn')?.addEventListener('click', () => {
+    updateBottomStats();
+  });
 });
 
 </script>

@@ -2571,6 +2571,20 @@
   box-shadow: 0 0 10px rgba(50, 205, 50, 0.3);
 }
 
+.act-btn-player:disabled,
+.reveal-btn-player:disabled {
+  background: rgba(40,40,40,0.3);
+  border-color: rgba(90,90,90,0.5);
+  color: #777;
+  cursor: not-allowed;
+}
+
+.act-btn-player:disabled:hover,
+.reveal-btn-player:disabled:hover {
+  background: rgba(40,40,40,0.3);
+  border-color: rgba(90,90,90,0.5);
+}
+
 #coinBtn,
 #starBtn,
 #mindBtn,
@@ -8246,9 +8260,6 @@ function startPlayerSync(code, slotKey) {
   // Listen for host coin grants
   listenForCoinGrants(code, slotKey);
 
-  // Listen for whose turn it is
-  listenForTurn(code, slotKey);
-
   /* READY CHECK PARKED
   listenForReadyReset(code, slotKey);
   listenForGameStarted(code);
@@ -9072,165 +9083,52 @@ function showInGameActionButtons() {
 }
 */
 
-// ─── Turn listener ─────────────────────────────────────────
-function listenForTurn(code, slotKey) {
-  db.ref(`sessions/${code}/game`).on('value', snap => {
-    const wrapper = document.getElementById('ingameActionsWrapper');
-    if (!wrapper) return;
+// ═══════════════════════════════════════════════════════════
+// ACT / REVEAL SYNC  —  DISABLED FOR NOW
+// The player page ACT/REVEAL buttons are currently DISABLED.
+// They will be linked to the walker page in a future update.
+// For now, only the WALKER page controls ACT/REVEAL functionality.
+// ═══════════════════════════════════════════════════════════
 
-    if (!snap.exists()) return;
-    const game = snap.val();
-    if (!game.active) return;
-
-    const isMyTurn = game.currentTurn === slotKey;
-    wrapper.classList.toggle('my-turn',     isMyTurn);
-    wrapper.classList.toggle('not-my-turn', !isMyTurn);
-
-    // Reset checked state when it becomes someone else's turn
-    if (!isMyTurn) {
-      const actBtn    = document.getElementById('playerActBtn');
-      const revealBtn = document.getElementById('playerRevealBtn');
-      if (actBtn)    actBtn.classList.remove('checked');
-      if (revealBtn) revealBtn.classList.remove('checked');
-      playerActChecked    = false;
-      playerRevealChecked = false;
-    }
-  });
-
-  // Live sync: reflect act/reveal written by walker back onto player buttons
-  db.ref(`sessions/${code}/players/${slotKey}/act`).on('value', snap => {
-    const val = snap.val();
-    const btn = document.getElementById('playerActBtn');
-    if (!btn) return;
-    const checked = val === 1;
-    playerActChecked = checked;
-    btn.classList.toggle('checked', checked);
-  });
-
-  db.ref(`sessions/${code}/players/${slotKey}/reveal`).on('value', snap => {
-    const val = snap.val();
-    const btn = document.getElementById('playerRevealBtn');
-    if (!btn) return;
-    const checked = val === 1;
-    playerRevealChecked = checked;
-    btn.classList.toggle('checked', checked);
-  });
-}
-
-// ─── In-game ACT / REVEAL buttons ──────────────────────────
-let playerActChecked = false;
-let playerRevealChecked = false;
-let walkerSlotListener = null;
-
+// TEMPORARILY DISABLED - Buttons shown but non-functional
 function showInGameActionButtons() {
   const area = document.querySelector('.join-session-area');
   if (!area || document.getElementById('playerActBtn')) return;
 
+  console.log('[DISABLED] ACT/REVEAL buttons not available - walker controls these');
+
   const wrapper = document.createElement('div');
-  wrapper.className = 'ingame-actions';
+  wrapper.className = 'ingame-actions disabled-placeholder';
   wrapper.id = 'ingameActionsWrapper';
 
   const actBtn = document.createElement('button');
-  actBtn.id = 'playerActBtn';
-  actBtn.className = 'act-btn-player';
-  actBtn.textContent = 'ACT';
-  actBtn.addEventListener('click', () => togglePlayerAction('act'));
+  actBtn.id        = 'playerActBtn';
+  actBtn.className = 'act-btn-player disabled';
+  actBtn.textContent = 'ACT (coming soon)';
+  actBtn.disabled  = true; // ALWAYS DISABLED - walker controls this
 
   const revealBtn = document.createElement('button');
-  revealBtn.id = 'playerRevealBtn';
-  revealBtn.className = 'reveal-btn-player';
-  revealBtn.textContent = 'REVEAL';
-  revealBtn.addEventListener('click', () => togglePlayerAction('reveal'));
+  revealBtn.id        = 'playerRevealBtn';
+  revealBtn.className = 'reveal-btn-player disabled';
+  revealBtn.textContent = 'REVEAL (coming soon)';
+  revealBtn.disabled  = true; // ALWAYS DISABLED - walker controls this
 
   wrapper.appendChild(actBtn);
   wrapper.appendChild(revealBtn);
   area.appendChild(wrapper);
 
-  // Listen for slot changes from walker — reset buttons on each new slot
-  if (activeSessionCode && !walkerSlotListener) {
-    let walkerSlotInitialized = false;
-    walkerSlotListener = firebase.database()
-      .ref(`sessions/${activeSessionCode}/walkerData/slot`)
-      .on('value', snap => {
-        if (!walkerSlotInitialized) { walkerSlotInitialized = true; return; }
-        if (snap.val() !== null) resetPlayerActionButtons();
-      });
-  }
+  // NO Firebase listeners - functionality disabled
+  // ACT/REVEAL is controlled entirely by the WALKER page
 }
 
-function togglePlayerAction(action) {
-  if (!activeSessionCode || !activePlayerSlot) return;
-
-  if (action === 'act') {
-    playerActChecked = !playerActChecked;
-    const btn = document.getElementById('playerActBtn');
-    if (btn) btn.classList.toggle('checked', playerActChecked);
-    firebase.database()
-      .ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/act`)
-      .set(playerActChecked ? 1 : 0);
-
-  } else if (action === 'reveal') {
-    playerRevealChecked = !playerRevealChecked;
-    const btn = document.getElementById('playerRevealBtn');
-    if (btn) btn.classList.toggle('checked', playerRevealChecked);
-    firebase.database()
-      .ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}/reveal`)
-      .set(playerRevealChecked ? 1 : 0);
-  }
-}
-
-function resetPlayerActionButtons() {
-  playerActChecked = false;
-  playerRevealChecked = false;
-  const actBtn = document.getElementById('playerActBtn');
-  const revealBtn = document.getElementById('playerRevealBtn');
-  if (actBtn) actBtn.classList.remove('checked');
-  if (revealBtn) revealBtn.classList.remove('checked');
-  // Clear Firebase flags for this player
-  if (activeSessionCode && activePlayerSlot) {
-    firebase.database()
-      .ref(`sessions/${activeSessionCode}/players/${activePlayerSlot}`)
-      .update({ act: 0, reveal: 0 });
-  }
-}
-
+// Placeholder for compatibility - does nothing
 function removeInGameActionButtons() {
   document.getElementById('ingameActionsWrapper')?.remove();
-  // Detach slot listener
-  if (walkerSlotListener && activeSessionCode) {
-    firebase.database()
-      .ref(`sessions/${activeSessionCode}/walkerData/slot`)
-      .off('value', walkerSlotListener);
-    walkerSlotListener = null;
-  }
-  playerActChecked = false;
-  playerRevealChecked = false;
 }
 
-// document.addEventListener('DOMContentLoaded', () => {
-//   const inventoryBtn = document.getElementById('inventoryBtn');
-//   const mindBtn = document.getElementById('mindBtn');
-
-//   if (inventoryBtn) {
-//     inventoryBtn.addEventListener('click', () => {
-//       updateBottomStats();
-//     });
-//   }
-
-//   if (mindBtn) {
-//     mindBtn.addEventListener('click', () => {
-//       updateBottomStats();
-//     });
-//   }
-// });
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('inventoryBtn')?.addEventListener('click', () => {
-    updateBottomStats();
-  });
-
-  document.getElementById('mindBtn')?.addEventListener('click', () => {
-    updateBottomStats();
-  });
+  document.getElementById('inventoryBtn')?.addEventListener('click', () => updateBottomStats());
+  document.getElementById('mindBtn')?.addEventListener('click',      () => updateBottomStats());
 });
 
 </script>
