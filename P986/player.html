@@ -1279,21 +1279,22 @@
 
   .blessing-card,
   .curse-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 1rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
     display: flex;
+    gap: 0.5rem;
     align-items: stretch;
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 0.75rem;
-    margin-bottom: 0.75rem;
-    overflow: hidden;
+    position: relative;
     border: 1px solid rgba(255, 255, 255, 0.12);
     transition: all 0.2s ease;
   }
 
   .blessing-card:hover,
   .curse-card:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-1px);
   }
 
   .blessing-card {
@@ -1301,7 +1302,7 @@
   }
 
   .blessing-card:hover {
-    box-shadow: 0 4px 15px rgba(255, 182, 193, 0.2);
+    box-shadow: 0 4px 15px rgba(255, 182, 193, 0.15);
   }
 
   .curse-card {
@@ -1309,28 +1310,38 @@
   }
 
   .curse-card:hover {
-    box-shadow: 0 4px 15px rgba(138, 43, 226, 0.2);
+    box-shadow: 0 4px 15px rgba(138, 43, 226, 0.15);
   }
 
   .blessing-image,
   .curse-image {
-    width: 5rem;
-    min-height: 5rem;
-    background: rgba(255, 255, 255, 0.08);
+    width: 7.6rem;
+    min-width: 3.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 0.125rem solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
     overflow: hidden;
-    position: relative;
   }
 
   .blessing-image {
-    background: linear-gradient(135deg, rgba(255, 182, 193, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(255, 182, 193, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border-color: rgba(255, 182, 193, 0.3);
   }
 
   .curse-image {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.12) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border-color: rgba(138, 43, 226, 0.3);
+  }
+
+  .blessing-image:hover,
+  .curse-image:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .blessing-image img,
@@ -1338,6 +1349,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 0.625rem;
   }
 
   .blessing-image svg,
@@ -6159,7 +6171,7 @@ function createBlessingCard(blessingName, index) {
   const activeStatus = blessingData.active || 'Passive';
 
   card.innerHTML = `
-    <div class="blessing-image">
+    <div class="blessing-image" onclick="openZoom('${blessingData.image}', '${blessingName}')">
       ${blessingData.image ? `<img src="${blessingData.image}" alt="${blessingName}" onerror="this.parentElement.innerHTML='<svg viewBox=\\'0 0 24 24\\'><path d=\\'M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z\\'/></svg>'" />` :
         '<svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>'}
     </div>
@@ -6287,7 +6299,7 @@ function createCurseCard(curseName, index) {
   const activeStatus = curseData.active || 'Passive';
 
   card.innerHTML = `
-    <div class="curse-image">
+    <div class="curse-image" onclick="openZoom('${curseData.image}', '${curseName}')">
       ${curseData.image ? `<img src="${curseData.image}" alt="${curseName}" onerror="this.parentElement.innerHTML='<svg viewBox=\\'0 0 24 24\\'><path d=\\'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z\\'/></svg>'" />` :
         '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>'}
     </div>

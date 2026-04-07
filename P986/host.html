@@ -2302,6 +2302,34 @@ h1, h2, h3, h4 {
 }
 
 /* ==========================
+   PLAYER NOTEPAD DUAL SECTION
+========================== */
+.player-notepad-server {
+  width: 100%;
+  min-height: 150px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: rgba(20, 20, 30, 0.4);
+  border: 1px solid rgba(100, 100, 120, 0.3);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  color: rgba(180, 200, 220, 0.9);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-bottom: 0.5rem;
+}
+
+.player-notepad-memo-label {
+  color: var(--accent-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  margin: 0.5rem 0 0.25rem 0;
+}
+
+/* ==========================
    RESPONSIVE ADJUSTMENTS
 ========================== */
 @media (max-width: 759px) {
@@ -2972,6 +3000,8 @@ h1, h2, h3, h4 {
       </svg>
       <span id="playerNotepadTitleText"></span>
     </h2>
+    <div class="player-notepad-server" id="playerNotepadServer"></div>
+    <div class="player-notepad-memo-label">-----memo-----</div>
     <textarea class="notepad-textarea" id="playerNotepadText" placeholder="Write player notes here..." oninput="savePlayerNotepad()"></textarea>
   </div>
 </div>
@@ -3455,6 +3485,7 @@ function confirmDelete(btn) {
       renderPlayers();
       setupDeleteButtons();
       saveState();
+      appendNotepadLog(`Host deleted ${playerName}`);
     }
   }, 50);
 }
@@ -3516,6 +3547,13 @@ function updateStat(index, stat, delta) {
 
   // Sync life changes back to player page via Firebase
   if (stat === 'life') {
+    // Check for revival (was dead, now alive)
+    const wasDead = player.life - delta <= 0;
+    const nowAlive = player.life >= 1;
+    if (wasDead && nowAlive && delta > 0) {
+      const name = player.name || `Player ${index + 1}`;
+      appendNotepadLog(`${name} lives again!`);
+    }
     pushHostLifeUpdateToFirebase(index, player.life);
   }
 
@@ -3575,6 +3613,9 @@ function killPlayer(index) {
     summary: `${name} has died. Soul: ${player.soul}.`,
     timestamp: Date.now()
   });
+  
+  // Add notepad log
+  appendNotepadLog(`${name} has been slain!`);
 
   renderPlayers();
   saveState();
@@ -3748,9 +3789,28 @@ function updateMadnessLinks() {
 // ACT MANAGEMENT
 // ==========================
 function cycleAct() {
+  const previousAct = gameState.act;
   gameState.act = (gameState.act + 1) % actStages.length;
   updateActButton();
   saveState();
+  
+  // Log villain + act messages if villain is selected
+  const villainName = document.getElementById('villainName').value;
+  if (villainName && villainDatabase[villainName]) {
+    const newAct = gameState.act;
+    const actLabel = actStages[newAct];
+    if (actLabel === '0') {
+      appendNotepadLog(`${villainName} haunts the narrative.`);
+    } else if (actLabel === 'I') {
+      appendNotepadLog(`The story of ${villainName} begins...`);
+    } else if (actLabel === 'II') {
+      appendNotepadLog(`The story of ${villainName} rises.`);
+    } else if (actLabel === 'III') {
+      appendNotepadLog(`${villainName}'s story comes to a close.`);
+    } else if (actLabel === 'Finale') {
+      appendNotepadLog(`And so the story of ${villainName} comes to an end...`);
+    }
+  }
 }
 
 function updateActButton() {
@@ -3975,6 +4035,24 @@ function villainChanged() {
   
   document.getElementById('villainCardBtn').disabled = !valid;
   document.getElementById('villainStoryBtn').disabled = !valid;
+  
+  // Log villain introduction when a villain is first selected
+  if (valid && gameState.villain !== name) {
+    gameState.villain = name;
+    // Log based on current act
+    const actLabel = actStages[gameState.act];
+    if (actLabel === '0') {
+      appendNotepadLog(`${name} haunts the narrative.`);
+    } else if (actLabel === 'I') {
+      appendNotepadLog(`The story of ${name} begins...`);
+    } else if (actLabel === 'II') {
+      appendNotepadLog(`The story of ${name} rises.`);
+    } else if (actLabel === 'III') {
+      appendNotepadLog(`${name}'s story comes to a close.`);
+    } else if (actLabel === 'Finale') {
+      appendNotepadLog(`And so the story of ${name} comes to an end...`);
+    }
+  }
 }
 
 /* Get current act from the act button */
@@ -5330,9 +5408,14 @@ function convertTextToRichText(text) {
 
 function updateEnemyName(enemyId, name) {
   const enemy = gameState.enemies.find(e => e.id === enemyId);
+  const wasEmpty = !enemy?.name;
   if (enemy) {
     enemy.name = name;
     saveState();
+    // Log when enemy gets a name for the first time
+    if (wasEmpty && name && name.trim()) {
+      appendNotepadLog(`${name} appeared!`);
+    }
   }
 }
 
@@ -5423,11 +5506,14 @@ function updateEnemyCardImage(enemyId, imageUrl) {
 }
 
 function killEnemy(enemyId) {
-  if (confirm('Are you sure you want to remove this enemy?')) {
+  const enemy = gameState.enemies.find(e => e.id === enemyId);
+  const enemyName = enemy?.name || 'Unknown Enemy';
+  if (confirm(`Are you sure you want to remove ${enemyName}?`)) {
     gameState.enemies = gameState.enemies.filter(e => e.id !== enemyId);
     renderEnemies();
     updateAddEnemyButton();
     saveState();
+    appendNotepadLog(`${enemyName} has been slain.`);
   }
 }
 
@@ -5611,6 +5697,24 @@ function saveNotepad() {
   saveState();
 }
 
+// Append a timestamped server message to the notepad
+function appendNotepadLog(message) {
+  const now = new Date();
+  const timestamp = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+  const logEntry = `[${timestamp}] ${message}\n`;
+  
+  const notepadEl = document.getElementById('notepadText');
+  if (notepadEl) {
+    // Append to existing content
+    notepadEl.value += logEntry;
+    // Auto-scroll to bottom
+    notepadEl.scrollTop = notepadEl.scrollHeight;
+    // Save to gameState
+    gameState.notepad = notepadEl.value;
+    saveState();
+  }
+}
+
 let currentPlayerIndex = -1;
 
 function togglePlayerNotepad(playerIndex) {
@@ -5620,7 +5724,9 @@ function togglePlayerNotepad(playerIndex) {
 
   // Regenerate the srvr block fresh every time the notepad is opened
   const notes = buildPlayerNotes(playerIndex);
-  document.getElementById('playerNotepadText').value = notes;
+  document.getElementById('playerNotepadServer').textContent = notes.server;
+  // Add newline after memo label so cursor starts on new line
+  document.getElementById('playerNotepadText').value = (notes.memo.startsWith('\n') ? '' : '\n') + notes.memo;
   document.getElementById('playerNotepadOverlay').classList.add('visible');
 }
 
@@ -5637,11 +5743,8 @@ function closePlayerNotepadOnOverlay(event) {
 
 function savePlayerNotepad() {
   if (currentPlayerIndex >= 0 && gameState.players[currentPlayerIndex]) {
-    const raw = document.getElementById('playerNotepadText').value;
-    const memoSep = '-----memo-----';
-    const sepIdx = raw.indexOf(memoSep);
-    // Only save what the host wrote below -----memo-----
-    const memoBody = sepIdx !== -1 ? raw.slice(sepIdx + memoSep.length) : raw;
+    // Now we only save what the host wrote in the memo textarea
+    const memoBody = document.getElementById('playerNotepadText').value;
     gameState.players[currentPlayerIndex].memoBody = memoBody;
     saveState();
   }
@@ -5986,6 +6089,9 @@ async function startHostSession() {
 
     // Show the code in place of the button
     showSessionCode(code);
+    
+    // Log session creation
+    appendNotepadLog("Hello World!");
 
     // Start listening for player join requests
     listenForPlayerJoins(code);
@@ -6278,11 +6384,13 @@ function listenForPlayerJoins(code) {
     }
 
     // Rule 3: find first empty slot, or add new if none available
+    let newSlotCreated = false;
     if (matchIndex === -1) {
       matchIndex = gameState.players.findIndex(p => !p.name || p.name.trim() === '');
       if (matchIndex === -1) {
         gameState.players.push(createPlayer(gameState.players.length + 1));
         matchIndex = gameState.players.length - 1;
+        newSlotCreated = true;
       }
     }
 
@@ -6313,6 +6421,13 @@ function listenForPlayerJoins(code) {
     renderPlayers();
     setupDeleteButtons();
     saveState();
+    
+    // Log player join
+    if (newSlotCreated) {
+      appendNotepadLog(`${name} trying to join, not enough player slots, creating new slot for ${name}.`);
+    } else {
+      appendNotepadLog(`${name} has joined!`);
+    }
 
     // ─────────────────────────────────────────────────────────────────────
     // FIX: If game is active, rebuild turnOrder to include the new player
@@ -6498,7 +6613,6 @@ function buildPlayerNotes(slotIndex) {
     log.forEach(entry => { srvr += `${entry}\n`; });
   }
 
-  srvr += `-----memo-----`;
   const memoBody = player.memoBody || '';
 
   const scatheEntries = player.scatheEntries || [];
@@ -6508,7 +6622,11 @@ function buildPlayerNotes(slotIndex) {
     scatheEntries.forEach(e => { scatheSection += `${e}\n`; });
   }
 
-  return srvr + memoBody + scatheSection;
+  // Return object with separate server and memo sections
+  return {
+    server: srvr,
+    memo: memoBody + scatheSection
+  };
 }
 
 function appendPlayerLog(slotIndex, message) {
@@ -6521,7 +6639,9 @@ function appendPlayerLog(slotIndex, message) {
   saveState();
   // Refresh notepad if open for this player
   if (typeof currentPlayerIndex !== 'undefined' && currentPlayerIndex === slotIndex) {
-    document.getElementById('playerNotepadText').value = buildPlayerNotes(slotIndex);
+    const notes = buildPlayerNotes(slotIndex);
+    document.getElementById('playerNotepadServer').textContent = notes.server;
+    document.getElementById('playerNotepadText').value = (notes.memo.startsWith('\n') ? '' : '\n') + notes.memo;
   }
 }
 
