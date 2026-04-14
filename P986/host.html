@@ -6049,10 +6049,21 @@ async function endSession() {
   const bar = document.getElementById('gameControlBar');
   if (bar) { bar.classList.remove('visible'); bar.innerHTML = ''; }
 
+  // Save code before clearing
+  const codeToClear = activeSessionCode;
   activeSessionCode = null;
   localStorage.removeItem('hostSessionCode');
   localStorage.removeItem('hostWalkerCycle');
   localStorage.removeItem('hostWalkerSlot');
+  // Clear walkerData from Firebase on reset
+  if (codeToClear) {
+    db.ref(`sessions/${codeToClear}/walkerData`).set({
+      cycle: 1, slot: 0, isNight: false, nightStep: 0, phaseMode: null
+    });
+    db.ref(`sessions/${codeToClear}/game`).update({
+      active: false, currentTurnIndex: 0, currentTurn: null
+    });
+  }
   walkerCycle = 1;
   walkerSlot  = 0;
 

@@ -3279,6 +3279,12 @@
 let activeSessionCode = null;
 let activePlayerSlot = null;
 
+// ACT/REVEAL state for walker sync
+let playerActState = 0;
+let playerRevealState = 0;
+let playerSyncCode = null;
+let playerSyncSlot = null;
+
 /**
  * Simplified Press-and-Hold Manager
  * Implements clean 2.5-second hold with progress ring and flash
@@ -9052,7 +9058,7 @@ function waitForAcceptance(code, name, artefact, iris) {
         joinBtn.style.opacity = '0';
         setTimeout(() => { joinBtn.style.display = 'none'; }, 400);
       }
-      showInGameActionButtons();
+      showInGameActionButtons(code, slotKey);
     }, 1000);
 
     // Lock artefact and iris now that session is active
@@ -9068,8 +9074,36 @@ function waitForAcceptance(code, name, artefact, iris) {
 
 function startPlayerSync(code, slotKey) {
   const slotRef = db.ref(`sessions/${code}/players/${slotKey}`);
+  const myPlayerSlot = slotKey; // e.g. 'player0'
 
-  // Listen for host ending the session
+  // ── Listen for game turn data to sync ACT/REVEAL buttons ──
+  db.ref(`sessions/${code}/game`).on('value', snap => {
+    if (!snap.exists()) return;
+    const game = snap.val();
+    if (!game.active) {
+      removeInGameActionButtons();
+      return;
+    }
+    
+    const currentTurn = game.currentTurn; // e.g. 'player0'
+    const isMyTurn = currentTurn === myPlayerSlot;
+    
+    if (isMyTurn) {
+      // It's this player's turn — show functional ACT/REVEAL buttons
+      showInGameActionButtons(code, slotKey);
+    } else {
+      // Not this player's turn — remove buttons
+      removeInGameActionButtons();
+    }
+  });
+
+  // ── Listen for ACT/REVEAL state changes from walker/other players ──
+  db.ref(`sessions/${code}/turnAction`).on('value', snap => {
+    const data = snap.val() || { act: 0, reveal: 0 };
+    syncTurnActionUI(data.act === 1, data.reveal === 1);
+  });
+
+  // ── Listen for host ending the session ──
   db.ref(`sessions/${code}/ended`).on('value', (snap) => {
     if (!snap.val()) return;
     // Session has been ended by host — unlock and reset join UI
@@ -9102,11 +9136,6 @@ function startPlayerSync(code, slotKey) {
 
     // Remove in-game ACT / REVEAL buttons if present
     removeInGameActionButtons();
-    /* READY CHECK PARKED
-    const readyBtn = document.getElementById('readyBtn');
-    if (readyBtn) { readyBtn.style.display='none'; readyBtn.textContent='Ready?'; readyBtn.classList.remove('is-ready'); }
-    playerIsReady = false;
-    */
   });
 
   // Listen for host coin grants
@@ -9855,7 +9884,7 @@ async function restorePlayerSession() {
         joinBtn.style.opacity = '0';
         setTimeout(() => { joinBtn.style.display = 'none'; }, 400);
       }
-      showInGameActionButtons();
+      showInGameActionButtons(savedCode, savedSlot);
     }, 1000);
 
     // Lock artefact and iris on reconnect
@@ -9880,139 +9909,79 @@ function setJoinStatus(type, message) {
   el.textContent = message;
 }
 
-/* ─── READY CHECK PARKED ──────────────────────────────────
-let playerIsReady = false;
-
-function toggleReady() {
-  if (!activeSessionCode || !activePlayerSlot) return;
-  playerIsReady = !playerIsReady;
-  const btn = document.getElementById('readyBtn');
-  if (playerIsReady) {
-    btn.textContent = 'READY!';
-    btn.classList.add('is-ready');
-  } else {
-    btn.textContent = 'Ready?';
-    btn.classList.remove('is-ready');
-  }
-  // Write 1 (ready) or 0 (not ready) to dedicated readyState node
-  db.ref(`sessions/${activeSessionCode}/readyState/${activePlayerSlot}`)
-    .set(playerIsReady ? 1 : 0);
-}
-
-// Listen for host resetting ready state (host pressed NO — readyState node cleared)
-function listenForReadyReset(code, slotKey) {
-  db.ref(`sessions/${code}/readyState/${slotKey}`).on('value', snap => {
-    const val = snap.val();
-    const btn = document.getElementById('readyBtn');
-    if (!btn) return;
-    if ((val === null || val === 0) && playerIsReady) {
-      playerIsReady = false;
-      btn.textContent = 'Ready?';
-      btn.classList.remove('is-ready');
-    }
-  });
-}
-
-// Listen for host starting the game — hide ready UI, show ACT + REVEAL buttons
-function listenForGameStarted(code) {
-  db.ref(`sessions/${code}/gameStarted`).on('value', snap => {
-    if (snap.val() !== true) return;
-    const readyBtn = document.getElementById('readyBtn');
-    if (readyBtn) {
-      readyBtn.style.transition = 'opacity 0.3s ease';
-      readyBtn.style.opacity = '0';
-      setTimeout(() => {
-        readyBtn.style.display = 'none';
-        readyBtn.style.opacity = '1';
-        showInGameActionButtons();
-      }, 300);
-    } else {
-      showInGameActionButtons();
-    }
-  });
-}
-
-function showInGameActionButtons() {
-  const area = document.querySelector('.join-session-area');
-  if (!area || document.getElementById('playerActBtn')) return;
-
-  const actBtn = document.createElement('button');
-  actBtn.id = 'playerActBtn';
-  actBtn.textContent = 'ACT';
-  actBtn.style.cssText = `
-    appearance:none; border:2px solid rgba(255,179,71,0.6);
-    background:rgba(255,179,71,0.12); color:#ffb347;
-    font-family:'Consolas','JetBrains Mono',monospace;
-    font-size:0.95rem; font-weight:700; letter-spacing:0.08em;
-    padding:0.5rem 1.5rem; border-radius:0.5rem; cursor:pointer;
-    transition:all 0.25s ease; text-transform:uppercase; margin-top:0.5rem;
-  `;
-
-  const revealBtn = document.createElement('button');
-  revealBtn.id = 'playerRevealBtn';
-  revealBtn.textContent = 'REVEAL';
-  revealBtn.style.cssText = `
-    appearance:none; border:2px solid rgba(255,215,0,0.5);
-    background:rgba(255,215,0,0.1); color:#ffd700;
-    font-family:'Consolas','JetBrains Mono',monospace;
-    font-size:0.95rem; font-weight:700; letter-spacing:0.08em;
-    padding:0.5rem 1.5rem; border-radius:0.5rem; cursor:pointer;
-    transition:all 0.25s ease; text-transform:uppercase;
-    margin-top:0.5rem; margin-left:0.5rem;
-  `;
-
-  area.appendChild(actBtn);
-  area.appendChild(revealBtn);
-}
-*/
-
 // ═══════════════════════════════════════════════════════════
-// ACT / REVEAL SYNC  —  DISABLED FOR NOW
-// The player page ACT/REVEAL buttons are currently DISABLED.
-// They will be linked to the walker page in a future update.
-// For now, only the WALKER page controls ACT/REVEAL functionality.
+// ACT / REVEAL SYNC WITH WALKER
 // ═══════════════════════════════════════════════════════════
-
-// TEMPORARILY DISABLED - Buttons shown but non-functional
-function showInGameActionButtons() {
+function showInGameActionButtons(code, slotKey) {
   const area = document.querySelector('.join-session-area');
-  if (!area || document.getElementById('playerActBtn')) return;
-
-  console.log('[DISABLED] ACT/REVEAL buttons not available - walker controls these');
+  if (!area) return;
+  
+  // Remove existing buttons first
+  removeInGameActionButtons();
+  
+  playerSyncCode = code;
+  playerSyncSlot = slotKey;
 
   const wrapper = document.createElement('div');
-  wrapper.className = 'ingame-actions disabled-placeholder';
+  wrapper.className = 'ingame-actions';
   wrapper.id = 'ingameActionsWrapper';
 
+  // ACT button
   const actBtn = document.createElement('button');
-  actBtn.id        = 'playerActBtn';
-  actBtn.className = 'act-btn-player disabled';
-  actBtn.textContent = 'ACT (coming soon)';
-  actBtn.disabled  = true; // ALWAYS DISABLED - walker controls this
+  actBtn.id = 'playerActBtn';
+  actBtn.className = 'act-btn-player' + (playerActState === 1 ? ' checked' : '');
+  actBtn.textContent = 'ACT';
+  actBtn.onclick = () => togglePlayerAct();
 
+  // REVEAL button
   const revealBtn = document.createElement('button');
-  revealBtn.id        = 'playerRevealBtn';
-  revealBtn.className = 'reveal-btn-player disabled';
-  revealBtn.textContent = 'REVEAL (coming soon)';
-  revealBtn.disabled  = true; // ALWAYS DISABLED - walker controls this
+  revealBtn.id = 'playerRevealBtn';
+  revealBtn.className = 'reveal-btn-player' + (playerRevealState === 1 ? ' checked' : '');
+  revealBtn.textContent = 'REVEAL';
+  revealBtn.onclick = () => togglePlayerReveal();
 
   wrapper.appendChild(actBtn);
   wrapper.appendChild(revealBtn);
   area.appendChild(wrapper);
-
-  // NO Firebase listeners - functionality disabled
-  // ACT/REVEAL is controlled entirely by the WALKER page
 }
 
-// Placeholder for compatibility - does nothing
 function removeInGameActionButtons() {
-  document.getElementById('ingameActionsWrapper')?.remove();
+  const wrapper = document.getElementById('ingameActionsWrapper');
+  if (wrapper) wrapper.remove();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('inventoryBtn')?.addEventListener('click', () => updateBottomStats());
-  document.getElementById('mindBtn')?.addEventListener('click',      () => updateBottomStats());
-});
+function togglePlayerAct() {
+  playerActState = playerActState === 1 ? 0 : 1;
+  const btn = document.getElementById('playerActBtn');
+  if (btn) btn.classList.toggle('checked', playerActState === 1);
+  syncTurnActionToFirebase();
+}
+
+function togglePlayerReveal() {
+  playerRevealState = playerRevealState === 1 ? 0 : 1;
+  const btn = document.getElementById('playerRevealBtn');
+  if (btn) btn.classList.toggle('checked', playerRevealState === 1);
+  syncTurnActionToFirebase();
+}
+
+function syncTurnActionToFirebase() {
+  if (!playerSyncCode) return;
+  db.ref(`sessions/${playerSyncCode}/turnAction`).set({
+    act: playerActState,
+    reveal: playerRevealState
+  });
+}
+
+function syncTurnActionUI(actChecked, revealChecked) {
+  playerActState = actChecked ? 1 : 0;
+  playerRevealState = revealChecked ? 1 : 0;
+  
+  const actBtn = document.getElementById('playerActBtn');
+  const revealBtn = document.getElementById('playerRevealBtn');
+  
+  if (actBtn) actBtn.classList.toggle('checked', actChecked);
+  if (revealBtn) revealBtn.classList.toggle('checked', revealChecked);
+}
 
 </script>
 </body>
