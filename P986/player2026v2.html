@@ -2845,6 +2845,120 @@
   border-color: rgba(90,90,90,0.5);
 }
 
+/* MAPS Card Selection Overlay */
+#mapsCardOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 2020;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#mapsCardOverlay.visible {
+  display: flex;
+  opacity: 1;
+}
+
+.maps-card-backs {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.maps-card-back {
+  width: 100px;
+  height: calc(100px * 5 / 7);
+  background: linear-gradient(145deg, #2a2a3a, #1a1a2a);
+  border: 3px solid rgba(255, 215, 0, 0.4);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  opacity: 0.6;
+  transform: scale(0.85);
+  pointer-events: none;
+}
+
+.maps-card-back.enabled {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+  animation: cardFloat 3s ease-in-out infinite;
+}
+
+.maps-card-back:nth-child(1).enabled { animation-delay: 0s; }
+.maps-card-back:nth-child(2).enabled { animation-delay: 0.3s; }
+.maps-card-back:nth-child(3).enabled { animation-delay: 0.6s; }
+
+@keyframes cardFloat {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1) translateY(-8px); }
+}
+
+.maps-card-back.enabled:hover {
+  transform: scale(1.1) translateY(-10px);
+  border-color: #ffd700;
+  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+}
+
+.maps-card-back.selected {
+  transform: scale(1.15) translateY(-12px);
+  border-color: #4ade80;
+  box-shadow: 0 0 30px rgba(74, 222, 128, 0.8);
+  animation: none;
+}
+
+.maps-card-back.dimmed {
+  opacity: 0.3;
+  transform: scale(0.8);
+  pointer-events: none;
+}
+
+.card-letter {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ffd700;
+  text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+.maps-instruction-text {
+  font-size: 1.3rem;
+  color: #fff;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+/* Reveal button states */
+.reveal-btn-player.revealing {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.2);
+  color: #ffd700;
+  animation: pulseReveal 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseReveal {
+  0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+  50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.8); }
+}
+
+.reveal-btn-player.locked {
+  border-color: #888;
+  background: rgba(80, 80, 80, 0.3);
+  color: #888;
+  cursor: not-allowed;
+  animation: none;
+}
+
 #coinBtn,
 #starBtn,
 #mindBtn,
@@ -9093,7 +9207,7 @@ function waitForAcceptance(code, name, artefact, iris) {
         joinBtn.style.opacity = '0';
         setTimeout(() => { joinBtn.style.display = 'none'; }, 400);
       }
-      showInGameActionButtons(code, slotKey);
+      showInGameActionButtons(code, mySlotKey);
     }, 1000);
 
     // Lock artefact and iris now that session is active
@@ -9325,7 +9439,7 @@ function handlePlayerDeath() {
     npc.status = '';
   });
   saveState('npcs', npcs);
-  renderRelationships();
+  if (typeof renderRelationships === 'function') renderRelationships();
 
   // Reset traits (constellation)
   characterOptions.innate = '';
@@ -9702,7 +9816,7 @@ function onNpcNameSaved() {
       changed = true;
     }
   });
-  if (changed) { saveState('npcs', npcs); renderRelationships(); }
+  if (changed) { saveState('npcs', npcs); if (typeof renderRelationships === 'function') renderRelationships(); }
 }
 
 const _origRenderRelationships2 = renderRelationships;
@@ -9992,13 +10106,166 @@ function togglePlayerAct() {
   syncTurnActionToFirebase();
 }
 
+// ═══════════════════════════════════════════════════════════
+// MAPS CARD SELECTION OVERLAY
+// ═══════════════════════════════════════════════════════════
+
+let mapsOverlay = null;
+let mapsSelectedCard = null; // 'A', 'B', or 'C'
+let mapsRevealLocked = false; // true after player picks a card
+
+function initMapsOverlay() {
+  if (!document.getElementById('mapsCardOverlay')) {
+    const overlay = document.createElement('div');
+    overlay.id = 'mapsCardOverlay';
+    overlay.innerHTML = `
+      <div class="maps-instruction-text">Choose a card</div>
+      <div class="maps-card-backs">
+        <div class="maps-card-back" data-card="A" onclick="handleMapsCardClick('A')">
+          <span class="card-letter">A</span>
+        </div>
+        <div class="maps-card-back" data-card="B" onclick="handleMapsCardClick('B')">
+          <span class="card-letter">B</span>
+        </div>
+        <div class="maps-card-back" data-card="C" onclick="handleMapsCardClick('C')">
+          <span class="card-letter">C</span>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+  mapsOverlay = document.getElementById('mapsCardOverlay');
+}
+
+function showMapsCardOverlay() {
+  if (!mapsOverlay) initMapsOverlay();
+  
+  mapsSelectedCard = null;
+  mapsRevealLocked = false;
+  
+  // Enable cards with stagger animation
+  const cards = mapsOverlay.querySelectorAll('.maps-card-back');
+  cards.forEach((card, i) => {
+    card.classList.remove('selected', 'dimmed');
+    card.classList.add('enabled');
+    card.style.animationDelay = `${i * 0.3}s`;
+  });
+  
+  // Update instruction
+  const instruction = mapsOverlay.querySelector('.maps-instruction-text');
+  if (instruction) instruction.textContent = 'Choose a card';
+  
+  // Show overlay
+  mapsOverlay.classList.add('visible');
+  
+  // Update button to "REVEAL!" with pulse
+  const btn = document.getElementById('playerRevealBtn');
+  if (btn) {
+    btn.textContent = 'REVEAL!';
+    btn.classList.add('revealing');
+  }
+}
+
+function hideMapsCardOverlay() {
+  if (!mapsOverlay) return;
+  mapsOverlay.classList.remove('visible');
+  
+  // Disable and hide cards
+  const cards = mapsOverlay.querySelectorAll('.maps-card-back');
+  cards.forEach(card => {
+    card.classList.remove('enabled', 'selected', 'dimmed');
+  });
+  
+  // Reset button state
+  const btn = document.getElementById('playerRevealBtn');
+  if (btn) {
+    btn.textContent = 'REVEAL';
+    btn.classList.remove('revealing');
+  }
+}
+
+function handleMapsCardClick(cardType) {
+  if (mapsRevealLocked) return; // Already locked
+  
+  mapsSelectedCard = cardType;
+  
+  // Update visual: selected vs dimmed
+  const cards = mapsOverlay.querySelectorAll('.maps-card-back');
+  cards.forEach(card => {
+    if (card.dataset.card === cardType) {
+      card.classList.add('selected');
+      card.classList.remove('dimmed');
+    } else {
+      card.classList.remove('selected');
+      card.classList.add('dimmed');
+    }
+  });
+  
+  // Update instruction
+  const instruction = mapsOverlay.querySelector('.maps-instruction-text');
+  if (instruction) instruction.textContent = `Card ${cardType} selected!`;
+  
+  // Lock the selection
+  mapsRevealLocked = true;
+  
+  // Update button to locked state
+  const btn = document.getElementById('playerRevealBtn');
+  if (btn) {
+    btn.textContent = 'LOCKED';
+    btn.classList.remove('revealing');
+    btn.classList.add('locked');
+    btn.disabled = true;
+  }
+  
+  // Sync selection to Firebase for walker
+  syncMapCardSelection(cardType);
+  
+  // Hide overlay after short delay
+  setTimeout(() => {
+    hideMapsCardOverlay();
+  }, 800);
+}
+
+function syncMapCardSelection(cardType) {
+  if (!playerSyncCode) return;
+  db.ref(`sessions/${playerSyncCode}/turnAction`).update({
+    mapSelection: cardType
+  });
+}
+
+// Reset reveal state (called when player resets or new round starts)
+function resetPlayerReveal() {
+  mapsSelectedCard = null;
+  mapsRevealLocked = false;
+  
+  const btn = document.getElementById('playerRevealBtn');
+  if (btn) {
+    btn.textContent = 'REVEAL';
+    btn.classList.remove('revealing', 'locked');
+    btn.disabled = false;
+  }
+  
+  playerRevealState = 0;
+  syncTurnActionToFirebase();
+}
+
 function togglePlayerReveal() {
+  const btn = document.getElementById('playerRevealBtn');
+  if (!btn || btn.disabled || btn.classList.contains('locked')) return;
+  
   // Toggle the reveal state
   playerRevealState = playerRevealState === 1 ? 0 : 1;
-  const btn = document.getElementById('playerRevealBtn');
-  if (btn) btn.classList.toggle('checked', playerRevealState === 1);
+  btn.classList.toggle('checked', playerRevealState === 1);
   
-  // Sync to Firebase - walker will handle enabling/disabling card tray
+  // Show/hide MAPS card overlay based on state
+  if (playerRevealState === 1) {
+    showMapsCardOverlay();
+  } else {
+    hideMapsCardOverlay();
+    resetPlayerReveal();
+  }
+  
+  // Sync to Firebase
   syncTurnActionToFirebase();
 }
 
@@ -10011,14 +10278,26 @@ function syncTurnActionToFirebase() {
 }
 
 function syncTurnActionUI(actChecked, revealChecked) {
+  const prevRevealState = playerRevealState;
+
   playerActState = actChecked ? 1 : 0;
   playerRevealState = revealChecked ? 1 : 0;
-  
+
   const actBtn = document.getElementById('playerActBtn');
   const revealBtn = document.getElementById('playerRevealBtn');
-  
+
   if (actBtn) actBtn.classList.toggle('checked', actChecked);
   if (revealBtn) revealBtn.classList.toggle('checked', revealChecked);
+
+  // Mirror the overlay side-effects that togglePlayerReveal drives locally,
+  // but only when reveal state actually changes (avoids re-triggering on every Firebase echo).
+  if (prevRevealState !== playerRevealState) {
+    if (revealChecked) {
+      showMapsCardOverlay();
+    } else {
+      hideMapsCardOverlay();
+    }
+  }
 }
 
 </script>

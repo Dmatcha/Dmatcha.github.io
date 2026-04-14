@@ -711,7 +711,834 @@
     // ═══════════════════════════════════════════════════════════
     // MAP CARDS DATABASE (from maps-db.csv)
     // ═══════════════════════════════════════════════════════════
-    const MAP_CARDS_DB = [{"folder":"A","webp":"/maps/A/00.webp","typeSubtype":"Adventure ? Camp","name":"Tranquil Glade","descLeft":"Everyone regains 1 life, stamina, and mana.","descMiddle":"","descRight":"","bumper":"A serene clearing bathed in soft sunlight...","flavour":"Enjoy a peaceful moment. Precious. Fleeting."},{"folder":"A","webp":"/maps/A/01.webp","typeSubtype":"Adventure ? Camp","name":"Tranquil Glade","descLeft":"Everyone regains 1 life, stamina, and energy for every Adventure so far.","descMiddle":"","descRight":"","bumper":"A serene clearing bathed in soft sunlight...","flavour":"Relax and enjoy the beautiful scenery. Smells nice."},{"folder":"A","webp":"/maps/A/02.webp","typeSubtype":"Adventure ? Discovery","name":"Hidden Cache","descLeft":"If the revealer has no equipment, find a 'basic' or 'simple' equipment.","descMiddle":"","descRight":"Otherwise, find some coins.","bumper":"A concealed stash of supplies...","flavour":"Forgotten, or hidden in hurry?"},{"folder":"A","webp":"/maps/A/03.webp","typeSubtype":"Adventure ? Discovery","name":"Lost Lockbox","descLeft":"Pick up the box, take this with you as a quest item.","descMiddle":"If anyone has a key, you may open the box to gain a non-equipment item.","descRight":"Attempt to break open the box.","bumper":"Was once cherished by someone... Maybe...","flavour":"Forgotten, or hidden in hurry? Seems valuable."},{"folder":"A","webp":"/maps/A/04.webp","typeSubtype":"Adventure ? Event","name":"Wandering Merchant","descLeft":"If near a village, town, or city: You may sell wares to the merchant.","descMiddle":"","descRight":"Otherwise: \nThe merchant offers to sell you wares.","bumper":"A friendly trader offers goods from distant lands...","flavour":"You hear the jingling and jangling long before you see him."},{"folder":"A","webp":"/maps/A/05.webp","typeSubtype":"Adventure ? Event","name":"Wandering Merchant","descLeft":"If the revealer is blessed: Receive a free item.","descMiddle":"","descRight":"Otherwise: \nThe merchant offers to sell you wares.","bumper":"A savvy trader offers goods from distant lands...","flavour":"Buying something would definitely lighten the load."},{"folder":"A","webp":"/maps/A/06.webp","typeSubtype":"Adventure ? Event","name":"The Stormcrow","descLeft":"Pay coins:\nYou may eat or drink at the bar. Recover life or stamina.","descMiddle":"Resolve: \nYou may swoon a stranger. Regain life, stamina, or something else...","descRight":"Otherwise, sit and listen to the bartender.","bumper":"A welcome reprieve...","flavour":"The brand is as ubiquitous as the layout!"},{"folder":"A","webp":"/maps/A/07.webp","typeSubtype":"Adventure ? Event","name":"Moonbreak","descLeft":"Gaze at the moon: All other players gain 1 {B} madness.","descMiddle":"Close eyes: Next player must reveal a Bravery or Challenge.","descRight":"If revealed at night, immediately complete the night.","bumper":"Suddenly you notice the twinkling twilight...","flavour":"Adventuring takes time. Night falls fast."},{"folder":"A","webp":"/maps/A/08.webp","typeSubtype":"Adventure ? Story","name":"Ancient Waystone","descLeft":"Flip a coin:\n\nIf heads, get a coin.","descMiddle":"Tails, lose a coin and progress the story.","descRight":"","bumper":"A moss-covered stone etched with faded runes...","flavour":"The stone guides you with true ambivalence."},{"folder":"A","webp":"/maps/A/09.webp","typeSubtype":"Adventure ? Story","name":"Abandoned Camp","descLeft":"Players with less madness than the revealer gain 1 {B} madness.","descMiddle":"Revealer may progress the story or encounter an enemy.","descRight":"","bumper":"A foreboding feeling hangs in the air...","flavour":"Eerily, this fire feels familiar."},{"folder":"B","webp":"/maps/B/10.webp","typeSubtype":"Bravery ? Camp","name":"Sacred Grove","descLeft":"If the revealer is blessed, they regain all life and stamina.","descMiddle":"","descRight":"Otherwise, everyone regains 2 life and 1 stamina.","bumper":"An area where nature's magic is palpable...","flavour":"All are welcome to revel in her majesty."},{"folder":"B","webp":"/maps/B/11.webp","typeSubtype":"Bravery ? Camp","name":"Sacred Grove","descLeft":"Revealer regains 3 life. Choose one player and they remove 1 {B}.","descMiddle":"","descRight":"If revealed during the night, become blessed.","bumper":"An area where nature's magic washes over you...","flavour":"Stay a while and breathe."},{"folder":"B","webp":"/maps/B/12.webp","typeSubtype":"Bravery ? Camp","name":"Abandoned Camp","descLeft":"Players with equipment camp normally, regain 2 life and stamina.","descMiddle":"","descRight":"If revealed during the night, encounter enemies.","bumper":"You re-light the fire easily, awakening the woods...","flavour":"Something goes bump in the night, you better be ready to bump back."},{"folder":"B","webp":"/maps/B/13.webp","typeSubtype":"Bravery ? Camp","name":"Abandoned Camp","descLeft":"Attempt to prepare a meal: Succeed and everyone regains life and stamina for each Camp.","descMiddle":"Fail: Everyone awakens with one resource pool empty.","descRight":"When revealed during the night, become cursed.","bumper":"In the firelight, you notice the barren woods betray you...","flavour":"Tonight's dinner may be a little late."},{"folder":"B","webp":"/maps/B/14.webp","typeSubtype":"Bravery ? Discovery","name":"Moss-Covered Altar","descLeft":"Offer an item, receive a blessing or curse.","descMiddle":"Offer a coin, show the current Adventure and Challenge. You may discard either.","descRight":"At night, encounter monsters as well.","bumper":"Beautiful runes are woven across the surface...","flavour":"The stone stares at you, the way a hound sniffs a favourite sock."},{"folder":"B","webp":"/maps/B/15.webp","typeSubtype":"Bravery ? Discovery","name":"Crackling Wellspring","descLeft":"You may consume a potion or elixir, then replace it with a random potion, elixir, or drink.","descMiddle":"","descRight":"Otherwise, everyone may sip from the well and regain 2 stamina.","bumper":"The well water is pristine, and electric...","flavour":"The numbing sensation mutes the taste. Hmm..."},{"folder":"B","webp":"/maps/B/16.webp","typeSubtype":"Bravery ? Discovery","name":"Library","descLeft":"Study quietly, forget 1 spell, then gain 1 random spell from a specific type.","descMiddle":"If revealed at night: Talk to the librarian; gain 1 {B} and insight.","descRight":"","bumper":"The librarian hums a tune out of sight...","flavour":"The cozy quiet comfort helps you forget the world outside."},{"folder":"B","webp":"/maps/B/17.webp","typeSubtype":"Bravery ? Discovery","name":"Library","descLeft":"Study quietly, forget one spell, then gain one spell of the same type.","descMiddle":"Discover something hidden in a book... \n(Retain as a quest)","descRight":"","bumper":"The librarian whistles a tune out of sight...","flavour":"The cozy quiet comfort reminds you of happier times."},{"folder":"B","webp":"/maps/B/18.webp","typeSubtype":"Bravery ? Event","name":"Rickety Bridge","descLeft":"Attempt to cross: Fail and reveal a Challenge immediately.","descMiddle":"Succeed: Show the current Adventure and next Bravery. Next player may choose one or discard both.","descRight":"Otherwise, the next player must choose a Bravery.","bumper":"Despite the view, maybe don't look down...","flavour":"Built long ago, it is used daily by more folks than you'd like to imagine..."},{"folder":"B","webp":"/maps/B/19.webp","typeSubtype":"Bravery ? Discovery","name":"Cliffside Hotel","descLeft":"Venture inside: Consult the book.","descMiddle":"Ring the bell and wait.","descRight":"Rob the front moneybox.","bumper":"The visage of faded beauty sleeps peacefully atop its throne...","flavour":"Curious as to why this style isn't more popular."},{"folder":"B","webp":"/maps/B/20.webp","typeSubtype":"Bravery ? Discovery","name":"Merchant Caravan","descLeft":"Persuade them to camp with you, and engage in revelry: Each player with a consumable item may offer it to fully recover one resource pool.","descMiddle":"You may sell, buy, or exchange goods.","descRight":"","bumper":"Their loot could make some royals weep.","flavour":"They have as many stories as you have drink and smoke and dance."},{"folder":"B","webp":"/maps/B/21.webp","typeSubtype":"Bravery ? Event","name":"Ancient Battlefield","descLeft":"If the revealer is blessed, discard this and reveal another Bravery immediately.","descMiddle":"","descRight":"Otherwise, encounter a non-humanoid creature.","bumper":"Critters scamper and scurry, eating history day by day.","flavour":"The weight of every life ended dries the air, \n\nholding tears hostage."},{"folder":"B","webp":"/maps/B/22.webp","typeSubtype":"Bravery ? Event","name":"Ancient Battlefield","descLeft":"If the revealer is haunted: Encounter ghosts, gain dread. (Retain as a quest)","descMiddle":"Otherwise, encounter a non-humanoid creature.","descRight":"If revealed at night, become haunted.","bumper":"Something lingers here.","flavour":"Life replaced with death. Each story snuffed out and replaced with rats. So many rats..."},{"folder":"B","webp":"/maps/B/23.webp","typeSubtype":"Bravery ? Event","name":"Quicksand!","descLeft":"Resolve, all other players must collectively spend that much stamina to rescue the revealer.","descMiddle":"","descRight":"Otherwise, revealer takes double the result as damage.","bumper":"You missed all the warning signs...","flavour":"The stuff of nightmares: A simple mistake."},{"folder":"B","webp":"/maps/B/24.webp","typeSubtype":"Bravery ? Event","name":"Rain Again","descLeft":"Everyone pays 3 stamina or 3 life to wait for the rain to stop.","descMiddle":"Otherwise, it begins to rain. Hard. Retain until dawn of the third day.","descRight":"If retained, -1 to all resolves. Or -2 if cursed.","bumper":"The clouds remind you of their might...","flavour":"Some things bloom in the rain; hard to believe with this downpour."},{"folder":"B","webp":"/maps/B/25.webp","typeSubtype":"Bravery ? Event","name":"Weary Mage","descLeft":"If the revealer has more light spells...\nRescue: Bring the injured mage to a nearby town or city.\nDefend: Fight bandits pursuing the mage.","descMiddle":"If the revealer has fewer light spells: The mage eyes you up and down, whispering with disgust. During the next Adventure or Bravery, encounter Knights I or II or III.","descRight":"","bumper":"A figure hustles toward you with erratic speed...","flavour":"Persecution is the oldest tradition."},{"folder":"B","webp":"/maps/B/26.webp","typeSubtype":"Bravery ? Event","name":"Lost Folk","descLeft":"Help them:\nDiscern their destination and allegiance. \n(Retain as a quest)","descMiddle":"","descRight":"Otherwise, wish them well and immediately reveal a new Bravery.","bumper":"Fear is barely hidden under their hoods...","flavour":"They avert their gaze and whisper quietly. What will become of them?"},{"folder":"B","webp":"/maps/B/27.webp","typeSubtype":"Bravery ? Event","name":"Lost Folk","descLeft":"Offer resources: \n\nGive money or items to aid their survival. Set this aside with those resources.\n\n(Retain as a quest)","descMiddle":"","descRight":"Otherwise, wish them well and immediately reveal a new Bravery.","bumper":"Wands at the ready veil their fear...","flavour":"They avert their gaze and whisper quickly. Tension and desperation coils around them..."},{"folder":"B","webp":"/maps/B/28.webp","typeSubtype":"Bravery ? Event","name":"Darkwood","descLeft":"Enter the Darkwood: Whoever has the lowest madness gains 1 {B} madness.","descMiddle":"Run away.\nRevealer gains 1 {B} madness.\nEncounter an enemy.","descRight":"If revealed during the night, find coins or a special item.","bumper":"Whispers and shadows plague the woods...","flavour":"Strangely, you can smell the open ocean beyond the trees."},{"folder":"B","webp":"/maps/B/29.webp","typeSubtype":"Bravery ? Event","name":"Avast!","descLeft":"Set out for the sea, you may play Adventure cards in the night this cycle.","descMiddle":"You may begin the night immediately.","descRight":"If revealed during the night, dream of the sea: Catch some fish, revealer heals life and stamina.","bumper":"A salty seabreeze sings sweetly...","flavour":"Oh that beautiful blue."},{"folder":"B","webp":"/maps/B/30.webp","typeSubtype":"Bravery ? Event","name":"Hooded Figure","descLeft":"Approach:\nGet closer and identify the stranger.","descMiddle":"Fight:\n\nTake initiative and strike!","descRight":"Call out:\nYell out to the stranger.","bumper":"A hooded figure suddenly appears at the edge of your vision...","flavour":"They haven't noticed you. Now's your chance."},{"folder":"B","webp":"/maps/B/31.webp","typeSubtype":"Bravery ? Event","name":"Seafaring","descLeft":"You must enter the night during this cycle.","descMiddle":"For every card revealed during the night, attempt to scavenge for teasure.","descRight":"Otherwise, dream of fish. The next player must reveal an Adventure or Challenge.","bumper":"A salty seabreeze slaps you in the face...","flavour":"Have you ever felt it? The thrill of flying across the waves?"},{"folder":"B","webp":"/maps/B/32.webp","typeSubtype":"Bravery ? Quest","name":"Keysmith","descLeft":"If you possess any locked item, you may show it to the keysmith.","descMiddle":"If you have a soulgem, it may interest the keysmith.","descRight":"Pay coin for a key.","bumper":"A managerie of beautiful keys dangle from every surface...","flavour":"Even when hidden deep in darkness, the truth always comes out."},{"folder":"B","webp":"/maps/B/33.webp","typeSubtype":"Bravery ? Quest","name":"A Simple Favour","descLeft":"Accept: Carry the envelope to its destination. \n(Retain as a quest)","descMiddle":"Cheat: Open the letter...\n(Begin a quest)","descRight":"Offer coin or items, assisting the courier in their delivery.","bumper":"A sudden yet strangely honest request...","flavour":"Some see trickery when there is none. Others are just naturally gifted liars."},{"folder":"B","webp":"/maps/B/34.webp","typeSubtype":"Bravery ? Story","name":"Forked Path","descLeft":"If the revealer is\nboth blessed AND cursed, progress the story.","descMiddle":"","descRight":"Then, the next player must reveal an Adventure or Challenge.","bumper":"Proceed with caution...","flavour":"Often our fates are decided by simple acts of disobedience."},{"folder":"B","webp":"/maps/B/35.webp","typeSubtype":"Bravery ? Story","name":"Forked Path","descLeft":"If the revealer is not both cursed AND blessed, progress the story.","descMiddle":"","descRight":"Then, the next player must reveal an Adventure or Challenge.","bumper":"A decision looms ahead...","flavour":"Little did they know, this one moment spelled their doom."},{"folder":"B","webp":"/maps/B/36.webp","typeSubtype":"Bravery ? Story","name":"Knight Escort","descLeft":"Attack the escort. \nFlip a coin:\nHeads: Fight two Knights II.\nTails: Fight two Knights I.","descMiddle":"Follow the escort.\nProgress the story.","descRight":"","bumper":"Plans of robbery are snuffed out when met by their gaze...","flavour":"The harmony of their metal march rings in your chest."},{"folder":"B","webp":"/maps/B/37.webp","typeSubtype":"Bravery ? Story","name":"Knight Escort","descLeft":"Attack the escort. \nFlip a coin:\nHeads: Fight one Knights III.\nTails: Fight one Knights I and II.","descMiddle":"Follow the escort.\nProgress the story.","descRight":"","bumper":"Attempts at inquiry are snuffed out by many hooves...","flavour":"The harmony of their metal march pounds in your chest."},{"folder":"B","webp":"/maps/B/38.webp","typeSubtype":"Bravery ? Story","name":"Carriage Caravan","descLeft":"Pay coin:\nRevisit any Adventure or Bravery or Challenge revealed this cycle immediately.","descMiddle":"Otherwise:\nProgress the story by encountering a friend or foe.","descRight":"","bumper":"The rumbling of the horses deafens the mind...","flavour":"Despite any weariness, the steeds carry on with pride."},{"folder":"B","webp":"/maps/B/39.webp","typeSubtype":"Bravery ? Story","name":"Moral Dilemma","descLeft":"You may attempt to rescue the children.","descMiddle":"You may help the knights capture the children.","descRight":"Otherwise, you may hide and watch the ordeal.","bumper":"A trio of armoured mounties pursues children...","flavour":"If you had the chance to change your fate, would you?"},{"folder":"C","webp":"/maps/C/40.webp","typeSubtype":"Challenge ? Camp","name":"Old Homestead","descLeft":"If revealed during the night: \nEveryone gains 2 {B} madness.","descMiddle":"","descRight":"Otherwise, enter the building, and consult the book...","bumper":"An elderly couple wave at you from the door...","flavour":"There's something strange about this place. Hmm."},{"folder":"C","webp":"/maps/C/41.webp","typeSubtype":"Challenge ? Event","name":"Wooden Effigy","descLeft":"If anyone is cursed: Resolve {B}, you can burn the effigy and remove a curse; take {B} damage if you fail.","descMiddle":"","descRight":"Otherwise, give this effigy to another player; it is a curse. They cannot reveal cards until this curse is removed.","bumper":"Come closer... It looks just like...*!*","flavour":"The sight of it sends lasting shivers down your spine."},{"folder":"C","webp":"/maps/C/42.webp","typeSubtype":"Challenge ? Discovery","name":"Moss-covered Altar","descLeft":"If blessed, you may offer an equipment, then consult the book.","descMiddle":"If cursed, you may offer an item, then consult the book.","descRight":"If revealed during the night, you may immediately complete the night.","bumper":"Soon, the altar shall be consumed...","flavour":"Foliage grows voraciously, feeding off the energies slumbering within."},{"folder":"C","webp":"/maps/C/43.webp","typeSubtype":"Challenge ? Discovery","name":"Library","descLeft":"When revealed at night: Forget two spells, gain two random spells.","descMiddle":"Talk to librarian: All other players may forget a spell and gain a random spell.","descRight":"Nap, remove \n\n1 {B}.","bumper":"The librarian mumbles quietly out of sight...","flavour":"The cozy quiet comfort helps you forget the world outside."},{"folder":"C","webp":"/maps/C/44.webp","typeSubtype":"Challenge ? Discovery","name":"Library","descLeft":"Study history: Show the next Bravery and Challenge. You may discard them.","descMiddle":"Study magicks: Choose a player, gain a copy of one of their spells.","descRight":"If the revealer is cursed: Hum the tune of the librarian, gain {B} and all others gain 1 life.","bumper":"The librarian hums a tune out of sight...","flavour":"The cozy quiet comfort helps you remember the joy of learning."},{"folder":"C","webp":"/maps/C/45.webp","typeSubtype":"Challenge ? Discovery","name":"Holy Moment","descLeft":"Participate: Lose all mana & stamina. At night, slay any enemy once.","descMiddle":"Interrupt: Lose half your life, steal one of three items.","descRight":"Good tidings: Everyone donates coins. Add this to the loot at night.","bumper":"A most sacred ceremony unfolds before you...","flavour":"Reverence and jubilation bloom in equal measure."},{"folder":"C","webp":"/maps/C/46.webp","typeSubtype":"Challenge ? Discovery","name":"Mysterious Ruins","descLeft":"Spelunk, resolve twice.\n1~4: Encounter that many Pico.\n5~10: Random item.","descMiddle":"11~12: Random gem.\n13~19: Coins\n20: Encounter one Ruined.","descRight":"Then, everyone regains 1 energy.","bumper":"Crumbling structures hint at a forgotten civilization...","flavour":"The sounds of strange machinations quack and bark somehwere deep within..."},{"folder":"C","webp":"/maps/C/47.webp","typeSubtype":"Challenge ? Discovery","name":"Mysterious Ruins","descLeft":"Spelunk, resolve twice.\n2~7: Find nothing.\n8~19: Find \n\nan elixir.","descMiddle":"1 or 20: Find a bizarre object. \n(Retain as a quest)","descRight":"Then, everyone regains 3 energy.","bumper":"Crumbling structures hint at a forgotten civilization...","flavour":"You feel the doom of peoples long forgotten..."},{"folder":"C","webp":"/maps/C/48.webp","typeSubtype":"Challenge ? Event","name":"Skyfire Spire","descLeft":"Offer an item as tribute to the flame, then continue onward.","descMiddle":"Deny the flame: \nSet stamina to zero. Take damage equal to all your items.","descRight":"","bumper":"The flame whispers and twists angrily...","flavour":"Used as a waypoint and guide, has become gluttonous and spoiled."},{"folder":"C","webp":"/maps/C/49.webp","typeSubtype":"Challenge ? Event","name":"Skyfire Spire","descLeft":"Reignite the flame by offering an item, song, or dance. Immediately revisit any card in the cycle.","descMiddle":"Feed the flame nearby foliage, immediately discard the current Adventure and Bravery.","descRight":"","bumper":"The flame beckons and wanes sleepily...","flavour":"Used as a waypoint and guide, yearns to burn bright once more."},{"folder":"C","webp":"/maps/C/50.webp","typeSubtype":"Challenge ? Event","name":"Lair","descLeft":"You may venture inside, seeking treasure. Encounter beasts.","descMiddle":"","descRight":"Otherwise, try to sneak past the lair.","bumper":"A once great hideout has become a nest for beasts...","flavour":"The brave enter. The clever leave. And the cunning reap the rewards."},{"folder":"C","webp":"/maps/C/51.webp","typeSubtype":"Challenge ? Event","name":"Lair","descLeft":"You may venture inside, seeking treasure. Encounter lizards.","descMiddle":"","descRight":"Otherwise, try to \n\nsneak past the lair.","bumper":"Some make their homes deep beneath the earth...","flavour":"A plethora of bones line the walls, a morbid decor."},{"folder":"C","webp":"/maps/C/52.webp","typeSubtype":"Challenge ? Event","name":"Mysterious Ruins","descLeft":"The revealer may attempt to open the door using Arcane or a Soulgem.\nConsult the book.","descMiddle":"Otherwise, take {B} damage and gain 1 {B}.","descRight":"Then, everyone regains 1 energy.","bumper":"A large stone door covered in old runes stands before you...","flavour":"Crumbling structures hint at a forgotten civilization..."},{"folder":"C","webp":"/maps/C/53.webp","typeSubtype":"Challenge ? Event","name":"Illegal Arena","descLeft":"Bet coins and fight as a team.","descMiddle":"Bet coins on a monster fight.","descRight":"Ask about the strange aberrations.","bumper":"The bouncer looks like the toughest one here...","flavour":"Unsanctioned. Unseemly. Unsanitary."},{"folder":"C","webp":"/maps/C/54.webp","typeSubtype":"Challenge ? Event","name":"The Collector","descLeft":"Offer equipment or rare item for exchange.","descMiddle":"Buy a rare item or equipment.","descRight":"Attempt to steal.","bumper":"Your senses are overwhelmed by the sheer number of *things*...","flavour":"Whether it be one of the many, or one of the few, the collector speaks of anything's uniqueness with fervor."},{"folder":"C","webp":"/maps/C/55.webp","typeSubtype":"Challenge ? Event","name":"Stormy Sky","descLeft":"If at sea, everyone must pay 3 stamina to endure a storm, or take 5 damage.","descMiddle":"If in a city, town, or village, everyone pays coin to stay at an inn.","descRight":"Otherwise, everyone must pay 3 stamina to run to a safe area. The next player must reveal an Adventure.","bumper":"These clounds look angry. Very angry...","flavour":"The wind and rain bite at your face, as if a pack of cackling ghosts flew all around you."},{"folder":"C","webp":"/maps/C/56.webp","typeSubtype":"Challenge ? Fight","name":"Ambush!","descLeft":"If at sea, summon a Vostrodile with quick. Resolve three times, taking the highest result.","descMiddle":"If in the wilds:\nEncounter a group of quick beasts with a high life total.","descRight":"If in a city, town, or village:\nEncounter a group of humanoids.","bumper":"You've been caught unawares. Survive.","flavour":"The cold electric fear pierces each muscle, twists each nerve."},{"folder":"C","webp":"/maps/C/57.webp","typeSubtype":"Challenge ? Fight","name":"Prepare Yourselves!","descLeft":"If at sea, summon a Vostrodile with quick. Resolve twice, taking the average.","descMiddle":"If in the wilds:\nEncounter a few beasts with life total higher than the party's stamina total.","descRight":"If in a city, town, or village:\nEncounter a few humanoids with life total higher than the party's stamina total.","bumper":"A battle approaches. get ready.","flavour":"You've got a fighting chance."},{"folder":"C","webp":"/maps/C/58.webp","typeSubtype":"Challenge ? Fight","name":"Upper Hand!","descLeft":"If at sea, summon a Vostrodile with stun. Resolve twice, taking the worst result.","descMiddle":"If in the wilds:\nEncounter a single beast with life higher than the party's stamina total.","descRight":"If in a city, town, or village:\nEncounter humanoids, do not activate abilities.","bumper":"Quick! Prepare for a pre-emptive strike!","flavour":"The element of surprise is wonderful when it tips in your favour..."},{"folder":"C","webp":"/maps/C/59.webp","typeSubtype":"Challenge ? Fight","name":"Formidable Opponent","descLeft":"Revealer acts first, followed by enemies. Choose a big or strong encounter.","descMiddle":"Big: Enemies with life higher than the highest player's life.","descRight":"Strong: Enemies with power higher than the highest player's combined strength and skill.","bumper":"The ominous aura crawls and infects all around you...","flavour":"These are the moments we can never forget."},{"folder":"C","webp":"/maps/C/60.webp","typeSubtype":"Challenge ? Quest","name":"Dead Men Tell No Tales","descLeft":"Accept contract without question.","descMiddle":"Discuss contract before accepting.","descRight":"Pay to remove your own warrants or bounty.","bumper":"And women! And dead anyone, really...","flavour":"Discretion is key. Elimination too. Mostly elimination."},{"folder":"C","webp":"/maps/C/61.webp","typeSubtype":"Challenge ? Quest","name":"Headhunter","descLeft":"Yield information about persons of interest.","descMiddle":"Entrust lost folk.","descRight":"Pay for a headhunting contract.","bumper":"Scouring high and low for a certain someone...","flavour":"This seriousness. This passion. Can you trust this feeling?"},{"folder":"C","webp":"/maps/C/62.webp","typeSubtype":"Challenge ? Quest","name":"Guild Handler","descLeft":"Bring proof of eliminating a fearsome creature.","descMiddle":"Bring proof of eliminating a nuisance from an area.","descRight":"Pay for a guild contract.","bumper":"A boisterous voice beckons you over.","flavour":"Playful and exuberant like a toy auctioneer."},{"folder":"C","webp":"/maps/C/63.webp","typeSubtype":"Challenge ? Quest","name":"Precious Memento","descLeft":"Transport fragile cargo.","descMiddle":"Entrust lost cargo.","descRight":"Pay for information.","bumper":"Thousands of connections made far and wide every day.","flavour":"Often overlooked, the interconnectedness weaves around us like red thread."}];
+    const MAP_CARDS_DB = [
+  {
+    folder: "A",
+    webp: "/maps/A/00.webp",
+    type: "Adventure",
+    subtype: "Camp",
+    name: "Tranquil Glade",
+    descLeft: "Everyone regains 1 life, stamina, and mana.",
+    descMiddle: "",
+    descRight: "",
+    bumper: "A serene clearing bathed in soft sunlight...",
+    flavour: "Enjoy a peaceful moment. Precious. Fleeting."
+  },
+  {
+    folder: "A",
+    webp: "/maps/A/01.webp",
+    type: "Adventure",
+    subtype: "Camp",
+    name: "Tranquil Glade",
+    descLeft: "Everyone regains 1 life, stamina, and energy for every Adventure so far.",
+    descMiddle: "",
+    descRight: "",
+    bumper: "A serene clearing bathed in soft sunlight...",
+    flavour: "Relax and enjoy the beautiful scenery. Smells nice."
+  },
+  {
+    folder: "A",
+    webp: "/maps/A/02.webp",
+    type: "Adventure",
+    subtype: "Discovery",
+    name: "Hidden Cache",
+    descLeft: "If the revealer has no equipment, find a 'basic' or 'simple' equipment.",
+    descMiddle: "",
+    descRight: "Otherwise, find some coins.",
+    bumper: "A concealed stash of supplies...",
+    flavour: "Forgotten, or hidden in hurry?"
+  },
+  {
+    folder: "A",
+    webp: "/maps/A/03.webp",
+    type: "Adventure",
+    subtype: "Discovery",
+    name: "Lost Lockbox",
+    descLeft: "Pick up the box, take this with you as a quest item.",
+    descMiddle: "If anyone has a key, you may open the box to gain a non-equipment item.",
+    descRight: "Attempt to break open the box.",
+    bumper: "Was once cherished by someone... Maybe...",
+    flavour: "Forgotten, or hidden in hurry? Seems valuable."
+  },
+  {
+    folder: "A",
+    webp: "/maps/A/04.webp",
+    type: "Adventure",
+    subtype: "Event",
+    name: "Wandering Merchant",
+    descLeft: "If near a village, town, or city: You may sell wares to the merchant.",
+    descMiddle: "",
+    descRight: `Otherwise: 
+The merchant offers to sell you wares.`,
+    bumper: "A friendly trader offers goods from distant lands...",
+    flavour: "You hear the jingling and jangling long before you see him."
+  },
+  {
+    folder: "A",
+    webp: "/maps/A/05.webp",
+    type: "Adventure",
+    subtype: "Event",
+    name: "Wandering Merchant",
+    descLeft: "If the revealer is blessed: Receive a free item.",
+    descMiddle: "",
+    descRight: `Otherwise: 
+The merchant offers to sell you wares.`,
+    bumper: "A savvy trader offers goods from distant lands...",
+    flavour: "Buying something would definitely lighten the load."
+  },
+  {
+    folder: "A",
+    webp: "/maps/A/06.webp",
+    type: "Adventure",
+    subtype: "Event",
+    name: "The Stormcrow",
+    descLeft: `Pay coins:
+You may eat or drink at the bar. Recover life or stamina.`,
+    descMiddle: `Resolve: 
+You may swoon a stranger. Regain life, stamina, or something else...`,
+    descRight: "Otherwise, sit and listen to the bartender.",
+    bumper: "A welcome reprieve...",
+    flavour: "The brand is as ubiquitous as the layout!"
+  },
+  {
+    folder: "A",
+    webp: "/maps/A/07.webp",
+    type: "Adventure",
+    subtype: "Event",
+    name: "Moonbreak",
+    descLeft: "Gaze at the moon: All other players gain 1 {B} madness.",
+    descMiddle: "Close eyes: Next player must reveal a Bravery or Challenge.",
+    descRight: "If revealed at night, immediately complete the night.",
+    bumper: "Suddenly you notice the twinkling twilight...",
+    flavour: "Adventuring takes time. Night falls fast."
+  },
+  {
+    folder: "A",
+    webp: "/maps/A/08.webp",
+    type: "Adventure",
+    subtype: "Story",
+    name: "Ancient Waystone",
+    descLeft: `Flip a coin:
+
+If heads, get a coin.`,
+    descMiddle: "Tails, lose a coin and progress the story.",
+    descRight: "",
+    bumper: "A moss-covered stone etched with faded runes...",
+    flavour: "The stone guides you with true ambivalence."
+  },
+  {
+    folder: "A",
+    webp: "/maps/A/09.webp",
+    type: "Adventure",
+    subtype: "Story",
+    name: "Abandoned Camp",
+    descLeft: "Players with less madness than the revealer gain 1 {B} madness.",
+    descMiddle: "Revealer may progress the story or encounter an enemy.",
+    descRight: "",
+    bumper: "A foreboding feeling hangs in the air...",
+    flavour: "Eerily, this fire feels familiar."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/10.webp",
+    type: "Bravery",
+    subtype: "Camp",
+    name: "Sacred Grove",
+    descLeft: "If the revealer is blessed, they regain all life and stamina.",
+    descMiddle: "",
+    descRight: "Otherwise, everyone regains 2 life and 1 stamina.",
+    bumper: "An area where nature's magic is palpable...",
+    flavour: "All are welcome to revel in her majesty."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/11.webp",
+    type: "Bravery",
+    subtype: "Camp",
+    name: "Sacred Grove",
+    descLeft: "Revealer regains 3 life. Choose one player and they remove 1 {B}.",
+    descMiddle: "",
+    descRight: "If revealed during the night, become blessed.",
+    bumper: "An area where nature's magic washes over you...",
+    flavour: "Stay a while and breathe."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/12.webp",
+    type: "Bravery",
+    subtype: "Camp",
+    name: "Abandoned Camp",
+    descLeft: "Players with equipment camp normally, regain 2 life and stamina.",
+    descMiddle: "",
+    descRight: "If revealed during the night, encounter enemies.",
+    bumper: "You re-light the fire easily, awakening the woods...",
+    flavour: "Something goes bump in the night, you better be ready to bump back."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/13.webp",
+    type: "Bravery",
+    subtype: "Camp",
+    name: "Abandoned Camp",
+    descLeft: "Attempt to prepare a meal: Succeed and everyone regains life and stamina for each Camp.",
+    descMiddle: "Fail: Everyone awakens with one resource pool empty.",
+    descRight: "When revealed during the night, become cursed.",
+    bumper: "In the firelight, you notice the barren woods betray you...",
+    flavour: "Tonight's dinner may be a little late."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/14.webp",
+    type: "Bravery",
+    subtype: "Discovery",
+    name: "Moss-Covered Altar",
+    descLeft: "Offer an item, receive a blessing or curse.",
+    descMiddle: "Offer a coin, show the current Adventure and Challenge. You may discard either.",
+    descRight: "At night, encounter monsters as well.",
+    bumper: "Beautiful runes are woven across the surface...",
+    flavour: "The stone stares at you, the way a hound sniffs a favourite sock."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/15.webp",
+    type: "Bravery",
+    subtype: "Discovery",
+    name: "Crackling Wellspring",
+    descLeft: "You may consume a potion or elixir, then replace it with a random potion, elixir, or drink.",
+    descMiddle: "",
+    descRight: "Otherwise, everyone may sip from the well and regain 2 stamina.",
+    bumper: "The well water is pristine, and electric...",
+    flavour: "The numbing sensation mutes the taste. Hmm..."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/16.webp",
+    type: "Bravery",
+    subtype: "Discovery",
+    name: "Library",
+    descLeft: "Study quietly, forget 1 spell, then gain 1 random spell from a specific type.",
+    descMiddle: "If revealed at night: Talk to the librarian; gain 1 {B} and insight.",
+    descRight: "",
+    bumper: "The librarian hums a tune out of sight...",
+    flavour: "The cozy quiet comfort helps you forget the world outside."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/17.webp",
+    type: "Bravery",
+    subtype: "Discovery",
+    name: "Library",
+    descLeft: "Study quietly, forget one spell, then gain one spell of the same type.",
+    descMiddle: `Discover something hidden in a book... 
+(Retain as a quest)`,
+    descRight: "",
+    bumper: "The librarian whistles a tune out of sight...",
+    flavour: "The cozy quiet comfort reminds you of happier times."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/18.webp",
+    type: "Bravery",
+    subtype: "Event",
+    name: "Rickety Bridge",
+    descLeft: "Attempt to cross: Fail and reveal a Challenge immediately.",
+    descMiddle: "Succeed: Show the current Adventure and next Bravery. Next player may choose one or discard both.",
+    descRight: "Otherwise, the next player must choose a Bravery.",
+    bumper: "Despite the view, maybe don't look down...",
+    flavour: "Built long ago, it is used daily by more folks than you'd like to imagine..."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/19.webp",
+    type: "Bravery",
+    subtype: "Discovery",
+    name: "Cliffside Hotel",
+    descLeft: "Venture inside: Consult the book.",
+    descMiddle: "Ring the bell and wait.",
+    descRight: "Rob the front moneybox.",
+    bumper: "The visage of faded beauty sleeps peacefully atop its throne...",
+    flavour: "Curious as to why this style isn't more popular."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/20.webp",
+    type: "Bravery",
+    subtype: "Discovery",
+    name: "Merchant Caravan",
+    descLeft: "Persuade them to camp with you, and engage in revelry: Each player with a consumable item may offer it to fully recover one resource pool.",
+    descMiddle: "You may sell, buy, or exchange goods.",
+    descRight: "",
+    bumper: "Their loot could make some royals weep.",
+    flavour: "They have as many stories as you have drink and smoke and dance."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/21.webp",
+    type: "Bravery",
+    subtype: "Event",
+    name: "Ancient Battlefield",
+    descLeft: "If the revealer is blessed, discard this and reveal another Bravery immediately.",
+    descMiddle: "",
+    descRight: "Otherwise, encounter a non-humanoid creature.",
+    bumper: "Critters scamper and scurry, eating history day by day.",
+    flavour: `The weight of every life ended dries the air, 
+
+holding tears hostage.`
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/22.webp",
+    type: "Bravery",
+    subtype: "Event",
+    name: "Ancient Battlefield",
+    descLeft: "If the revealer is haunted: Encounter ghosts, gain dread. (Retain as a quest)",
+    descMiddle: "Otherwise, encounter a non-humanoid creature.",
+    descRight: "If revealed at night, become haunted.",
+    bumper: "Something lingers here.",
+    flavour: "Life replaced with death. Each story snuffed out and replaced with rats. So many rats..."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/23.webp",
+    type: "Bravery",
+    subtype: "Event",
+    name: "Quicksand!",
+    descLeft: "Resolve, all other players must collectively spend that much stamina to rescue the revealer.",
+    descMiddle: "",
+    descRight: "Otherwise, revealer takes double the result as damage.",
+    bumper: "You missed all the warning signs...",
+    flavour: "The stuff of nightmares: A simple mistake."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/24.webp",
+    type: "Bravery",
+    subtype: "Event",
+    name: "Rain Again",
+    descLeft: "Everyone pays 3 stamina or 3 life to wait for the rain to stop.",
+    descMiddle: "Otherwise, it begins to rain. Hard. Retain until dawn of the third day.",
+    descRight: "If retained, -1 to all resolves. Or -2 if cursed.",
+    bumper: "The clouds remind you of their might...",
+    flavour: "Some things bloom in the rain; hard to believe with this downpour."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/25.webp",
+    type: "Bravery",
+    subtype: "Event",
+    name: "Weary Mage",
+    descLeft: `If the revealer has more light spells...
+Rescue: Bring the injured mage to a nearby town or city.
+Defend: Fight bandits pursuing the mage.`,
+    descMiddle: "If the revealer has fewer light spells: The mage eyes you up and down, whispering with disgust. During the next Adventure or Bravery, encounter Knights I or II or III.",
+    descRight: "",
+    bumper: "A figure hustles toward you with erratic speed...",
+    flavour: "Persecution is the oldest tradition."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/26.webp",
+    type: "Bravery",
+    subtype: "Event",
+    name: "Lost Folk",
+    descLeft: `Help them:
+Discern their destination and allegiance. 
+(Retain as a quest)`,
+    descMiddle: "",
+    descRight: "Otherwise, wish them well and immediately reveal a new Bravery.",
+    bumper: "Fear is barely hidden under their hoods...",
+    flavour: "They avert their gaze and whisper quietly. What will become of them?"
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/27.webp",
+    type: "Bravery",
+    subtype: "Event",
+    name: "Lost Folk",
+    descLeft: `Offer resources: 
+
+Give money or items to aid their survival. Set this aside with those resources.
+
+(Retain as a quest)`,
+    descMiddle: "",
+    descRight: "Otherwise, wish them well and immediately reveal a new Bravery.",
+    bumper: "Wands at the ready veil their fear...",
+    flavour: "They avert their gaze and whisper quickly. Tension and desperation coils around them..."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/28.webp",
+    type: "Bravery",
+    subtype: "Event",
+    name: "Darkwood",
+    descLeft: "Enter the Darkwood: Whoever has the lowest madness gains 1 {B} madness.",
+    descMiddle: `Run away.
+Revealer gains 1 {B} madness.
+Encounter an enemy.`,
+    descRight: "If revealed during the night, find coins or a special item.",
+    bumper: "Whispers and shadows plague the woods...",
+    flavour: "Strangely, you can smell the open ocean beyond the trees."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/29.webp",
+    type: "Bravery",
+    subtype: "Event",
+    name: "Avast!",
+    descLeft: "Set out for the sea, you may play Adventure cards in the night this cycle.",
+    descMiddle: "You may begin the night immediately.",
+    descRight: "If revealed during the night, dream of the sea: Catch some fish, revealer heals life and stamina.",
+    bumper: "A salty seabreeze sings sweetly...",
+    flavour: "Oh that beautiful blue."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/30.webp",
+    type: "Bravery",
+    subtype: "Event",
+    name: "Hooded Figure",
+    descLeft: `Approach:
+Get closer and identify the stranger.`,
+    descMiddle: `Fight:
+
+Take initiative and strike!`,
+    descRight: `Call out:
+Yell out to the stranger.`,
+    bumper: "A hooded figure suddenly appears at the edge of your vision...",
+    flavour: "They haven't noticed you. Now's your chance."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/31.webp",
+    type: "Bravery",
+    subtype: "Event",
+    name: "Seafaring",
+    descLeft: "You must enter the night during this cycle.",
+    descMiddle: "For every card revealed during the night, attempt to scavenge for teasure.",
+    descRight: "Otherwise, dream of fish. The next player must reveal an Adventure or Challenge.",
+    bumper: "A salty seabreeze slaps you in the face...",
+    flavour: "Have you ever felt it? The thrill of flying across the waves?"
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/32.webp",
+    type: "Bravery",
+    subtype: "Quest",
+    name: "Keysmith",
+    descLeft: "If you possess any locked item, you may show it to the keysmith.",
+    descMiddle: "If you have a soulgem, it may interest the keysmith.",
+    descRight: "Pay coin for a key.",
+    bumper: "A managerie of beautiful keys dangle from every surface...",
+    flavour: "Even when hidden deep in darkness, the truth always comes out."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/33.webp",
+    type: "Bravery",
+    subtype: "Quest",
+    name: "A Simple Favour",
+    descLeft: `Accept: Carry the envelope to its destination. 
+(Retain as a quest)`,
+    descMiddle: `Cheat: Open the letter...
+(Begin a quest)`,
+    descRight: "Offer coin or items, assisting the courier in their delivery.",
+    bumper: "A sudden yet strangely honest request...",
+    flavour: "Some see trickery when there is none. Others are just naturally gifted liars."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/34.webp",
+    type: "Bravery",
+    subtype: "Story",
+    name: "Forked Path",
+    descLeft: `If the revealer is
+both blessed AND cursed, progress the story.`,
+    descMiddle: "",
+    descRight: "Then, the next player must reveal an Adventure or Challenge.",
+    bumper: "Proceed with caution...",
+    flavour: "Often our fates are decided by simple acts of disobedience."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/35.webp",
+    type: "Bravery",
+    subtype: "Story",
+    name: "Forked Path",
+    descLeft: "If the revealer is not both cursed AND blessed, progress the story.",
+    descMiddle: "",
+    descRight: "Then, the next player must reveal an Adventure or Challenge.",
+    bumper: "A decision looms ahead...",
+    flavour: "Little did they know, this one moment spelled their doom."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/36.webp",
+    type: "Bravery",
+    subtype: "Story",
+    name: "Knight Escort",
+    descLeft: `Attack the escort. 
+Flip a coin:
+Heads: Fight two Knights II.
+Tails: Fight two Knights I.`,
+    descMiddle: `Follow the escort.
+Progress the story.`,
+    descRight: "",
+    bumper: "Plans of robbery are snuffed out when met by their gaze...",
+    flavour: "The harmony of their metal march rings in your chest."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/37.webp",
+    type: "Bravery",
+    subtype: "Story",
+    name: "Knight Escort",
+    descLeft: `Attack the escort. 
+Flip a coin:
+Heads: Fight one Knights III.
+Tails: Fight one Knights I and II.`,
+    descMiddle: `Follow the escort.
+Progress the story.`,
+    descRight: "",
+    bumper: "Attempts at inquiry are snuffed out by many hooves...",
+    flavour: "The harmony of their metal march pounds in your chest."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/38.webp",
+    type: "Bravery",
+    subtype: "Story",
+    name: "Carriage Caravan",
+    descLeft: `Pay coin:
+Revisit any Adventure or Bravery or Challenge revealed this cycle immediately.`,
+    descMiddle: `Otherwise:
+Progress the story by encountering a friend or foe.`,
+    descRight: "",
+    bumper: "The rumbling of the horses deafens the mind...",
+    flavour: "Despite any weariness, the steeds carry on with pride."
+  },
+  {
+    folder: "B",
+    webp: "/maps/B/39.webp",
+    type: "Bravery",
+    subtype: "Story",
+    name: "Moral Dilemma",
+    descLeft: "You may attempt to rescue the children.",
+    descMiddle: "You may help the knights capture the children.",
+    descRight: "Otherwise, you may hide and watch the ordeal.",
+    bumper: "A trio of armoured mounties pursues children...",
+    flavour: "If you had the chance to change your fate, would you?"
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/40.webp",
+    type: "Challenge",
+    subtype: "Camp",
+    name: "Old Homestead",
+    descLeft: `If revealed during the night: 
+Everyone gains 2 {B} madness.`,
+    descMiddle: "",
+    descRight: "Otherwise, enter the building, and consult the book...",
+    bumper: "An elderly couple wave at you from the door...",
+    flavour: "There's something strange about this place. Hmm."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/41.webp",
+    type: "Challenge",
+    subtype: "Event",
+    name: "Wooden Effigy",
+    descLeft: "If anyone is cursed: Resolve {B}, you can burn the effigy and remove a curse; take {B} damage if you fail.",
+    descMiddle: "",
+    descRight: "Otherwise, give this effigy to another player; it is a curse. They cannot reveal cards until this curse is removed.",
+    bumper: "Come closer... It looks just like...*!*",
+    flavour: "The sight of it sends lasting shivers down your spine."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/42.webp",
+    type: "Challenge",
+    subtype: "Discovery",
+    name: "Moss-covered Altar",
+    descLeft: "If blessed, you may offer an equipment, then consult the book.",
+    descMiddle: "If cursed, you may offer an item, then consult the book.",
+    descRight: "If revealed during the night, you may immediately complete the night.",
+    bumper: "Soon, the altar shall be consumed...",
+    flavour: "Foliage grows voraciously, feeding off the energies slumbering within."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/43.webp",
+    type: "Challenge",
+    subtype: "Discovery",
+    name: "Library",
+    descLeft: "When revealed at night: Forget two spells, gain two random spells.",
+    descMiddle: "Talk to librarian: All other players may forget a spell and gain a random spell.",
+    descRight: `Nap, remove 
+
+1 {B}.`,
+    bumper: "The librarian mumbles quietly out of sight...",
+    flavour: "The cozy quiet comfort helps you forget the world outside."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/44.webp",
+    type: "Challenge",
+    subtype: "Discovery",
+    name: "Library",
+    descLeft: "Study history: Show the next Bravery and Challenge. You may discard them.",
+    descMiddle: "Study magicks: Choose a player, gain a copy of one of their spells.",
+    descRight: "If the revealer is cursed: Hum the tune of the librarian, gain {B} and all others gain 1 life.",
+    bumper: "The librarian hums a tune out of sight...",
+    flavour: "The cozy quiet comfort helps you remember the joy of learning."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/45.webp",
+    type: "Challenge",
+    subtype: "Discovery",
+    name: "Holy Moment",
+    descLeft: "Participate: Lose all mana & stamina. At night, slay any enemy once.",
+    descMiddle: "Interrupt: Lose half your life, steal one of three items.",
+    descRight: "Good tidings: Everyone donates coins. Add this to the loot at night.",
+    bumper: "A most sacred ceremony unfolds before you...",
+    flavour: "Reverence and jubilation bloom in equal measure."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/46.webp",
+    type: "Challenge",
+    subtype: "Discovery",
+    name: "Mysterious Ruins",
+    descLeft: `Spelunk, resolve twice.
+1~4: Encounter that many Pico.
+5~10: Random item.`,
+    descMiddle: `11~12: Random gem.
+13~19: Coins
+20: Encounter one Ruined.`,
+    descRight: "Then, everyone regains 1 energy.",
+    bumper: "Crumbling structures hint at a forgotten civilization...",
+    flavour: "The sounds of strange machinations quack and bark somehwere deep within..."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/47.webp",
+    type: "Challenge",
+    subtype: "Discovery",
+    name: "Mysterious Ruins",
+    descLeft: `Spelunk, resolve twice.
+2~7: Find nothing.
+8~19: Find 
+
+an elixir.`,
+    descMiddle: `1 or 20: Find a bizarre object. 
+(Retain as a quest)`,
+    descRight: "Then, everyone regains 3 energy.",
+    bumper: "Crumbling structures hint at a forgotten civilization...",
+    flavour: "You feel the doom of peoples long forgotten..."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/48.webp",
+    type: "Challenge",
+    subtype: "Event",
+    name: "Skyfire Spire",
+    descLeft: "Offer an item as tribute to the flame, then continue onward.",
+    descMiddle: `Deny the flame: 
+Set stamina to zero. Take damage equal to all your items.`,
+    descRight: "",
+    bumper: "The flame whispers and twists angrily...",
+    flavour: "Used as a waypoint and guide, has become gluttonous and spoiled."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/49.webp",
+    type: "Challenge",
+    subtype: "Event",
+    name: "Skyfire Spire",
+    descLeft: "Reignite the flame by offering an item, song, or dance. Immediately revisit any card in the cycle.",
+    descMiddle: "Feed the flame nearby foliage, immediately discard the current Adventure and Bravery.",
+    descRight: "",
+    bumper: "The flame beckons and wanes sleepily...",
+    flavour: "Used as a waypoint and guide, yearns to burn bright once more."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/50.webp",
+    type: "Challenge",
+    subtype: "Event",
+    name: "Lair",
+    descLeft: "You may venture inside, seeking treasure. Encounter beasts.",
+    descMiddle: "",
+    descRight: "Otherwise, try to sneak past the lair.",
+    bumper: "A once great hideout has become a nest for beasts...",
+    flavour: "The brave enter. The clever leave. And the cunning reap the rewards."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/51.webp",
+    type: "Challenge",
+    subtype: "Event",
+    name: "Lair",
+    descLeft: "You may venture inside, seeking treasure. Encounter lizards.",
+    descMiddle: "",
+    descRight: `Otherwise, try to 
+
+sneak past the lair.`,
+    bumper: "Some make their homes deep beneath the earth...",
+    flavour: "A plethora of bones line the walls, a morbid decor."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/52.webp",
+    type: "Challenge",
+    subtype: "Event",
+    name: "Mysterious Ruins",
+    descLeft: `The revealer may attempt to open the door using Arcane or a Soulgem.
+Consult the book.`,
+    descMiddle: "Otherwise, take {B} damage and gain 1 {B}.",
+    descRight: "Then, everyone regains 1 energy.",
+    bumper: "A large stone door covered in old runes stands before you...",
+    flavour: "Crumbling structures hint at a forgotten civilization..."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/53.webp",
+    type: "Challenge",
+    subtype: "Event",
+    name: "Illegal Arena",
+    descLeft: "Bet coins and fight as a team.",
+    descMiddle: "Bet coins on a monster fight.",
+    descRight: "Ask about the strange aberrations.",
+    bumper: "The bouncer looks like the toughest one here...",
+    flavour: "Unsanctioned. Unseemly. Unsanitary."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/54.webp",
+    type: "Challenge",
+    subtype: "Event",
+    name: "The Collector",
+    descLeft: "Offer equipment or rare item for exchange.",
+    descMiddle: "Buy a rare item or equipment.",
+    descRight: "Attempt to steal.",
+    bumper: "Your senses are overwhelmed by the sheer number of *things*...",
+    flavour: "Whether it be one of the many, or one of the few, the collector speaks of anything's uniqueness with fervor."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/55.webp",
+    type: "Challenge",
+    subtype: "Event",
+    name: "Stormy Sky",
+    descLeft: "If at sea, everyone must pay 3 stamina to endure a storm, or take 5 damage.",
+    descMiddle: "If in a city, town, or village, everyone pays coin to stay at an inn.",
+    descRight: "Otherwise, everyone must pay 3 stamina to run to a safe area. The next player must reveal an Adventure.",
+    bumper: "These clounds look angry. Very angry...",
+    flavour: "The wind and rain bite at your face, as if a pack of cackling ghosts flew all around you."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/56.webp",
+    type: "Challenge",
+    subtype: "Fight",
+    name: "Ambush!",
+    descLeft: "If at sea, summon a Vostrodile with quick. Resolve three times, taking the highest result.",
+    descMiddle: `If in the wilds:
+Encounter a group of quick beasts with a high life total.`,
+    descRight: `If in a city, town, or village:
+Encounter a group of humanoids.`,
+    bumper: "You've been caught unawares. Survive.",
+    flavour: "The cold electric fear pierces each muscle, twists each nerve."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/57.webp",
+    type: "Challenge",
+    subtype: "Fight",
+    name: "Prepare Yourselves!",
+    descLeft: "If at sea, summon a Vostrodile with quick. Resolve twice, taking the average.",
+    descMiddle: `If in the wilds:
+Encounter a few beasts with life total higher than the party's stamina total.`,
+    descRight: `If in a city, town, or village:
+Encounter a few humanoids with life total higher than the party's stamina total.`,
+    bumper: "A battle approaches. get ready.",
+    flavour: "You've got a fighting chance."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/58.webp",
+    type: "Challenge",
+    subtype: "Fight",
+    name: "Upper Hand!",
+    descLeft: "If at sea, summon a Vostrodile with stun. Resolve twice, taking the worst result.",
+    descMiddle: `If in the wilds:
+Encounter a single beast with life higher than the party's stamina total.`,
+    descRight: `If in a city, town, or village:
+Encounter humanoids, do not activate abilities.`,
+    bumper: "Quick! Prepare for a pre-emptive strike!",
+    flavour: "The element of surprise is wonderful when it tips in your favour..."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/59.webp",
+    type: "Challenge",
+    subtype: "Fight",
+    name: "Formidable Opponent",
+    descLeft: "Revealer acts first, followed by enemies. Choose a big or strong encounter.",
+    descMiddle: "Big: Enemies with life higher than the highest player's life.",
+    descRight: "Strong: Enemies with power higher than the highest player's combined strength and skill.",
+    bumper: "The ominous aura crawls and infects all around you...",
+    flavour: "These are the moments we can never forget."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/60.webp",
+    type: "Challenge",
+    subtype: "Quest",
+    name: "Dead Men Tell No Tales",
+    descLeft: "Accept contract without question.",
+    descMiddle: "Discuss contract before accepting.",
+    descRight: "Pay to remove your own warrants or bounty.",
+    bumper: "And women! And dead anyone, really...",
+    flavour: "Discretion is key. Elimination too. Mostly elimination."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/61.webp",
+    type: "Challenge",
+    subtype: "Quest",
+    name: "Headhunter",
+    descLeft: "Yield information about persons of interest.",
+    descMiddle: "Entrust lost folk.",
+    descRight: "Pay for a headhunting contract.",
+    bumper: "Scouring high and low for a certain someone...",
+    flavour: "This seriousness. This passion. Can you trust this feeling?"
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/62.webp",
+    type: "Challenge",
+    subtype: "Quest",
+    name: "Guild Handler",
+    descLeft: "Bring proof of eliminating a fearsome creature.",
+    descMiddle: "Bring proof of eliminating a nuisance from an area.",
+    descRight: "Pay for a guild contract.",
+    bumper: "A boisterous voice beckons you over.",
+    flavour: "Playful and exuberant like a toy auctioneer."
+  },
+  {
+    folder: "C",
+    webp: "/maps/C/63.webp",
+    type: "Challenge",
+    subtype: "Quest",
+    name: "Precious Memento",
+    descLeft: "Transport fragile cargo.",
+    descMiddle: "Entrust lost cargo.",
+    descRight: "Pay for information.",
+    bumper: "Thousands of connections made far and wide every day.",
+    flavour: "Often overlooked, the interconnectedness weaves around us like red thread."
+  }
+];
 
     // Track used card indices per cycle to prevent repeats
     const usedCardIndices = {
