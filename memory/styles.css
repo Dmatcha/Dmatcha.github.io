@@ -1,0 +1,664 @@
+/* AFTS Website - GitBook Inspired Styling */
+:root {
+    --primary-color: #5a67d8;
+    --primary-hover: #4c51bf;
+    --text-color: #2d3748;
+    --text-light: #718096;
+    --bg-color: #ffffff;
+    --sidebar-bg: #f7fafc;
+    --border-color: #e2e8f0;
+    --code-bg: #2d3748;
+    --code-text: #e2e8f0;
+    --warning-bg: #fffaf0;
+    --warning-border: #ed8936;
+    --info-bg: #ebf8ff;
+    --info-border: #4299e1;
+    --success-bg: #f0fff4;
+    --success-border: #48bb78;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-color);
+    line-height: 1.6;
+    background: var(--bg-color);
+}
+
+/* Layout */
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 280px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
+    padding: 24px;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    top: 0;
+    left: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-logo {
+    width: 32px;
+    height: 32px;
+    background: var(--primary-color);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.sidebar-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.nav-section {
+    margin-bottom: 24px;
+}
+
+.nav-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-light);
+    margin-bottom: 8px;
+    padding-left: 12px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.nav-item:hover {
+    background: rgba(90, 103, 216, 0.1);
+    color: var(--primary-color);
+}
+
+.nav-item.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.nav-item svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.nav-item .chevron {
+    margin-left: auto;
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+}
+
+.nav-item.expanded .chevron {
+    transform: rotate(90deg);
+}
+
+/* Collapsible Nav Sections */
+.nav-section-title.collapsible {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+}
+
+.nav-section-title.collapsible:hover {
+    color: var(--text-color);
+}
+
+.nav-section-title.collapsible .chevron {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.nav-section-title.collapsible .chevron.rotated {
+    transform: rotate(90deg);
+}
+
+.nav-group {
+    margin-bottom: 16px;
+}
+
+.nav-children {
+    padding-left: 24px;
+    overflow: hidden;
+    max-height: 500px;
+    transition: max-height 0.3s ease;
+}
+
+.nav-children.collapsed {
+    max-height: 0;
+}
+
+/* Nav Children under main nav items (not under section titles) */
+.nav-item + .nav-children {
+    padding-left: 24px;
+}
+
+.nav-child {
+    display: block;
+    padding: 6px 12px;
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 13px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.nav-child:hover {
+    color: var(--primary-color);
+    background: rgba(90, 103, 216, 0.05);
+}
+
+.nav-child.active {
+    color: var(--primary-color);
+    background: rgba(90, 103, 216, 0.1);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 32px 48px;
+    max-width: 900px;
+}
+
+/* Header */
+.page-header {
+    display: none;
+}
+
+/* Content Typography */
+.content h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+.content h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-top: 40px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.content h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-top: 32px;
+    margin-bottom: 12px;
+}
+
+.content h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-top: 24px;
+    margin-bottom: 8px;
+}
+
+.content p {
+    margin-bottom: 16px;
+    font-size: 16px;
+    line-height: 1.75;
+}
+
+.content ul, .content ol {
+    margin-bottom: 16px;
+    padding-left: 24px;
+}
+
+.content li {
+    margin-bottom: 8px;
+    line-height: 1.6;
+}
+
+.content li ul, .content li ol {
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+/* Blockquotes / Callouts */
+.callout {
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin: 24px 0;
+    border-left: 4px solid;
+}
+
+.callout.warning {
+    background: var(--warning-bg);
+    border-color: var(--warning-border);
+}
+
+.callout.info {
+    background: var(--info-bg);
+    border-color: var(--info-border);
+}
+
+.callout.success {
+    background: var(--success-bg);
+    border-color: var(--success-border);
+}
+
+.callout-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.callout.warning .callout-title {
+    color: #c05621;
+}
+
+.callout.info .callout-title {
+    color: #2b6cb0;
+}
+
+.callout.success .callout-title {
+    color: #276749;
+}
+
+.callout p {
+    margin: 0;
+    font-size: 15px;
+}
+
+.callout p:last-child {
+    margin-bottom: 0;
+}
+
+/* Code Blocks */
+pre, code {
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+}
+
+pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+code {
+    background: #edf2f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #d53f8c;
+}
+
+pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+}
+
+/* Tables */
+.table-wrapper {
+    overflow-x: auto;
+    margin: 24px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+th {
+    background: var(--sidebar-bg);
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+tr:hover {
+    background: var(--sidebar-bg);
+}
+
+/* Page Navigation */
+.page-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.page-nav-link {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 20px;
+    background: var(--sidebar-bg);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: all 0.2s ease;
+    max-width: 45%;
+}
+
+.page-nav-link:hover {
+    background: rgba(90, 103, 216, 0.1);
+    transform: translateY(-2px);
+}
+
+.page-nav-link.prev {
+    align-items: flex-start;
+}
+
+.page-nav-link.next {
+    align-items: flex-end;
+    margin-left: auto;
+}
+
+.page-nav-label {
+    font-size: 12px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.page-nav-title {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+/* Table of Contents (On this page) */
+.on-this-page {
+    background: var(--sidebar-bg);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 32px;
+}
+
+.on-this-page-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-light);
+    margin-bottom: 12px;
+}
+
+.on-this-page ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.on-this-page li {
+    margin-bottom: 8px;
+}
+
+.on-this-page a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 14px;
+    display: block;
+    padding: 4px 0;
+}
+
+.on-this-page a:hover {
+    color: var(--primary-color);
+}
+
+/* Footer */
+.footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    color: var(--text-light);
+    font-size: 13px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 100;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 24px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    .mobile-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px;
+        background: var(--sidebar-bg);
+        border-bottom: 1px solid var(--border-color);
+        position: sticky;
+        top: 0;
+        z-index: 50;
+    }
+
+    .menu-toggle {
+        background: none;
+        border: none;
+        padding: 8px;
+        cursor: pointer;
+        color: var(--text-color);
+    }
+
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 90;
+    }
+
+    .sidebar-overlay.open {
+        display: block;
+    }
+}
+
+@media (max-width: 950px) {
+    .main-content {
+        max-width: calc(100vw - 48px);
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 16px;
+        max-width: 100%;
+    }
+
+    .content h1 {
+        font-size: 28px;
+    }
+
+    .content h2 {
+        font-size: 20px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .mobile-header {
+        display: none;
+    }
+}
+
+/* Search Modal */
+.search-trigger {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-light);
+    font-size: 14px;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.search-trigger:hover {
+    border-color: var(--primary-color);
+}
+
+.search-trigger svg {
+    width: 16px;
+    height: 16px;
+}
+
+.search-shortcut {
+    margin-left: auto;
+    font-size: 11px;
+    padding: 2px 6px;
+    background: var(--sidebar-bg);
+    border-radius: 4px;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--text-light);
+}
+
+.breadcrumbs a {
+    color: var(--text-light);
+    text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+    color: var(--primary-color);
+}
+
+.breadcrumbs span {
+    color: var(--text-color);
+}
+
+/* Strong and Emphasis */
+strong {
+    font-weight: 600;
+}
+
+em {
+    font-style: italic;
+}
+
+/* HR */
+hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 32px 0;
+}
+
+/* Copy Button for Code Blocks */
+.copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 4px;
+    padding: 6px 8px;
+    cursor: pointer;
+    color: var(--code-text);
+    opacity: 0.6;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.copy-btn:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.copy-btn.copied {
+    color: #48bb78;
+}
+
+/* Strikethrough */
+del {
+    text-decoration: line-through;
+    color: var(--text-light);
+}

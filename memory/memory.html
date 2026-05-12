@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reMEMORY</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="mobile-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+        <span>reMEMORY</span>
+    </div>
+
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="../index.html" class="sidebar-logo" title="Back to Home">&#9664;</a>
+                <span class="sidebar-title">reMEMORY</span>
+            </div>
+            <nav>
+                <div class="nav-section">
+                    <a href="#welcome" class="nav-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                        Welcome
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-group">
+                        <div class="nav-section-title collapsible" onclick="toggleNavSection(this)">
+                            MAIN - PART 1
+                            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                        <a href="#part1" class="nav-item">ACQUISITION & INSTALLATION</a>
+                        <div class="nav-children collapsed">
+                            <a href="#physical-checklist" class="nav-child">Physical Checklist</a>
+                            <a href="#windows-media-tool" class="nav-child">Windows Media Tool</a>
+                            <a href="#installation-account" class="nav-child">Installation</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-group">
+                        <div class="nav-section-title collapsible" onclick="toggleNavSection(this)">
+                            MAIN - PART 2
+                            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                        <a href="#part2" class="nav-item">INITIALIZATION</a>
+                        <div class="nav-children collapsed">
+                            <a href="#start" class="nav-child">START</a>
+                            <a href="#updates" class="nav-child">Updates</a>
+                            <a href="#drivers-oem" class="nav-child">Drivers</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-group">
+                        <div class="nav-section-title collapsible" onclick="toggleNavSection(this)">
+                            TIPS & TRICKS
+                            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                        <a href="#tips" class="nav-item">TIPS: Advancements</a>
+                        <div class="nav-children collapsed">
+                            <a href="#cpu-settings" class="nav-child">CPU Settings</a>
+                            <a href="#gpu-settings" class="nav-child">GPU Settings</a>
+                            <a href="#software-tools" class="nav-child">Software & Tools</a>
+                        </div>
+                        <a href="#tricks" class="nav-item">TRICKS: Extras</a>
+                        <div class="nav-children collapsed">
+                            <a href="#cloning-ssd" class="nav-child">Cloning SSDs</a>
+                            <a href="#network-disk-fix" class="nav-child">Network Disk Fix</a>
+                            <a href="#winget" class="nav-child">Winget</a>
+                            <a href="#disk-clone" class="nav-child">Disk Clone</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-group">
+                        <div class="nav-section-title collapsible" onclick="toggleNavSection(this)">
+                            ICONS
+                            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                        <a href="#icons" class="nav-item">ICONS</a>
+                        <div class="nav-children collapsed">
+                            <a href="#icon-network" class="nav-child">Network Disk</a>
+                            <a href="#icon-usb" class="nav-child">USB Drive</a>
+                            <a href="#icon-internal" class="nav-child">Internal Disk</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-group">
+                        <div class="nav-section-title collapsible" onclick="toggleNavSection(this)">
+                            AI
+                            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                        <a href="#ai-preface" class="nav-item">AI Preface</a>
+                        <a href="#ai-tools" class="nav-item">AI TOOLS</a>
+                        <div class="nav-children collapsed">
+                            <a href="#tool-01" class="nav-child">Tool 01</a>
+                            <a href="#tool-02" class="nav-child">Tool 02</a>
+                            <a href="#tool-03" class="nav-child">Tool 03</a>
+                            <a href="#tool-04" class="nav-child">Tool 04</a>
+                            <a href="#tool-05" class="nav-child">Tool 05</a>
+                            <a href="#tool-06" class="nav-child">Tool 06</a>
+                            <a href="#tool-07" class="nav-child">Tool 07</a>
+                            <a href="#tool-08" class="nav-child">Tool 08</a>
+                            <a href="#tool-09" class="nav-child">Tool 09</a>
+                            <a href="#tool-10" class="nav-child">Tool 10</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="breadcrumbs">
+                <a href="index.html">DEANSand</a>
+                <span>/</span>
+                <span>MEMORY</span>
+            </div>
+
+            <article class="content">
+                <section id="welcome">
+                    <h1>Welcome to MEMORY</h1>
+                    <div class="callout warning">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            Please read carefully. Proceed at your own risk.
+                        </div>
+                    </div>
+                    <p>This is a collection of information regarding educational information about computers and technology. Think of it as an advanced guide.</p>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Info
+                        </div>
+                        <p>There is always a risk that any of these suggestions could damage your system. Please be careful and do your best to double check your work before committing any changes!</p>
+                    </div>
+                </section>
+
+                <section id="part1">
+                    <h1>PART 1: ACQUISITION & INSTALLATION</h1>
+
+                    <h2 id="physical-checklist">Physical Checklist</h2>
+                    <p>Before diving into software, ensure you have everything physically prepared:</p>
+                    <ul>
+                        <li><strong>USB Flash Drive (8GB minimum)</strong> - This will become your Windows installation/reload drive</li>
+                        <li><strong>Stable Internet Connection</strong> - For downloading the Media Creation Tool and drivers</li>
+                        <li><strong>Backup Storage</strong> - External drive or cloud storage for important files</li>
+                    </ul>
+                    <h3>Specifically about USB flash drives:</h3>
+                    <ul>
+                        <li>USB 3.0 or higher recommended for faster read/write speeds</li>
+                        <li>8GB minimum for Windows 10, 16GB for Windows 11</li>
+                        <li>SanDisk, Samsung, or Kingston reliable brands suggested</li>
+                    </ul>
+                </section>
+
+                <section id="windows-media-tool">
+                    <h2>Windows Media Creation Tool and You</h2>
+                    <h3 id="accessing-windows">Accessing Windows to Make Windows</h3>
+                    <p>To create a Windows installation/reload USB drive, we will use Microsoft's official Media Creation Tool.</p>
+                    <div class="callout warning">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            Important
+                        </div>
+                        <p>Always use official Windows sources from Microsoft. Never download Windows ISOs from third-party websites.</p>
+                    </div>
+                    <ol>
+                        <li>Navigate to Microsoft's official Windows download page</li>
+                        <li>Download the Media Creation Tool for your desired Windows version</li>
+                        <li>Run the tool with administrator privileges</li>
+                        <li>Select "Create installation media (USB flash drive, DVD, or ISO file)"</li>
+                        <li>Choose your language, edition, and architecture (64-bit recommended)</li>
+                        <li>Select your USB flash drive from the list</li>
+                        <li>Wait for the download and creation process to complete</li>
+                        <li>Your Windows installation USB is ready!</li>
+                    </ol>
+                    <div class="callout success">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Success
+                        </div>
+                        <p>You now have a Windows 10/11 Reload USB drive ready for installation!</p>
+                    </div>
+                </section>
+
+                <section id="installation-account">
+                    <h2>Installation and User Account Creation</h2>
+                    <h3 id="installation-procedure">Installation Procedure</h3>
+                    <h4 id="getting-to-install">Getting to the install screen</h4>
+                    <ol>
+                        <li>Insert your newly created Windows USB into the target computer</li>
+                        <li>Power on and enter the Boot Menu (usually F12, F11, or F2 depending on manufacturer)</li>
+                        <li>Select the USB drive as the boot device</li>
+                        <li>Windows will begin loading from the USB</li>
+                        <li>On the first screen, select your language preferences</li>
+                        <li>Click "Install Now"</li>
+                    </ol>
+                    <div class="callout warning">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            Warning
+                        </div>
+                        <p>If you are installing over an existing system, this will ERASE all data on the selected drive. Ensure you have backups!</p>
+                    </div>
+                    <h4 id="proceeding-through">Proceeding through Installation</h4>
+                    <ol>
+                        <li>Enter your Windows product key (or skip if using Home edition)</li>
+                        <li>Accept the license terms</li>
+                        <li>Select "Custom: Install Windows only (advanced)" for a clean install</li>
+                        <li>Select the drive where you want Windows installed</li>
+                        <li>Wait for files to copy and installation to complete</li>
+                        <li>The system will restart automatically</li>
+                    </ol>
+                    <h4 id="first-time-user-setup">First time user setup</h4>
+                    <ol>
+                        <li>Configure region and keyboard layout</li>
+                        <li>Connect to WiFi or Ethernet</li>
+                        <li>Review privacy settings (configure according to your preferences)</li>
+                        <li>Create your user account and password</li>
+                        <li>Wait for final setup to complete</li>
+                        <li>You'll see the Windows desktop for the first time!</li>
+                    </ol>
+                </section>
+
+                <section id="part2">
+                    <h1>PART 2: INITIALIZATION</h1>
+                    <p>This section covers the post-installation setup steps for your Windows system.</p>
+
+                    <h2 id="start">START</h2>
+                    <p>TAKE YOUR TIME. Read everything Microsoft prompts you with.</p>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Info
+                        </div>
+                        <p>If you have access to a wired internet connection, it is recommended you connect before proceeding. This will be used to exploit the setup process to your benefit later on.</p>
+                    </div>
+                </section>
+
+                <section id="updates">
+                    <h2>Updates and Updating</h2>
+                    <p><strong>Overview:</strong> First half is about initial updates after fresh installing Windows. Second half is what to do after and can be repeated for subsequent updates.</p>
+
+                    <h3 id="first-time-desktop">Upon hitting the desktop for the first time</h3>
+                    <p>First you'll need to connect to the internet. If your system has a LAN port, connect it to your router via RJ45 cable. Otherwise use WiFi. Select your network (preferably 5GHz), input your password.</p>
+                    <p>Next, head to Windows Settings > Updates & Security. Click check for updates. Wait for all updates to download and install—some may require a reboot. After rebooting, check for updates again. Once you no longer have any updates remaining, reboot your system.</p>
+
+                    <h3 id="driver-manager">After Windows Updates Completed -> Update Drivers Using Device Manager</h3>
+                    <p>Your system will likely still be missing many key drivers. Right-click the Windows icon or press Windows key + X and select Device Manager. Open each tree branch and right click each entry, select "update driver" then "Search automatically". If a new driver is found the system will attempt to install it.</p>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Info
+                        </div>
+                        <p>While this method is tedious, it is the safest way to update drivers, and the drivers themselves are typically the most stable (DCH) versions.</p>
+                    </div>
+                    <div class="callout warning">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            Warning
+                        </div>
+                        <p>Avoid driver-updating software, as they are overwhelmingly malware.</p>
+                    </div>
+                    <h3 id="checking-updates">Checking for updates manually</h3>
+                    <p>Your laptop manufacturer or PC component OEM should have more up-to-date drivers. Write down the manufacturer for each major hardware component:</p>
+                    <h4>For Laptops:</h4>
+                    <ul>
+                        <li>Major Manufacturer (e.g. Acer, Asus, Gigabyte, MSi)</li>
+                        <li>Internet Port (e.g. Intel, Realtek, Killer)</li>
+                        <li>WiFi chip (e.g. Intel, Broadcom, Qualcomm)</li>
+                        <li>Mainboard chipset</li>
+                        <li>Graphics (e.g. Intel, nVidia, AMD)</li>
+                    </ul>
+                    <h4>For PCs:</h4>
+                    <ul>
+                        <li>Motherboard</li>
+                        <li>GPU</li>
+                        <li>Network</li>
+                    </ul>
+                </section>
+
+                <section id="drivers-oem">
+                    <h2>Drivers and OEM Software</h2>
+                    <p><strong>OEM</strong> stands for <strong>O</strong>riginal <strong>E</strong>quipment <strong>M</strong>anufacturer. OEM drivers are available on the manufacturer's support page. Download the latest drivers for your specific model to ensure optimal performance and stability.</p>
+                    <pre><code># Check device drivers in Device Manager
+# Right-click Start > Device Manager
+# Update each device with "Search automatically for updated driver software"</code></pre>
+                </section>
+
+                <section id="tips">
+                    <h1>TIPS: Advancements and Optimizations</h1>
+                    <p>This section covers optional improvements, some of which are very powerful and some very dangerous.</p>
+
+                    <h2 id="cpu-settings">Advanced CPU Settings</h2>
+                    <p>Using the <code>Registry Editor</code>, we will enable advanced control features for the CPU that are hidden by default.</p>
+                    <div class="callout warning">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            WARNING
+                        </div>
+                        <p>Absolutely do not proceed unless you are willing to risk damage to your data or hardware.</p>
+                    </div>
+                    <h3 id="opening-regedit">Opening Registry Editor</h3>
+                    <p>Press <code>Windows key + R</code> to bring up Run. Type <code>regedit</code> and press Enter.</p>
+                    <h3 id="quality-of-life">Quality of Life</h3>
+                    <h4 id="numpad-startup">Enable numpad on startup</h4>
+                    <ol>
+                        <li>Open <code>HKEY_USERS\.Default\Control Panel\Keyboard</code></li>
+                        <li>Double click <code>InitialKeyboardIndicators</code></li>
+                        <li>Change the value to <code>2</code></li>
+                        <li>Click OK</li>
+                    </ol>
+                    <h3 id="performance-enhancement">Performance Enhancement</h3>
+                    <h4 id="core-parking">Allowing the computer to relax [UNLOCK CORE PARKING FEATURES]</h4>
+                    <p>Unlocking this feature allows your PC to use less power when not doing stressful tasks. It also allows the CPU to boost higher.</p>
+                    <ol>
+                        <li>Navigate: <code>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\54533251-82be-4824-96c1-47b60b740d00\0cc5b647-c1df-4637-891a-dec35c318583</code></li>
+                        <li>Double-click <code>Attributes</code> and change value to <code>2</code></li>
+                        <li>Open Power Options > Change advanced power settings</li>
+                        <li>Configure <code>Processor power management</code> > <code>Processor performance core parking</code></li>
+                    </ol>
+                </section>
+
+                <section id="gpu-settings">
+                    <h2>Advanced GPU Settings</h2>
+                    <p>Only the settings in the Intel, nVidia, and AMD graphics control panel will be shown here. No overclocking will be covered.</p>
+                    <h3 id="identifying-gpu">Identifying your Graphics Processing Unit</h3>
+                    <p>Open Device Manager > Display adaptors. Make a note of which you have:</p>
+                    <ol>
+                        <li>Intel iGPU (UHD series)</li>
+                        <li>NVIDIA GeForce series</li>
+                        <li>AMD Radeon series</li>
+                    </ol>
+                    <p>Then prepare to interact with your corresponding control software:</p>
+                    <ul>
+                        <li>Intel graphics command centre</li>
+                        <li>nVidia Control Panel</li>
+                        <li>AMD Catalyst / Radeon Software</li>
+                    </ul>
+                </section>
+
+                <section id="software-tools">
+                    <h2>Software and Tools</h2>
+                    <p>These are meant to improve your user experience. Free and opensource when possible.</p>
+                    <h3 id="basic">Basic</h3>
+                    <ul>
+                        <li><strong>Web Browser</strong> - Chrome, Firefox, Edge, or Brave</li>
+                        <li><strong>Archive Tool</strong> - 7-Zip or WinRAR for extracting files</li>
+                        <li><strong>PDF Reader</strong> - Adobe Reader or Sumatra PDF</li>
+                        <li><strong>Office Suite</strong> - Microsoft Office, LibreOffice, or Google Docs</li>
+                    </ul>
+                    <h3 id="advanced">Advanced</h3>
+                    <h4 id="trackpad-driver">Driver manipulation to improve trackpad/touchpad</h4>
+                    <p>If your laptop uses Windows Precision trackpad drivers: rejoice, as those are the best end-user experience.</p>
+                    <p>If not, identify if you have ELAN or Synaptics input devices in Device Manager.</p>
+                </section>
+
+                <section id="tricks">
+                    <h1>TRICKS: Extras and more!</h1>
+                    <p><del>extra stuff I've come across along the internet</del></p>
+
+                    <h2 id="cloning-ssd">Cloning SSDs using dd in macOS</h2>
+                    <p>If you're a <code>macOS</code> enthusiast and need to clone your <code>Windows</code> boot SSD, here's the power of <code>dd</code>.</p>
+                    <ol>
+                        <li>Plug in your SSDs into an enclosure or connect to macOS</li>
+                        <li>Open <code>diskutil</code>, select <code>view</code> > <code>show all devices</code></li>
+                        <li>Note the disk numbers for source and target</li>
+                        <li>Open <code>terminal</code> <strong>WARNING</strong> this is where you can mess up</li>
+                        <li>Use: <code>sudo dd if=/dev/rdiskS of=/dev/rdiskT bs=4M</code></li>
+                        <li>Replace S with source disk number, T with target disk number</li>
+                        <li><strong>This will take a very long time!</strong> There is no loading bar.</li>
+                    </ol>
+
+                    <h2 id="regedit-pills">BASED AND REGEDIT PILLED</h2>
+                    <p>Here we cover NVMe SSD latency timing in Windows. Adjusting this can improve latency for audio and games (slightly).</p>
+                </section>
+
+                <section id="network-disk-fix">
+                    <h2>Network Disk Regedit Fix</h2>
+                    <p>If you need to rearrange your network hardware, you may encounter weirdnesses with Windows accessing network mapped disks.</p>
+                    <div class="callout warning">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            Warning
+                        </div>
+                        <p>You'll need to foray into the registry editor. Be warned: you can mess up your Windows installation...</p>
+                    </div>
+                    <h3 id="fix">Fix</h3>
+                    <p>Navigate to: <code>HKEY_CURRENT_USER\Network</code></p>
+                    <p>You'll see a list of drive letters for mapped network drives.</p>
+                    <h3 id="nic-settings">Changing NIC settings</h3>
+                    <ol>
+                        <li>Press Windows key + R, type <code>control panel</code></li>
+                        <li>Select Network and Sharing Center</li>
+                        <li>Change adapter settings</li>
+                        <li>Select the relevant NIC and configure</li>
+                    </ol>
+                </section>
+
+                <section id="winget">
+                    <h2>Winget Winstall Wingood</h2>
+                    <p>For Windows 10 or 11, you have access to winget in Windows Terminal, Command Prompt, or PowerShell.</p>
+                    <h3 id="winget-time">Winget Time</h3>
+                    <div class="callout warning">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            Note
+</div>
+                        <p>If you get an error, update Microsoft Store and update <code>App Installer</code>.</p>
+                    </div>
+                    <ol>
+                        <li>Open a terminal window</li>
+                        <li>Type <code>winget</code> and hit enter</li>
+                        <li>Visit <a href="https://winget.run/" target="_blank">winget.run</a> or <a href="https://winstall.app" target="_blank">winstall.app</a></li>
+                        <li>Example: <code>winget install -e --id SublimeHQ.SublimeText.4</code></li>
+                        <li>Check installed apps: <code>winget list</code></li>
+                        <li>Check for updates: <code>winget upgrade</code></li>
+                        <li>Update all: <code>winget upgrade --all</code></li>
+                    </ol>
+                </section>
+
+                <section id="disk-clone">
+                    <h2>Obscure CLI Disk Clone</h2>
+                    <p>Migrating an SSD? Upgrading your OS? Avoid reinstalling everything!</p>
+                    <h3 id="specifics">1. Specifics</h3>
+                    <ul>
+                        <li>One blank disk</li>
+                        <li>One (or more) data disks</li>
+                        <li>macOS or Linux</li>
+                        <li>External disk readers</li>
+                        <li>Patience</li>
+                    </ul>
+                    <div class="callout warning">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            WARNING
+                        </div>
+                        <p>If you have valuable data, make sure you have a copy. We will do things that will ruin your life if something goes wrong!</p>
+                    </div>
+                    <h3 id="yahoo">2. Yahoo!</h3>
+                    <ol>
+                        <li>Plug in the blank, empty disk</li>
+                        <li>In macOS, load up Disk Utility, set view to <em>show all devices</em></li>
+                        <li>Write down the disk numbers for source and target</li>
+                        <li>Unmount the subcategory disks</li>
+                        <li>Use this command: <code>sudo dd if=/dev/rdiskX of=/dev/rdiskY bs=1m</code></li>
+                    </ol>
+                    <h3 id="why-so-long">3. Why the heck would anyone do this?</h3>
+                    <p>Sometimes you need to migrate an OS to a different slot, or you have a faulty system and need to clone before it dies completely.</p>
+                </section>
+
+                <section id="icons">
+                    <h1>ICONS</h1>
+                    <p>Customize drive icons in Windows Explorer for easier identification.</p>
+
+                    <h2 id="icon-network">Network Disk Icon</h2>
+                    <p>Mapping a network drive? Bored of the default icon? Let's do it!</p>
+                    <div class="callout warning">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            Note
+                        </div>
+                        <p>We will dive into <code>regedit</code> so backup anything important!</p>
+                    </div>
+                    <ol>
+                        <li>Open <code>regedit</code> as administrator</li>
+                        <li>Browse to: <code>HKEY_CURRENT_USER\Software\Classes\Applications\Explorer.exe\Drives\</code></li>
+                        <li>Create a new key with your drive letter (e.g., "S")</li>
+                        <li>Create <code>DefaultIcon</code> key under it</li>
+                        <li>Set the default value to your .ico file path</li>
+                        <li>Close regedit and refresh Explorer</li>
+                    </ol>
+
+                    <h2 id="icon-usb">USB Drive Icon</h2>
+                    <p>Wanna spice up your old basic USB drive? Let's add some pizzazz!</p>
+                    <h3>Checklist</h3>
+                    <ul>
+                        <li>USB Drive</li>
+                        <li><code>.ico</code> file</li>
+                        <li>Basic text editor</li>
+                    </ul>
+                    <h3>Pizzazz</h3>
+                    <ol>
+                        <li>Plug in the USB</li>
+                        <li>Copy your <code>.ico</code> file to the USB root</li>
+                        <li>Create a file named <code>autorun.inf</code> with:
+                            <pre><code>[autorun]
+icon=ABCXYZ.ico</code></pre>
+                        </li>
+                        <li>Replace ABCXYZ with your icon filename</li>
+                        <li>Eject and reconnect the USB</li>
+                    </ol>
+
+                    <h2 id="icon-internal">Internal Disk Icon</h2>
+                    <p>There are many ways to accomplish the same task. Some are easier than others...</p>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Info
+                        </div>
+                        <p>The scheme we use changes with each major Windows update.</p>
+                    </div>
+                    <h3>Simple Method: RIGHT-CLICK!</h3>
+                    <p>Right-click on the drive, select Properties, look for the Customize tab.</p>
+                    <h3>Alternative: Autorun.inf or Regedit</h3>
+                    <p>Use the same methods as Network/USB drives above.</p>
+                </section>
+
+                <section id="ai-preface">
+                    <h1>AI Preface</h1>
+
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Mandatory Reading
+                        </div>
+                        <p>Please read this preface before exploring the AI section. This is a mental library documenting all the AI code, useful scripts, and processes I've discovered while interacting with AI systems. I do not pretend nor endorse using ANY code found here. It is purely for education.</p>
+                    </div>
+
+                    <h2 id="what-is-this">What is this section?</h2>
+                    <p>This section serves as a personal mental library of curated collection of AI-generated code, scripts, prompts, and processes that have proven useful across various interactions with AI systems.</p>
+
+                    <h2 id="purpose">Purpose</h2>
+                    <p>The goal is to preserve and organize valuable AI outputs that can be referenced, reused, or built upon <em>which I forget often and it is a waste to fetch again</em>.
+
+                    <h2 id="how-to-use">How to use this section</h2>
+                    <p>Navigate through the <strong>TOOLS</strong> subsection to explore different categories of AI-generated content. Each tool page contains:</p>
+                    <ul>
+                        <li>Code snippets and implementations</li>
+                        <li>Usage examples and explanations</li>
+                        <li>Potential use cases</li>
+                    </ul>
+
+                    <div class="callout warning">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            Important
+                        </div>
+                        <p>Always verify AI-generated code before using it in production environments. Test thoroughly and understand what each script does before deployment. This should <strong>only</strong> be used in test environments for educational purposes.</p>
+                    </div>
+                </section>
+
+                <section id="ai-tools">
+                    <h1>AI TOOLS</h1>
+                    <p>Welcome to the AI TOOLS section. This is mainly so I do not need to keep finding commands I use often.</p>
+
+                    <h2 id="available-tools">Available Tools</h2>
+                    <p>Select from the following:</p>
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tool #</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Tool 01</strong></td>
+                                    <td>Placeholder for AI tool content</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tool 02</strong></td>
+                                    <td>Placeholder for AI tool content</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tool 03</strong></td>
+                                    <td>Placeholder for AI tool content</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tool 04</strong></td>
+                                    <td>Placeholder for AI tool content</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tool 05</strong></td>
+                                    <td>Placeholder for AI tool content</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tool 06</strong></td>
+                                    <td>Placeholder for AI tool content</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tool 07</strong></td>
+                                    <td>Placeholder for AI tool content</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tool 08</strong></td>
+                                    <td>Placeholder for AI tool content</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tool 09</strong></td>
+                                    <td>Placeholder for AI tool content</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tool 10</strong></td>
+                                    <td>Placeholder for AI tool content</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Getting Started
+                        </div>
+                        <p>Scroll down to view any tool details. Each tool contains code snippets, usage examples, and best practices.</p>
+                    </div>
+
+                    <h2 id="tool-01">Tool 01</h2>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Placeholder
+                        </div>
+                        <p>This page is a placeholder for Tool 01. You can populate this with your favorite AI commands, scripts, and processes.</p>
+                    </div>
+                    <h3>Description</h3>
+                    <p>Add your description here. What does this tool do? When is it useful?</p>
+                    <h3>Code / Command</h3>
+                    <pre><code># Add your code or command here</code></pre>
+                    <h3>Usage</h3>
+                    <p>Explain how to use this tool. Include any prerequisites, installation steps, or examples.</p>
+
+                    <h2 id="tool-02">Tool 02</h2>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Placeholder
+                        </div>
+                        <p>This page is a placeholder for Tool 02. You can populate this with your favorite AI commands, scripts, and processes.</p>
+                    </div>
+                    <h3>Description</h3>
+                    <p>Add your description here. What does this tool do? When is it useful?</p>
+                    <h3>Code / Command</h3>
+                    <pre><code># Add your code or command here</code></pre>
+                    <h3>Usage</h3>
+                    <p>Explain how to use this tool. Include any prerequisites, installation steps, or examples.</p>
+
+                    <h2 id="tool-03">Tool 03: Peak Retro</h2>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Linux-only
+                        </div>
+                        <p>I've only used this in Linux. You will need "mkvtoolnix-cli" and "video2x.AppImage" and maybe additional libraries depending on your Linux distribution.</p>
+                    </div>
+                    <h3>Description</h3>
+                    <p>Useful for ancient 480(p) files. Upscale old videos from ancient NTSC media.</p>
+                    <h3>STEP 1: Create A Clean CFR Video Intermediate</h3>
+                    <p>This stabilizes timestamps and converts the source into a clean constant-framerate intermediate before AI processing. Audio is intentionally excluded to avoid Video2X muxing and timestamp bugs.</p>
+                    <pre><code>ffmpeg -i "EP01.mkv" -fps_mode cfr -r 30000/1001 -c:v libx264 -crf 18 -preset slow -an "EP01_CFR.mkv"</code></pre>
+                    
+                    <h3>STEP 2: AI Upscale Using RealESRGAN Anime Video v3</h3>
+                    <p>This performs the actual AI upscale on the GPU using the anime-optimized RealESRGAN model. The output remains video-only for maximum stability.</p>
+                    <pre><code>/Path2File/Video2X-x86_64.AppImage --no-copy-streams -d 1 -i "EP01_CFR.mkv" -o "EP01_UPSCALE.mkv" -p realesrgan --realesrgan-model realesr-animevideov3 -s 2</code></pre>
+                    
+                    <h3>STEP 3: Compress The Upscaled Video To HEVC Using x265</h3>
+                    <p>This uses CPU-based x265 encoding for superior compression efficiency, lower remote-streaming bandwidth, and better anime quality retention than NVENC HEVC.</p>
+                    <pre><code>ffmpeg -i "EP01_UPSCALE.mkv" -map 0:v -c:v libx265 -crf 20 -preset slow -pix_fmt yuv420p -x265-params "aq-mode=3:aq-strength=1.0:deblock=-1,-1" "EP01.hevc"</code></pre>
+                    
+                    <h3>STEP 4: Convert Original Audio Tracks To AAC</h3>
+                    <p>This converts both original audio tracks into modern AAC audio for improved Jellyfin compatibility, browser playback, and seeking stability.</p>
+                    <pre><code>ffmpeg -i "EP01.mkv" -map 0:a:0 -map 0:a:1 -c:a aac -b:a 192k "EP01_AUDIO.mkv"</code></pre>
+                    
+                    <h3>STEP 5: Build The Final MKV</h3>
+                    <p>This creates the final MKV using: HEVC video, converted AAC audio, original subtitle tracks, rebuilt MKV indexes/cues. The result <em>should</em> seek properly and switch audio tracks reliably.</p>
+                    <pre><code>ffmpeg -i "EP01.mkv" -fps_mode cfr -r 30000/1001 -c:v libx264 -crf 18 -preset slow -an "EP01_CFR.mkv"</code></pre>
+                    
+
+                    <h3>Usage</h3>
+                    <p>Explain how to use this tool. Include any prerequisites, installation steps, or examples.</p>
+
+                    <h2 id="tool-04">Tool 04</h2>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Placeholder
+                        </div>
+                        <p>This page is a placeholder for Tool 04. You can populate this with your favorite AI commands, scripts, and processes.</p>
+                    </div>
+                    <h3>Description</h3>
+                    <p>Add your description here. What does this tool do? When is it useful?</p>
+                    <h3>Code / Command</h3>
+                    <pre><code># Add your code or command here</code></pre>
+                    <h3>Usage</h3>
+                    <p>Explain how to use this tool. Include any prerequisites, installation steps, or examples.</p>
+
+                    <h2 id="tool-05">Tool 05</h2>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Placeholder
+                        </div>
+                        <p>This page is a placeholder for Tool 05. You can populate this with your favorite AI commands, scripts, and processes.</p>
+                    </div>
+                    <h3>Description</h3>
+                    <p>Add your description here. What does this tool do? When is it useful?</p>
+                    <h3>Code / Command</h3>
+                    <pre><code># Add your code or command here</code></pre>
+                    <h3>Usage</h3>
+                    <p>Explain how to use this tool. Include any prerequisites, installation steps, or examples.</p>
+
+                    <h2 id="tool-06">Tool 06</h2>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Placeholder
+                        </div>
+                        <p>This page is a placeholder for Tool 06. You can populate this with your favorite AI commands, scripts, and processes.</p>
+                    </div>
+                    <h3>Description</h3>
+                    <p>Add your description here. What does this tool do? When is it useful?</p>
+                    <h3>Code / Command</h3>
+                    <pre><code># Add your code or command here</code></pre>
+                    <h3>Usage</h3>
+                    <p>Explain how to use this tool. Include any prerequisites, installation steps, or examples.</p>
+
+                    <h2 id="tool-07">Tool 07</h2>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Placeholder
+                        </div>
+                        <p>This page is a placeholder for Tool 07. You can populate this with your favorite AI commands, scripts, and processes.</p>
+                    </div>
+                    <h3>Description</h3>
+                    <p>Add your description here. What does this tool do? When is it useful?</p>
+                    <h3>Code / Command</h3>
+                    <pre><code># Add your code or command here</code></pre>
+                    <h3>Usage</h3>
+                    <p>Explain how to use this tool. Include any prerequisites, installation steps, or examples.</p>
+
+                    <h2 id="tool-08">Tool 08</h2>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Placeholder
+                        </div>
+                        <p>This page is a placeholder for Tool 08. You can populate this with your favorite AI commands, scripts, and processes.</p>
+                    </div>
+                    <h3>Description</h3>
+                    <p>Add your description here. What does this tool do? When is it useful?</p>
+                    <h3>Code / Command</h3>
+                    <pre><code># Add your code or command here</code></pre>
+                    <h3>Usage</h3>
+                    <p>Explain how to use this tool. Include any prerequisites, installation steps, or examples.</p>
+
+                    <h2 id="tool-09">Tool 09</h2>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Placeholder
+                        </div>
+                        <p>This page is a placeholder for Tool 09. You can populate this with your favorite AI commands, scripts, and processes.</p>
+                    </div>
+                    <h3>Description</h3>
+                    <p>Add your description here. What does this tool do? When is it useful?</p>
+                    <h3>Code / Command</h3>
+                    <pre><code># Add your code or command here</code></pre>
+                    <h3>Usage</h3>
+                    <p>Explain how to use this tool. Include any prerequisites, installation steps, or examples.</p>
+
+                    <h2 id="tool-10">Tool 10</h2>
+                    <div class="callout info">
+                        <div class="callout-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            Placeholder
+                        </div>
+                        <p>This page is a placeholder for Tool 10. You can populate this with your favorite AI commands, scripts, and processes.</p>
+                    </div>
+                    <h3>Description</h3>
+                    <p>Add your description here. What does this tool do? When is it useful?</p>
+                    <h3>Code / Command</h3>
+                    <pre><code># Add your code or command here</code></pre>
+                    <h3>Usage</h3>
+                    <p>Explain how to use this tool. Include any prerequisites, installation steps, or examples.</p>
+                </section>
+
+                <footer class="footer">
+                    <p>MEMORY - A mental library of collected knowledge.</p>
+                </footer>
+            </article>
+        </main>
+    </div>
+
+    <script src="main.js"></script>
+    <script>
+        // Toggle collapsible navigation sections
+        function toggleNavSection(element) {
+            const section = element.closest('.nav-section');
+            const children = section.querySelector('.nav-children');
+            const chevron = element.querySelector('.chevron');
+
+            if (children) {
+                children.classList.toggle('collapsed');
+                element.classList.toggle('collapsed');
+                if (chevron) {
+                    chevron.classList.toggle('rotated');
+                }
+            }
+        }
+
+        // Initialize all collapsible sections on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const collapsibleSections = document.querySelectorAll('.nav-section-title.collapsible');
+            collapsibleSections.forEach(function(section) {
+                const children = section.closest('.nav-section').querySelector('.nav-children');
+                if (children) {
+                    children.classList.add('collapsed');
+                    section.classList.add('collapsed');
+                }
+            });
+        });
+    </script>
+
+<script>
+/**
+ * Iframe 元素高亮注入脚本
+ * 需要在目标网站中引入此脚本来支持跨域 iframe 高亮功能
+ *
+ * 使用方法：
+ * 1. 将此脚本添加到目标网站的 HTML 中
+ * 2. 或通过浏览器扩展、用户脚本等方式注入
+ */
+
+(function () {
+  "use strict";
+
+  // 检查是否在 iframe 中
+  if (window.self === window.top) {
+    return; // 不在 iframe 中，不执行
+  }
+
+  // 检查是否已经初始化过
+  if (window.__iframeHighlightInitialized) {
+    return;
+  }
+  window.__iframeHighlightInitialized = true;
+  console.log("Iframe 高亮脚本已加载");
+
+  // 创建高亮覆盖层
+  var overlay = document.createElement("div");
+  overlay.id = "iframe-highlight-overlay";
+  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
+
+  // 创建悬停高亮框（虚线边框）
+  var highlightBox = document.createElement("div");
+  highlightBox.id = "iframe-highlight-box";
+  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
+
+  // 创建选中节点的常驻高亮框（实线边框）
+  var selectedBox = document.createElement("div");
+  selectedBox.id = "iframe-selected-box";
+  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
+
+  // 创建悬停标签显示
+  var tagLabel = document.createElement("div");
+  tagLabel.id = "iframe-tag-label";
+  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
+
+  // 创建选中节点标签
+  var selectedLabel = document.createElement("div");
+  selectedLabel.id = "iframe-selected-label";
+  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
+  overlay.appendChild(highlightBox);
+  overlay.appendChild(selectedBox);
+  overlay.appendChild(tagLabel);
+  overlay.appendChild(selectedLabel);
+  document.body.appendChild(overlay);
+
+  // 存储当前选中的元素
+  var selectedElement = null;
+  var highlightEnabled = false;
+
+  // 更新选中元素的高亮显示
+  function updateSelectedHighlight(element) {
+    console.log("updateSelectedHighlight called with:", element);
+    if (!element) {
+      selectedBox.style.display = "none";
+      selectedLabel.style.display = "none";
+      selectedElement = null;
+      console.log("Cleared selected highlight");
+      return;
+    }
+    selectedElement = element;
+    var rect = element.getBoundingClientRect();
+    console.log("Selected element rect:", rect);
+
+    // 更新选中高亮框位置
+    selectedBox.style.display = "block";
+    selectedBox.style.left = "".concat(rect.left - 2, "px");
+    selectedBox.style.top = "".concat(rect.top - 2, "px");
+    selectedBox.style.width = "".concat(rect.width + 4, "px");
+    selectedBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新选中标签位置和内容
+    selectedLabel.style.display = "block";
+    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 28;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 5) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    var labelWidth = selectedLabel.offsetWidth || 100; // 预估宽度
+    if (labelLeft + labelWidth > window.innerWidth - 10) {
+      labelLeft = window.innerWidth - labelWidth - 10;
+    }
+    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
+    selectedLabel.style.top = "".concat(labelTop, "px");
+    console.log("Selected highlight positioned at:", {
+      left: selectedBox.style.left,
+      top: selectedBox.style.top,
+      width: selectedBox.style.width,
+      height: selectedBox.style.height
+    });
+  }
+  function getElementSelector(element) {
+    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
+    var segments = [];
+    var current = element;
+    while (current !== document.documentElement) {
+      var selector = '';
+      // 优先检查唯一ID
+      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
+        segments.unshift("#".concat(current.id));
+        break; // ID唯一，无需继续向上
+      }
+
+      // 生成类名选择器（取第一个有效类名）
+      var classes = Array.from(current.classList).filter(function (c) {
+        return !c.startsWith('js-');
+      });
+      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
+
+      // 生成位置索引（nth-child）
+      var tag = current.tagName.toLowerCase();
+      if (!className) {
+        var siblings = Array.from(current.parentNode.children);
+        var index = siblings.findIndex(function (el) {
+          return el === current;
+        }) + 1;
+        selector = "".concat(tag, ":nth-child(").concat(index, ")");
+      } else {
+        selector = className;
+      }
+      segments.unshift(selector);
+      current = current.parentElement;
+    }
+
+    // 处理根元素
+    if (current === document.documentElement) {
+      segments.unshift('html');
+    }
+    return segments.join(' > ');
+  }
+
+  // 获取元素文本内容
+  function getElementText(element) {
+    var _element$textContent;
+    if (element.tagName === "INPUT") {
+      return element.value || element.placeholder || "";
+    }
+    if (element.tagName === "TEXTAREA") {
+      return element.value || element.placeholder || "";
+    }
+    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
+    return text.length > 50 ? text.substring(0, 50) + "..." : text;
+  }
+
+  // 获取元素属性信息
+  function getElementAttributes(element) {
+    var attrs = {};
+    for (var i = 0; i < element.attributes.length; i++) {
+      var attr = element.attributes[i];
+      attrs[attr.name] = attr.value;
+    }
+    return attrs;
+  }
+
+  // 鼠标悬停事件处理
+  function handleMouseOver(e) {
+    if (!highlightEnabled) return;
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免高亮 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 如果是已选中的元素，不显示悬停高亮
+    if (target === selectedElement) {
+      highlightBox.style.display = "none";
+      tagLabel.style.display = "none";
+      return;
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+
+    // 更新悬停高亮框位置
+    highlightBox.style.display = "block";
+    highlightBox.style.left = "".concat(rect.left - 2, "px");
+    highlightBox.style.top = "".concat(rect.top - 2, "px");
+    highlightBox.style.width = "".concat(rect.width + 4, "px");
+    highlightBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新标签位置和内容
+    tagLabel.style.display = "block";
+    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 22;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 0) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
+      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
+    }
+    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
+    tagLabel.style.top = "".concat(labelTop, "px");
+
+    // 发送消息到父窗口
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 鼠标离开事件处理
+  function handleMouseOut(e) {
+    if (!highlightEnabled) return;
+    var relatedTarget = e.relatedTarget;
+
+    // 如果鼠标移动到高亮相关元素上，不隐藏高亮
+    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
+      return;
+    }
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: null,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 点击事件处理
+  function handleClick(e) {
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免处理 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 检查是否是交互元素，这些元素需要保留默认行为
+    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
+
+    // 如果高亮功能启用，对于非交互元素阻止默认行为和事件传播
+    if (highlightEnabled) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+    console.log("Element clicked:", {
+      tagName: target.tagName,
+      selector: selector,
+      rect: rect
+    });
+
+    // 立即更新选中高亮
+    updateSelectedHighlight(target);
+
+    // 隐藏悬停高亮，因为现在是选中状态
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-click",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 监听来自父窗口的消息
+  function handleParentMessage(event) {
+    console.log("Received message from parent:", event.data);
+    if (event.data.type === "iframe-highlight-toggle") {
+      var enabled = event.data.enabled;
+      console.log("Highlight toggle:", enabled);
+      if (enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "enable-iframe-highlight") {
+      console.log("Enable iframe highlight");
+      enableHighlight();
+    } else if (event.data.type === "disable-iframe-highlight") {
+      console.log("Disable iframe highlight");
+      disableHighlight();
+    } else if (event.data.type === "toggle-iframe-highlight") {
+      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
+      console.log("Toggle iframe highlight to:", _enabled);
+      if (_enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "update-selected-element") {
+      var selector = event.data.selector;
+      console.log("Update selected element with selector:", selector);
+      if (selector) {
+        try {
+          var element = document.querySelector(selector);
+          console.log("Found element by selector:", element);
+          updateSelectedHighlight(element);
+        } catch (error) {
+          console.warn("Failed to select element:", error);
+          updateSelectedHighlight(null);
+        }
+      } else {
+        updateSelectedHighlight(null);
+      }
+    } else if (event.data.type === "clear-selected-element") {
+      console.log("Clear selected element");
+      updateSelectedHighlight(null);
+    }
+  }
+
+  // 启用高亮功能
+  function enableHighlight() {
+    console.log("Enabling highlight");
+    document.addEventListener("mouseover", handleMouseOver, true);
+    document.addEventListener("mouseout", handleMouseOut, true);
+    document.addEventListener("click", handleClick, true);
+    highlightEnabled = true;
+    overlay.style.display = "block";
+  }
+
+  // 禁用高亮功能
+  function disableHighlight() {
+    console.log("Disabling highlight");
+    highlightEnabled = false;
+    // 保持事件监听器，但通过 highlightEnabled 变量控制行为
+    // 这样可以保留选中状态的显示
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    // 不隐藏 selectedBox 和 selectedLabel，保留选中状态
+  }
+
+  // 完全禁用高亮功能（移除所有监听器）
+  function fullyDisableHighlight() {
+    console.log("Fully disabling highlight");
+    highlightEnabled = false;
+    document.removeEventListener("mouseover", handleMouseOver, true);
+    document.removeEventListener("mouseout", handleMouseOut, true);
+    document.removeEventListener("click", handleClick, true);
+    overlay.style.display = "none";
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    selectedBox.style.display = "none";
+    selectedLabel.style.display = "none";
+  }
+
+  // 添加事件监听
+  enableHighlight();
+  window.addEventListener("message", handleParentMessage);
+
+  // 暴露全局函数供外部调用
+  window.__iframeHighlightControl = {
+    enable: enableHighlight,
+    disable: disableHighlight,
+    fullyDisable: fullyDisableHighlight,
+    isEnabled: function isEnabled() {
+      return highlightEnabled;
+    },
+    getSelectedElement: function getSelectedElement() {
+      return selectedElement;
+    },
+    updateSelected: updateSelectedHighlight,
+    // 通过消息发送开关控制
+    sendToggleMessage: function sendToggleMessage(enabled) {
+      window.parent.postMessage({
+        type: 'iframe-highlight-status',
+        enabled: enabled || highlightEnabled,
+        source: 'iframe-highlight-injector'
+      }, '*');
+    }
+  };
+
+  // 通知父窗口脚本已加载
+  try {
+    window.parent.postMessage({
+      type: "iframe-highlight-ready",
+      data: {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: Date.now()
+      },
+      source: "iframe-highlight-injector"
+    }, "*");
+  } catch (error) {
+    console.warn("无法发送就绪消息到父窗口:", error);
+  }
+
+  // 清理函数
+  window.__iframeHighlightCleanup = function () {
+    fullyDisableHighlight();
+    window.removeEventListener("message", handleParentMessage);
+    if (overlay.parentElement) {
+      overlay.parentElement.removeChild(overlay);
+    }
+    delete window.__iframeHighlightInitialized;
+    delete window.__iframeHighlightCleanup;
+  };
+})();
+
+</script>
+
+<script>
+/**
+ * Iframe 元素高亮注入脚本
+ * 需要在目标网站中引入此脚本来支持跨域 iframe 高亮功能
+ *
+ * 使用方法：
+ * 1. 将此脚本添加到目标网站的 HTML 中
+ * 2. 或通过浏览器扩展、用户脚本等方式注入
+ */
+
+(function () {
+  "use strict";
+
+  // 检查是否在 iframe 中
+  if (window.self === window.top) {
+    return; // 不在 iframe 中，不执行
+  }
+
+  // 检查是否已经初始化过
+  if (window.__iframeHighlightInitialized) {
+    return;
+  }
+  window.__iframeHighlightInitialized = true;
+  console.log("Iframe 高亮脚本已加载");
+
+  // 创建高亮覆盖层
+  var overlay = document.createElement("div");
+  overlay.id = "iframe-highlight-overlay";
+  overlay.style.cssText = "\n    position: fixed;\n    top: 0;\n    left: 0;\n    width: 100vw;\n    height: 100vh;\n    pointer-events: none;\n    z-index: 999999;\n    overflow: hidden;\n  ";
+
+  // 创建悬停高亮框（虚线边框）
+  var highlightBox = document.createElement("div");
+  highlightBox.id = "iframe-highlight-box";
+  highlightBox.style.cssText = "\n    position: absolute;\n    border: 2px dashed #007AFF;\n    background: rgba(0, 122, 255, 0.08);\n    pointer-events: none;\n    display: none;\n    transition: all 0.1s ease;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);\n    border-radius: 2px;\n  ";
+
+  // 创建选中节点的常驻高亮框（实线边框）
+  var selectedBox = document.createElement("div");
+  selectedBox.id = "iframe-selected-box";
+  selectedBox.style.cssText = "\n    position: absolute;\n    border: 2px solid #007AFF;\n    pointer-events: none;\n    display: none;\n    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 107, 53, 0.4);\n    border-radius: 2px;\n    z-index: 1000000;\n  ";
+
+  // 创建悬停标签显示
+  var tagLabel = document.createElement("div");
+  tagLabel.id = "iframe-tag-label";
+  tagLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 2px 6px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 2px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000001;\n    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);\n    font-weight: 500;\n  ";
+
+  // 创建选中节点标签
+  var selectedLabel = document.createElement("div");
+  selectedLabel.id = "iframe-selected-label";
+  selectedLabel.style.cssText = "\n    position: absolute;\n    background: #007AFF;\n    color: white;\n    padding: 3px 8px;\n    font-size: 11px;\n    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;\n    border-radius: 3px;\n    pointer-events: none;\n    display: none;\n    white-space: nowrap;\n    z-index: 1000002;\n    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);\n    font-weight: 600;\n  ";
+  overlay.appendChild(highlightBox);
+  overlay.appendChild(selectedBox);
+  overlay.appendChild(tagLabel);
+  overlay.appendChild(selectedLabel);
+  document.body.appendChild(overlay);
+
+  // 存储当前选中的元素
+  var selectedElement = null;
+  var highlightEnabled = false;
+
+  // 更新选中元素的高亮显示
+  function updateSelectedHighlight(element) {
+    console.log("updateSelectedHighlight called with:", element);
+    if (!element) {
+      selectedBox.style.display = "none";
+      selectedLabel.style.display = "none";
+      selectedElement = null;
+      console.log("Cleared selected highlight");
+      return;
+    }
+    selectedElement = element;
+    var rect = element.getBoundingClientRect();
+    console.log("Selected element rect:", rect);
+
+    // 更新选中高亮框位置
+    selectedBox.style.display = "block";
+    selectedBox.style.left = "".concat(rect.left - 2, "px");
+    selectedBox.style.top = "".concat(rect.top - 2, "px");
+    selectedBox.style.width = "".concat(rect.width + 4, "px");
+    selectedBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新选中标签位置和内容
+    selectedLabel.style.display = "block";
+    selectedLabel.textContent = "\u2713 <".concat(element.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 28;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 5) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    var labelWidth = selectedLabel.offsetWidth || 100; // 预估宽度
+    if (labelLeft + labelWidth > window.innerWidth - 10) {
+      labelLeft = window.innerWidth - labelWidth - 10;
+    }
+    selectedLabel.style.left = "".concat(Math.max(5, labelLeft), "px");
+    selectedLabel.style.top = "".concat(labelTop, "px");
+    console.log("Selected highlight positioned at:", {
+      left: selectedBox.style.left,
+      top: selectedBox.style.top,
+      width: selectedBox.style.width,
+      height: selectedBox.style.height
+    });
+  }
+  function getElementSelector(element) {
+    if (!(element instanceof Element)) throw new Error('Argument must be a DOM element');
+    var segments = [];
+    var current = element;
+    while (current !== document.documentElement) {
+      var selector = '';
+      // 优先检查唯一ID
+      if (current.id && document.querySelectorAll("#".concat(current.id)).length === 1) {
+        segments.unshift("#".concat(current.id));
+        break; // ID唯一，无需继续向上
+      }
+
+      // 生成类名选择器（取第一个有效类名）
+      var classes = Array.from(current.classList).filter(function (c) {
+        return !c.startsWith('js-');
+      });
+      var className = classes.length > 0 ? ".".concat(classes[0]) : '';
+
+      // 生成位置索引（nth-child）
+      var tag = current.tagName.toLowerCase();
+      if (!className) {
+        var siblings = Array.from(current.parentNode.children);
+        var index = siblings.findIndex(function (el) {
+          return el === current;
+        }) + 1;
+        selector = "".concat(tag, ":nth-child(").concat(index, ")");
+      } else {
+        selector = className;
+      }
+      segments.unshift(selector);
+      current = current.parentElement;
+    }
+
+    // 处理根元素
+    if (current === document.documentElement) {
+      segments.unshift('html');
+    }
+    return segments.join(' > ');
+  }
+
+  // 获取元素文本内容
+  function getElementText(element) {
+    var _element$textContent;
+    if (element.tagName === "INPUT") {
+      return element.value || element.placeholder || "";
+    }
+    if (element.tagName === "TEXTAREA") {
+      return element.value || element.placeholder || "";
+    }
+    var text = ((_element$textContent = element.textContent) === null || _element$textContent === void 0 ? void 0 : _element$textContent.trim()) || "";
+    return text.length > 50 ? text.substring(0, 50) + "..." : text;
+  }
+
+  // 获取元素属性信息
+  function getElementAttributes(element) {
+    var attrs = {};
+    for (var i = 0; i < element.attributes.length; i++) {
+      var attr = element.attributes[i];
+      attrs[attr.name] = attr.value;
+    }
+    return attrs;
+  }
+
+  // 鼠标悬停事件处理
+  function handleMouseOver(e) {
+    if (!highlightEnabled) return;
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免高亮 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 如果是已选中的元素，不显示悬停高亮
+    if (target === selectedElement) {
+      highlightBox.style.display = "none";
+      tagLabel.style.display = "none";
+      return;
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+
+    // 更新悬停高亮框位置
+    highlightBox.style.display = "block";
+    highlightBox.style.left = "".concat(rect.left - 2, "px");
+    highlightBox.style.top = "".concat(rect.top - 2, "px");
+    highlightBox.style.width = "".concat(rect.width + 4, "px");
+    highlightBox.style.height = "".concat(rect.height + 4, "px");
+
+    // 更新标签位置和内容
+    tagLabel.style.display = "block";
+    tagLabel.textContent = "<".concat(target.tagName.toLowerCase(), ">");
+
+    // 计算标签位置，确保不超出视窗
+    var labelTop = rect.top - 22;
+    var labelLeft = rect.left;
+
+    // 如果标签会超出顶部，显示在元素下方
+    if (labelTop < 0) {
+      labelTop = rect.bottom + 5;
+    }
+
+    // 如果标签会超出右侧，向左调整
+    if (labelLeft + tagLabel.offsetWidth > window.innerWidth) {
+      labelLeft = window.innerWidth - tagLabel.offsetWidth - 5;
+    }
+    tagLabel.style.left = "".concat(Math.max(0, labelLeft), "px");
+    tagLabel.style.top = "".concat(labelTop, "px");
+
+    // 发送消息到父窗口
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 鼠标离开事件处理
+  function handleMouseOut(e) {
+    if (!highlightEnabled) return;
+    var relatedTarget = e.relatedTarget;
+
+    // 如果鼠标移动到高亮相关元素上，不隐藏高亮
+    if (relatedTarget && (relatedTarget === highlightBox || relatedTarget === tagLabel || relatedTarget === overlay || relatedTarget === selectedBox || relatedTarget === selectedLabel)) {
+      return;
+    }
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-hover",
+        data: null,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 点击事件处理
+  function handleClick(e) {
+    var target = e.target;
+    if (!target || target === overlay || target === highlightBox || target === tagLabel || target === selectedBox || target === selectedLabel) {
+      return;
+    }
+
+    // 避免处理 html 和 body 元素
+    if (target === document.documentElement || target === document.body) {
+      return;
+    }
+
+    // 检查是否是交互元素，这些元素需要保留默认行为
+    var isInteractiveElement = ['input', 'textarea', 'select', 'button', 'a'].includes(target.tagName.toLowerCase());
+
+    // 如果高亮功能启用，对于非交互元素阻止默认行为和事件传播
+    if (highlightEnabled) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    var rect = target.getBoundingClientRect();
+    var selector = getElementSelector(target);
+    var text = getElementText(target);
+    var attributes = getElementAttributes(target);
+    console.log("Element clicked:", {
+      tagName: target.tagName,
+      selector: selector,
+      rect: rect
+    });
+
+    // 立即更新选中高亮
+    updateSelectedHighlight(target);
+
+    // 隐藏悬停高亮，因为现在是选中状态
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    var elementInfo = {
+      tagName: target.tagName.toLowerCase(),
+      rect: {
+        left: rect.left,
+        top: rect.top,
+        right: rect.right,
+        bottom: rect.bottom,
+        width: rect.width,
+        height: rect.height,
+        x: rect.x,
+        y: rect.y
+      },
+      selector: selector,
+      text: text,
+      attributes: attributes,
+      url: window.location.href,
+      path: window.location.pathname,
+      timestamp: Date.now()
+    };
+    try {
+      window.parent.postMessage({
+        type: "iframe-element-click",
+        data: elementInfo,
+        source: "iframe-highlight-injector"
+      }, "*");
+    } catch (error) {
+      console.warn("无法发送消息到父窗口:", error);
+    }
+  }
+
+  // 监听来自父窗口的消息
+  function handleParentMessage(event) {
+    console.log("Received message from parent:", event.data);
+    if (event.data.type === "iframe-highlight-toggle") {
+      var enabled = event.data.enabled;
+      console.log("Highlight toggle:", enabled);
+      if (enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "enable-iframe-highlight") {
+      console.log("Enable iframe highlight");
+      enableHighlight();
+    } else if (event.data.type === "disable-iframe-highlight") {
+      console.log("Disable iframe highlight");
+      disableHighlight();
+    } else if (event.data.type === "toggle-iframe-highlight") {
+      var _enabled = event.data.enabled !== undefined ? event.data.enabled : !highlightEnabled;
+      console.log("Toggle iframe highlight to:", _enabled);
+      if (_enabled) {
+        enableHighlight();
+      } else {
+        disableHighlight();
+      }
+    } else if (event.data.type === "update-selected-element") {
+      var selector = event.data.selector;
+      console.log("Update selected element with selector:", selector);
+      if (selector) {
+        try {
+          var element = document.querySelector(selector);
+          console.log("Found element by selector:", element);
+          updateSelectedHighlight(element);
+        } catch (error) {
+          console.warn("Failed to select element:", error);
+          updateSelectedHighlight(null);
+        }
+      } else {
+        updateSelectedHighlight(null);
+      }
+    } else if (event.data.type === "clear-selected-element") {
+      console.log("Clear selected element");
+      updateSelectedHighlight(null);
+    }
+  }
+
+  // 启用高亮功能
+  function enableHighlight() {
+    console.log("Enabling highlight");
+    document.addEventListener("mouseover", handleMouseOver, true);
+    document.addEventListener("mouseout", handleMouseOut, true);
+    document.addEventListener("click", handleClick, true);
+    highlightEnabled = true;
+    overlay.style.display = "block";
+  }
+
+  // 禁用高亮功能
+  function disableHighlight() {
+    console.log("Disabling highlight");
+    highlightEnabled = false;
+    // 保持事件监听器，但通过 highlightEnabled 变量控制行为
+    // 这样可以保留选中状态的显示
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    // 不隐藏 selectedBox 和 selectedLabel，保留选中状态
+  }
+
+  // 完全禁用高亮功能（移除所有监听器）
+  function fullyDisableHighlight() {
+    console.log("Fully disabling highlight");
+    highlightEnabled = false;
+    document.removeEventListener("mouseover", handleMouseOver, true);
+    document.removeEventListener("mouseout", handleMouseOut, true);
+    document.removeEventListener("click", handleClick, true);
+    overlay.style.display = "none";
+    highlightBox.style.display = "none";
+    tagLabel.style.display = "none";
+    selectedBox.style.display = "none";
+    selectedLabel.style.display = "none";
+  }
+
+  // 添加事件监听
+  enableHighlight();
+  window.addEventListener("message", handleParentMessage);
+
+  // 暴露全局函数供外部调用
+  window.__iframeHighlightControl = {
+    enable: enableHighlight,
+    disable: disableHighlight,
+    fullyDisable: fullyDisableHighlight,
+    isEnabled: function isEnabled() {
+      return highlightEnabled;
+    },
+    getSelectedElement: function getSelectedElement() {
+      return selectedElement;
+    },
+    updateSelected: updateSelectedHighlight,
+    // 通过消息发送开关控制
+    sendToggleMessage: function sendToggleMessage(enabled) {
+      window.parent.postMessage({
+        type: 'iframe-highlight-status',
+        enabled: enabled || highlightEnabled,
+        source: 'iframe-highlight-injector'
+      }, '*');
+    }
+  };
+
+  // 通知父窗口脚本已加载
+  try {
+    window.parent.postMessage({
+      type: "iframe-highlight-ready",
+      data: {
+        url: window.location.href,
+        userAgent: navigator.userAgent,
+        timestamp: Date.now()
+      },
+      source: "iframe-highlight-injector"
+    }, "*");
+  } catch (error) {
+    console.warn("无法发送就绪消息到父窗口:", error);
+  }
+
+  // 清理函数
+  window.__iframeHighlightCleanup = function () {
+    fullyDisableHighlight();
+    window.removeEventListener("message", handleParentMessage);
+    if (overlay.parentElement) {
+      overlay.parentElement.removeChild(overlay);
+    }
+    delete window.__iframeHighlightInitialized;
+    delete window.__iframeHighlightCleanup;
+  };
+})();
+
+</script>
+</body>
+</html>
