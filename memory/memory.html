@@ -674,7 +674,7 @@ icon=ABCXYZ.ico</code></pre>
                     
                     <h3>STEP 5: Build The Final MKV</h3>
                     <p>This creates the final MKV using: HEVC video, converted AAC audio, original subtitle tracks, rebuilt MKV indexes/cues. The result <em>should</em> seek properly and switch audio tracks reliably.</p>
-                    <pre><code>ffmpeg -i "EP01.mkv" -fps_mode cfr -r 30000/1001 -c:v libx264 -crf 18 -preset slow -an "EP01_CFR.mkv"</code></pre>
+                    <pre><code>mkvmerge --engage no_cue_duration --engage no_cue_relative_position -o "EP01_FINAL.mkv" --aspect-ratio 0:16/9 "EP01.hevc" --no-video "EP01_AUDIO.mkv" --no-video --no-subtitles "EP01.mkv" --no-video --no-audio</code></pre>
                     
 
                     <h3>Usage</h3>
