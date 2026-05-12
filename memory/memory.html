@@ -139,7 +139,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                             Info
                         </div>
-                        <p>There is always a risk that any of these suggestions could damage your system. Please be careful and do your best to double check your work before committing any changes!</p>
+                        <p>There is always a risk that any of these suggestions could damage your system. Please be careful and do your best to double check your work before committing any changes! BACKUP YOUR FILES AND DATA!!</p>
                     </div>
                 </section>
 
@@ -676,10 +676,139 @@ icon=ABCXYZ.ico</code></pre>
                     <p>This creates the final MKV using: HEVC video, converted AAC audio, original subtitle tracks, rebuilt MKV indexes/cues. The result <em>should</em> seek properly and switch audio tracks reliably.</p>
                     <pre><code>mkvmerge --engage no_cue_duration --engage no_cue_relative_position -o "EP01_FINAL.mkv" --aspect-ratio 0:16/9 "EP01.hevc" --no-video "EP01_AUDIO.mkv" --no-video --no-subtitles "EP01.mkv" --no-video --no-audio</code></pre>
                     
-
                     <h3>Usage</h3>
-                    <p>Explain how to use this tool. Include any prerequisites, installation steps, or examples.</p>
+                    <p>Use this to test single-file conversions. Replace "EP01" with the actual filename (and location) of your videos.</p>
 
+                    <h4>Batch Processor</h4>
+                    <p>This is the <em>same</em> as the above but in a batch-convert code. Create the script inside the folder with all the videos you want to upscale. The <strong>Video2x.Appimage</strong> should be placed in the folder above this, and made executable via chmod +x. (example: Projects/Video2x.Appimage, Projects/UpscaleMe/"script and video files here") </p>
+                    <pre><code>#!/usr/bin/env bash
+
+# ============================================================
+# Portable Anime AI Upscale Pipeline
+# ============================================================
+
+set -euo pipefail
+
+# ---------- PATH SETUP ----------
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+
+V2X="$PROJECT_DIR/Video2X-x86_64.AppImage"
+LOG="$SCRIPT_DIR/upscale_batch.log"
+
+# ---------- SETTINGS ----------
+X265_CRF="20"
+X265_PRESET="slow"
+UPSCALE_FACTOR="2"
+
+# ---------- START LOG ----------
+echo "" | tee -a "$LOG"
+echo "==================================================" | tee -a "$LOG"
+echo "Batch Started" | tee -a "$LOG"
+date | tee -a "$LOG"
+echo "==================================================" | tee -a "$LOG"
+
+# ---------- CHECK VIDEO2X ----------
+if [ ! -f "$V2X" ]; then
+    echo "ERROR: Video2X AppImage not found:" | tee -a "$LOG"
+    echo "$V2X" | tee -a "$LOG"
+    exit 1
+fi
+
+# ---------- GPU DETECTION ----------
+GPU_ID=$("$V2X" --list-devices 2>/dev/null | grep -iv "intel\|integrated" | head -1 | awk '{print $1}' | tr -d '.')
+
+if [ -z "$GPU_ID" ]; then
+    echo "ERROR: No discrete GPU detected." | tee -a "$LOG"
+    exit 1
+fi
+
+echo "Using GPU device index: $GPU_ID" | tee -a "$LOG"
+
+# ---------- MAIN LOOP ----------
+for ORIG in "$SCRIPT_DIR"/*.mkv; do
+
+    [ -e "$ORIG" ] || continue
+
+    BASE=$(basename "$ORIG" .mkv)
+
+    CFR="${SCRIPT_DIR}/${BASE}_CFR.mkv"
+    UPSCALE="${SCRIPT_DIR}/${BASE}_UPSCALE.mkv"
+    HEVC="${SCRIPT_DIR}/${BASE}.hevc"
+    AUDIO="${SCRIPT_DIR}/${BASE}_AUDIO.mkv"
+    FINAL="${SCRIPT_DIR}/${BASE}_FINAL.mkv"
+
+    echo "" | tee -a "$LOG"
+    echo "==================================================" | tee -a "$LOG"
+    echo "Processing: $BASE" | tee -a "$LOG"
+    date | tee -a "$LOG"
+    echo "==================================================" | tee -a "$LOG"
+
+    # ---------- SKIP COMPLETED ----------
+    if [ -f "$FINAL" ]; then
+        echo "Skipping: FINAL already exists." | tee -a "$LOG"
+        continue
+    fi
+
+    # ============================================================
+    # STEP 1 — CFR NORMALIZATION
+    # ============================================================
+
+    echo "--- Step 1: CFR Normalize ---" | tee -a "$LOG"
+
+    nice -n 10 ffmpeg -y -i "$ORIG" -fps_mode cfr -r 30000/1001 -c:v libx264 -crf 18 -preset slow -an "$CFR"
+
+    # ============================================================
+    # STEP 2 — AI UPSCALE (GPU)
+    # ============================================================
+
+    echo "--- Step 2: AI Upscale ---" | tee -a "$LOG"
+
+    "$V2X" --no-copy-streams -d "$GPU_ID" -i "$CFR" -o "$UPSCALE" -p realesrgan --realesrgan-model realesr-animevideov3 -s "$UPSCALE_FACTOR"
+
+    # ============================================================
+    # STEP 3 — HEVC x265 ENCODE (CPU)
+    # ============================================================
+
+    echo "--- Step 3: HEVC x265 Encode ---" | tee -a "$LOG"
+
+    nice -n 10 ffmpeg -y -i "$UPSCALE" -map 0:v -c:v libx265 -crf "$X265_CRF" -preset "$X265_PRESET" -pix_fmt yuv420p -x265-params "aq-mode=3:aq-strength=1.0:deblock=-1,-1" "$HEVC"
+
+    # ============================================================
+    # STEP 4 — AAC AUDIO CONVERSION
+    # ============================================================
+
+    echo "--- Step 4: AAC Audio Conversion ---" | tee -a "$LOG"
+
+    ffmpeg -y -i "$ORIG" -map 0:a? -c:a aac -b:a 192k "$AUDIO"
+
+    # ============================================================
+    # STEP 5 — FINAL MKV REBUILD
+    # ============================================================
+
+    echo "--- Step 5: Final MKV Rebuild ---" | tee -a "$LOG"
+
+    mkvmerge --engage no_cue_duration --engage no_cue_relative_position -o "$FINAL" --aspect-ratio 0:16/9 "$HEVC" --no-video "$AUDIO" --no-video --no-subtitles "$ORIG" --no-video --no-audio
+
+    # ============================================================
+    # STEP 6 — CLEANUP
+    # ============================================================
+
+    echo "--- Cleaning Up Intermediates ---" | tee -a "$LOG"
+
+    rm -f "$CFR" "$UPSCALE" "$HEVC" "$AUDIO"
+
+    echo "Completed Successfully: $FINAL" | tee -a "$LOG"
+
+done
+
+# ---------- FINISHED ----------
+echo "" | tee -a "$LOG"
+echo "==================================================" | tee -a "$LOG"
+echo "Batch Complete" | tee -a "$LOG"
+date | tee -a "$LOG"
+echo "==================================================" | tee -a "$LOG"
+                    </code></pre>
                     <h2 id="tool-04">Tool 04</h2>
                     <div class="callout info">
                         <div class="callout-title">
@@ -699,14 +828,12 @@ icon=ABCXYZ.ico</code></pre>
                     <div class="callout info">
                         <div class="callout-title">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                            Placeholder
+                            Linux-only
                         </div>
                         <p>This page is a placeholder for Tool 05. You can populate this with your favorite AI commands, scripts, and processes.</p>
                     </div>
                     <h3>Description</h3>
-                    <p>Add your description here. What does this tool do? When is it useful?</p>
-                    <h3>Code / Command</h3>
-                    <pre><code># Add your code or command here</code></pre>
+
                     <h3>Usage</h3>
                     <p>Explain how to use this tool. Include any prerequisites, installation steps, or examples.</p>
 
