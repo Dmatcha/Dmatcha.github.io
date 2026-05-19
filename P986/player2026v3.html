@@ -4832,6 +4832,70 @@ const ConstellationConfig = {
   // Fear, Hate, Love lists contain all allowed values — any subset of them matches.
   // 691 clusters cover all 16,384 combinations. Replace PLACEHOLDER descs with final names.
   specializedTitles: [
+  // ═══════════════════════════════════════════════════════════════════
+  // PERSONAL OVERRIDES — checked first, supersede all cluster matches
+  // Add entries here for any build that deserves a unique named result.
+  // isOverride: true allows the UI to treat these specially if desired.
+  // ═══════════════════════════════════════════════════════════════════
+  //
+  // N'S BUILD: Insight / (Magicks|Archery) / (Animalist|Naturalist)
+  //               / Abominations / Authority / Places / Chaos
+  //
+  //   Magicks variants → CONSTELLATION (scores ~15/7/12 and 15/6/13)
+  {
+    isOverride: true,
+    conditions: {
+      innate:      ['insight'],
+      proficiency: ['magicks'],
+      interest:    ['animalist','naturalist'],
+      fear:        ['abominations'],
+      hate:        ['authority'],
+      love:        ['places'],
+      source:      ['chaos']
+    },
+    dominance: 'CONSTELLATION',
+    title: 'Constellation of the Twilight Ivy',
+    desc:  '[Curving across the cosmos, it is said this cluster of stars is responsible for the birth of many worlds. Act as if you have chosen both Animalist and Naturalist: become an expert at foraging and succeed camp challenges, recover more at camps; you may start with a buddy creature, if its life were to be reduced to zero, instead set its life to 1 and stun it for the remainder of the cycle, other animals and beasts are friendlier toward you.]'
+  },
+  //   Archery variants → OMEN (scores ~12/9/13 and 12/8/14)
+  {
+    isOverride: true,
+    conditions: {
+      innate:      ['insight'],
+      proficiency: ['archery'],
+      interest:    ['animalist','naturalist'],
+      fear:        ['abominations'],
+      hate:        ['authority'],
+      love:        ['places'],
+      source:      ['chaos']
+    },
+    dominance: 'OMEN',
+    title: 'Constellation of the Twilight Ivy',
+    desc:  '[Curving across the cosmos, it is said this cluster of stars is responsible for the birth of many worlds. Act as if you have chosen both Animalist and Naturalist: become an expert at foraging and succeed camp challenges, recover more at camps; you may start with a buddy creature, if its life were to be reduced to zero, instead set its life to 1 and stun it for the remainder of the cycle, other animals and beasts are friendlier toward you.]'
+  },
+  //
+  // G'S BUILD: Insight / Hands / Avarist
+  //              / (Abominations|Spirits) / Religion / People / Trust
+  //
+  //   Both Fear variants → OMEN (scores 7/11/14 and 8/11/14)
+  {
+    isOverride: true,
+    conditions: {
+      innate:      ['insight'],
+      proficiency: ['hands'],
+      interest:    ['avarist'],
+      fear:        ['abominations','spirits'],
+      hate:        ['religion'],
+      love:        ['people'],
+      source:      ['trust']
+    },
+    dominance: 'OMEN',
+    title: 'Star in the Faraway Fog',
+    desc:  '[Like a lighthouse, the light of this star is visible always, however faint. You fear abominations and spirits equally, having a severe aversion to the occult. Should you overcome this fear, gain a moment of favour and occasionally act as if you have Blessing of the Nightmare Slayer (you may target abominations, horrors, ghosts, spirits, and other occult-relatef foes).]'
+  },
+  // ═══════════════════════════════════════════════════════════════════
+  // END PERSONAL OVERRIDES — cluster entries follow
+  // ═══════════════════════════════════════════════════════════════════
     {
       conditions: { innate: ["insight"], proficiency: ["archery"], interest: ["animalist"], fear: ["abominations", "beasts", "insects", "spirits"], hate: ["aggression", "authority", "religion", "sickness"], love: ["ideas", "people", "places", "things"], source: ["ambition"] },
       dominance: 'CONSTELLATION',
