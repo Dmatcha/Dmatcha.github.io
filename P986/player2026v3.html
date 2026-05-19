@@ -1086,10 +1086,10 @@
 
   .traits-row {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.5rem;
     justify-content: center;
     flex-wrap: wrap;
-    transition: all 0.4s ease;
+    transition: all 0.5s ease;
   }
 
   .traits-row.disabled {
@@ -1104,7 +1104,7 @@
     font-size: 0.9rem;
     font-weight: 600;
     color: #FFD700;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0rem;
     text-transform: uppercase;
     letter-spacing: 0.15em;
   }
@@ -3183,19 +3183,19 @@
         <!-- Love Row -->
         <div class="traits-row disabled" data-row="love">
           <div class="traits-row-title">Love</div>
-          <div class="traits-option" data-row="love" data-value="patron">Patron</div>
-          <div class="traits-option" data-row="love" data-value="mentor">Mentor</div>
-          <div class="traits-option" data-row="love" data-value="beloved">Beloved</div>
-          <div class="traits-option" data-row="love" data-value="kin">Kin</div>
+          <div class="traits-option" data-row="love" data-value="people">People</div>
+          <div class="traits-option" data-row="love" data-value="places">Places</div>
+          <div class="traits-option" data-row="love" data-value="things">Things</div>
+          <div class="traits-option" data-row="love" data-value="ideas">Ideas</div>
         </div>
 
         <!-- Source Row -->
         <div class="traits-row disabled" data-row="source">
           <div class="traits-row-title">Source</div>
-          <div class="traits-option" data-row="source" data-value="ancestry">Ancestry</div>
-          <div class="traits-option" data-row="source" data-value="training">Training</div>
-          <div class="traits-option" data-row="source" data-value="twist">Twist of Fate</div>
-          <div class="traits-option" data-row="source" data-value="trial">Trial and Error</div>
+          <div class="traits-option" data-row="source" data-value="ambition">Ambition</div>
+          <div class="traits-option" data-row="source" data-value="trust">Trust</div>
+          <div class="traits-option" data-row="source" data-value="passion">Passion</div>
+          <div class="traits-option" data-row="source" data-value="chaos">Chaos</div>
         </div>
       </div>
       
@@ -4678,7 +4678,7 @@ const traitsDescriptions = {
 
 function updateTraitsTitle() {
   const name = playerNameInput.value.trim() || 'Player';
-  traitsTitle.textContent = `${name}'s Constellation`;
+  traitsTitle.textContent = `${name}'s Traits`;
 }
 
 function generateTraitsDescription() {
@@ -9196,26 +9196,13 @@ traitsLockBtn.addEventListener('click', () => {
   saveState('characterOptions',characterOptions);
   traitsGrid.style.display='none';
   traitsLockBtn.style.display='none';
-  const combinedHTML=`<div class="traits-description-name">Your Constellation</div>
+  const combinedHTML=`<div class="traits-description-name"></div>
     <div style="margin:0.75rem 0;padding:0.75rem;background:linear-gradient(135deg,rgba(212,175,55,0.15),rgba(138,43,226,0.1));border-radius:0.75rem;border:1px solid rgba(212,175,55,0.3);">
-      <div style="font-size:0.75rem;color:rgba(212,175,55,0.8);text-align:center;text-transform:uppercase;letter-spacing:0.1em;">Dominance: ${comboDescriptor.dominance}</div>
       <div style="font-size:1.5rem;font-weight:700;color:#D4AF37;text-align:center;margin-bottom:0.5rem;">${comboDescriptor.specializedTitle || comboDescriptor.dominance}</div>
       <div style="font-size:0.85rem;color:rgba(255,255,255,0.7);text-align:center;margin-top:0.5rem;">${comboDescriptor.specializedDesc || '[Awaiting descriptor]'}</div>
-      <div style="display:flex;justify-content:space-around;margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid rgba(212,175,55,0.2);">
-        <div style="text-align:center;"><div style="font-size:0.65rem;color:rgba(255,255,255,0.5);text-transform:uppercase;">Constellation</div><div style="font-size:0.85rem;color:#66ccff;">${comboDescriptor.points.constellation} pts</div></div>
-        <div style="text-align:center;"><div style="font-size:0.65rem;color:rgba(255,255,255,0.5);text-transform:uppercase;">Guiding Star</div><div style="font-size:0.85rem;color:#ffd700;">${comboDescriptor.points.guidingStar} pts</div></div>
-        <div style="text-align:center;"><div style="font-size:0.65rem;color:rgba(255,255,255,0.5);text-transform:uppercase;">Omen</div><div style="font-size:0.85rem;color:#ff8fa3;">${comboDescriptor.points.omen} pts</div></div>
       </div>
     </div>
-    <div class="traits-description-name" style="margin-top:1rem;">Character Identity</div>
-    <div style="margin:0.5rem 0;padding:0.5rem;background:rgba(212,175,55,0.08);border-radius:0.5rem;">
-      <div style="font-size:1.05rem;font-weight:600;color:#D4AF37;">${comboDescriptor.secondaryTitle}</div>
-      <div style="font-size:0.85rem;color:rgba(255,255,255,0.7);">${comboDescriptor.tagline}</div>
-    </div>
-    <div class="traits-description-name" style="margin-top:0.75rem;">Individual Traits</div>${description}
-    <div class="traits-description-name" style="margin-top:1rem;">The Full Story</div>
-    <div style="margin-top:0.5rem;font-style:italic;color:rgba(255,255,255,0.85);">${comboDescriptor.narrative}</div>
-    <div style="font-size:0.65rem;color:rgba(255,255,255,0.4);margin-top:1rem;text-align:center;">Uniqueness: ${comboDescriptor.uniquenessScore}/100 | Combo: ${comboDescriptor.combinationKey}</div>`;
+    <div class="traits-description-name" style="margin-top:0.75rem;"></div>${description}`;
   traitsDescription.innerHTML=combinedHTML;
   traitsDescription.style.display='block';
   pushPlayerMetaToFirebase();
@@ -9229,26 +9216,13 @@ function checkTraitsLocked() {
     // Generate full celestial display for saved locked traits
     const comboDescriptor = ConstellationCombo.generateDescriptor(characterOptions);
     const description = generateTraitsDescription();
-    const combinedHTML = `<div class="traits-description-name">Your Constellation</div>
+  const combinedHTML=`<div class="traits-description-name"></div>
     <div style="margin:0.75rem 0;padding:0.75rem;background:linear-gradient(135deg,rgba(212,175,55,0.15),rgba(138,43,226,0.1));border-radius:0.75rem;border:1px solid rgba(212,175,55,0.3);">
-      <div style="font-size:0.75rem;color:rgba(212,175,55,0.8);text-align:center;text-transform:uppercase;letter-spacing:0.1em;">Dominance: ${comboDescriptor.dominance}</div>
       <div style="font-size:1.5rem;font-weight:700;color:#D4AF37;text-align:center;margin-bottom:0.5rem;">${comboDescriptor.specializedTitle || comboDescriptor.dominance}</div>
       <div style="font-size:0.85rem;color:rgba(255,255,255,0.7);text-align:center;margin-top:0.5rem;">${comboDescriptor.specializedDesc || '[Awaiting descriptor]'}</div>
-      <div style="display:flex;justify-content:space-around;margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid rgba(212,175,55,0.2);">
-        <div style="text-align:center;"><div style="font-size:0.65rem;color:rgba(255,255,255,0.5);text-transform:uppercase;">Constellation</div><div style="font-size:0.85rem;color:#66ccff;">${comboDescriptor.points.constellation} pts</div></div>
-        <div style="text-align:center;"><div style="font-size:0.65rem;color:rgba(255,255,255,0.5);text-transform:uppercase;">Guiding Star</div><div style="font-size:0.85rem;color:#ffd700;">${comboDescriptor.points.guidingStar} pts</div></div>
-        <div style="text-align:center;"><div style="font-size:0.65rem;color:rgba(255,255,255,0.5);text-transform:uppercase;">Omen</div><div style="font-size:0.85rem;color:#ff8fa3;">${comboDescriptor.points.omen} pts</div></div>
       </div>
     </div>
-    <div class="traits-description-name" style="margin-top:1rem;">Character Identity</div>
-    <div style="margin:0.5rem 0;padding:0.5rem;background:rgba(212,175,55,0.08);border-radius:0.5rem;">
-      <div style="font-size:1.05rem;font-weight:600;color:#D4AF37;">${comboDescriptor.secondaryTitle}</div>
-      <div style="font-size:0.85rem;color:rgba(255,255,255,0.7);">${comboDescriptor.tagline}</div>
-    </div>
-    <div class="traits-description-name" style="margin-top:0.75rem;">Individual Traits</div>${description}
-    <div class="traits-description-name" style="margin-top:1rem;">The Full Story</div>
-    <div style="margin-top:0.5rem;font-style:italic;color:rgba(255,255,255,0.85);">${comboDescriptor.narrative}</div>
-    <div style="font-size:0.65rem;color:rgba(255,255,255,0.4);margin-top:1rem;text-align:center;">Uniqueness: ${comboDescriptor.uniquenessScore}/100 | Combo: ${comboDescriptor.combinationKey}</div>`;
+    <div class="traits-description-name" style="margin-top:0.75rem;"></div>${description}`;
     traitsDescription.innerHTML = combinedHTML;
     traitsDescription.style.display = 'block';
   } else {
