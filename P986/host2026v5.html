@@ -3563,6 +3563,12 @@ function updateStat(index, stat, delta) {
     db.ref(`sessions/${activeSessionCode}/players/${slot}/soul`).set(player.soul);
   }
 
+  // Sync madness to player page (for Madness Magic spell casting)
+  if (stat === 'madness' && activeSessionCode) {
+    const slot = `player${index}`;
+    db.ref(`sessions/${activeSessionCode}/players/${slot}/madness`).set(player.madness);
+  }
+
   renderPlayers();
   saveState();
 }
@@ -6529,6 +6535,36 @@ function listenForPlayerStatUpdates(code) {
 
     // Traits notes
     if (data.traitsNotes !== undefined) p.traitsNotes = data.traitsNotes;
+
+    // Madness Magic spell cast request — player wants to cast a Madness Magic spell
+    if (data.madnessCastRequest) {
+      const request = data.madnessCastRequest;
+      const spellName = request.spellName || 'Unknown Spell';
+      const madnessCost = request.madnessCost || 0;
+
+      // Verify player has enough madness
+      const currentMadness = p.madness || 0;
+      if (currentMadness >= madnessCost) {
+        // Deduct madness
+        p.madness = Math.max(0, currentMadness - madnessCost);
+
+        // Log the spell cast
+        const costText = madnessCost === 1 ? '1 Madness' : `${madnessCost} Madness`;
+        appendPlayerLog(slotIndex, `Cast "${spellName}" — ${costText} from madness.`);
+
+        // Visual feedback for host
+        console.log(`Player ${name} cast ${spellName} (cost: ${costText}). New madness: ${p.madness}`);
+      } else {
+        appendPlayerLog(slotIndex, `Attempted "${spellName}" — insufficient madness!`);
+        console.warn(`Player ${name} tried to cast ${spellName} but only has ${currentMadness} madness (needs ${madnessCost}).`);
+      }
+
+      // Clear the cast request so it doesn't re-trigger
+      db.ref(`sessions/${code}/players/${snap.key}/madnessCastRequest`).remove();
+
+      renderPlayers();
+      saveState();
+    }
 
     // Scathe Memo Book — new entry written by player
     if (data.scatheMemo) {
