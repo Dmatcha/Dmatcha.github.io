@@ -12680,7 +12680,7 @@ function renderSpells() {
   spellList.innerHTML = '';
 
   // Render legendary slots
-  spellList.innerHTML += `<div class="spell-section-title">Mind${legendaryCount > 1 ? 's' : ''}</div>`;
+  spellList.innerHTML = `<div class="spell-section-title">Mind${legendaryCount > 1 ? 's' : ''}</div>`;
   for (let i = 0; i < legendaryCount; i++) {
     spellList.innerHTML += createSpellCard(i, spells[i] || {}, true);
   }
@@ -12694,24 +12694,28 @@ function renderSpells() {
     "Regenerate"
   ];
 
-  // Render collapsible "Spells ~ Actions" toggle (before the Spells section title)
-  spellList.innerHTML += `
+  // Build the toggle and actions container HTML string first, then assign once
+  // This prevents innerHTML += from re-parsing and causing nesting issues
+  let actionsHtml = `
     <div class="spells-actions-toggle expanded" id="spellsActionsToggle" onclick="toggleSpellsActions()">
-      <span class="arrow">&#9658;</span>
       <span class="spells-label">Spells</span>
       <span class="actions-label">~ Actions</span>
+      <span class="arrow">&#9658;</span>
     </div>
     <div id="actionsContainer" class="actions-container expanded">
   `;
 
-  // Render basic actions (indellible, no delete button)
+  // Append all action cards to the string
   for (const actionName of basicActions) {
     const actionData = spellDB[actionName] || { name: actionName, description: '', primaryType: 'Basic', secondaryType: '' };
-    spellList.innerHTML += createActionCard(actionData);
+    actionsHtml += createActionCard(actionData);
   }
 
-  // Close actions container
-  spellList.innerHTML += '</div>';
+  // Close the actions container
+  actionsHtml += '</div>';
+
+  // Now append the entire block at once
+  spellList.innerHTML += actionsHtml;
 
   // Render regular slots with "Spells" section title
   spellList.innerHTML += `<div class="spell-section-title">Spells</div>`;
@@ -12806,9 +12810,31 @@ function createActionCard(data = {}) {
  * Toggle the visibility of the basic actions container
  * "Spells" stays visible, "~ Actions" becomes bold yellow when expanded
  */
+let toggleLocked = false; // Prevent double-fire from onclick + addEventListener
 function toggleSpellsActions() {
+  // Prevent rapid double-firing
+  if (toggleLocked) {
+    console.log('toggleSpellsActions: blocked (locked)');
+    return;
+  }
+  toggleLocked = true;
+  setTimeout(() => { toggleLocked = false; }, 100);
+
   const container = document.getElementById('actionsContainer');
   const toggle = document.getElementById('spellsActionsToggle');
+
+  // Debug: check if elements exist
+  if (!container) {
+    console.log('toggleSpellsActions: actionsContainer NOT FOUND');
+    console.log('Available IDs:', ['spellsActionsToggle', 'spellList', 'mindOverlay'].map(id => `${id}: ${document.getElementById(id) ? 'exists' : 'null'}`));
+    // Try finding by partial match
+    const allIds = document.querySelectorAll('[id]');
+    console.log('All element IDs containing "action":',
+      Array.from(allIds).filter(el => el.id.includes('action') || el.id.includes('Action')).map(el => el.id));
+  }
+  if (!toggle) {
+    console.log('toggleSpellsActions: spellsActionsToggle NOT FOUND');
+  }
 
   if (!container || !toggle) {
     console.log('toggleSpellsActions: elements not found', { container, toggle });
@@ -12816,6 +12842,7 @@ function toggleSpellsActions() {
   }
 
   const isCollapsed = !container.classList.contains('expanded');
+  console.log('Before toggle - container.expanded:', container.classList.contains('expanded'), 'toggle.expanded:', toggle.classList.contains('expanded'));
 
   if (isCollapsed) {
     container.classList.add('expanded');
@@ -12825,18 +12852,15 @@ function toggleSpellsActions() {
     toggle.classList.remove('expanded');
   }
 
-  console.log('toggleSpellsActions: now expanded =', container.classList.contains('expanded'));
+  console.log('After toggle - container.expanded:', container.classList.contains('expanded'), 'toggle.expanded:', toggle.classList.contains('expanded'));
 }
 
 /**
- * Bind click events for basic action cards and toggle
+ * Bind click events for basic action cards (NOT the toggle - it's handled by onclick attribute)
  */
 function bindActionEvents() {
-  // Bind click event to the "Spells ~ Actions" toggle
-  const toggle = document.getElementById('spellsActionsToggle');
-  if (toggle) {
-    toggle.addEventListener('click', toggleSpellsActions);
-  }
+  // Note: The "Spells ~ Actions" toggle already has onclick="toggleSpellsActions()" in HTML
+  // DO NOT add another event listener here to avoid double-firing
 
   document.querySelectorAll('.action-slot').forEach(card => {
     const castBtn = card.querySelector('.spell-cast-btn');
