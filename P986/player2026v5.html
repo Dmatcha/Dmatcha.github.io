@@ -964,11 +964,9 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    user-select: none;
-    transition: background-color 0.2s ease;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.5rem;
     margin: 1.5rem 0 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 0.0625rem solid rgba(212, 165, 255, 0.2);
   }
   .spells-actions-toggle:hover {
     background-color: rgba(155, 89, 182, 0.1);
@@ -976,11 +974,13 @@
   .spells-actions-toggle .arrow {
     font-size: 0.8rem;
     color: var(--mind-bright-purple);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, color 0.3s ease;
     display: inline-block;
+    margin-left: auto; /* Push arrow to the right */
   }
   .spells-actions-toggle.expanded .arrow {
     transform: rotate(90deg);
+    color: #FFD700; /* Turn yellow with Actions when expanded */
   }
   .spells-actions-toggle .spells-label {
     color: var(--mind-bright-purple);
@@ -995,13 +995,20 @@
     font-weight: 700;
   }
 
-  /* Basic actions container */
+  /* Basic actions container - animated slide from toggle */
   .actions-container {
-    display: none;
-    margin: 0.75rem 0;
+    max-height: 0;
+    overflow: hidden;
+    margin: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, margin 0.3s ease-out;
   }
   .actions-container.expanded {
-    display: block;
+    max-height: 2000px; /* Large enough to fit all actions */
+    overflow: hidden;
+    margin: 0.75rem 0;
+    opacity: 1;
+    transition: max-height 0.4s ease-in, opacity 0.3s ease-in, margin 0.3s ease-in;
   }
 
   /* Action slots (basic actions) */
@@ -1019,6 +1026,11 @@
     font-weight: 600;
     color: rgba(200, 200, 200, 0.9);
     margin-bottom: 0.25rem;
+  }
+  /* Action card names turn yellow when actions are expanded */
+  .actions-container.expanded .action-slot .spell-name-display {
+    color: #FFD700;
+    font-weight: 700;
   }
   .spell-subtitle { font-size: 0.85rem; color: rgba(155, 89, 182, 0.7); font-style: italic; padding-left: 0.25rem; }
   .spell-footer { display: flex; align-items: center; margin-top: auto; padding-top: 0.5rem; gap: 0.5rem; }
@@ -12694,15 +12706,19 @@ function renderSpells() {
     "Regenerate"
   ];
 
+  // Load saved toggle state (default to true/expanded)
+  const actionsExpanded = loadState('actionsExpanded', true);
+
   // Build the toggle and actions container HTML string first, then assign once
-  // This prevents innerHTML += from re-parsing and causing nesting issues
+  // The toggle is now INSIDE the Spells section, not a separate section
+  // When collapsed, actions are hidden but the toggle is still visible
   let actionsHtml = `
-    <div class="spells-actions-toggle expanded" id="spellsActionsToggle" onclick="toggleSpellsActions()">
+    <div class="spells-actions-toggle ${actionsExpanded ? 'expanded' : ''}" id="spellsActionsToggle" onclick="toggleSpellsActions()">
       <span class="spells-label">Spells</span>
       <span class="actions-label">~ Actions</span>
       <span class="arrow">&#9658;</span>
     </div>
-    <div id="actionsContainer" class="actions-container expanded">
+    <div id="actionsContainer" class="actions-container ${actionsExpanded ? 'expanded' : ''}">
   `;
 
   // Append all action cards to the string
@@ -12717,8 +12733,8 @@ function renderSpells() {
   // Now append the entire block at once
   spellList.innerHTML += actionsHtml;
 
-  // Render regular slots with "Spells" section title
-  spellList.innerHTML += `<div class="spell-section-title">Spells</div>`;
+  // Render regular spell slots (merged into same "Spells" section as actions)
+  // The "Spells" section title is now combined with the actions toggle
   for (let i = legendaryCount; i < spells.length && i < maxSlots; i++) {
     spellList.innerHTML += createSpellCard(i, spells[i] || {}, false);
   }
@@ -12842,17 +12858,16 @@ function toggleSpellsActions() {
   }
 
   const isCollapsed = !container.classList.contains('expanded');
-  console.log('Before toggle - container.expanded:', container.classList.contains('expanded'), 'toggle.expanded:', toggle.classList.contains('expanded'));
 
   if (isCollapsed) {
     container.classList.add('expanded');
     toggle.classList.add('expanded');
+    saveState('actionsExpanded', true); // Persist state
   } else {
     container.classList.remove('expanded');
     toggle.classList.remove('expanded');
+    saveState('actionsExpanded', false); // Persist state
   }
-
-  console.log('After toggle - container.expanded:', container.classList.contains('expanded'), 'toggle.expanded:', toggle.classList.contains('expanded'));
 }
 
 /**
