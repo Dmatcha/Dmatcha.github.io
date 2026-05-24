@@ -957,8 +957,120 @@
   .spell-delete-btn:hover { background: rgba(255, 0, 0, 0.5); }
   .spell-delete-btn svg { width: 0.75rem; height: 0.75rem; stroke: white; stroke-width: 2; fill: none; }
   .spell-section-title { font-size: 1.1rem; font-weight: 600; color: var(--mind-bright-purple); margin: 1.5rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 0.0625rem solid rgba(212, 165, 255, 0.2); }
+
+  /* Collapsible "Spells ~ Actions" header */
+  .spells-actions-toggle {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1.5rem 0 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 0.0625rem solid rgba(212, 165, 255, 0.2);
+  }
+  .spells-actions-toggle:hover {
+    background-color: rgba(155, 89, 182, 0.1);
+  }
+  .spells-actions-toggle .arrow {
+    font-size: 0.8rem;
+    color: var(--mind-bright-purple);
+    transition: transform 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    margin-left: auto; /* Push arrow to the right */
+  }
+  .spells-actions-toggle.expanded .arrow {
+    transform: rotate(90deg);
+    color: #FFD700; /* Turn yellow with Actions when expanded */
+  }
+  .spells-actions-toggle .spells-label {
+    color: var(--mind-bright-purple);
+  }
+  .spells-actions-toggle .actions-label {
+    color: rgba(200, 200, 200, 0.7);
+    font-weight: 400;
+    transition: all 0.3s ease;
+  }
+  .spells-actions-toggle.expanded .actions-label {
+    color: #FFD700;
+    font-weight: 700;
+  }
+
+  /* Basic actions container - animated slide from toggle */
+  .actions-container {
+    max-height: 0;
+    overflow: hidden;
+    margin: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, margin 0.3s ease-out;
+  }
+  .actions-container.expanded {
+    max-height: 2000px; /* Large enough to fit all actions */
+    overflow: hidden;
+    margin: 0.75rem 0;
+    opacity: 1;
+    transition: max-height 0.4s ease-in, opacity 0.3s ease-in, margin 0.3s ease-in;
+  }
+
+  /* Action slots (basic actions) */
+  .spell-slot.action-slot {
+    background: rgba(100, 100, 100, 0.15);
+    border: 1px solid rgba(150, 150, 150, 0.2);
+  }
+  .spell-slot.action-slot:hover {
+    background: rgba(100, 100, 100, 0.25);
+    border-color: rgba(150, 150, 150, 0.35);
+  }
+
+  /* Display name for actions (no input field) */
+  .spell-name-display {
+    font-weight: 600;
+    color: rgba(200, 200, 200, 0.9);
+    margin-bottom: 0.25rem;
+  }
+  /* Action card names turn yellow when actions are expanded */
+  .actions-container.expanded .action-slot .spell-name-display {
+    color: #FFD700;
+    font-weight: 700;
+  }
   .spell-subtitle { font-size: 0.85rem; color: rgba(155, 89, 182, 0.7); font-style: italic; padding-left: 0.25rem; }
   .spell-footer { display: flex; align-items: center; margin-top: auto; padding-top: 0.5rem; gap: 0.5rem; }
+
+  /* ===== PAY TOGGLE SYSTEM ===== */
+  /* Clickable "Pay <icon>" segments in spell descriptions */
+  .pay-toggle {
+    cursor: pointer;
+    border-radius: 0.25rem;
+    padding: 0 0.1rem;
+    transition: color 0.15s ease, background 0.15s ease;
+    display: inline;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Default (disabled) state: inherit the description colour */
+  .pay-toggle.pay-off {
+    color: inherit;
+    font-weight: inherit;
+  }
+  /* Enabled state: solid bold white */
+  .pay-toggle.pay-on {
+    color: #ffffff;
+    font-weight: 700;
+  }
+  /* Subtle hover hint */
+  .pay-toggle:hover {
+    background: rgba(255,255,255,0.08);
+    border-radius: 0.2rem;
+  }
+  /* Extra cost icons appended to the footer when a Pay is toggled on */
+  .spell-footer .pay-extra-cost {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    opacity: 0.85;
+  }
+  .spell-footer .pay-extra-cost .cost-icon {
+    /* Match existing cost-icon size */
+  }
   .spell-cost { display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap; }
   .cost-item { display: inline-flex; align-items: center; gap: 0.125rem; }
   .cost-icon { width: 1.25rem; height: 1.25rem; object-fit: contain; vertical-align: middle; }
@@ -4857,7 +4969,7 @@ const ConstellationConfig = {
     title: 'Constellation of the Twilight Ivy',
     desc:  '[Curving across the cosmos, it is said this cluster of stars is responsible for the birth of many worlds. Act as if you have chosen both Animalist and Naturalist: become an expert at foraging and succeed camp challenges, recover more at camps; you may start with a buddy creature, if its life were to be reduced to zero, instead set its life to 1 and stun it for the remainder of the cycle, other animals and beasts are friendlier toward you.]'
   },
-  //   Archery variants → OMEN (scores ~12/9/13 and 12/8/14)
+  //   N's Build; Archery variants → OMEN (scores ~12/9/13 and 12/8/14)
   {
     isOverride: true,
     conditions: {
@@ -4892,6 +5004,63 @@ const ConstellationConfig = {
     dominance: 'GUIDING_STAR',
     title: 'Star in the Faraway Fog',
     desc:  '[Like a lighthouse, the light of this star is visible always, however faint. You fear abominations and spirits equally, having a severe aversion to the occult. Should you overcome this fear, gain a moment of favour and occasionally act as if you have Blessing of the Nightmare Slayer (you may target abominations, horrors, ghosts, spirits, and other occult-related foes).]'
+  },
+  // 
+  // S's build: DIAMOND LOCKET: Studious / Magicks / Naturalist
+  //                   / Abominations / Aggression / People / Passion
+  //   → CONSTELLATION (scores C=45, GS=32, O=18)
+  {
+    isOverride: true,
+    conditions: {
+      innate:      ['studious'],
+      proficiency: ['magicks'],
+      interest:    ['naturalist'],
+      fear:        ['abominations'],
+      hate:        ['aggression'],
+      love:        ['people'],
+      source:      ['passion']
+    },
+    dominance: 'CONSTELLATION',
+    title: 'Constellation of the Diamond Locket',
+    desc:  '[By way of clasping a device similar to this constellation\'s appearance, it is said one may be transformed. Sadly such things disappeared long ago, along with their wielders. Few Anim remain with memory of its history.]'
+  },
+  //
+  // T's build: GUIDING STAR OF THE TOWER: Wayfinding / Magicks / Avarist
+  //                               / Insects / Authority / Things / Ambition
+  //   → CONSTELLATION (scores C=47, GS=31, O=16)
+  {
+    isOverride: true,
+    conditions: {
+      innate:      ['wayfinding'],
+      proficiency: ['magicks'],
+      interest:    ['avarist'],
+      fear:        ['insects'],
+      hate:        ['authority'],
+      love:        ['things'],
+      source:      ['ambition']
+    },
+    dominance: 'CONSTELLATION',
+    title: 'Guiding Star of the Tower',
+    desc:  '[A righteous air surrounds the few who can pick out this star among all others, even fewer can describe in detail the robe that follows this stalwart comet. Often mistaken for belonging to a royal court, you\'re most likely to feel at home among the academies.]'
+  },
+  //
+  // M's build: Deep Dark Mark 
+  //   Revelry / Magicks / Chemist / Spirits / Sickness / People / Passion
+  //   
+  {
+    isOverride: true,
+    conditions: {
+      innate:      ['revelry'],
+      proficiency: ['magicks'],
+      interest:    ['chemist'],
+      fear:        ['spirits'],
+      hate:        ['sickness'],
+      love:        ['people'],
+      source:      ['passion']
+    },
+    dominance: 'OMEN',
+    title: 'Deep Dark Mark',
+    desc:  '[Seen behind the eyes, in dreams, and in the darkest part of night skies. A quiet, numbing sensation accompanies this manifestation of dooms. Yet, in blackest inks all colours are welcome, united as one. The shape is described as being similar to that of the Hunter\'s Mark. If you look to your shadow, you may find what you seek.]'
   },
   // ═══════════════════════════════════════════════════════════════════
   // END PERSONAL OVERRIDES — cluster entries follow
@@ -9134,18 +9303,30 @@ const ConstellationCombo = {
   // Find a specialized title if the trait combination matches
   findSpecializedTitle(traits, dominance) {
     const titles = this.specializedTitles;
+
+    // Pass 1: personal overrides — checked unconditionally, dominance is authoritative in the entry itself
     for (const titleEntry of titles) {
+      if (!titleEntry.isOverride) continue;
+      let match = true;
+      for (const [cat, allowedTraits] of Object.entries(titleEntry.conditions)) {
+        const selectedTrait = traits[cat];
+        if (!allowedTraits.includes(selectedTrait)) { match = false; break; }
+      }
+      if (match) return titleEntry;
+    }
+
+    // Pass 2: cluster entries — filtered by computed dominance as before
+    for (const titleEntry of titles) {
+      if (titleEntry.isOverride) continue;
       if (titleEntry.dominance !== dominance) continue;
       let match = true;
       for (const [cat, allowedTraits] of Object.entries(titleEntry.conditions)) {
         const selectedTrait = traits[cat];
-        if (!allowedTraits.includes(selectedTrait)) {
-          match = false;
-          break;
-        }
+        if (!allowedTraits.includes(selectedTrait)) { match = false; break; }
       }
       if (match) return titleEntry;
     }
+
     return null;
   },
   generateDescriptor(traits) {
@@ -11054,7 +11235,7 @@ const spellDB = {
     primaryType: "Nature Spell",
     secondaryType: "Magical Action",
     cost: [{"type": "channel", "amount": 0}],
-    description: "Tap <img src='../icons/tap2.png' class='desc-icon' alt='tap' />, you may remove 1 from any of your own duration counters, then: \n<img src='../icons/potency8.png' class='desc-icon' alt='potency' /> 3: Regain <img src='../icons/mana1.png' class='desc-icon' alt='mana' />. \n<img src='../icons/mastery4.png' class='desc-icon' alt='mastery' /> 3: Regain <img src='../icons/energy1.png' class='desc-icon' alt='energy' />. \nWhen you gain <img src='../icons/madness.png' class='desc-icon' alt='madness' /> or bathe: Untap <img src='../icons/untap2.png' class='desc-icon' alt='untap' />.\n<em>I become me, anew.</em>",
+    description: "Tap <img src='../icons/tap2.png' class='desc-icon' alt='tap' />, you may remove 1 from any of your own duration counters, then: \nPotency <img src='../icons/potency8.png' class='desc-icon' alt='potency' /> 3: Regain <img src='../icons/mana1.png' class='desc-icon' alt='mana' />. \nMastery <img src='../icons/mastery4.png' class='desc-icon' alt='mastery' /> 3: Regain <img src='../icons/energy1.png' class='desc-icon' alt='energy' />. \nWhen you gain <img src='../icons/madness.png' class='desc-icon' alt='madness' /> or bathe: Untap <img src='../icons/untap2.png' class='desc-icon' alt='untap' />.\n<em>I become me, anew.</em>",
     image: "cards/fronts/385.webp"
   },
   "Arclight": {
@@ -12274,6 +12455,10 @@ let spells = loadState('spells', []);
 let mindOpen = false;
 let castWarningDisabled = loadState('castWarningDisabled', false);
 
+// Pay-toggle state: persisted per spell+toggleIndex so choices survive overlay open/close
+// Structure: { "SpellName_0": true, "SpellName_1": false, ... }
+let payToggles = loadState('payToggles', {});
+
 // Check if player has soulbound artefact and iris
 function hasSoulboundAndIris() {
   return inventory[0]?.name && inventory[1]?.name;
@@ -12602,11 +12787,169 @@ function initializeSpells() {
   saveState('spells', spells);
 }
 
+// ═══════════════════════════════════════════════════════════
+// PAY TOGGLE SYSTEM
+// ═══════════════════════════════════════════════════════════
+
+/**
+ * Parse a spell description and extract Pay-toggle entries.
+ * Each entry has: { rawImg, iconSrc, iconAlt, toggleIndex }
+ * A "Pay" line is: Pay <img src='...' ...>: ...
+ */
+function parsePayToggleEntries(description) {
+  if (!description) return [];
+  // Match "Pay" followed immediately by an <img> tag (with optional whitespace between)
+  const regex = /Pay\s*(<img[^>]+src=['"]([^'"]+)['"][^>]*alt=['"]([^'"]+)['"][^>]*\/?>)/gi;
+  const entries = [];
+  let match;
+  let idx = 0;
+  while ((match = regex.exec(description)) !== null) {
+    entries.push({
+      rawImg: match[1],   // the full <img ...> tag
+      iconSrc: match[2],  // src value
+      iconAlt: match[3],  // alt value (used as cost type)
+      toggleIndex: idx++
+    });
+  }
+  return entries;
+}
+
+/** Stable key for a spell's pay toggle slot */
+function getPayToggleKey(spellName, toggleIndex) {
+  return `${spellName}_pay_${toggleIndex}`;
+}
+
+/**
+ * Rewrite a spell description so every "Pay <img>:" segment becomes a
+ * clickable <span class="pay-toggle pay-on|pay-off"> wrapper.
+ * The wrapper carries data attributes used by the click handler.
+ */
+function renderDescriptionWithPayToggles(description, spellName) {
+  if (!description) return description;
+
+  // We process the string replacement in a single pass using a replacer function
+  let toggleIndex = 0;
+  return description.replace(
+    /Pay(\s*)(<img[^>]+src=['"]([^'"]+)['"][^>]*alt=['"]([^'"]+)['"][^>]*\/?>)/gi,
+    (fullMatch, whitespace, imgTag, iconSrc, iconAlt) => {
+      const key = getPayToggleKey(spellName, toggleIndex);
+      const isOn = !!payToggles[key];
+      const stateClass = isOn ? 'pay-on' : 'pay-off';
+      const html = `<span class="pay-toggle ${stateClass}" data-spell="${encodeURIComponent(spellName)}" data-toggle-index="${toggleIndex}" data-icon-src="${iconSrc}" data-icon-alt="${iconAlt.toLowerCase()}">Pay${whitespace}${imgTag}</span>`;
+      toggleIndex++;
+      return html;
+    }
+  );
+}
+
+/**
+ * Build the combined cost array: base spell cost + any enabled Pay costs.
+ * Each Pay cost contributes {type, amount:1} matching the icon's alt text
+ * (which maps to COST_ICONS keys, e.g. "stamina", "empower", "mana").
+ */
+function getEffectiveCost(spell) {
+  const baseCost = spell?.cost ?? [];
+  if (!spell?.name) return baseCost;
+
+  const canonical = findSpellByName(spell.name);
+  const description = canonical?.description ?? spell.description ?? '';
+  const entries = parsePayToggleEntries(description);
+  if (entries.length === 0) return baseCost;
+
+  const extraCosts = [];
+  entries.forEach(entry => {
+    const key = getPayToggleKey(spell.name, entry.toggleIndex);
+    if (payToggles[key]) {
+      // Map the alt text to a valid cost type; fall back to 'generic'
+      const costType = entry.iconAlt.toLowerCase();
+      extraCosts.push({ type: costType, amount: 1 });
+    }
+  });
+
+  return [...baseCost, ...extraCosts];
+}
+
+/**
+ * Render extra cost icons for the footer, one per enabled Pay toggle.
+ * Returns HTML string (empty if none toggled on).
+ */
+function renderPayExtraCostIcons(spell) {
+  if (!spell?.name) return '';
+  const canonical = findSpellByName(spell.name);
+  const description = canonical?.description ?? spell.description ?? '';
+  const entries = parsePayToggleEntries(description);
+  if (entries.length === 0) return '';
+
+  let html = '';
+  entries.forEach(entry => {
+    const key = getPayToggleKey(spell.name, entry.toggleIndex);
+    if (payToggles[key]) {
+      const iconPath = COST_ICONS[entry.iconAlt.toLowerCase()] || entry.iconSrc;
+      html += `<span class="pay-extra-cost"><img src="${iconPath}" alt="${entry.iconAlt}" class="cost-icon" title="Pay: ${entry.iconAlt}" /></span>`;
+    }
+  });
+  return html;
+}
+
+/** Click handler wired to .pay-toggle elements via event delegation */
+function handlePayToggleClick(e) {
+  const toggle = e.target.closest('.pay-toggle');
+  if (!toggle) return;
+  e.stopPropagation();
+
+  const spellName = decodeURIComponent(toggle.dataset.spell);
+  const toggleIndex = parseInt(toggle.dataset.toggleIndex, 10);
+  const key = getPayToggleKey(spellName, toggleIndex);
+
+  // Flip the state
+  payToggles[key] = !payToggles[key];
+  saveState('payToggles', payToggles);
+
+  const isOn = payToggles[key];
+  toggle.classList.toggle('pay-on', isOn);
+  toggle.classList.toggle('pay-off', !isOn);
+
+  // Update the spell footer for this card (both spell-slot and action-slot)
+  const card = toggle.closest('.spell-slot, .action-slot');
+  if (!card) return;
+
+  // Rebuild the footer extra-cost icons
+  const footerDiv = card.querySelector('.spell-footer');
+  if (footerDiv) {
+    // Remove existing pay-extra-cost spans
+    footerDiv.querySelectorAll('.pay-extra-cost').forEach(el => el.remove());
+
+    // Find the spell object — works for both spell-slots (data-index) and action-slots (data-action-name)
+    const indexAttr = card.dataset.index;
+    const index = (indexAttr !== undefined && indexAttr !== '') ? +indexAttr : null;
+    const spell = (index !== null && !isNaN(index))
+      ? spells[index]
+      : (card.dataset.actionName ? (findSpellByName(card.dataset.actionName) || { name: card.dataset.actionName, cost: [] }) : null);
+
+    if (spell?.name) {
+      // Rebuild extra-cost icons (always, whether toggling on or off)
+      const extraHtml = renderPayExtraCostIcons(spell);
+      const temp = document.createElement('div');
+      temp.innerHTML = extraHtml;
+      while (temp.firstChild) footerDiv.appendChild(temp.firstChild);
+
+      // Update cast button disabled state based on effective cost (unconditional)
+      const castBtn = card.querySelector('.spell-cast-btn');
+      if (castBtn) {
+        const effectiveCost = getEffectiveCost(spell);
+        const canAfford = canAffordSpell(effectiveCost);
+        castBtn.classList.toggle('disabled', !canAfford);
+        castBtn.disabled = !canAfford;
+      }
+    }
+  }
+}
+
 function renderSpells() {
   const config = getSpellSlotConfig();
   const maxSlots = getMaxSpellSlots();
   const legendaryCount = config.legendarySlots;
-  
+
   const currentCount = getCurrentSpellCount();
   const capacityEl = document.getElementById('mindCapacity');
   if (capacityEl) {
@@ -12615,20 +12958,57 @@ function renderSpells() {
   }
 
   spellList.innerHTML = '';
-  
+
   // Render legendary slots
-  spellList.innerHTML += `<div class="spell-section-title">Mind${legendaryCount > 1 ? 's' : ''}</div>`;
+  spellList.innerHTML = `<div class="spell-section-title">Mind${legendaryCount > 1 ? 's' : ''}</div>`;
   for (let i = 0; i < legendaryCount; i++) {
     spellList.innerHTML += createSpellCard(i, spells[i] || {}, true);
   }
-  
-  // Render regular slots
-  spellList.innerHTML += '<div class="spell-section-title">Spells</div>';
+
+  // Define the basic actions that all players can perform (indellible)
+  const basicActions = [
+    "Sprint, Dash, Run",
+    "Throw, Climb, Steal, Hide",
+    "Jump, Attack, Dodge, Evade",
+    "Enhance",
+    "Regenerate"
+  ];
+
+  // Load saved toggle state (default to true/expanded)
+  const actionsExpanded = loadState('actionsExpanded', true);
+
+  // Build the toggle and actions container HTML string first, then assign once
+  // The toggle is now INSIDE the Spells section, not a separate section
+  // When collapsed, actions are hidden but the toggle is still visible
+  let actionsHtml = `
+    <div class="spells-actions-toggle ${actionsExpanded ? 'expanded' : ''}" id="spellsActionsToggle" onclick="toggleSpellsActions()">
+      <span class="spells-label">Spells</span>
+      <span class="actions-label">~ Actions</span>
+      <span class="arrow">&#9658;</span>
+    </div>
+    <div id="actionsContainer" class="actions-container ${actionsExpanded ? 'expanded' : ''}">
+  `;
+
+  // Append all action cards to the string
+  for (const actionName of basicActions) {
+    const actionData = spellDB[actionName] || { name: actionName, description: '', primaryType: 'Basic', secondaryType: '' };
+    actionsHtml += createActionCard(actionData);
+  }
+
+  // Close the actions container
+  actionsHtml += '</div>';
+
+  // Now append the entire block at once
+  spellList.innerHTML += actionsHtml;
+
+  // Render regular spell slots (merged into same "Spells" section as actions)
+  // The "Spells" section title is now combined with the actions toggle
   for (let i = legendaryCount; i < spells.length && i < maxSlots; i++) {
     spellList.innerHTML += createSpellCard(i, spells[i] || {}, false);
   }
-  
+
   bindSpellEvents();
+  bindActionEvents();
   updateAddSpellButtonState();
 }
 
@@ -12652,9 +13032,20 @@ function createSpellCard(index, data = {}, isLegendary = false) {
     : (data.type || (isLegendary ? 'Legendary Spell' : 'Regular Spell'));
   
   const costHtml = data.cost ? renderCostIcons(data.cost) : '';
-  const canCast = data.name && canAffordSpell(data.cost);
+  const effectiveCost = getEffectiveCost(data);
+  const canCast = data.name && canAffordSpell(effectiveCost);
   const showDelete = !data.locked;
-  
+
+  // Render description with Pay-toggle wrappers (only if spell has a name)
+  const canonical = data.name ? (findSpellByName(data.name) || data) : data;
+  const descRaw = canonical?.description ?? data.description ?? '—';
+  const descHtml = data.name
+    ? renderDescriptionWithPayToggles(descRaw, data.name)
+    : (descRaw || '—');
+
+  // Extra cost icons for any already-toggled Pay options
+  const payExtraHtml = data.name ? renderPayExtraCostIcons(data) : '';
+
   return `
   <div class="spell-slot${isLegendary ? ' legendary' : ''}" data-index="${index}" data-spell-name="${data.name || ''}">
     <div class="spell-left-column">
@@ -12665,9 +13056,10 @@ function createSpellCard(index, data = {}, isLegendary = false) {
       <input class="spell-name ${isLocked}" placeholder="${placeholder}" value="${data.name || ''}" ${isLocked ? 'readonly' : ''} />
       <div class="spell-type">${typeLabel}</div>
       <div class="spell-subtitle">${data.subtitle || ''}</div>
-      <div class="spell-description">${data.description || '—'}</div>
+      <div class="spell-description">${descHtml}</div>
       <div class="spell-footer">
         <div class="spell-cost">${costHtml}</div>
+        ${payExtraHtml}
       </div>
     </div>
     <button class="spell-confirm-btn"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
@@ -12675,8 +13067,189 @@ function createSpellCard(index, data = {}, isLegendary = false) {
   </div>`;
 }
 
+/**
+ * Create a card for basic actions (indellible, no delete button)
+ * These are always available to all players
+ */
+function createActionCard(data = {}) {
+  const hasImage = data.image ? 'has-image' : '';
+  const imgContent = data.image
+    ? `<img src="${data.image}" alt="${data.name || 'Action'}" />`
+    : `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`;
+
+  const typeLabel = data.primaryType && data.secondaryType
+    ? `${data.primaryType} — ${data.secondaryType}`
+    : (data.type || 'Basic Action');
+
+  const costHtml = data.cost ? renderCostIcons(data.cost) : '';
+  const effectiveCost = getEffectiveCost(data);
+  const canCast = data.name && canAffordSpell(effectiveCost);
+
+  // Render description with Pay-toggle wrappers
+  const descRaw = data.description || '—';
+  const descHtml = data.name
+    ? renderDescriptionWithPayToggles(descRaw, data.name)
+    : descRaw;
+  const payExtraHtml = data.name ? renderPayExtraCostIcons(data) : '';
+
+  return `
+  <div class="spell-slot action-slot" data-action-name="${data.name || ''}">
+    <div class="spell-left-column">
+      <div class="spell-image ${hasImage}">${imgContent}</div>
+      ${data.name ? `<button class="spell-cast-btn ${canCast ? '' : 'disabled'}" ${canCast ? '' : 'disabled'}>Use</button>` : ''}
+    </div>
+    <div class="spell-info">
+      <div class="spell-name-display">${data.name || ''}</div>
+      <div class="spell-type">${typeLabel}</div>
+      <div class="spell-description">${descHtml}</div>
+      <div class="spell-footer">
+        <div class="spell-cost">${costHtml}</div>
+        ${payExtraHtml}
+      </div>
+    </div>
+    <!-- No delete button for basic actions - they are indellible -->
+  </div>`;
+}
+
+/**
+ * Toggle the visibility of the basic actions container
+ * "Spells" stays visible, "~ Actions" becomes bold yellow when expanded
+ */
+let toggleLocked = false; // Prevent double-fire from onclick + addEventListener
+function toggleSpellsActions() {
+  // Prevent rapid double-firing
+  if (toggleLocked) {
+    console.log('toggleSpellsActions: blocked (locked)');
+    return;
+  }
+  toggleLocked = true;
+  setTimeout(() => { toggleLocked = false; }, 100);
+
+  const container = document.getElementById('actionsContainer');
+  const toggle = document.getElementById('spellsActionsToggle');
+
+  // Debug: check if elements exist
+  if (!container) {
+    console.log('toggleSpellsActions: actionsContainer NOT FOUND');
+    console.log('Available IDs:', ['spellsActionsToggle', 'spellList', 'mindOverlay'].map(id => `${id}: ${document.getElementById(id) ? 'exists' : 'null'}`));
+    // Try finding by partial match
+    const allIds = document.querySelectorAll('[id]');
+    console.log('All element IDs containing "action":',
+      Array.from(allIds).filter(el => el.id.includes('action') || el.id.includes('Action')).map(el => el.id));
+  }
+  if (!toggle) {
+    console.log('toggleSpellsActions: spellsActionsToggle NOT FOUND');
+  }
+
+  if (!container || !toggle) {
+    console.log('toggleSpellsActions: elements not found', { container, toggle });
+    return;
+  }
+
+  const isCollapsed = !container.classList.contains('expanded');
+
+  if (isCollapsed) {
+    container.classList.add('expanded');
+    toggle.classList.add('expanded');
+    saveState('actionsExpanded', true); // Persist state
+  } else {
+    container.classList.remove('expanded');
+    toggle.classList.remove('expanded');
+    saveState('actionsExpanded', false); // Persist state
+  }
+}
+
+/**
+ * Bind click events for basic action cards (NOT the toggle - it's handled by onclick attribute)
+ */
+function bindActionEvents() {
+  // Note: The "Spells ~ Actions" toggle already has onclick="toggleSpellsActions()" in HTML
+  // DO NOT add another event listener here to avoid double-firing
+
+  document.querySelectorAll('.action-slot').forEach(card => {
+    const castBtn = card.querySelector('.spell-cast-btn');
+    const imageDiv = card.querySelector('.spell-image');
+    const actionName = card.dataset.actionName;
+
+    // Cast/use button click
+    if (castBtn) {
+      castBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (castBtn.classList.contains('disabled')) return;
+
+        const actionData = spellDB[actionName];
+        if (actionData && actionData.cost) {
+          // Handle action use - check and deduct costs
+          handleActionUse(actionName, actionData);
+        }
+      });
+    }
+
+    // Image click for zoom
+    if (imageDiv) {
+      imageDiv.addEventListener('click', () => {
+        const actionData = spellDB[actionName];
+        if (!actionData?.name) return;
+        const imgEl = imageDiv.querySelector('img');
+        if (imgEl?.src) openZoom(imgEl.src, actionData.name);
+      });
+    }
+  });
+}
+
+/**
+ * Handle using a basic action - check costs and deduct resources
+ */
+function handleActionUse(actionName, actionData) {
+  if (!actionData.cost) return;
+
+  // Build effective cost including any toggled Pay options
+  const effectiveCost = getEffectiveCost(actionData);
+
+  // Check if player can afford the action
+  if (!canAffordSpell(effectiveCost)) {
+    alert('Not enough resources to use this action!');
+    return;
+  }
+
+  // Show confirmation
+  if (!castWarningDisabled) {
+    if (!confirm(`Use "${actionName}"?`)) return;
+  }
+
+  // Deduct costs
+  deductSpellCost(effectiveCost);
+
+  // Visual feedback
+  const actionSlot = document.querySelector(`.action-slot[data-action-name="${actionName}"]`);
+  if (actionSlot) {
+    const castBtn = actionSlot.querySelector('.spell-cast-btn');
+    if (castBtn) {
+      const originalText = castBtn.textContent;
+      castBtn.textContent = "Used!";
+      castBtn.style.background = "rgba(76, 175, 80, 0.6)";
+      setTimeout(() => {
+        castBtn.textContent = originalText;
+        castBtn.style.background = "";
+      }, 1000);
+    }
+  }
+
+  console.log(`Used action: ${actionName}`);
+}
+
 function bindSpellEvents() {
+  // Wire pay-toggle clicks via delegation on the whole spell list (once per render)
+  if (spellList._payToggleListener) {
+    spellList.removeEventListener('click', spellList._payToggleListener);
+  }
+  spellList._payToggleListener = handlePayToggleClick;
+  spellList.addEventListener('click', spellList._payToggleListener);
+
   document.querySelectorAll('.spell-slot').forEach(card => {
+    // Action-slots share .spell-slot but have no name input — handled by bindActionEvents()
+    if (card.classList.contains('action-slot')) return;
+
     const index = +card.dataset.index;
     const nameInput = card.querySelector('.spell-name');
     const confirmBtn = card.querySelector('.spell-confirm-btn');
@@ -12929,7 +13502,10 @@ function handleCastSpell(index) {
   const canonical = findSpellByName(spell.name);
   const cost = canonical?.cost ?? spell.cost ?? [];
 
-  const { hasX, hasGeneric } = hasVariableCost(spell.cost);
+  // Build the effective cost: base cost + any enabled Pay-toggle costs
+  const effectiveCost = getEffectiveCost(spell);
+
+  const { hasX, hasGeneric } = hasVariableCost(effectiveCost);
   let xValue = 0;
   let genericChoice = 'Mana';
   
@@ -12978,8 +13554,8 @@ function handleCastSpell(index) {
     }
   }
   
-  // 3. Check Affordability
-  if (!canAffordSpell(spell.cost, xValue, genericChoice)) {
+  // 3. Check Affordability (using effective cost)
+  if (!canAffordSpell(effectiveCost, xValue, genericChoice)) {
     alert('Not enough resources to cast this spell!');
     return;
   }
@@ -12989,8 +13565,8 @@ function handleCastSpell(index) {
     if (!confirm(`Cast "${spell.name}"?`)) return;
   }
   
-  // 5. Deduct and Finish
-  deductSpellCost(spell.cost, xValue, genericChoice);
+  // 5. Deduct and Finish (using effective cost)
+  deductSpellCost(effectiveCost, xValue, genericChoice);
   
   // Visual Feedback
   const btn = document.querySelector(`.spell-slot[data-index="${index}"] .spell-cast-btn`);

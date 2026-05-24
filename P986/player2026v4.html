@@ -957,81 +957,6 @@
   .spell-delete-btn:hover { background: rgba(255, 0, 0, 0.5); }
   .spell-delete-btn svg { width: 0.75rem; height: 0.75rem; stroke: white; stroke-width: 2; fill: none; }
   .spell-section-title { font-size: 1.1rem; font-weight: 600; color: var(--mind-bright-purple); margin: 1.5rem 0 0.75rem; padding-bottom: 0.5rem; border-bottom: 0.0625rem solid rgba(212, 165, 255, 0.2); }
-
-  /* Collapsible "Spells ~ Actions" header */
-  .spells-actions-toggle {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 1.5rem 0 0.75rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 0.0625rem solid rgba(212, 165, 255, 0.2);
-  }
-  .spells-actions-toggle:hover {
-    background-color: rgba(155, 89, 182, 0.1);
-  }
-  .spells-actions-toggle .arrow {
-    font-size: 0.8rem;
-    color: var(--mind-bright-purple);
-    transition: transform 0.3s ease, color 0.3s ease;
-    display: inline-block;
-    margin-left: auto; /* Push arrow to the right */
-  }
-  .spells-actions-toggle.expanded .arrow {
-    transform: rotate(90deg);
-    color: #FFD700; /* Turn yellow with Actions when expanded */
-  }
-  .spells-actions-toggle .spells-label {
-    color: var(--mind-bright-purple);
-  }
-  .spells-actions-toggle .actions-label {
-    color: rgba(200, 200, 200, 0.7);
-    font-weight: 400;
-    transition: all 0.3s ease;
-  }
-  .spells-actions-toggle.expanded .actions-label {
-    color: #FFD700;
-    font-weight: 700;
-  }
-
-  /* Basic actions container - animated slide from toggle */
-  .actions-container {
-    max-height: 0;
-    overflow: hidden;
-    margin: 0;
-    opacity: 0;
-    transition: max-height 0.4s ease-out, opacity 0.3s ease-out, margin 0.3s ease-out;
-  }
-  .actions-container.expanded {
-    max-height: 2000px; /* Large enough to fit all actions */
-    overflow: hidden;
-    margin: 0.75rem 0;
-    opacity: 1;
-    transition: max-height 0.4s ease-in, opacity 0.3s ease-in, margin 0.3s ease-in;
-  }
-
-  /* Action slots (basic actions) */
-  .spell-slot.action-slot {
-    background: rgba(100, 100, 100, 0.15);
-    border: 1px solid rgba(150, 150, 150, 0.2);
-  }
-  .spell-slot.action-slot:hover {
-    background: rgba(100, 100, 100, 0.25);
-    border-color: rgba(150, 150, 150, 0.35);
-  }
-
-  /* Display name for actions (no input field) */
-  .spell-name-display {
-    font-weight: 600;
-    color: rgba(200, 200, 200, 0.9);
-    margin-bottom: 0.25rem;
-  }
-  /* Action card names turn yellow when actions are expanded */
-  .actions-container.expanded .action-slot .spell-name-display {
-    color: #FFD700;
-    font-weight: 700;
-  }
   .spell-subtitle { font-size: 0.85rem; color: rgba(155, 89, 182, 0.7); font-style: italic; padding-left: 0.25rem; }
   .spell-footer { display: flex; align-items: center; margin-top: auto; padding-top: 0.5rem; gap: 0.5rem; }
   .spell-cost { display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap; }
@@ -12681,7 +12606,7 @@ function renderSpells() {
   const config = getSpellSlotConfig();
   const maxSlots = getMaxSpellSlots();
   const legendaryCount = config.legendarySlots;
-
+  
   const currentCount = getCurrentSpellCount();
   const capacityEl = document.getElementById('mindCapacity');
   if (capacityEl) {
@@ -12690,57 +12615,20 @@ function renderSpells() {
   }
 
   spellList.innerHTML = '';
-
+  
   // Render legendary slots
-  spellList.innerHTML = `<div class="spell-section-title">Mind${legendaryCount > 1 ? 's' : ''}</div>`;
+  spellList.innerHTML += `<div class="spell-section-title">Mind${legendaryCount > 1 ? 's' : ''}</div>`;
   for (let i = 0; i < legendaryCount; i++) {
     spellList.innerHTML += createSpellCard(i, spells[i] || {}, true);
   }
-
-  // Define the basic actions that all players can perform (indellible)
-  const basicActions = [
-    "Sprint, Dash, Run",
-    "Throw, Climb, Steal, Hide",
-    "Jump, Attack, Dodge, Evade",
-    "Enhance",
-    "Regenerate"
-  ];
-
-  // Load saved toggle state (default to true/expanded)
-  const actionsExpanded = loadState('actionsExpanded', true);
-
-  // Build the toggle and actions container HTML string first, then assign once
-  // The toggle is now INSIDE the Spells section, not a separate section
-  // When collapsed, actions are hidden but the toggle is still visible
-  let actionsHtml = `
-    <div class="spells-actions-toggle ${actionsExpanded ? 'expanded' : ''}" id="spellsActionsToggle" onclick="toggleSpellsActions()">
-      <span class="spells-label">Spells</span>
-      <span class="actions-label">~ Actions</span>
-      <span class="arrow">&#9658;</span>
-    </div>
-    <div id="actionsContainer" class="actions-container ${actionsExpanded ? 'expanded' : ''}">
-  `;
-
-  // Append all action cards to the string
-  for (const actionName of basicActions) {
-    const actionData = spellDB[actionName] || { name: actionName, description: '', primaryType: 'Basic', secondaryType: '' };
-    actionsHtml += createActionCard(actionData);
-  }
-
-  // Close the actions container
-  actionsHtml += '</div>';
-
-  // Now append the entire block at once
-  spellList.innerHTML += actionsHtml;
-
-  // Render regular spell slots (merged into same "Spells" section as actions)
-  // The "Spells" section title is now combined with the actions toggle
+  
+  // Render regular slots
+  spellList.innerHTML += '<div class="spell-section-title">Spells</div>';
   for (let i = legendaryCount; i < spells.length && i < maxSlots; i++) {
     spellList.innerHTML += createSpellCard(i, spells[i] || {}, false);
   }
-
+  
   bindSpellEvents();
-  bindActionEvents();
   updateAddSpellButtonState();
 }
 
@@ -12785,165 +12673,6 @@ function createSpellCard(index, data = {}, isLegendary = false) {
     <button class="spell-confirm-btn"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
     <button class="spell-delete-btn" style="${showDelete ? '' : 'display:none'}"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>`;
-}
-
-/**
- * Create a card for basic actions (indellible, no delete button)
- * These are always available to all players
- */
-function createActionCard(data = {}) {
-  const hasImage = data.image ? 'has-image' : '';
-  const imgContent = data.image
-    ? `<img src="${data.image}" alt="${data.name || 'Action'}" />`
-    : `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`;
-
-  const typeLabel = data.primaryType && data.secondaryType
-    ? `${data.primaryType} — ${data.secondaryType}`
-    : (data.type || 'Basic Action');
-
-  const costHtml = data.cost ? renderCostIcons(data.cost) : '';
-  const canCast = data.name && canAffordSpell(data.cost);
-
-  return `
-  <div class="spell-slot action-slot" data-action-name="${data.name || ''}">
-    <div class="spell-left-column">
-      <div class="spell-image ${hasImage}">${imgContent}</div>
-      ${data.name ? `<button class="spell-cast-btn ${canCast ? '' : 'disabled'}" ${canCast ? '' : 'disabled'}>Use</button>` : ''}
-    </div>
-    <div class="spell-info">
-      <div class="spell-name-display">${data.name || ''}</div>
-      <div class="spell-type">${typeLabel}</div>
-      <div class="spell-description">${data.description || '—'}</div>
-      <div class="spell-footer">
-        <div class="spell-cost">${costHtml}</div>
-      </div>
-    </div>
-    <!-- No delete button for basic actions - they are indellible -->
-  </div>`;
-}
-
-/**
- * Toggle the visibility of the basic actions container
- * "Spells" stays visible, "~ Actions" becomes bold yellow when expanded
- */
-let toggleLocked = false; // Prevent double-fire from onclick + addEventListener
-function toggleSpellsActions() {
-  // Prevent rapid double-firing
-  if (toggleLocked) {
-    console.log('toggleSpellsActions: blocked (locked)');
-    return;
-  }
-  toggleLocked = true;
-  setTimeout(() => { toggleLocked = false; }, 100);
-
-  const container = document.getElementById('actionsContainer');
-  const toggle = document.getElementById('spellsActionsToggle');
-
-  // Debug: check if elements exist
-  if (!container) {
-    console.log('toggleSpellsActions: actionsContainer NOT FOUND');
-    console.log('Available IDs:', ['spellsActionsToggle', 'spellList', 'mindOverlay'].map(id => `${id}: ${document.getElementById(id) ? 'exists' : 'null'}`));
-    // Try finding by partial match
-    const allIds = document.querySelectorAll('[id]');
-    console.log('All element IDs containing "action":',
-      Array.from(allIds).filter(el => el.id.includes('action') || el.id.includes('Action')).map(el => el.id));
-  }
-  if (!toggle) {
-    console.log('toggleSpellsActions: spellsActionsToggle NOT FOUND');
-  }
-
-  if (!container || !toggle) {
-    console.log('toggleSpellsActions: elements not found', { container, toggle });
-    return;
-  }
-
-  const isCollapsed = !container.classList.contains('expanded');
-
-  if (isCollapsed) {
-    container.classList.add('expanded');
-    toggle.classList.add('expanded');
-    saveState('actionsExpanded', true); // Persist state
-  } else {
-    container.classList.remove('expanded');
-    toggle.classList.remove('expanded');
-    saveState('actionsExpanded', false); // Persist state
-  }
-}
-
-/**
- * Bind click events for basic action cards (NOT the toggle - it's handled by onclick attribute)
- */
-function bindActionEvents() {
-  // Note: The "Spells ~ Actions" toggle already has onclick="toggleSpellsActions()" in HTML
-  // DO NOT add another event listener here to avoid double-firing
-
-  document.querySelectorAll('.action-slot').forEach(card => {
-    const castBtn = card.querySelector('.spell-cast-btn');
-    const imageDiv = card.querySelector('.spell-image');
-    const actionName = card.dataset.actionName;
-
-    // Cast/use button click
-    if (castBtn) {
-      castBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (castBtn.classList.contains('disabled')) return;
-
-        const actionData = spellDB[actionName];
-        if (actionData && actionData.cost) {
-          // Handle action use - check and deduct costs
-          handleActionUse(actionName, actionData);
-        }
-      });
-    }
-
-    // Image click for zoom
-    if (imageDiv) {
-      imageDiv.addEventListener('click', () => {
-        const actionData = spellDB[actionName];
-        if (!actionData?.name) return;
-        const imgEl = imageDiv.querySelector('img');
-        if (imgEl?.src) openZoom(imgEl.src, actionData.name);
-      });
-    }
-  });
-}
-
-/**
- * Handle using a basic action - check costs and deduct resources
- */
-function handleActionUse(actionName, actionData) {
-  if (!actionData.cost) return;
-
-  // Check if player can afford the action
-  if (!canAffordSpell(actionData.cost)) {
-    alert('Not enough resources to use this action!');
-    return;
-  }
-
-  // Show confirmation
-  if (!castWarningDisabled) {
-    if (!confirm(`Use "${actionName}"?`)) return;
-  }
-
-  // Deduct costs
-  deductSpellCost(actionData.cost);
-
-  // Visual feedback
-  const actionSlot = document.querySelector(`.action-slot[data-action-name="${actionName}"]`);
-  if (actionSlot) {
-    const castBtn = actionSlot.querySelector('.spell-cast-btn');
-    if (castBtn) {
-      const originalText = castBtn.textContent;
-      castBtn.textContent = "Used!";
-      castBtn.style.background = "rgba(76, 175, 80, 0.6)";
-      setTimeout(() => {
-        castBtn.textContent = originalText;
-        castBtn.style.background = "";
-      }, 1000);
-    }
-  }
-
-  console.log(`Used action: ${actionName}`);
 }
 
 function bindSpellEvents() {
