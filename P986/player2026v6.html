@@ -2538,6 +2538,105 @@
   fill: none;
 }
 
+/* ===== Dynamic Requirement Highlighting ===== */
+.inv-description .req-line {
+  display: block;
+  line-height: 1.5;
+}
+
+.inv-description .requirement-met {
+  color: #fff;
+  font-weight: 700;
+}
+
+.inv-description .requirement-unmet {
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 400;
+}
+
+/* Pay effect toggle styles */
+.inv-description .pay-effect {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 0.25rem 0;
+  padding: 0.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.inv-description .pay-effect:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.inv-description .pay-effect.locked {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.inv-description .pay-effect.active {
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+}
+
+.inv-description .pay-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  margin-top: 0.1rem;
+}
+
+.inv-description .pay-effect.active .pay-checkbox {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.inv-description .pay-checkbox svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  stroke: #121212;
+  stroke-width: 3;
+  fill: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.inv-description .pay-effect.active .pay-checkbox svg {
+  opacity: 1;
+}
+
+.inv-description .pay-text {
+  flex: 1;
+}
+
+/* Cost display badge */
+.inv-cost-badge {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  background: rgba(212, 175, 55, 0.9);
+  color: #121212;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.inv-cost-badge.visible {
+  opacity: 1;
+}
+
 
   /* Bottom Stats Bar */
   #bottomStats {
@@ -10066,6 +10165,7 @@ inventoryBtn.onclick = () => {
     inventoryOverlay.classList.add('visible');
     inventoryBtn.classList.add('active');
     renderInventory();
+    refreshItemDescriptions(); // Refresh dynamic requirement highlighting with current stats
     updateBottomStats();
   }
 };
@@ -10311,19 +10411,19 @@ Skill 3: Pay one stamina: Parry incoming strike or slash.`,
     },
     "Simple Shortbow": {
       type: "Basic Artefact — Equipment",
-      description: `Equip: Requires skill 1.
-Pay one stamina: Deal 1 pierce damage.
+      description: `Equip: Skill {skl} 1.
+Pay {u}: Deal 1 pierce damage.
 
-Skill 3:
+Skill {skl} 3:
 You can shoot three times.`,
       image: "cards/fronts/123.webp",
     },
     "Legionnaire Crossbow": {
       type: "Artefact — Equipment",
-      description: `Equip: Requires skill 2.
-Pay one stamina and focus: Deal 2 pierce damage.
+      description: `Equip: Skill {skl} 2.
+Pay {u}{slow}: Deal 2 pierce damage.
 
-Strength 5:
+Strength {str} 5:
 Double damage and range.`,
       image: "cards/fronts/124.webp",
     },
@@ -10770,26 +10870,306 @@ Inebriates for a prolonged time, usually as a matter of your madness.`,
   }
 };
 
+// ===== Item Description Parser & Dynamic Formatting =====
+
+// Stat name mappings for checking player stats
+const STAT_MAPPINGS = {
+  'strength': 'Strength',
+  'skill': 'Skill',
+  'arcane': 'Arcane',
+  'tinge': 'Tinge',
+  'endurance': 'Endurance',
+  'mastery': 'Mastery',
+  'fury': 'Fury',
+  'prowess': 'Prowess',
+  'wisdom': 'Wisdom',
+  'will': 'Will'
+};
+
+// Get player stat value
+function getPlayerStat(statName) {
+  const key = STAT_MAPPINGS[statName?.toLowerCase()] || statName;
+  return Number(loadState(key, 0)) || 0;
+}
+
+// Stat placeholder mappings
+const STAT_PLACEHOLDERS = {
+  '{str}': 'Strength',
+  '{skl}': 'Skill',
+  '{arc}': 'Arcane',
+  '{tnc}': 'Tinge',
+  '{end}': 'Endurance',
+  '{mst}': 'Mastery',
+  '{fry}': 'Fury',
+  '{prw}': 'Prowess',
+  '{wis}': 'Wisdom',
+  '{wil}': 'Will'
+};
+
+// Expand placeholders in a line to full stat names
+function expandStatPlaceholders(line) {
+  let expanded = line;
+  for (const [placeholder, statName] of Object.entries(STAT_PLACEHOLDERS)) {
+    // Match patterns like "Skill {skl} 1" or "Equip: Strength {str} 2"
+    expanded = expanded.replace(new RegExp(placeholder, 'gi'), statName);
+  }
+  return expanded;
+}
+
+// Get stat name from placeholder
+function getStatFromPlaceholder(placeholder) {
+  return STAT_PLACEHOLDERS[placeholder.toLowerCase()] || null;
+}
+
+// Format a line by replacing stat placeholders with colored/bold versions
+function formatStatPlaceholdersInLine(line, cssClass) {
+  let result = '';
+  let remaining = line;
+  const placeholderRegex = /\{[^}]+\}/g;
+  let match;
+  let lastIndex = 0;
+
+  while ((match = placeholderRegex.exec(line)) !== null) {
+    // Add text before the match
+    result += escapeHtml(line.substring(lastIndex, match.index));
+
+    const placeholder = match[0].toLowerCase();
+    const statName = getStatFromPlaceholder(placeholder);
+
+    if (statName) {
+      // Get the player's stat value
+      const playerValue = getPlayerStat(statName);
+      const isMet = playerValue >= 1; // If the placeholder is used, player has at least 1 in that stat
+
+      if (isMet) {
+        result += `<span style="color:#fff;font-weight:700">${match[0]}</span>`;
+      } else {
+        result += `<span style="color:rgba(255,255,255,0.45)">${match[0]}</span>`;
+      }
+    } else {
+      // Non-stat placeholder (like {u}, {c}, {slow}) - format as cost
+      result += `<span style="color:#4caf50">${match[0]}</span>`;
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Add remaining text
+  result += escapeHtml(line.substring(lastIndex));
+  return result;
+}
+
+// Parse a requirement line like "Strength 2" or "Skill {skl} 3"
+function parseRequirement(line) {
+  // First expand any placeholders
+  const expandedLine = expandStatPlaceholders(line);
+
+  const reqMatch = expandedLine.match(/^(Equip:\s*)?(Strength|Skill|Arcane|Tinge|Endurance|Mastery|Fury|Prowess|Wisdom|Will)\s+(\d+)/i);
+  if (reqMatch) {
+    return {
+      type: 'requirement',
+      stat: reqMatch[2],
+      value: parseInt(reqMatch[3]),
+      required: true,
+      met: getPlayerStat(reqMatch[2]) >= parseInt(reqMatch[3])
+    };
+  }
+  return null;
+}
+
+// Parse Pay line like "Pay {u}:" or "Pay {u}{c}:"
+function parsePayLine(line) {
+  const payMatch = line.match(/^Pay\s+(\{[^}]+\})/);
+  if (payMatch) {
+    const costStr = payMatch[1];
+    const cost = {
+      stamina: (costStr.match(/\{u\}/g) || []).length,
+      energy: (costStr.match(/\{c\}/g) || []).length,
+      life: (costStr.match(/\{g\}/g) || []).length,
+      mana: (costStr.match(/\{w\}/g) || []).length,
+      empower: (costStr.match(/\{r\}/g) || []).length,
+      madness: (costStr.match(/\{B\}/g) || []).length,
+      coin: (costStr.match(/\{COIN\}/g) || []).length,
+      focus: (costStr.match(/\{slow\}/g) || []).length
+    };
+    const totalCost = cost.stamina + cost.energy + cost.life + cost.mana + cost.empower + cost.madness + cost.coin + cost.focus;
+    return {
+      type: 'pay',
+      cost: cost,
+      totalCost: totalCost
+    };
+  }
+  return null;
+}
+
+// Render formatted description with dynamic highlighting
+function renderFormattedDescription(description, index) {
+  if (!description) return '<span class="req-line requirement-unmet">—</span>';
+
+  const lines = description.split('\n');
+  let html = '';
+  let equipMet = false;
+  let currentPayActive = false;
+  let itemPayStates = {};
+
+  // Initialize pay states for this item
+  if (!window.itemPayStates) window.itemPayStates = {};
+  if (!window.itemPayStates[index]) window.itemPayStates[index] = {};
+
+  lines.forEach((line, lineIndex) => {
+    const trimmedLine = line.trim();
+
+    // Check for Equip: requirement
+    if (trimmedLine.toLowerCase().startsWith('equip:')) {
+      const req = parseRequirement(trimmedLine);
+      if (req) {
+        equipMet = req.met;
+        const cssClass = req.met ? 'requirement-met' : 'requirement-unmet';
+        // Format with stat placeholders highlighted
+        html += `<span class="req-line ${cssClass}">${formatStatPlaceholdersInLine(line, cssClass)}</span>\n`;
+      } else {
+        html += `<span class="req-line">${formatStatPlaceholdersInLine(line, '')}</span>\n`;
+      }
+      return;
+    }
+
+    // Check for Pay: line
+    const pay = parsePayLine(trimmedLine);
+    if (pay) {
+      const payId = `pay-${index}-${lineIndex}`;
+      const isLocked = !equipMet;
+      const isActive = window.itemPayStates[index][payId] || false;
+      const cssClass = isLocked ? 'pay-effect locked' : (isActive ? 'pay-effect active' : 'pay-effect');
+
+      // Format line with stat placeholders highlighted
+      const formattedLine = formatStatPlaceholdersInLine(line, '');
+
+      html += `<div class="${cssClass}" data-index="${index}" data-payid="${payId}" data-cost='${JSON.stringify(pay.cost)}' onclick="toggleItemPay('${payId}', ${index}, event)">
+        <div class="pay-checkbox"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <span class="pay-text">${formattedLine}</span>
+      </div>\n`;
+      return;
+    }
+
+    // Check for stat requirement line like "Skill 3:" or "Strength {str} 5:"
+    const statReq = parseRequirement(trimmedLine);
+    if (statReq) {
+      const cssClass = statReq.met ? 'requirement-met' : 'requirement-unmet';
+      html += `<span class="req-line ${cssClass}">${formatStatPlaceholdersInLine(line, cssClass)}</span>\n`;
+      return;
+    }
+
+    // Regular line - format any stat placeholders
+    html += `<span class="req-line">${formatStatPlaceholdersInLine(line, '')}</span>\n`;
+  });
+
+  return html;
+}
+
+// Toggle pay effect and update cost
+function toggleItemPay(payId, index, event) {
+  if (!window.itemPayStates) window.itemPayStates = {};
+  if (!window.itemPayStates[index]) window.itemPayStates[index] = {};
+
+  const currentState = window.itemPayStates[index][payId] || false;
+  window.itemPayStates[index][payId] = !currentState;
+
+  // Find and update the pay effect element
+  const payElement = document.querySelector(`[data-payid="${payId}"]`);
+  if (payElement) {
+    if (window.itemPayStates[index][payId]) {
+      payElement.classList.add('active');
+    } else {
+      payElement.classList.remove('active');
+    }
+  }
+
+  // Update total cost display for this item
+  updateItemCostDisplay(index);
+}
+
+// Update the cost badge for an item
+function updateItemCostDisplay(index) {
+  const card = document.querySelector(`.inventory-item[data-index="${index}"]`);
+  if (!card) return;
+
+  const badge = card.querySelector('.inv-cost-badge');
+  if (!badge) return;
+
+  let totalCost = 0;
+  const payStates = window.itemPayStates?.[index] || {};
+
+  // Sum up all active pay costs
+  Object.keys(payStates).forEach(payId => {
+    if (payStates[payId]) {
+      const payElement = document.querySelector(`[data-payid="${payId}"]`);
+      if (payElement) {
+        try {
+          const cost = JSON.parse(payElement.dataset.cost || '{}');
+          totalCost += (cost.stamina || 0) + (cost.energy || 0) + (cost.life || 0) +
+                       (cost.mana || 0) + (cost.empower || 0) + (cost.madness || 0) +
+                       (cost.coin || 0) + (cost.focus || 0);
+        } catch (e) {}
+      }
+    }
+  });
+
+  if (totalCost > 0) {
+    badge.textContent = `+${totalCost} cost`;
+    badge.classList.add('visible');
+  } else {
+    badge.classList.remove('visible');
+  }
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// Force re-render of all item descriptions (called when stats change)
+function refreshItemDescriptions() {
+  document.querySelectorAll('.inventory-item').forEach((card, i) => {
+    const descEl = card.querySelector('.inv-description');
+    const item = inventory[parseInt(card.dataset.index)];
+    if (item?.name) {
+      const itemData = findItemInDB(item.name);
+      if (itemData?.description) {
+        descEl.innerHTML = renderFormattedDescription(itemData.description, parseInt(card.dataset.index));
+      }
+    }
+  });
+}
+
 function createInventoryCard(index, slotType, data = {}) {
   const hasImage = data.image ? 'has-image' : '';
   const isLocked = data.locked ? 'locked' : '';
-  const imgContent = data.image 
+  const imgContent = data.image
     ? `<img src="${data.image}" alt="${data.name || 'Item'}" />`
     : `<svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
-  
+
+  // Get formatted description with dynamic highlighting
+  const itemData = data.name ? findItemInDB(data.name) : null;
+  const descriptionHtml = itemData?.description
+    ? renderFormattedDescription(itemData.description, index)
+    : '<span class="req-line requirement-unmet">—</span>';
+
   return `
   <div class="inventory-item" data-index="${index}" data-slot="${slotType}">
+    <span class="inv-cost-badge">+0 cost</span>
     <div class="inv-image ${hasImage}">${imgContent}</div>
-    
+
     <div class="inv-info">
-      <input class="inv-name ${isLocked}" 
-             placeholder="${placeholderForSlot(slotType)}" 
-             value="${data.name || ''}" 
+      <input class="inv-name ${isLocked}"
+             placeholder="${placeholderForSlot(slotType)}"
+             value="${data.name || ''}"
              ${isLocked ? 'readonly' : ''} />
       <div class="inv-type">${data.type || slotTypeLabel(slotType)}</div>
-      <div class="inv-description">${data.description || '—'}</div>
+      <div class="inv-description">${descriptionHtml}</div>
     </div>
-    
+
     <button class="inv-confirm-btn">
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </button>
