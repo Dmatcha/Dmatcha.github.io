@@ -10921,10 +10921,11 @@ function getStatFromPlaceholder(placeholder) {
   return STAT_PLACEHOLDERS[placeholder.toLowerCase()] || null;
 }
 
-// Format a line by replacing stat placeholders with colored/bold versions
+// Format a line by replacing stat placeholders with colored/bold versions.
+// The cssClass argument ('requirement-met' | 'requirement-unmet' | '') drives the
+// highlight state for stat placeholders so the placeholder glow matches the line.
 function formatStatPlaceholdersInLine(line, cssClass) {
   let result = '';
-  let remaining = line;
   const placeholderRegex = /\{[^}]+\}/g;
   let match;
   let lastIndex = 0;
@@ -10937,14 +10938,17 @@ function formatStatPlaceholdersInLine(line, cssClass) {
     const statName = getStatFromPlaceholder(placeholder);
 
     if (statName) {
-      // Get the player's stat value
-      const playerValue = getPlayerStat(statName);
-      const isMet = playerValue >= 1; // If the placeholder is used, player has at least 1 in that stat
+      // Honor the line's met/unmet state passed in by the caller.
+      // If neither, fall back to a soft "any value" indicator.
+      let isMet;
+      if (cssClass === 'requirement-met')   isMet = true;
+      else if (cssClass === 'requirement-unmet') isMet = false;
+      else isMet = getPlayerStat(statName) >= 1;
 
       if (isMet) {
         result += `<span style="color:#fff;font-weight:700">${match[0]}</span>`;
       } else {
-        result += `<span style="color:rgba(255,255,255,0.45)">${match[0]}</span>`;
+        result += `<span style="color:rgba(255,255,255,0.45);font-weight:400">${match[0]}</span>`;
       }
     } else {
       // Non-stat placeholder (like {u}, {c}, {slow}) - format as cost
@@ -10959,47 +10963,121 @@ function formatStatPlaceholdersInLine(line, cssClass) {
   return result;
 }
 
-// Parse a requirement line like "Strength 2" or "Skill {skl} 3"
-function parseRequirement(line) {
-  // First expand any placeholders
-  const expandedLine = expandStatPlaceholders(line);
-
-  const reqMatch = expandedLine.match(/^(Equip:\s*)?(Strength|Skill|Arcane|Tinge|Endurance|Mastery|Fury|Prowess|Wisdom|Will)\s+(\d+)/i);
+// Parse a single-stat requirement (e.g. "Strength 2", "Skill {skl} 3", "Equip: Requires mastery 4 or higher")
+// Returns { stat, value, met, type: 'requirement' } or null
+function parseSingleRequirement(expandedLine) {
+  // Optional "Equip:" or "Equip" prefix, optional "Requires" word,
+  // then a stat name, optional {placeholder} (already expanded by caller), then the digit.
+  const reqMatch = expandedLine.match(
+    /(?:Equip:?\s*)?(?:Requires\s+)?(Strength|Skill|Arcane|Tinge|Endurance|Mastery|Fury|Prowess|Wisdom|Will)\s*(?:\{[a-z]+\}\s*)?(\d+)/i
+  );
   if (reqMatch) {
+    const stat = reqMatch[1];
+    const value = parseInt(reqMatch[2]);
     return {
       type: 'requirement',
-      stat: reqMatch[2],
-      value: parseInt(reqMatch[3]),
+      stat: stat,
+      value: value,
       required: true,
-      met: getPlayerStat(reqMatch[2]) >= parseInt(reqMatch[3])
+      met: getPlayerStat(stat) >= value
     };
   }
   return null;
 }
 
-// Parse Pay line like "Pay {u}:" or "Pay {u}{c}:"
-function parsePayLine(line) {
-  const payMatch = line.match(/^Pay\s+(\{[^}]+\})/);
-  if (payMatch) {
-    const costStr = payMatch[1];
-    const cost = {
-      stamina: (costStr.match(/\{u\}/g) || []).length,
-      energy: (costStr.match(/\{c\}/g) || []).length,
-      life: (costStr.match(/\{g\}/g) || []).length,
-      mana: (costStr.match(/\{w\}/g) || []).length,
-      empower: (costStr.match(/\{r\}/g) || []).length,
-      madness: (costStr.match(/\{B\}/g) || []).length,
-      coin: (costStr.match(/\{COIN\}/g) || []).length,
-      focus: (costStr.match(/\{slow\}/g) || []).length
-    };
-    const totalCost = cost.stamina + cost.energy + cost.life + cost.mana + cost.empower + cost.madness + cost.coin + cost.focus;
-    return {
-      type: 'pay',
-      cost: cost,
-      totalCost: totalCost
-    };
+// Parse a requirement line. Supports:
+//   - "Equip: Requires strength 2" / "Equip: Requires skill 3 or higher" (deployed wording)
+//   - "Equip: Skill {skl} 1" (placeholder form)
+//   - "Equip: Mastery 4" (bare stat form)
+//   - "Strength 5" / "Tinge 11:" / "Arcane 6:" (scaling lines after Equip)
+//   - "Strength & Skill 3 or higher" (multi-stat, value shared across both stats)
+function parseRequirement(line) {
+  // First expand any {str}/{skl}/{mst} etc. placeholders to their stat names
+  const expandedLine = expandStatPlaceholders(line);
+
+  // Multi-stat requirement: detect " & " in the line
+  if (/\s+&\s+/.test(expandedLine)) {
+    const parts = expandedLine.split(/\s+&\s+/);
+    if (parts.length === 2) {
+      // Try to parse the second part (it should have the number)
+      const secondReq = parseSingleRequirement(parts[1]);
+      if (secondReq) {
+        // Extract the first stat from parts[0]
+        const firstStatMatch = parts[0].match(/(Strength|Skill|Arcane|Tinge|Endurance|Mastery|Fury|Prowess|Wisdom|Will)/i);
+        if (firstStatMatch) {
+          const firstStat = firstStatMatch[1];
+          const firstMet = getPlayerStat(firstStat) >= secondReq.value;
+          return {
+            type: 'multi-requirement',
+            requirements: [
+              { stat: firstStat, value: secondReq.value, met: firstMet },
+              { stat: secondReq.stat, value: secondReq.value, met: secondReq.met }
+            ],
+            stat: firstStat + ' & ' + secondReq.stat, // For cost badge / display
+            value: secondReq.value,
+            required: true,
+            met: firstMet && secondReq.met
+          };
+        }
+      }
+    }
   }
-  return null;
+
+  // Single-stat requirement (the common case)
+  return parseSingleRequirement(expandedLine);
+}
+
+// Parse a Pay line. Supports both placeholder form ("Pay {u}:", "Pay {u}{slow}:")
+// and plain-language form ("Pay one stamina:", "Pay 6 of any resource:", "Pay three energy:").
+// Returns { type: 'pay', cost: {stamina, energy, life, mana, empower, madness, coin, focus}, totalCost, raw }
+// or null if the line is not a Pay line.
+function parsePayLine(line) {
+  // Match "Pay X:" where X is the cost phrase (everything between "Pay " and the next ":")
+  const payMatch = line.match(/^Pay\s+(.+?):/);
+  if (!payMatch) return null;
+
+  const costStr = payMatch[1].trim();
+  const cost = {
+    stamina: 0, energy: 0, life: 0, mana: 0, empower: 0, madness: 0, coin: 0, focus: 0
+  };
+
+  // 1) Count placeholder occurrences (e.g. {u}, {c}, {g}, {w}, {r}, {B}, {slow}, {COIN})
+  cost.stamina += (costStr.match(/\{u\}/g)   || []).length;
+  cost.energy  += (costStr.match(/\{c\}/g)   || []).length;
+  cost.life    += (costStr.match(/\{g\}/g)   || []).length;
+  cost.mana    += (costStr.match(/\{w\}/g)   || []).length;
+  cost.empower += (costStr.match(/\{r\}/g)   || []).length;
+  cost.madness += (costStr.match(/\{B\}/g)   || []).length;
+  cost.coin    += (costStr.match(/\{COIN\}/g)|| []).length;
+  cost.focus   += (costStr.match(/\{slow\}/g)|| []).length;
+
+  // 2) Parse plain-language costs ("one stamina", "2 energy", "6 of any resource", "three mana")
+  const wordToNum = {
+    one: 1, two: 2, three: 3, four: 4, five: 5,
+    six: 6, seven: 7, eight: 8, nine: 9, ten: 10
+  };
+  const costRegex = /(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(stamina|energy|life|mana|empower|madness|of\s+any(?:\s+resource)?|of\s+any\s+resource)/gi;
+  let m;
+  while ((m = costRegex.exec(costStr)) !== null) {
+    const raw = m[1].toLowerCase();
+    const n = /^\d+$/.test(raw) ? parseInt(raw, 10) : (wordToNum[raw] || 1);
+    const resource = m[2].toLowerCase().replace(/\s+/g, ' ').trim();
+    if (resource === 'stamina')       cost.stamina += n;
+    else if (resource === 'energy')   cost.energy  += n;
+    else if (resource === 'life')     cost.life    += n;
+    else if (resource === 'mana')     cost.mana    += n;
+    else if (resource === 'empower')  cost.empower += n;
+    else if (resource === 'madness')  cost.madness += n;
+    else if (resource === 'of any' || resource === 'of any resource') {
+      // "Pay 6 of any resource" — treat each unit as a coin (most permissive bucket)
+      cost.coin += n;
+    }
+  }
+
+  const totalCost = cost.stamina + cost.energy + cost.life + cost.mana +
+                     cost.empower + cost.madness + cost.coin + cost.focus;
+
+  return { type: 'pay', cost: cost, totalCost: totalCost, raw: costStr };
 }
 
 // Render formatted description with dynamic highlighting
@@ -11009,8 +11087,6 @@ function renderFormattedDescription(description, index) {
   const lines = description.split('\n');
   let html = '';
   let equipMet = false;
-  let currentPayActive = false;
-  let itemPayStates = {};
 
   // Initialize pay states for this item
   if (!window.itemPayStates) window.itemPayStates = {};
@@ -11018,30 +11094,30 @@ function renderFormattedDescription(description, index) {
 
   lines.forEach((line, lineIndex) => {
     const trimmedLine = line.trim();
+    const lowerTrimmed = trimmedLine.toLowerCase();
 
-    // Check for Equip: requirement
-    if (trimmedLine.toLowerCase().startsWith('equip:')) {
+    // Check for Equip: requirement (case-insensitive)
+    if (lowerTrimmed.startsWith('equip:')) {
       const req = parseRequirement(trimmedLine);
       if (req) {
         equipMet = req.met;
         const cssClass = req.met ? 'requirement-met' : 'requirement-unmet';
-        // Format with stat placeholders highlighted
         html += `<span class="req-line ${cssClass}">${formatStatPlaceholdersInLine(line, cssClass)}</span>\n`;
       } else {
+        // "Equip:" with no parseable requirement — render plain
         html += `<span class="req-line">${formatStatPlaceholdersInLine(line, '')}</span>\n`;
       }
       return;
     }
 
-    // Check for Pay: line
+    // Check for Pay: line (must have a recognized cost to qualify)
     const pay = parsePayLine(trimmedLine);
-    if (pay) {
+    if (pay && pay.totalCost > 0) {
       const payId = `pay-${index}-${lineIndex}`;
       const isLocked = !equipMet;
       const isActive = window.itemPayStates[index][payId] || false;
       const cssClass = isLocked ? 'pay-effect locked' : (isActive ? 'pay-effect active' : 'pay-effect');
 
-      // Format line with stat placeholders highlighted
       const formattedLine = formatStatPlaceholdersInLine(line, '');
 
       html += `<div class="${cssClass}" data-index="${index}" data-payid="${payId}" data-cost='${JSON.stringify(pay.cost)}' onclick="toggleItemPay('${payId}', ${index}, event)">
@@ -11051,7 +11127,7 @@ function renderFormattedDescription(description, index) {
       return;
     }
 
-    // Check for stat requirement line like "Skill 3:" or "Strength {str} 5:"
+    // Check for stat requirement line (multi-stat or single-stat, e.g. "Skill 3:" or "Strength & Skill 3:")
     const statReq = parseRequirement(trimmedLine);
     if (statReq) {
       const cssClass = statReq.met ? 'requirement-met' : 'requirement-unmet';
