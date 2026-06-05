@@ -1061,6 +1061,31 @@
     background: rgba(255,255,255,0.08);
     border-radius: 0.2rem;
   }
+  /* Spell "Regain X" choice toggle: only one of N options is active at a time. */
+  .choice-toggle {
+    cursor: pointer;
+    border-radius: 0.25rem;
+    padding: 0 0.15rem;
+    transition: color 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+    user-select: none;
+  }
+  .choice-toggle.choice-inactive {
+    opacity: 0.4;
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .choice-toggle.choice-inactive img.desc-icon {
+    filter: grayscale(0.6) brightness(0.7);
+  }
+  .choice-toggle.choice-active {
+    color: #ffffff;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 0.0625rem rgba(255, 255, 255, 0.25), 0 0 0.5rem rgba(255, 255, 255, 0.08);
+    text-shadow: 0 0 0.25rem rgba(255, 255, 255, 0.4);
+  }
+  .choice-toggle:hover {
+    background: rgba(255,255,255,0.08);
+  }
   /* Extra cost icons appended to the footer when a Pay is toggled on */
   .spell-footer .pay-extra-cost {
     display: flex;
@@ -2218,6 +2243,17 @@
 .inventory-item img {
   object-fit: cover;
   border-radius: 0.5rem;
+}
+
+/* desc-icon inside item description: keep the 1rem size set by .desc-icon.
+   Without this exclusion, the slot-specific img size rules below would
+   blow the in-text resource icons up to 5-10rem. */
+.inventory-item .inv-description img.desc-icon {
+  width: 1rem;
+  height: 1rem;
+  object-fit: contain;
+  border-radius: 0;
+  vertical-align: middle;
 }
 
 .inventory-item[data-slot="artefact"] img {
@@ -11110,29 +11146,55 @@ const RESOURCE_PLACEHOLDER_ICONS = {
   '{u}': ['../icons/stamina1.png', 'stamina'],
   '{U}': ['../icons/stamina1.png', 'stamina'],
   '{c}': ['../icons/energy1.png', 'energy'],
+  '{C}': ['../icons/energy1.png', 'energy'],
   '{w}': ['../icons/mana1.png', 'mana'],
-  '{g}': ['../icons/Life1.png', 'life'],
+  '{W}': ['../icons/mana1.png', 'mana'],
+  '{g}': ['../icons/life1.png', 'life'],
+  '{G}': ['../icons/life1.png', 'life'],
   '{r}': ['../icons/empower1.png', 'empower'],
+  '{R}': ['../icons/empower1.png', 'empower'],
   '{B}': ['../icons/madness.png', 'madness'],
   '{slow}': ['../icons/slow4.png', 'channel'],
+  '{SLOW}': ['../icons/slow4.png', 'channel'],
   '{COIN}': ['../icons/crys.svg', 'generic'],
+  '{coin}': ['../icons/crys.svg', 'generic'],
   '{pote}': ['../icons/potency7.png', 'potency'],
   '{potency}': ['../icons/potency7.png', 'potency'],
+  '{POTENCY}': ['../icons/potency7.png', 'potency'],
   '{mast}': ['../icons/mastery4.png', 'mastery'],
   '{mastery}': ['../icons/mastery4.png', 'mastery'],
+  '{MASTERY}': ['../icons/mastery4.png', 'mastery'],
   '{tnc}': ['../icons/mana4.png', 'tinge'],
+  '{TNC}': ['../icons/mana4.png', 'tinge'],
   '{arc}': ['../icons/moonworm.png', 'arcane'],
+  '{ARC}': ['../icons/moonworm.png', 'arcane'],
   '{armour}': ['../icons/armour.svg', 'armour'],
+  '{ARMOUR}': ['../icons/armour.svg', 'armour'],
   '{mshield}': ['../icons/mshield.svg', 'shield'],
+  '{MSHIELD}': ['../icons/mshield.svg', 'shield'],
   '{worm}': ['../icons/worm1.png', 'worm'],
+  '{WORM}': ['../icons/worm1.png', 'worm'],
   '{swap}': ['../icons/swap.svg', 'swap'],
+  '{SWAP}': ['../icons/swap.svg', 'swap'],
   '{tap}': ['../icons/tap2.png', 'tap'],
+  '{TAP}': ['../icons/tap2.png', 'tap'],
   '{untap}': ['../icons/untap2.png', 'untap'],
-  '{ready}': ['../icons/slow1.png', 'ready']
+  '{UNTAP}': ['../icons/untap2.png', 'untap'],
+  '{ready}': ['../icons/slow1.png', 'ready'],
+  '{READY}': ['../icons/slow1.png', 'ready']
 };
-// Look up a resource icon for a placeholder token. Returns {path, alt} or null.
+// Look up a resource icon for a placeholder token. Returns [path, alt] or null.
+// Case-insensitive: matches the placeholder's lower-case form against the lower-cased
+// keys in RESOURCE_PLACEHOLDER_ICONS so callers don't have to know whether the
+// source data used {R} or {r}, {C} or {c}, etc.
 function getResourceIcon(placeholder) {
-  return RESOURCE_PLACEHOLDER_ICONS[placeholder] || null;
+  if (!placeholder) return null;
+  if (RESOURCE_PLACEHOLDER_ICONS[placeholder]) return RESOURCE_PLACEHOLDER_ICONS[placeholder];
+  const lower = placeholder.toLowerCase();
+  for (const [key, value] of Object.entries(RESOURCE_PLACEHOLDER_ICONS)) {
+    if (key.toLowerCase() === lower) return value;
+  }
+  return null;
 }
 
 // Format a line by replacing stat placeholders with colored/bold versions,
@@ -11262,14 +11324,18 @@ function parsePayLine(line) {
   };
 
   // 1) Count placeholder occurrences (e.g. {u}, {c}, {g}, {w}, {r}, {B}, {slow}, {COIN})
-  cost.stamina += (costStr.match(/\{u\}/g)   || []).length;
-  cost.energy  += (costStr.match(/\{c\}/g)   || []).length;
-  cost.life    += (costStr.match(/\{g\}/g)   || []).length;
-  cost.mana    += (costStr.match(/\{w\}/g)   || []).length;
-  cost.empower += (costStr.match(/\{r\}/g)   || []).length;
-  cost.madness += (costStr.match(/\{B\}/g)   || []).length;
-  cost.coin    += (costStr.match(/\{COIN\}/g)|| []).length;
-  cost.focus   += (costStr.match(/\{slow\}/g)|| []).length;
+  //    Use a single case-insensitive regex that matches every supported placeholder.
+  //    CSV data sometimes uses {R} (empower) or {W} (mana) uppercase; spell data may use {U}/{W}.
+  const costStrLower = costStr.toLowerCase();
+  const placeholderMatches = (re) => (costStrLower.match(re) || []).length;
+  cost.stamina += placeholderMatches(/\{u\}/g);
+  cost.energy  += placeholderMatches(/\{c\}/g);
+  cost.life    += placeholderMatches(/\{g\}/g);
+  cost.mana    += placeholderMatches(/\{w\}/g);
+  cost.empower += placeholderMatches(/\{r\}/g);
+  cost.madness += (costStr.match(/\{B\}/g) || []).length;        // {B} case-sensitive (madness is always capital)
+  cost.coin    += placeholderMatches(/\{coin\}/g);
+  cost.focus   += placeholderMatches(/\{slow\}/g);
 
   // 2) Parse plain-language costs ("one stamina", "2 energy", "6 of any resource", "three mana")
   const wordToNum = {
@@ -11582,18 +11648,31 @@ function validateInventoryName(name, slot, excludeIndex = -1) {
 // Helper function to find item data in inventoryDB
 function findItemInDB(itemName) {
   if (!itemName) return null;
-  
+
   // Check items section for exact match
   if (inventoryDB.items[itemName]) {
     return inventoryDB.items[itemName];
   }
-  
-  // Fuzzy match if exact match fails
-  const fuzzyResult = fuzzyMatch(inventoryDB.items, itemName);
+
+  // Also check artefacts and irises sections (Iris / Soulbound Artefact slots).
+  // The artefact and iris sub-databases hold the per-slot descriptions, types,
+  // and images that the user expects to see on the inventory card.
+  if (inventoryDB.artefacts && inventoryDB.artefacts[itemName]) {
+    return inventoryDB.artefacts[itemName];
+  }
+  if (inventoryDB.irises && inventoryDB.irises[itemName]) {
+    return inventoryDB.irises[itemName];
+  }
+
+  // Fuzzy match if exact match fails (search all 3 sections)
+  const fuzzyResult =
+    fuzzyMatch(inventoryDB.items, itemName) ||
+    fuzzyMatch(inventoryDB.artefacts || {}, itemName) ||
+    fuzzyMatch(inventoryDB.irises || {}, itemName);
   if (fuzzyResult) {
     return fuzzyResult.data;
   }
-  
+
   return null;
 }
 
@@ -12077,7 +12156,7 @@ const addSpellBtn = document.getElementById('addSpellBtn');
 
 // Icon mapping for costs (relative to player2026.html location)
 const COST_ICONS = {
-  life: '../icons/Life1.png',
+  life: '../icons/life1.png',
   stamina: '../icons/stamina1.png',
   empower: '../icons/empower1.png',
   mana: '../icons/mana1.png',
@@ -12149,7 +12228,7 @@ const spellDB = {
     primaryType: "Basic Spell",
     secondaryType: "Magical Action",
     cost: [{"type": "coalesce", "amount": 1}],
-    description: "Remove <img src='../icons/madness.png' class='desc-icon' alt='madness' /> then:\nRegain {G}{G} or <img src='../icons/stamina1.png' class='desc-icon' alt='stamina' /><img src='../icons/stamina1.png' class='desc-icon' alt='stamina' /> or {C}{C}.\n<em>Blood for power.</em>",
+    description: "Remove {B} then:\nRegain {G}{G} \nor regain {U}{U}, \nor regain {C}{C}.\n<em>Blood for power.</em>",
     image: "cards/fronts/384.webp",
   difficultyLevel: 0
   },
@@ -13490,6 +13569,45 @@ const ARTEFACT_LEGENDARY_SPELLS = {
   "The Wand": [] // The Wand has no legendary spells - allows any non-legendary spell to be slotted instead
 };
 
+// Artefact-granted legendary spells live in the main spellDB under themed
+// keys (e.g. "Bizarre: Socks", "Darkflame: Heatsoul"). The artefact→spell
+// pool map (ARTEFACT_LEGENDARY_SPELLS) uses the short, user-friendly pool
+// names ("Socks", "Heatsoul"). This table bridges the two so the assignment
+// and re-add flows can resolve a pool entry to the canonical spellDB row.
+//
+// Convention: the LHS is the name used in the artefact's legendarySpellList,
+// the RHS is the key in spellDB. Luck has no prefix and maps to itself.
+const LEGENDARY_POOL_TO_SPELLDB_KEY = {
+  // The Bronze Ring of Smiles
+  "Smile and Nod":        "Gaze: Smile and Nod",
+  "Gaze and Influence":   "Gaze: Influence",
+  // The Pair and a Half
+  "Socks":                "Bizarre: Socks",
+  "Glove":                "Bizarre: Glove",
+  // The Trickblade
+  "Make-a-Blade":         "Bizarre: Make-a-Blade",
+  "Fencing Forme":        "Bizarre: Fencing Forme",
+  // The Darkflame
+  "Heatsoul":             "Darkflame: Heatsoul",
+  "Ignite":               "Darkflame: Ignite",
+  "Fireball":             "Darkflame: Fireball",
+  // The Wintergrace
+  "Coldsoul":             "Wintergrace: Coldsoul",
+  "Fingers of Frost":     "Wintergrace: Fingers Of Frost",
+  "Frostbolt":            "Wintergrace: Frostbolt",
+  // The Coin
+  "Mundane":              "Mundane: Coin",
+  "Luck":                 "Luck",
+  // The Prismatic Glasses
+  "Futuresight Glance":   "Futuresight: Glance",
+  "Scan":                 "Scan: Read",
+  // The Fisherman's Flask
+  "Pour":                 "Bizarre: Pour",
+  // Scathe's Memo Book
+  "Scribe":               "Bizarre: Scribe"
+};
+
+
 // Track which legendary spells were originally assigned to the player
 // This ensures they can only relearn spells from their artefact's pool
 let assignedLegendarySpells = loadState('assignedLegendarySpells', {});
@@ -13637,8 +13755,46 @@ function fuzzyMatch(database, searchTerm) {
 
 function findSpellByName(name) {
   if (!name) return null;
+  const searchLower = name.toLowerCase().trim();
+
+  // 1) If `name` is an artefact pool entry (e.g. "Scan", "Socks", "Heatsoul"),
+  //    map it to the canonical spellDB key (e.g. "Scan: Read", "Bizarre: Socks")
+  //    and return the spellDB row. The artefact pools use the short player-facing
+  //    spell names, while spellDB uses themed keys — this bridge is the only
+  //    way to get a pool entry's data.
+  const poolKey = LEGENDARY_POOL_TO_SPELLDB_KEY[name] || LEGENDARY_POOL_TO_SPELLDB_KEY[searchLower];
+  if (poolKey && spellDB[poolKey]) {
+    return { ...spellDB[poolKey], name: poolKey };
+  }
+
+  // 1.5) Fuzzy match the input against the pool-entry names. Catches partial
+  //      inputs like "sock" → "Socks" → "Bizarre: Socks".
+  const poolNames = Object.keys(LEGENDARY_POOL_TO_SPELLDB_KEY);
+  const poolFuzzy = fuzzyMatch(
+    Object.fromEntries(poolNames.map(n => [n, { name: n }])),
+    name
+  );
+  if (poolFuzzy) {
+    const mappedKey = LEGENDARY_POOL_TO_SPELLDB_KEY[poolFuzzy.key];
+    if (mappedKey && spellDB[mappedKey]) {
+      return { ...spellDB[mappedKey], name: poolFuzzy.key };
+    }
+  }
+
+  // 2) Case-insensitive exact match in spellDB (catches "Gaze: Influence"
+  //    typed by the user directly, plus the case where they typed the
+  //    themed name instead of the short pool name).
+  for (const [key, data] of Object.entries(spellDB)) {
+    if (key.toLowerCase() === searchLower) {
+      return { ...data, name: key };
+    }
+  }
+
+  // 3) Fuzzy match against spellDB (handles partial / misspelled inputs).
   const result = fuzzyMatch(spellDB, name);
-  return result ? { ...result.data, name: result.key } : null;
+  if (result) return { ...result.data, name: result.key };
+
+  return null;
 }
 
 // Render cost as icons
@@ -13737,11 +13893,15 @@ function initializeSpells() {
     for (let i = 0; i < 2; i++) {
       if (!spells[i]?.name && legendarySpellList[i]) {
         const legendarySpell = legendarySpellList[i];
-        const spellData = spellDB[legendarySpell.name];
-        
+        // Pull canonical data from spellDB via the pool→key bridge map
+        const spellData = findSpellByName(legendarySpell.name);
+
         if (spellData) {
           spells[i] = {
+            id: legendarySpell.id,
+            image: `cards/fronts/${legendarySpell.id}.webp`,
             ...spellData,
+            name: legendarySpell.name,
             isLegendary: true
           };
         } else {
@@ -13789,10 +13949,14 @@ function initializeSpells() {
         const legendarySpell = legendarySpellList.find(s => s.name === assignedSpellName);
         
         if (legendarySpell) {
-          const spellData = spellDB[legendarySpell.name];
+          // Pull canonical data from spellDB via the pool→key bridge map
+          const spellData = findSpellByName(legendarySpell.name);
           if (spellData) {
             spells[i] = {
+              id: legendarySpell.id,
+              image: `cards/fronts/${legendarySpell.id}.webp`,
               ...spellData,
+              name: legendarySpell.name,
               isLegendary: true
             };
           } else {
@@ -13835,18 +13999,36 @@ function initializeSpells() {
 // ═══════════════════════════════════════════════════════════
 
 /**
+ * Replace every resource placeholder token in a string with its <img> tag
+ * (e.g. "{R}" → "<img src='../icons/empower1.png' class='desc-icon' alt='empower' />").
+ * Case-insensitive against RESOURCE_PLACEHOLDER_ICONS. Used to normalize spell
+ * descriptions so the Pay-toggle machinery sees one consistent <img>-based
+ * format regardless of whether the source data used {R} or <img>.
+ */
+function expandResourcePlaceholdersToIcons(text) {
+  if (!text) return text;
+  return text.replace(/\{[^{}]+\}/g, (token) => {
+    const icon = getResourceIcon(token);
+    if (!icon) return token;
+    const [iconPath, altText] = icon;
+    return `<img src="${iconPath}" class="desc-icon" alt="${altText}" title="${altText}" />`;
+  });
+}
+
+/**
  * Parse a spell description and extract Pay-toggle entries.
  * Each entry has: { rawImg, iconSrc, iconAlt, toggleIndex }
- * A "Pay" line is: Pay <img src='...' ...>: ...
+ * A "Pay" line is: Pay <img ...>: ...  (after we expand {X} placeholders to <img>)
  */
 function parsePayToggleEntries(description) {
   if (!description) return [];
+  const normalized = expandResourcePlaceholdersToIcons(description);
   // Match "Pay" followed immediately by an <img> tag (with optional whitespace between)
   const regex = /Pay\s*(<img[^>]+src=['"]([^'"]+)['"][^>]*alt=['"]([^'"]+)['"][^>]*\/?>)/gi;
   const entries = [];
   let match;
   let idx = 0;
-  while ((match = regex.exec(description)) !== null) {
+  while ((match = regex.exec(normalized)) !== null) {
     entries.push({
       rawImg: match[1],   // the full <img ...> tag
       iconSrc: match[2],  // src value
@@ -13862,6 +14044,212 @@ function getPayToggleKey(spellName, toggleIndex) {
   return `${spellName}_pay_${toggleIndex}`;
 }
 
+// ─── SPELL CHOICE TOGGLE ───────────────────────────────────────────────
+//
+// Some spells (e.g. Regenerate) describe two or more mutually-exclusive
+// "regain X" options separated by "or". The player picks one; whichever
+// is selected at cast-time determines the effect. State is stored in
+// `choiceToggles` keyed by spell name → chosen resource type
+// (e.g. "life", "stamina", "energy"). Default = first option.
+//
+// The renderer below finds segments that match either of these shapes
+// (post-placeholder-expansion, so <img> tags are present):
+//   "Regain <icons>"
+//   "or regain <icons>"
+// and wraps each in a <span class="choice-toggle active|inactive" data-...>.
+
+let choiceToggles = loadState('choiceToggles', {});
+
+/** Stable key for a spell's choice toggle */
+function getChoiceKey(spellName) {
+  return `__choice_${spellName}`;
+}
+
+/**
+ * Read the current chosen resource for a spell (or null if no choice has
+ * been made yet). The renderer falls back to "first option" when this is
+ * null, so existing data on first render is always sensible.
+ */
+function getSpellChoice(spellName) {
+  return choiceToggles[spellName] || null;
+}
+
+/** Persist the chosen resource for a spell. */
+function setSpellChoice(spellName, resourceType) {
+  choiceToggles[spellName] = resourceType;
+  saveState('choiceToggles', choiceToggles);
+}
+
+/**
+ * Find "Regain <imgs>" (or "or regain <imgs>") segments in a spell
+ * description and wrap each in a clickable toggle span. Returns the
+ * rewritten HTML. The first segment defaults to active; later ones
+ * are inactive until the user clicks one.
+ *
+ * The pattern matches one or more <img> tags (each an icon) optionally
+ * followed by punctuation / whitespace, all the way up to the next "or",
+ * newline, period, or end of string. We deliberately over-match slightly
+ * and let the segments be visually separated by the <br>-like display of
+ * <span class="req-line"> in the parent .spell-description.
+ */
+function renderChoiceToggles(html, spellName) {
+  if (!html) return html;
+
+  // Match the choice-toggle segments in a spell description. Each segment is
+  // shaped as "Regain <imgs>" or "or regain <imgs>". The "Regain"/"regain"
+  // keyword is REQUIRED (not optional) so the regex doesn't accidentally
+  // match an unrelated <imgs> that happens to be preceded by a word that
+  // contains the letters "or" (e.g. "Remove <img...>" — the substring "or"
+  // would otherwise falsely match). Captures:
+  //   1 = "or " connector (optional)
+  //   2 = the "Regain" / "regain" keyword + trailing whitespace
+  //   3 = the trailing <img> run
+  // Splitting "or" from the keyword lets us keep "or" as plain text (it
+  // shouldn't get the active-styling) while the keyword + imgs together
+  // form the clickable toggle span.
+  const regex = /(\bor\s+)?((?:R|r)egain\s+)((?:<img[^>]+>)+)/gi;
+  const matches = [];
+  let m;
+  while ((m = regex.exec(html)) !== null) {
+    matches.push({
+      full:        m[0],
+      start:       m.index,
+      end:         m.index + m[0].length,
+      orConnector: m[1] || '',
+      keyword:     (m[2] || '').trimEnd(),  // "Regain" or "regain" (no trailing ws)
+      imgs:        m[3] || ''
+    });
+  }
+  if (matches.length === 0) return html;
+
+  // Determine which segment is active. Default: first one.
+  const chosenResource = getSpellChoice(spellName);
+  let activeIdx = 0;
+  if (chosenResource) {
+    // Match either single- or double-quoted alt attributes.
+    const altNeedle = new RegExp(`alt=["']${chosenResource.toLowerCase()}["']`);
+    const found = matches.findIndex(seg => altNeedle.test(seg.imgs));
+    if (found >= 0) activeIdx = found;
+  }
+
+  // Build the new HTML by stitching segments in reverse so indices stay valid.
+  let out = html;
+  for (let i = matches.length - 1; i >= 0; i--) {
+    const seg = matches[i];
+    const isActive = i === activeIdx;
+    const stateClass = isActive ? 'choice-active' : 'choice-inactive';
+    // Pull resource type from the first <img> alt= attribute.
+    const altMatch = seg.imgs.match(/alt=['"]([^'"]+)['"]/i);
+    const resourceType = altMatch ? altMatch[1].toLowerCase() : 'unknown';
+    // The "or " connector stays outside the span (it's not part of the
+    // toggle itself). The "Regain"/"regain" keyword and the imgs both go
+    // inside the span so the keyword + icons together form one clickable
+    // toggle, and the keyword's color/brightness follows the active state
+    // via .choice-active / .choice-inactive. If a description uses bare
+    // "or <imgs>" (no keyword), the keyword slot is just empty.
+    const keyword = seg.keyword || '';
+    const replacement =
+      `${seg.orConnector}` +
+      `<span class="choice-toggle ${stateClass}" ` +
+        `data-spell="${encodeURIComponent(spellName)}" ` +
+        `data-segment-index="${i}" ` +
+        `data-resource="${resourceType}">` +
+        `${keyword}${seg.imgs.trim()}` +
+      `</span>`;
+    out = out.slice(0, seg.start) + replacement + out.slice(seg.end);
+  }
+  return out;
+}
+
+/** Click handler for .choice-toggle elements (wired via event delegation). */
+function handleChoiceToggleClick(e) {
+  const toggle = e.target.closest('.choice-toggle');
+  if (!toggle) return;
+  e.stopPropagation();
+  const spellName = decodeURIComponent(toggle.dataset.spell);
+  const resource = toggle.dataset.resource;
+
+  setSpellChoice(spellName, resource);
+
+  // Update DOM siblings: this spell's choice toggles are siblings within the
+  // same .spell-description container.
+  const container = toggle.parentElement;
+  if (container) {
+    container.querySelectorAll(`.choice-toggle[data-spell="${encodeURIComponent(spellName)}"]`).forEach(el => {
+      el.classList.toggle('choice-active', el === toggle);
+      el.classList.toggle('choice-inactive', el !== toggle);
+    });
+  }
+}
+
+/**
+ * Apply the spell's choice effect on cast. The description is parsed to
+ * count how many <img> icons belong to the active choice (so "Regain GG"
+ * counts as 2 life). The player's chosen resource is read from
+ * choiceToggles, or the first option as the default.
+ *
+ * For each icon in the active segment, the matching resource pool gets
+ * +1 (clamped to that bar's max). The bars are refreshed afterwards.
+ */
+function applyChoiceEffect(spell) {
+  if (!spell?.name) {
+    console.debug('[applyChoiceEffect] no spell name, skipping');
+    return;
+  }
+  const canonical = findSpellByName(spell.name);
+  const description = canonical?.description ?? spell.description ?? '';
+  const normalized = expandResourcePlaceholdersToIcons(description);
+
+  // Re-derive the segments using the same regex as the renderer.
+  const regex = /(\bor\s+)?((?:R|r)egain\s+)((?:<img[^>]+>)+)/gi;
+  const segments = [];
+  let m;
+  while ((m = regex.exec(normalized)) !== null) {
+    segments.push({ orConnector: m[1] || '', keyword: (m[2] || '').trimEnd(), imgs: m[3] || '' });
+  }
+  if (segments.length === 0) {
+    console.debug(`[applyChoiceEffect] no "Regain" segments found in "${spell.name}" description; nothing to do`);
+    return;
+  }
+
+  // Pick the active segment: chosen resource if any, else first.
+  const chosen = getSpellChoice(spell.name);
+  let active = segments[0];
+  if (chosen) {
+    // Match either single- or double-quoted alt attributes.
+    const altNeedle = new RegExp(`alt=["']${chosen.toLowerCase()}["']`);
+    const found = segments.find(s => altNeedle.test(s.imgs));
+    if (found) active = found;
+  }
+  // Read the resource type off the active segment for the log line.
+  const activeAlt = active.imgs.match(/alt=['"]([^'"]+)['"]/i);
+  const activeResource = activeAlt ? activeAlt[1].toLowerCase() : '?';
+
+  // Count <img> tags in the active segment and apply +1 per icon to the
+  // corresponding resource pool.
+  const imgRegex = /<img[^>]+alt=['"]([^'"]+)['"]/gi;
+  let imgMatch;
+  const resourceMap = {
+    life: 'life', stamina: 'stamina', mana: 'mana', energy: 'energy',
+    empower: 'empower', madness: 'madness', coalesce: 'coalesce'
+  };
+  let applied = 0;
+  while ((imgMatch = imgRegex.exec(active.imgs)) !== null) {
+    const alt = imgMatch[1].toLowerCase();
+    const stateKey = resourceMap[alt];
+    if (!stateKey) continue;
+    const cur = Number(loadState(stateKey, 0)) || 0;
+    // Use the same max as the bar config to avoid over-fill.
+    const cfg = (typeof barsConfig !== 'undefined' && barsConfig.find(b => b.key === stateKey)) || null;
+    const max = cfg ? cfg.max : (cur + 1);
+    saveState(stateKey, Math.min(cur + 1, max));
+    applied++;
+  }
+  console.debug(`[applyChoiceEffect] ${spell.name}: +${applied} to ${activeResource} (chosen=${chosen || 'default'})`);
+  if (typeof updateAllBars === 'function') updateAllBars();
+  if (typeof updateBottomStats === 'function') updateBottomStats();
+}
+
 /**
  * Rewrite a spell description so every "Pay <img>:" segment becomes a
  * clickable <span class="pay-toggle pay-on|pay-off"> wrapper.
@@ -13870,9 +14258,14 @@ function getPayToggleKey(spellName, toggleIndex) {
 function renderDescriptionWithPayToggles(description, spellName) {
   if (!description) return description;
 
+  // Expand {R}/{c}/{w}/etc. resource placeholders to <img> tags so the regex
+  // below sees the same canonical form regardless of which style the spell
+  // data uses. The icons also show up in the rendered description.
+  const normalized = expandResourcePlaceholdersToIcons(description);
+
   // We process the string replacement in a single pass using a replacer function
   let toggleIndex = 0;
-  return description.replace(
+  const withPayToggles = normalized.replace(
     /Pay(\s*)(<img[^>]+src=['"]([^'"]+)['"][^>]*alt=['"]([^'"]+)['"][^>]*\/?>)/gi,
     (fullMatch, whitespace, imgTag, iconSrc, iconAlt) => {
       const key = getPayToggleKey(spellName, toggleIndex);
@@ -13883,6 +14276,10 @@ function renderDescriptionWithPayToggles(description, spellName) {
       return html;
     }
   );
+
+  // Layer choice toggles on top: wrap "Regain <icons>" segments in
+  // .choice-toggle spans so the player can pick which resource to recover.
+  return renderChoiceToggles(withPayToggles, spellName);
 }
 
 /**
@@ -14128,11 +14525,19 @@ function createActionCard(data = {}) {
   const effectiveCost = getEffectiveCost(data);
   const canCast = data.name && canAffordSpell(effectiveCost);
 
-  // Render description with Pay-toggle wrappers
+  // Render description with Pay-toggle wrappers, then layer choice
+  // toggles on top so action cards (Regenerate, etc.) also get the
+  // "Regain … or regain … or regain …" interactive segments. Without
+  // this, the action card would show the placeholder text as inert
+  // prose and the player would have no way to pick life vs stamina vs
+  // energy for an action-based Regenerate.
   const descRaw = data.description || '—';
-  const descHtml = data.name
+  let descHtml = data.name
     ? renderDescriptionWithPayToggles(descRaw, data.name)
     : descRaw;
+  if (data.name) {
+    descHtml = renderChoiceToggles(descHtml, data.name);
+  }
   const payExtraHtml = data.name ? renderPayExtraCostIcons(data) : '';
 
   return `
@@ -14263,6 +14668,14 @@ function handleActionUse(actionName, actionData) {
   // Deduct costs
   deductSpellCost(effectiveCost);
 
+  // Apply any spell-choice effect (e.g. Regenerate's "regain 2 of chosen
+  // resource"). Action cards go through the same description-rendering
+  // pipeline as spell cards, so a Regenerate action has the same
+  // "Regain … or regain … or regain …" segments and the player's most
+  // recent click on one of those toggles drives which resource gets the
+  // +N bump. This mirrors the spell-slot cast flow above.
+  applyChoiceEffect(actionData);
+
   // Visual feedback
   const actionSlot = document.querySelector(`.action-slot[data-action-name="${actionName}"]`);
   if (actionSlot) {
@@ -14288,6 +14701,14 @@ function bindSpellEvents() {
   }
   spellList._payToggleListener = handlePayToggleClick;
   spellList.addEventListener('click', spellList._payToggleListener);
+
+  // Wire choice-toggle clicks via delegation on the whole spell list
+  // (one listener covers all spells, just like pay-toggle).
+  if (spellList._choiceToggleListener) {
+    spellList.removeEventListener('click', spellList._choiceToggleListener);
+  }
+  spellList._choiceToggleListener = handleChoiceToggleClick;
+  spellList.addEventListener('click', spellList._choiceToggleListener);
 
   document.querySelectorAll('.spell-slot').forEach(card => {
     // Action-slots share .spell-slot but have no name input — handled by bindActionEvents()
@@ -14838,6 +15259,12 @@ function handleCastSpell(index) {
   // ── 6. Deduct and finish ──────────────────────────────────────────────────
   deductSpellCost(nonChannelCost, xValue, genericChoice);
 
+  // Apply any spell-choice effect (e.g. Regenerate's "regain 2 of chosen resource").
+  // The chosen resource is whatever the player last selected in the description's
+  // choice-toggle; if no choice has been made we skip the effect (the spell
+  // description will still highlight the first option as the default UI hint).
+  applyChoiceEffect(spell);
+
   const btn = document.querySelector(`.spell-slot[data-index="${index}"] .spell-cast-btn`);
   if (btn) {
     const orig = (btn.querySelector('span') || btn).textContent;
@@ -14900,58 +15327,65 @@ function saveSpell(index, name) {
       } 
       // Normal legendary slots - restrict to assigned pool
       else {
-        // First, try to fuzzy match the input to find the actual spell name
-        let spellNameToCheck = name;
-        let matchedSpell = foundSpell;
-        
-        // If foundSpell exists, use its name for validation (fuzzy match succeeded)
-        if (foundSpell) {
-          spellNameToCheck = foundSpell.name;
-        }
-        
-        // Check if the spell (or fuzzy-matched spell) is from the artefact's legendary pool
-        const isFromPool = legendarySpellList.some(s => 
-          s.name.toLowerCase() === spellNameToCheck.toLowerCase()
+        // First, check the search term directly against the pool (case-insensitive
+        // exact match). This avoids the fuzzyMatch trap where typing "Scan" would
+        // match a completely different spell "Scan: Read" before our pool check
+        // runs, and the resulting "Scan: Read" name would then fail the pool test.
+        let directPoolHit = legendarySpellList.find(
+          s => s.name.toLowerCase() === name.toLowerCase().trim()
         );
-        
-        if (!isFromPool) {
-          const poolNames = legendarySpellList.map(s => s.name).join(', ');
-          alert(`This legendary slot can only learn spells from ${artefact}'s pool:\n${poolNames}`);
-          return;
+
+        // 1.5) If no exact pool hit, try fuzzy matching the input against the
+        //      pool entry names (e.g. "sock" → "Socks"). findSpellByName now
+        //      does the same lookup and returns the canonical spellDB row.
+        if (!directPoolHit) {
+          const fuzzyPoolHit = findSpellByName(name);
+          if (fuzzyPoolHit) {
+            const poolName = Object.entries(LEGENDARY_POOL_TO_SPELLDB_KEY).find(
+              ([, dbKey]) => dbKey === fuzzyPoolHit.name
+            )?.[0];
+            if (poolName) {
+              directPoolHit = legendarySpellList.find(
+                s => s.name.toLowerCase() === poolName.toLowerCase()
+              );
+            }
+          }
         }
-        
-        // Valid legendary spell from pool
-        if (matchedSpell) {
+
+        if (directPoolHit) {
+          // Clean direct hit — pull the canonical data for this pool entry.
+          // This always carries the right id, image, description, and cost.
+          const spellData = findSpellByName(directPoolHit.name);
           spells[index] = {
-            ...matchedSpell,
+            id: directPoolHit.id,
+            image: `cards/fronts/${directPoolHit.id}.webp`,
+            ...(spellData || {}),
+            name: directPoolHit.name,
+            isLegendary: true
+          };
+        } else if (foundSpell) {
+          // The fuzzy match landed on a pool entry. Build the spell with the
+          // pool entry's id/image so the card shows the right card art even if
+          // spellDB happens to also have a colliding entry.
+          const matchedPoolEntry = legendarySpellList.find(s =>
+            LEGENDARY_POOL_TO_SPELLDB_KEY[s.name] === foundSpell.name
+          );
+          if (!matchedPoolEntry) {
+            const poolNames = legendarySpellList.map(s => s.name).join(', ');
+            alert(`This legendary slot can only learn spells from ${artefact}'s pool:\n${poolNames}`);
+            return;
+          }
+          spells[index] = {
+            id: matchedPoolEntry.id,
+            image: `cards/fronts/${matchedPoolEntry.id}.webp`,
+            ...foundSpell,
+            name: matchedPoolEntry.name,
             isLegendary: true
           };
         } else {
-          // Find the spell in the legendary list (for fallback)
-          const legendarySpell = legendarySpellList.find(s => 
-            s.name.toLowerCase() === spellNameToCheck.toLowerCase()
-          );
-          
-          if (legendarySpell) {
-            spells[index] = {
-              name: legendarySpell.name,
-              id: legendarySpell.id,
-              image: `cards/fronts/${legendarySpell.id}.webp`,
-              primaryType: "Legendary Spell",
-              secondaryType: "",
-              description: "A legendary spell granted by your Soulbound Artefact.",
-              cost: [{ type: "coalesce", amount: 1 }],
-              isLegendary: true
-            };
-          } else {
-            spells[index] = {
-              name: spellNameToCheck,
-              type: 'Legendary Spell',
-              description: 'Custom legendary spell - no data available.',
-              cost: [],
-              isLegendary: true
-            };
-          }
+          const poolNames = legendarySpellList.map(s => s.name).join(', ');
+          alert(`This legendary slot can only learn spells from ${artefact}'s pool:\n${poolNames}`);
+          return;
         }
       }
     } else {
